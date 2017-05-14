@@ -1,0 +1,565 @@
+body {
+  margin: 0 auto;
+  padding: 0;
+  font-size: 16px;
+  /*background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.03);*/
+  background-color: #f5f5f5;
+  min-width: 900px;
+}
+
+.loscp-query-input {
+    padding-left: 30px !important;
+    background: url(../img/search-16.png) no-repeat 8px;
+    background-color: #fff;
+    width: 220px;
+}
+
+.loscp-font-fixspace {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 1em;
+}
+
+
+#loscp-topbar {
+  padding: 0 15px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  color: #777;
+  min-height: 50px;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.15);
+}
+
+.loscp-topbar-collapse {
+  position: relative;
+  display: block !important;
+  height: auto !important;
+  padding-bottom: 0;
+  overflow: visible !important;
+  white-space: nowrap;
+}
+
+
+.loscp-nav {
+  position: relative;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0 30px;
+  float: left;
+  min-height: 50px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.loscp-nav:first-child {
+  margin-left: 0;
+}
+
+.loscp-nav-right {
+  float: right !important;
+  margin-right: 2px;
+}
+
+.loscp-nav > li {
+  position: relative;
+  padding: 0;
+  display: inline-block;
+  zoom: 1;
+  vertical-align: middle;
+  line-height: 50px;
+}
+
+.loscp-nav > li:first-child {
+  margin-left: 0;
+}
+
+.loscp-nav > li > a {
+  padding: 0 10px;
+  display: block;
+  text-decoration: none;
+  white-space: nowrap;
+  color: #777;
+  font-size: 16px;
+}
+
+.loscp-nav > li > a:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.loscp-nav > li > a.active {
+  color: #000;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.loscp-topbar-logo {
+  margin-right: 10px;
+  max-height: 40px;
+  max-width: 100px;
+}
+
+.loscp-topbar-brand {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+/** user bar **/
+#loscp-topbar-userbar > .iam-name {
+  font-size: 16px;
+  color: #666;
+  max-width: 120px;
+  margin-right: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: break-word;
+  overflow: hidden;
+  position: relative;
+  display: inline-block;
+}
+
+#loscp-topbar-userbar > .iam-photo {
+  margin-left: 0px;
+}
+
+#loscp-topbar-userbar > .iam-photo > img {
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  padding: 0px;
+  background-color: #dfdfdf;
+}
+
+#loscp-topbar-user-signed-modal {
+  padding: 20px;
+  top: 2px;
+  right: 1px;
+  position: absolute;
+  z-index: 1000;
+  border: 2px solid #999;
+  border-radius: 5px;
+  text-align: left;
+  /* Fallback for web browsers that don't support RGBa */
+  background-color: rgb(195, 218, 237);
+  /* RGBa with 0.6 opacity */
+  background-color: rgba(255, 255, 255, 1);
+}
+#loscp-topbar-user-signed-modal .iam-photo {
+  width: 96px;
+  height: 96px;
+  position: relative;
+  z-index: 200;
+  left: 50%;
+  padding: 3px;
+  margin: 10px 0 10px -48px;
+  border-radius: 50%;
+  background-color: #dfdfdf;
+}
+#loscp-topbar-user-signed-modal .iam-name {
+  text-align: center;
+  font-size: 16px;
+  padding: 0 0 10px 0;
+}
+#loscp-topbar-user-signed-modal .iam-btn {
+  width: 260px;
+  display: block;
+  margin: 10px 0;
+}
+#loscp-topbar-user-signed-modal .iam-btn:last-child {
+    margin-bottom: 0;
+}
+
+#comp-content {
+  padding: 0 10px;
+}
+
+.loscp-boxlet-grp {
+  margin: 0 0 10px;
+}
+.loscp-boxlet-grp .lbg-title {
+  font-size: 20px;
+  font-weight: bold;
+  padding: 10px 0;
+}
+.loscp-boxlet {
+  border-radius: 5px;
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  box-shadow: 0px 1px 2px 1px #999;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.loscp-boxlet .lb-title {
+  font-size: 20px;
+  font-weight: bold;
+  padding: 5px 0 10px 0;
+  margin-bottom: 10px;
+}
+.loscp-boxlet .lb-underline {
+  border-bottom: #ccc solid 2px;
+}
+.loscp-boxlet .lb-colbox {
+  padding: 5px 10px;
+  background-color: #eee;
+  border-left: #fff 10px solid;
+}
+.loscp-boxlet .lb-colbox:first-child {
+  border-left: 0;
+}
+.loscp-boxlet .lb-colbox .lbc-title {
+  font-size: 6px;
+  color: #777;
+}
+.loscp-boxlet .lb-colbox .lbc-value {
+  margin-top: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+.loscp-boxlet .lb-colbox .lbc-value span {
+  font-size: 8px;
+  font-weight: normal;
+}
+
+.loscp-panel-table tr {
+  border-bottom: 1px solid #ccc;
+}
+
+.loscp-panel-table tr:last-child {
+  border-bottom: 0;
+}
+
+.loscp-panel-table td {
+  padding: 4px 0;
+}
+
+.loscp-panel-table td.lpt-title {
+  font-weight: bold;
+}
+
+.loscp-form > .form-group {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.loscp-form-group-title {
+  margin: 15px 0;
+  font-size: 16px;
+  color: #999;
+  white-space: pre;
+}
+.loscp-form-checkbox {
+  margin: 0 20px 0 0;
+  padding: 10px 0;
+}
+
+.loscp-form-box-selector {
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  width: 100%;
+}
+
+.loscp-form-box-selector-item {
+  position: relative;
+  display: block;
+  float: left;
+  padding: 5px;
+  margin: 0 10px 10px 0;
+  background-color: #ECF0F1;
+  box-shadow: inset 0px 0px 1px #FFFFCC;
+  width: 200px;
+  overflow: hidden;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.loscp-form-box-selector-item:hover {
+  outline: #BDC3C7 solid 3px;
+}
+
+.loscp-form-box-selector-item.selected {
+  outline: #5cb85c solid 3px;
+}
+
+
+#loscp-module-navbar {
+  clear: both;
+  height: 30px;
+  padding: 0;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.loscp-module-nav {
+  position: relative;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 10px;
+  float: left;
+  min-height: 30px !important;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.loscp-module-nav:first-child {
+  margin-left: 0 !important;
+}
+
+.loscp-module-nav > li {
+  position: relative;
+  padding: 0;
+  margin: 0 0 0 10px;
+  display: inline-block;
+  zoom: 1;
+  vertical-align: middle;
+  line-height: 30px;
+  float: left;
+  border-radius: 2px;
+}
+
+.loscp-module-nav > li:first-child {
+  margin-left: 0;
+}
+
+.loscp-module-nav > li > a {
+  padding: 0 10px;
+  display: block;
+  text-decoration: none;
+  white-space: nowrap;
+  color: #777;
+  font-size: 12px;
+  border-radius: 2px;
+}
+
+.loscp-module-nav > li > a:hover {
+  padding: 0 10px;
+  display: block;
+  text-decoration: none;
+  white-space: nowrap;
+  color: #777;
+  font-size: 12px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.loscp-module-nav > li.active,
+.loscp-module-nav > li > a.active {
+  background-color: #333;
+  color: #fff;
+}
+
+.loscp-module-nav > li.active > a {
+  color: #fff;
+}
+
+.loscp-module-nav > li.active:after,
+.loscp-module-nav > li > a.active:after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 50%;
+  margin-left: -6px;
+  top: 30px;
+  width: 0;
+  height: 0;
+  border-color: #333 transparent transparent transparent;
+  border-style: solid;
+  border-width: 6px;
+}
+
+#loscp-module-navbar-optools button {
+  font-size: 10px;
+}
+
+#loscp-module-navbar-optools input {
+  margin: 0;
+  padding: 2px;
+  height: 30px;
+  font-size: 12px;
+  border-radius: 2px;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+}
+
+
+.loscp-div-light {
+  clear: both;
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.15);
+}
+
+
+.loscp-btn {
+  font-size: 12px;
+  border-radius: 2px;
+  border: 0;
+  padding: 0.5em 1em;
+  margin: 0 10px 0 0;
+  line-height: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.loscp-btn:hover {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.loscp-btn-xsmall {
+  font-size: 70%;
+}
+
+.loscp-btn-small {
+  font-size: 85%;
+}
+
+
+.loscp-btn:last-child {
+  margin-right: 0;
+}
+
+.loscp-btn-primary,
+.loscp-btn-primary a {
+  color: #fff !important;
+  background-color: rgb(0, 120, 231);
+}
+
+/* ext::app */
+.loscp-app-list-qry-input {
+    padding: 5px 5px 5px 30px;
+    background: url(../img/search-16.png) no-repeat 8px; 
+    width: 300px;
+}
+
+.loscp-app-specset-gn-box {
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.loscp-app-specset-gn-box {
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.loscp-app-specset-gn-box .head {
+    padding: 0 0 5px 0;
+    position: relative;
+    height: 30px;
+}
+
+.loscp-app-specset-gn-box .title {
+    left: 0;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.loscp-app-specset-gn-box .options {
+    position: absolute;
+    /*top: 0;*/
+    right: 0;
+}
+
+.loscp-app-specset-gn-box .body {
+    padding: 5px; 
+    background-color: #fff;
+}
+
+.loscp-app-specset-gn-box .body td {
+    padding: 3px;
+}
+
+#loscp-app-instset-bound {
+    /*border-color: #f5f5f5;*/
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f5f5f5;
+}
+
+#loscp-app-instset-bound .lib-ctn {
+    width: 100%;
+}
+
+#loscp-app-instset-bound .lib-ctn tr th {
+    padding-bottom: 10px;
+}
+
+#loscp-app-instset-bound .lib-ctn tr td {
+    padding: 10px;
+}
+
+#loscp-app-instset-bound .bound-item {
+    border: 1px solid #fff;
+}
+
+#loscp-app-instset-bound .bound-item:hover {
+    border: 1px solid #5cb85c;
+}
+
+#loscp-app-instset-bound .lib-header {
+    background-color: #f5f5f5;
+}
+
+#loscp-app-instset-bound .lib-header-subtitle {
+    font-size: 16px;
+}
+
+#loscp-app-instset-bound .lib-header-title {
+    font-size: 18px;
+    padding: 5px 0;
+}
+
+#loscp-app-instset-bound .lib-comment {
+    font-size: 12px;
+}
+
+#loscp-app-instset-bound .lib-tbody {
+    background-color: #fff;
+}
+
+#loscp-app-instset-bound .box-item:hover {
+    cursor: pointer;
+}
+
+pre {
+    margin: 0;
+    padding: 0;
+    border: 0px;
+}
+
+pre code {
+	margin: 0;
+	padding: 0;
+    border: 0px;
+	font-size: 12px !important;
+	line-height: 120% !important;
+}
+
+button {
+  min-width: 30px;
+}
+
+.button-xsmall {
+  font-size: 70% !important;
+}
+
+.button-small {
+  font-size: 85% !important;
+}
+
+.button-large {
+  font-size: 110% !important;
+}
+
+.button-xlarge {
+  font-size: 125% !important;
+}
+

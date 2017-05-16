@@ -2,7 +2,7 @@ var losCpRes = {
     statusls : [
         {phase: "Running", title: "Running"},
         {phase: "Stopped", title: "Stopped"},
-    ],
+    ]
 }
 
 losCpRes.Index = function()
@@ -18,3 +18,7 @@ losCpRes.Index = function()
     });
 }
 
+losCpRes.todo = function()
+{
+
+}

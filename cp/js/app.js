@@ -512,9 +512,6 @@ losCpApp.InstDeploy = function(id)
                 losCpApp.InstDeployCommit(rsj);
             });
         },
-        error : function(xhr, textStatus, error) {
-            l4i.InnerAlert(alert_id, 'alert-danger', textStatus+' '+xhr.responseText);
-        }
     });
 }
 

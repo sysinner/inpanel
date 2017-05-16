@@ -53,7 +53,7 @@ losCp.Boot = function()
             "~/cp/js/pod.js"+ losCp.debug_uri(),
             "~/cp/js/app.js"+ losCp.debug_uri(),
             "~/cp/js/app-spec.js"+ losCp.debug_uri(),
-            "~/cp/js/res.js",
+            "~/cp/js/res.js"+ losCp.debug_uri(),
             "~/cp/js/res-domain.js"+ losCp.debug_uri(),
         ], losCp.load_index);
     });

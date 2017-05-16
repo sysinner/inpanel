@@ -501,8 +501,36 @@ losCpResDomain.Deploy = function(name)
     if (!inst.operate.app_id || inst.operate.app_id.length < 16) {
         losCpResDomain.DeploySelectApp();
     } else {
-        losCpResDomain.deployCommit();
+        losCpResDomain.DeployWizard(name);
     }
+}
+
+losCpResDomain.DeployWizard = function(name)
+{
+    l4iModal.Open({
+        id     : "loscp-resdomain-deploy",
+        title  : "Resource Domain Deploy Wizard",
+        width  : 800,
+        height : 300,
+        tpluri : losCp.TplPath("res/domain-deploy"),
+        callback : function(err, data) {
+            l4iTemplate.Render({
+                dstid: "loscp-resdomain-deploy-wizard",
+                tplid: "loscp-resdomain-deploy-wizard-tpl",
+                data:  {
+                    _app_id: losCpResDomain.inst_active.operate.app_id,
+                },
+            });
+        },
+        buttons : [{
+            onclick: "l4iModal.Close()",
+            title: "Close",
+        }, {
+            onclick: "losCpApp.DeployCommit()",
+            title: "Next",
+            style: "btn-primary",
+        }],
+    });
 }
         
 losCpResDomain.DeploySelectApp = function(name)
@@ -522,7 +550,7 @@ losCpResDomain.DeploySelectApp = function(name)
             l4iModal.Open({
                 title  : "Select a App to Deploy",
                 width  : 800,
-                height : 500,
+                height : 400,
                 tplsrc : tpl,
                 callback: function(err) {
                     if (err) {
@@ -539,7 +567,7 @@ losCpResDomain.DeploySelectApp = function(name)
                         return;
                     }
                     losCpResDomain.inst_active.operate.app_id = data;
-                    losCpResDomain.deployCommit();
+                    losCpResDomain.DeployCommit();
                     l4iModal.Close();
                 },
                 buttons : [{
@@ -564,7 +592,7 @@ losCpResDomain.DeploySelectApp = function(name)
     });
 }
 
-losCpResDomain.deployCommit = function(inst)
+losCpResDomain.DeployCommit = function(inst)
 {
     if (!losCpResDomain.inst_active || !losCpResDomain.inst_active.operate.app_id) {
         return;

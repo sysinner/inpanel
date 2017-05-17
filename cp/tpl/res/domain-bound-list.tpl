@@ -8,7 +8,8 @@
 <thead>
 <tr>
   <th>Path</th>
-  <th>Pod / Port</th>
+  <th>Type</th>
+  <th>Setting</th>
   <th>Action</th>
   <th></th>
 </tr>
@@ -17,11 +18,16 @@
 {[~it.bounds :v]}
 <tr>
   <td class="loscp-font-fixspace">{[=v._name]}</td>
+  <td>
+    {[~it._types :tv]}
+    {[if (v._type == tv.type) {]}{[=tv.title]}{[}]}
+    {[~]}
+  </td>
   <td class="loscp-font-fixspace">{[=v._value]}</td>
   <td>
     {[~it._actions :av]}
     {[if (v.action == av.action) {]}{[=av.title]}{[}]}
-	{[~]}
+    {[~]}
   </td>
   <td align="right">
     <button class="loscp-btn loscp-btn-xsmall" onclick="losCpResDomain.BoundSet('{[=v.name]}')">Setting</button>

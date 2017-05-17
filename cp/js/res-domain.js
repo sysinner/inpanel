@@ -9,11 +9,24 @@ var losCpResDomain = {
     bound_basepath_re: /^[0-9a-zA-Z.-~\/]{1,30}$/,
     bound_podid_re: /^[0-9a-f]{16,20}$/,
     boundset_def: {
+        action: 1,
+        value: "pod:",
         _name: "/",
         _podid: "",
         _boxport: "",
-        action: 1,
+        _upstream: "",
+        _redirect_url: "",
     },
+    bound_types: [{
+        title: "Pod/BoxPort",
+        type: "pod",
+    }, {
+        title: "IP/Port",
+        type: "upstream",
+    }, {
+        title: "Redirect",
+        type: "redirect",
+    }],
 }
 
 losCpResDomain.List = function()
@@ -291,20 +304,45 @@ losCpResDomain.BoundList = function(name)
                 if (data.bounds[i]._name == "") {
                     data.bounds[i]._name = "/";
                 }
+                if (!data.bounds[i]._type) {
+                    data.bounds[i]._type = "pod";
+                }
 
-                data.bounds[i]._value = data.bounds[i].value.substr("pod/".length);
+                var vpi = data.bounds[i].value.indexOf(":");
+                if (vpi > 1) {
+
+                    switch (data.bounds[i].value.substr(0, vpi)) {
+                    case "pod":
+                        break;
+
+                    case "upstream":
+                        break;
+
+                    case "redirect":
+                        break;
+
+                    default:
+                        // TODO
+                    }
+                    data.bounds[i]._value = data.bounds[i].value.substr(vpi + 1);
+                    data.bounds[i]._type = data.bounds[i].value.substr(0, vpi);
+                } else {
+                    data.bounds[i]._value = "";
+                    data.bounds[i]._type = "pod";
+                }
             }
 
             data._name = data.meta.name.substr("domain/".length);
             losCpResDomain.inst_active = l4i.Clone(data);
 
             data._actions = losCpResDomain.op_actions;
+            data._types = losCpResDomain.bound_types;
 
             l4iModal.Open({
                 id:      "loscp-resdomain-boundlist-modal",
                 title  : "Domain Bounds",
                 tplsrc : tpl,
-                width  : 800,
+                width  : 900,
                 height : 500,
                 buttons: [{
                     title: "Cancel",
@@ -371,9 +409,6 @@ losCpResDomain.BoundSet = function(name)
         for (var i in losCpResDomain.inst_active.bounds) {
             if (losCpResDomain.inst_active.bounds[i].name == name) {
                 bound = l4i.Clone(losCpResDomain.inst_active.bounds[i]);
-                var values = bound.value.split("/");
-                bound._podid = values[1]; 
-                bound._boxport = values[2]; 
                 break;
             }
         }
@@ -381,13 +416,64 @@ losCpResDomain.BoundSet = function(name)
     if (!bound) {
         bound = l4i.Clone(losCpResDomain.boundset_def);
     }
+    if (!bound.value) {
+        bound.value = "pod:";
+    }
+    var pi = bound.value.indexOf(":");
+    if (pi < 2) {
+        pi = bound.value.indexOf("/");
+        // TODO return;
+    }
+    if (pi < 2) {
+        return;
+    }
+
+    bound._type = bound.value.substr(0, pi);
+    bound._value = bound.value.substr(pi + 1);
+
+    switch (bound._type) {
+    case "pod":
+        var values = bound._value.split(":");
+        if (values.length != 2) {
+            values = bound._value.split("/"); // TODO
+        }
+        if (values.length == 2) {
+            bound._podid = values[0];
+            bound._boxport = values[1];
+        }
+        break;
+
+    case "upstream":
+        break;
+
+    case "redirect":
+        break;
+
+    default:
+        return;
+    }
+
+    if (!bound._podid) {
+        bound._podid   = "";
+        bound._boxport = "";
+    }
+    if (!bound._value) {
+        bound._value = "";
+    }
+
     bound._actions = losCpResDomain.op_actions;
+    bound._types = losCpResDomain.bound_types;
+
+    losCpResDomain.inst_active_bound = bound;
 
     l4iModal.Open({
         id     : "loscp-resdomain-boundset-modal",
         title  : "Binding",
         tpluri : losCp.TplPath("res/domain-bound-set"),
         data   : bound,
+        callback: function(err, data) {
+            $("#loscp-resdomain-boundset-type-"+ bound._type).css({"display": "block"});
+        },
         buttons: [{
             title: "Cancel",
             onclick : "l4iModal.Close()",
@@ -399,6 +485,26 @@ losCpResDomain.BoundSet = function(name)
     });
 }
 
+losCpResDomain.BoundSetTypeOnChange = function(elem)
+{
+    if (!losCpResDomain.inst_active_bound) {
+        return;
+    }
+
+    if (!elem) {
+        return;
+    }
+
+    var typeid = $(elem).val();
+    if (losCpResDomain.inst_active_bound._type == typeid) {
+        return;
+    }
+
+    $("#loscp-resdomain-boundset-type-"+ losCpResDomain.inst_active_bound._type).css({"display": "none"});
+    $("#loscp-resdomain-boundset-type-"+ typeid).css({"display": "block"});
+
+    losCpResDomain.inst_active_bound._type = typeid;
+}
 
 losCpResDomain.BoundSetCommit = function()
 {
@@ -422,24 +528,43 @@ losCpResDomain.BoundSetCommit = function()
             throw "Invalid BaseURI";
         }
 
-        var podid = form.find("input[name=bound_podid]").val();
-        if (!podid || !losCpResDomain.bound_podid_re.test(podid)) {
-            throw "Invalid Pod ID";
-        }
-
-        var port = parseInt(form.find("input[name=bound_boxport]").val());
-        if (port < 1 || port > 65535) {
-            throw "Invalid Box Port";
-        }
-
         var action = parseInt(form.find("input[name=bound_action]:checked").val());
         if (action < 1) {
             throw "Invalid Action";
         }
 
+        var type = form.find("select[name=type]").val();
+        if (!type) {
+            throw "Invalid Type";
+        }
+
+        var value = "";
+        switch (type) {
+        case "pod":
+            var podid = form.find("input[name=bound_podid]").val();
+            if (!podid || !losCpResDomain.bound_podid_re.test(podid)) {
+                throw "Invalid Pod ID";
+            }
+
+            var port = parseInt(form.find("input[name=bound_boxport]").val());
+            if (port < 1 || port > 65535) {
+                throw "Invalid Box Port";
+            }
+            value = "pod:"+ podid +":"+ port;
+            break;
+
+        case "upstream":
+            value = "upstream:"+ form.find("input[name=bound_upstream]").val();
+            break;
+
+        case "redirect":
+            value = "redirect:"+ form.find("input[name=bound_redirect]").val();
+            break;
+        }
+
         req.bounds.push({
-            name: "domain/basepath/"+ basepath,
-            value: "pod/"+ podid +"/"+ port,
+            name:   "domain/basepath/"+ basepath,
+            value:  value,
             action: action,
         });
 
@@ -526,7 +651,7 @@ losCpResDomain.DeployWizard = function(name)
             onclick: "l4iModal.Close()",
             title: "Close",
         }, {
-            onclick: "losCpApp.DeployCommit()",
+            onclick: "losCpResDomain.DeployCommit()",
             title: "Next",
             style: "btn-primary",
         }],
@@ -592,7 +717,7 @@ losCpResDomain.DeploySelectApp = function(name)
     });
 }
 
-losCpResDomain.DeployCommit = function(inst)
+losCpResDomain.DeployCommit = function()
 {
     if (!losCpResDomain.inst_active || !losCpResDomain.inst_active.operate.app_id) {
         return;
@@ -632,7 +757,8 @@ losCpResDomain.DeployCommit = function(inst)
                 losCpResDomain.instances = null;
                 losCpResDomain.inst_active = null;
                 losCpResDomain.List();
-            }, 1000);
+                l4iModal.Close();
+            }, 500);
         }
     });
 }

@@ -4,7 +4,6 @@ var losCpResDomain = {
         {action: 2, title: "Stop"},
         {action: 3, title: "Destroy"},
     ],
-    instances : [], // cache
     inst_active: null,
     bound_basepath_re: /^[0-9a-zA-Z.-~\/]{1,30}$/,
     bound_podid_re: /^[0-9a-f]{16,20}$/,
@@ -31,6 +30,9 @@ var losCpResDomain = {
 
 losCpResDomain.List = function()
 {
+    var uri = "?type=domain";
+    uri += "&fields=meta/id|name|updated,bounds/name,operate/app_id,action";
+
     seajs.use(["ep"], function (EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function (tpl, data) {
@@ -76,8 +78,6 @@ losCpResDomain.List = function()
                 data.items[i]._name = data.items[i].meta.name.substr("domain/".length);
             }
 
-            losCpResDomain.instances = data.items;
-
             $(alert_id).hide();
 
             l4iTemplate.Render({
@@ -100,7 +100,7 @@ losCpResDomain.List = function()
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("resource/list?type=domain", {
+        losCp.ApiCmd("resource/list"+ uri, {
             callback: ep.done("data"),
         });
     });
@@ -375,24 +375,9 @@ losCpResDomain.BoundList = function(name)
             callback: ep.done("tpl"),
         });
 
-        var domain_entry = null;
-        if (losCpResDomain.instances && losCpResDomain.instances.length > 0) {
-
-            for (var i in losCpResDomain.instances) { 
-                if (losCpResDomain.instances[i]._name == name) {
-                    domain_entry = losCpResDomain.instances[i];
-                    domain_entry.kind = "Resource";
-                    break;
-                }
-            }
-        }
-        if (domain_entry) {
-            ep.emit("data", domain_entry);
-        } else {
-            losCp.ApiCmd("resource/domain?name="+ name, {
-                callback: ep.done("data"),
-            });
-        }
+        losCp.ApiCmd("resource/domain?name="+ name, {
+            callback: ep.done("data"),
+        });
     });
 }
 
@@ -603,31 +588,23 @@ losCpResDomain.BoundSetCommit = function()
 
 losCpResDomain.Deploy = function(name)
 {
-    if (!name || !losCpResDomain.instances) {
+    if (!name) {
         return;
     }
-
-    var inst = null;
-
-    for (var i in losCpResDomain.instances) {
-
-        if (name == losCpResDomain.instances[i]._name) {
-            inst = l4i.Clone(losCpResDomain.instances[i]);
-            break;
-        }
-    }
-
-    if (!inst) {
-        return;
-    }
-
-    losCpResDomain.inst_active = inst;
-
-    if (!inst.operate.app_id || inst.operate.app_id.length < 16) {
-        losCpResDomain.DeploySelectApp();
-    } else {
-        losCpResDomain.DeployWizard(name);
-    }
+    losCp.ApiCmd("resource/domain?name="+ name, {
+        callback: function(err, data) {
+            if (err || !data.kind) {
+                return;
+            }
+            losCpResDomain.inst_active = data;
+            // return losCpResDomain.DeploySelectApp();
+            if (!data.operate.app_id || data.operate.app_id.length < 16) {
+                losCpResDomain.DeploySelectApp();
+            } else {
+                losCpResDomain.DeployWizard(name);
+            }
+        },
+    });
 }
 
 losCpResDomain.DeployWizard = function(name)
@@ -660,7 +637,7 @@ losCpResDomain.DeployWizard = function(name)
         
 losCpResDomain.DeploySelectApp = function(name)
 {    
-    if (!losCpResDomain.inst_active || !losCpResDomain.inst_active.operate.app_id) {
+    if (!losCpResDomain.inst_active) {
         return;
     }
 
@@ -693,7 +670,6 @@ losCpResDomain.DeploySelectApp = function(name)
                     }
                     losCpResDomain.inst_active.operate.app_id = data;
                     losCpResDomain.DeployCommit();
-                    l4iModal.Close();
                 },
                 buttons : [{
                     onclick: "l4iModal.Close()",
@@ -739,6 +715,8 @@ losCpResDomain.DeployCommit = function()
         timeout : 3000,
         callback : function(err, rsj) {
 
+            l4iModal.Close();
+
             if (err || !rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Failed");
             }
@@ -754,11 +732,9 @@ losCpResDomain.DeployCommit = function()
             l4i.InnerAlert(alert_id, 'alert-success', "Successful operation");
 
             window.setTimeout(function(){
-                losCpResDomain.instances = null;
                 losCpResDomain.inst_active = null;
                 losCpResDomain.List();
-                l4iModal.Close();
-            }, 500);
+            }, 1000);
         }
     });
 }

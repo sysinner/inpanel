@@ -24,7 +24,7 @@
   <td class="loscp-font-fixspace">{[=v.meta.id]}</td>
   <td>{[=v.meta.name]}</td>
   <td>
-    <a href="#spec.detail" onclick="losCpApp.ListSpecInfo('{[=v.meta.id]}')">{[=v.spec.meta.name]}</a> v{[=v.spec.meta.version]}
+    <a href="#spec.detail" onclick="losCpAppSpec.Info('{[=v.spec.meta.id]}')">{[=v.spec.meta.name]}</a> v{[=v.spec.meta.version]}
   </td>
   <td>
     <a href="#pod.detail" onclick="losCpPod.Info('{[=v.operate.pod_id]}')" class="loscp-font-fixspace">{[=v.operate.pod_id]}</a>

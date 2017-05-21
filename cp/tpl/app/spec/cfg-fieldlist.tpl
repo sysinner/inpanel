@@ -33,7 +33,9 @@
       <td>{[=v.default]}</td>
       <td>{[=v.validates.length]}</td>
       <td align="right">
+        {[if (it.meta.user == losCp.UserSession.username) {]}
         <button class="loscp-btn loscp-btn-xsmall" onclick="losCpAppSpec.CfgFieldSet('{[=v.name]}')">Setting</button>
+        {[}]}
       </td>
     </tr>
     {[~]}

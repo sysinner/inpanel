@@ -26,7 +26,6 @@ var losCpApp = {
         },
     },
     instSet : {},
-    instListCache: null,
     instDeployActive: null,
     OpActions: [{
         name: "Start",
@@ -65,12 +64,11 @@ losCpApp.InstLaunchNew = function()
 
 losCpApp.InstListRefresh = function()
 {
-    losCpApp.instListCache = null;
-
-    var uri = "";
+    var uri = "?";
     if (document.getElementById("qry_text")) {
-        uri = "qry_text="+ $("#qry_text").val();
+        uri += "qry_text="+ $("#qry_text").val();
     }
+	uri += "&fields=meta/id|name|updated,spec/meta/id|name|version,operate/action|pod_id,operate/options/name";
 
     var alert_id = "#loscp-app-instls-alert";
 
@@ -109,8 +107,6 @@ losCpApp.InstListRefresh = function()
                     _actions: losCpApp.OpActions,
                 },
             });
-
-            losCpApp.instListCache = rsj;
         });
 
         ep.fail(function (err) {
@@ -139,7 +135,7 @@ losCpApp.InstListRefresh = function()
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("app-inst/list?"+ uri, {
+        losCp.ApiCmd("app-inst/list"+ uri, {
             callback: ep.done("data"),
         });
     });
@@ -224,25 +220,6 @@ losCpApp.OpOptInfo = function(app_id)
     });
 }
 
-
-losCpApp.ListSpecInfo = function(id)
-{
-    if (!losCpApp.instListCache) {
-        return;
-    }
-
-    for (var i in losCpApp.instListCache.items) {
-
-        if (losCpApp.instListCache.items[i].meta.id != id) {
-            continue;
-        }
-
-        if (losCpApp.instListCache.items[i].spec) {
-            losCpAppSpec.Info(null, losCpApp.instListCache.items[i].spec);
-            break;
-        }
-    }
-}
 
 losCpApp.instConfiguratorCallback = null;
 losCpApp.InstConfigurator = function(cb)
@@ -475,18 +452,6 @@ losCpApp.InstConfig = function(cb)
 
 losCpApp.InstDeploy = function(id)
 {
-    // if (losCpApp.instListCache) {
-    //     for (var i in losCpApp.instListCache.items) {
-    //         if (losCpApp.instListCache.items[i].meta.id != id) {
-    //             continue;
-    //         }
-    //         losCpApp.instDeployActive = l4i.Clone(losCpApp.instListCache.items[i]);
-    //         return losCpApp.InstConfigurator(function() {
-    //             losCpApp.InstDeployCommit(losCpApp.instDeployActive);
-    //         });
-    //     }
-    // }
-
     var tplid = "loscp-app-instls";
     var alert_id = "#"+ tplid +"-alert";
 

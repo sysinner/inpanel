@@ -22,7 +22,6 @@ var losCpAppSpec = {
     },
     setActive : {},
     infoCache: null,
-    listCache: null,
     active:    null,
     cfgFieldTypes: [{
         type: 1,
@@ -75,6 +74,7 @@ losCpAppSpec.listDataRefresh = function(tplid)
     if (el && el.value.length > 0) {
         uri = "qry_text="+ el.value;
     }
+    uri += "&fields=meta/id|name|user|version|updated,packages/name,executors/name,configurator/name,configurator/fields/name";
 
     losCp.ApiCmd("app-spec/list?"+ uri, {
         timeout : 3000,
@@ -132,8 +132,6 @@ losCpAppSpec.listDataRefresh = function(tplid)
                     }
                 }
             }
-
-            losCpAppSpec.listCache = l4i.Clone(rsj.items);
 
             l4iTemplate.Render({
                 dstid: tplid,
@@ -940,7 +938,45 @@ losCpAppSpec.CfgSet = function(spec_id)
                 }
             }
 
+            if (!data.configurator.fields) {
+                data.configurator.fields = [];
+            }
+
+            for (var j in data.configurator.fields) {
+
+                if (!data.configurator.fields[j].default) {
+                    data.configurator.fields[j].default = ""
+                }
+                if (!data.configurator.fields[j].prompt) {
+                    data.configurator.fields[j].prompt = ""
+                }
+                if (!data.configurator.fields[j].validates) {
+                    data.configurator.fields[j].validates = [];
+                }
+                for (var k in data.configurator.fields[j].validates) {
+                    if (!data.configurator.fields[j].validates[k].value) {
+                        data.configurator.fields[j].validates[k].value = "";
+                    }
+                }
+            }
+
             losCpAppSpec.active = l4i.Clone(data);
+
+            var btns = [{
+                title   : "Cancel",
+                onclick : "l4iModal.Close()",
+            }];
+            if (losCp.UserSession.username == data.meta.user) {
+                btns.push({
+                    title   : "New Field",
+                    onclick : 'losCpAppSpec.CfgFieldSet()',
+                });
+                btns.push({
+                    title   : "Save",
+                    onclick : 'losCpAppSpec.CfgSetCommit()',
+                    style   : "btn-primary",
+                });
+            }         
 
             l4iModal.Open({
                 id:      "loscp-appspec-cfg-fieldlist-modal",
@@ -948,17 +984,7 @@ losCpAppSpec.CfgSet = function(spec_id)
                 tplsrc : tpl,
                 width  : 900,
                 height : 600,
-                buttons: [{
-                    title   : "Cancel",
-                    onclick : "l4iModal.Close()",
-                }, {
-                    title   : "New Field",
-                    onclick : 'losCpAppSpec.CfgFieldSet()',
-                }, {
-                    title   : "Save",
-                    onclick : 'losCpAppSpec.CfgSetCommit()',
-                    style   : "btn-primary",
-                }],
+                buttons: btns,
                 callback: function() {
                     losCpAppSpec.cfgFieldListRefresh();
                 },
@@ -973,24 +999,9 @@ losCpAppSpec.CfgSet = function(spec_id)
             callback: ep.done("tpl"),
         });
 
-        var spec_entry = null;
-        if (losCpAppSpec.listCache && losCpAppSpec.listCache.length > 0) {
-
-            for (var i in losCpAppSpec.listCache) { 
-                if (losCpAppSpec.listCache[i].meta.id == spec_id) {
-                    spec_entry = losCpAppSpec.listCache[i];
-                    spec_entry.kind = "AppSpec";
-                    break;
-                }
-            }
-        }
-        if (spec_entry) {
-            ep.emit("data", spec_entry);
-        } else {
-            losCp.ApiCmd("app-spec/entry?id="+ spec_id, {
-                callback: ep.done("data"),
-            });
-        }
+        losCp.ApiCmd("app-spec/entry?id="+ spec_id, {
+            callback: ep.done("data"),
+        });
     });
 }
 

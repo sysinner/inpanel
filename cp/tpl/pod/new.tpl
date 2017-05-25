@@ -1,9 +1,10 @@
 <div id="loscp-podnew-alert"></div>
+<div id="loscp-podnew-form" style="padding-left:4px;"></div>
 
+<script type="text/html" id="loscp-podnew-inner">
 <div class="panel panel-default">
   <div class="panel-heading">New Pod Instance</div>
   <div class="panel-body">
-
     <div class="l4i-form-group">
       <label class="">Name</label>
       <div class="">
@@ -25,9 +26,23 @@
     <button type="button" class="pure-button" onclick="losCpPod.List()" style="margin-left:10px">
       Cancel
     </button>
-
   </div>
 </div>
+</script>
+
+<script type="text/html" id="loscp-podnew-modal">
+<div class="l4i-form-group">
+  <label class="">Name</label>
+  <div class="">
+    <input type="text" class="form-control" id="loscp-podnew-meta-name" value="">
+  </div>
+</div>
+<div class="l4i-form-group">
+  <label class="">Plan</label>
+  <div id="loscp-podnew-plans" class="loscp-form-box-selector"></div>
+</div>
+<div id="loscp-podnew-resource-selector"></div>
+</script>
 
 <script type="text/html" id="loscp-podnew-plans-tpl">
 {[~it.items :v]}

@@ -17,18 +17,16 @@ var losCpPod = {
             id : "",
             name : "",
         },
+        operate: {
+            action : "start",
+        },
         spec : {
             meta : {
                 id : "",
             },
             ref_plan : "",
-        },
-        status : {
-            desiredPhase : "Running",
-            placement : {
-                zoneid: "",
-                cellid: "",
-            },
+            zone: "",
+            cell: "",
         },
     },
     syszones : null,
@@ -39,6 +37,7 @@ var losCpPod = {
     clusters : null,
     cluster_selected : null,
     zone_active : null,
+    new_options : {},
 }
 
 losCpPod.Index = function()
@@ -143,8 +142,9 @@ losCpPod.List = function(tplid)
     });
 }
 
-losCpPod.New = function()
+losCpPod.New = function(options)
 {
+    options = options || {};
     var alert_id = "#loscp-podnew-alert";
 
     seajs.use(["ep"], function (EventProxy) {
@@ -181,23 +181,62 @@ losCpPod.New = function()
 
             // console.log(losCpPod)
 
-            l4iTemplate.Render({
-                dstid:    "work-content",
-                tplsrc:   tpl,
-                callback: function() {
+            var fnfre = function() {
+                l4iTemplate.Render({
+                    dstid: "loscp-podnew-plans",
+                    tplid: "loscp-podnew-plans-tpl",
+                    data : {
+                        items:          losCpPod.plans.items,
+                        _plan_selected: losCpPod.plan_selected,
+                    },
+                });
+                losCpPod.NewRefreshPlan();
+            }
+            losCpPod.new_options = options;
+            if (options.open_modal) {
+                l4iModal.Open({
+                    tplsrc : tpl,
+                    title  : "Create new Pod Instance",
+                    width  : 900,
+                    height : 600,
+                    callback: function() {
+                        l4iTemplate.Render({
+                            dstid: "loscp-podnew-form",
+                            tplid: "loscp-podnew-modal",
+                            data : {
+                                items:          losCpPod.plans.items,
+                                _plan_selected: losCpPod.plan_selected,
+                            },
+                            callback: fnfre,
+                        });
+                    },
+                    buttons: [{
+                        onclick : "l4iModal.Close()",
+                        title   : "Close",
+                    }, {
+                        onclick : "losCpPod.NewCommit()",
+                        title   : "Save",
+                        style   : "btn btn-primary",
+                    }],
+                });
 
-                    l4iTemplate.Render({
-                        dstid: "loscp-podnew-plans",
-                        tplid: "loscp-podnew-plans-tpl",
-                        data : {
-                            items:          losCpPod.plans.items,
-                            _plan_selected: losCpPod.plan_selected,
-                        },
-                    });
-
-                    losCpPod.NewRefreshPlan();
-                },
-            });
+            } else {
+                l4iTemplate.Render({
+                    dstid:    "work-content",
+                    tplsrc:   tpl,
+                    callback: function() {
+                        l4iTemplate.Render({
+                            dstid: "loscp-podnew-form",
+                            tplid: "loscp-podnew-inner",
+                            data : {
+                                items:          losCpPod.plans.items,
+                                _plan_selected: losCpPod.plan_selected,
+                            },
+                            callback: fnfre,
+                        });
+                    },
+                });
+            }
         });
 
         ep.fail(function (err) {
@@ -422,7 +461,9 @@ losCpPod.NewCommit = function()
         method  : "POST",
         data    : JSON.stringify(set),
         callback : function(err, rsj) {
-
+            if (losCpPod.new_options.open_modal) {
+                l4iModal.ScrollTop();
+            }
             if (err || !rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
             }
@@ -439,8 +480,13 @@ losCpPod.NewCommit = function()
 
             window.setTimeout(function(){
                 l4iModal.Close();
-                losCpPod.List();
-            }, 500);
+                if (!losCpPod.new_options.open_modal) {
+                    losCpPod.List();
+                }
+                if (losCpPod.new_options.callback) {
+                    losCpPod.new_options.callback(null);
+                }
+            }, 1000);
         }
     });
 }

@@ -17,12 +17,12 @@
 
 <script id="loscp-topbar-user-signed-tpl" type="text/html">
 
-<li class="iam-name">{[=it.name]}</li>
+<li class="iam-name">{[=it.display_name]}</li>
 <li class="iam-photo" id="loscp-topbar-user-signed"><img src="{[=it.photo_url]}"/></li>
 
 <div id="loscp-topbar-user-signed-modal" style="display:none;">
   <img class="iam-photo" src="{[=it.photo_url]}">
-  <div class="iam-name">{[=it.name]}</div>
+  <div class="iam-name">{[=it.display_name]}</div>
   <a class="btn btn-default iam-btn" href="{[=it.iam_url]}" target="_blank">Account Center</a>
   <a class="btn btn-default iam-btn" href="/los/cp/auth/sign-out">Sign out</a>
 </div>

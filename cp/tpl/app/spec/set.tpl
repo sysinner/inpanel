@@ -108,9 +108,9 @@
         {[~it.spec._roles.items :v]}
         <span style="margin-right:10px">
           {[if (v._checked) {]}
-          <input type="checkbox" name="roles" value="{[=v.id]}" checked="checked"> {[=v.meta.name]}
+          <input type="checkbox" name="roles" value="{[=v.id]}" checked="checked"> {[=v.name]}
           {[} else {]}
-          <input type="checkbox" name="roles" value="{[=v.id]}"> {[=v.meta.name]}
+          <input type="checkbox" name="roles" value="{[=v.id]}"> {[=v.name]}
           {[}]}
         </span>
         {[~]}

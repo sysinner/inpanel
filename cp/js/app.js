@@ -14,7 +14,7 @@ var losCpApp = {
         operate: {
             pod_id: null,
             options: [],
-			res_bound_roles: [],
+            res_bound_roles: [],
         }
     },
     instBoundPodDef: {
@@ -68,7 +68,7 @@ losCpApp.InstListRefresh = function()
     if (document.getElementById("qry_text")) {
         uri += "qry_text="+ $("#qry_text").val();
     }
-	uri += "&fields=meta/id|name|updated,spec/meta/id|name|version,operate/action|pod_id,operate/options/name";
+    uri += "&fields=meta/id|name|updated,spec/meta/id|name|version,operate/action|pod_id,operate/options/name";
 
     var alert_id = "#loscp-app-instls-alert";
 
@@ -295,7 +295,7 @@ losCpApp.InstConfigurator = function(cb)
                 onclick: "l4iModal.Close()",
                 title: "Close",
             }, {
-                onclick: "losCpApp.InstConfig()",
+                onclick: "losCpApp.InstConfigCommit()",
                 title: "Next",
                 style: "btn-primary",
             }],
@@ -307,10 +307,10 @@ losCpApp.InstConfigurator = function(cb)
 
 losCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs)
 {
-    var alert_id = "#loscp-appinst-cfg-wizard-alert";
     if (!cfg_defs) {
         return;
     }
+    var alert_id = "#loscp-appinst-cfg-wizard-alert";
 
     seajs.use(["ep"], function (EventProxy) {
 
@@ -322,15 +322,6 @@ losCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs)
 
             if (!data.items || data.items.length < 1) {
                 return l4i.InnerAlert(alert_id, "alert-danger", "No Fit ("+ cfg_defs +") AppInstance Found");
-                /*
-                return l4iAlert.Open("warn", "No Fit ("+ cfg_defs +") AppInstance Found", {
-                    close: false,
-                    buttons: [{
-                        title: "Close",
-                        onclick: "l4iModal.Close()",
-                    }],
-                });
-                */
             }
 
             l4iModal.Open({
@@ -344,7 +335,6 @@ losCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs)
                     title: "Close",
                 }],
                 fn_selector: function(err, select_item) {
-                    // console.log("select: ###"+ select_item +"###");
                     $("#loscp-appinst-cfgfield-"+ cfg_name).val(select_item);
                     $("#loscp-appinst-cfgfield-"+ cfg_name +"-dp").text(select_item);
                     l4iModal.Prev();
@@ -373,7 +363,7 @@ losCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs)
     });
 }
 
-losCpApp.InstConfig = function(cb)
+losCpApp.InstConfigCommit = function(cb)
 {
     var alert_id = "#loscp-appinst-cfg-wizard-alert";
     var form = $("#loscp-appinst-cfg-wizard");
@@ -450,7 +440,7 @@ losCpApp.InstConfig = function(cb)
     });
 }
 
-losCpApp.InstDeploy = function(id)
+losCpApp.InstDeploy = function(id, auto_start)
 {
     var tplid = "loscp-app-instls";
     var alert_id = "#"+ tplid +"-alert";
@@ -474,20 +464,24 @@ losCpApp.InstDeploy = function(id)
             losCpApp.instDeployActive = rsj;
 
             losCpApp.InstConfigurator(function() {
-                losCpApp.InstDeployCommit(rsj);
+                losCpApp.InstDeployCommit(id, auto_start);
             });
         },
     });
 }
 
-losCpApp.InstDeployCommit = function(app)
+losCpApp.InstDeployCommit = function(app_id, auto_start)
 {
     var tplid = "loscp-app-instls";
     var alert_id = "#"+ tplid +"-alert";
 
-    losCp.ApiCmd("pod/app-set", {
-        method  : "POST",
-        data    : JSON.stringify(app),
+    var uri = "?app_id="+ app_id;
+    if (auto_start && auto_start === true) {
+        uri += "&operate_action=start";
+    }
+
+    losCp.ApiCmd("pod/app-sync"+ uri, {
+        method  : "GET",
         timeout : 10000,
         callback : function(err, rsj) {
 
@@ -658,7 +652,11 @@ losCpApp.InstNewCommit = function()
             l4i.UrlEventHandler("app/inst/list");
 
             window.setTimeout(function(){
-                l4iModal.Close();
+                if (rsj.meta && rsj.meta.id) {
+                    losCpApp.InstDeploy(rsj.meta.id, true);
+                } else {
+                    l4iModal.Close();
+                }
             }, 1000);
         }
     });
@@ -681,15 +679,15 @@ losCpApp.InstSet = function(app_id)
                 return alert("App Not Found")
             }
     
-			if (!roles || roles.error || roles.kind != "UserRoleList") {
+            if (!roles || roles.error || roles.kind != "UserRoleList") {
                 return alert("RoleList Not Found")
             }
 
             $("#work-content").html(tpl);
 
-			if (!inst.operate) {
-				inst.operate = {};
-			}
+            if (!inst.operate) {
+                inst.operate = {};
+            }
             if (!inst.operate.res_bound_roles) {
                 inst.operate.res_bound_roles = [];
             }
@@ -742,17 +740,17 @@ losCpApp.InstSetCommit = function()
 {
 
     var alert_id = "#loscp-app-instset-alert";
-	try {
+    try {
 
-		var form = $("#loscp-app-instset");
+        var form = $("#loscp-app-instset");
         if (!form) {
             throw "No Form Data Found";
         }
 
-		losCpApp.instSet.meta.name = form.find("input[name=name]").val();
+        losCpApp.instSet.meta.name = form.find("input[name=name]").val();
 
         losCpApp.instSet.operate.res_bound_roles = [];
-		form.find("input[name=res_bound_roles]:checked").each(function() {
+        form.find("input[name=res_bound_roles]:checked").each(function() {
             
             var val = parseInt($(this).val());
             if (val > 1) {
@@ -764,7 +762,7 @@ losCpApp.InstSetCommit = function()
 
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'alert-danger', err);
-	}
+    }
 
     losCp.ApiCmd("app-inst/set", {
         method  : "POST",

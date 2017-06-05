@@ -211,7 +211,7 @@ losCpAppSpec.Info = function(id, spec)
             for (var i in rsj.roles) {
                 for (var j in roles.items) {
                     if (rsj.roles[i] == roles.items[j].id) {
-                        rsj._roles.push(roles.items[j].meta.name);
+                        rsj._roles.push(roles.items[j].name);
                         break;
                     }
                 }
@@ -614,6 +614,21 @@ losCpAppSpec.SetExecutorSave = function()
     l4iModal.Close();
 }
 
+losCpAppSpec.SetExecutorRemove = function(name)
+{
+    if (name.length < 4) {
+        return;
+    }
+
+    for (var i in losCpAppSpec.setActive.executors) {
+        if (losCpAppSpec.setActive.executors[i].name == name) {
+            losCpAppSpec.setActive.executors.splice(i, 1);
+            break
+        }
+    }
+
+    losCpAppSpec.setExecutorRefresh();
+}
 
 losCpAppSpec.SetServicePortAppend = function()
 {

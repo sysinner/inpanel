@@ -67,6 +67,7 @@ losCpPod.List = function(tplid)
             if (tpl) {
                 $("#work-content").html(tpl);
             }
+			losCp.OpToolActive = null;
             losCp.OpToolsRefresh("#"+ tplid +"-optools");
 
             if (!data || data.error || !data.kind || data.kind != "PodList") {
@@ -757,7 +758,7 @@ losCpPod.SetCommit = function()
 
             window.setTimeout(function(){
                 l4iModal.Close();
-                losCpPod.List()();
+                losCpPod.List();
             }, 500);
         }
     });

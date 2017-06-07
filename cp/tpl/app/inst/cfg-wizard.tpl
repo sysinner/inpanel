@@ -22,8 +22,8 @@
 {[if (v.type == 1) {]}
 <div class="l4i-form-group">
   <label>{[=v.title]}</label>
-  <div>  
-    <input name="fn_{[=v.name]}" class="form-control loscp-appinst-cfg-wizard-item" value="{[=v._value]}">
+  <div> 
+    <input name="fn_{[=v.name]}" class="form-control loscp-appinst-cfg-wizard-item" value="{[=v._value]}" {[if (v.auto_fill && v.auto_fill.length > 0) {]}readonly="readonly"{[}]}>
   </div>
 </div>
 {[}]}

@@ -33,15 +33,29 @@ var losCpAppSpec = {
         type: 10,
         title: "Bound Configurator",
     }],
+    cfgFieldAutoFills: [{
+        type: "",
+        title: "Disable",
+    }, {
+        type: "defval",
+        title: "Default Value",
+    }, {
+        type: "hexstr_32",
+        title: "Random Hex String (32 length)",
+    }, {
+        type: "base64_48",
+        title: "Random Base64 String (48 length)",
+    }],
     cfgFieldDef: {
         name: "",
         title: "",
         prompt: "",
         type: 1,
         default: "",
+        auto_fill: "",
         validates: [],         
     },
-    fieldNameRe: /^[a-z]{1}[0-9a-z_\/]{1,30}$/,
+    fieldNameRe: /^[a-z]{1}[0-9a-z_\/\-]{1,30}$/,
     iamAppRoles: null,
 }
 
@@ -958,12 +972,14 @@ losCpAppSpec.CfgSet = function(spec_id)
             }
 
             for (var j in data.configurator.fields) {
-
                 if (!data.configurator.fields[j].default) {
-                    data.configurator.fields[j].default = ""
+                    data.configurator.fields[j].default = "";
+                }
+                if (!data.configurator.fields[j].auto_fill) {
+                    data.configurator.fields[j].auto_fill = "";
                 }
                 if (!data.configurator.fields[j].prompt) {
-                    data.configurator.fields[j].prompt = ""
+                    data.configurator.fields[j].prompt = "";
                 }
                 if (!data.configurator.fields[j].validates) {
                     data.configurator.fields[j].validates = [];
@@ -1023,6 +1039,7 @@ losCpAppSpec.CfgSet = function(spec_id)
 losCpAppSpec.cfgFieldListRefresh = function()
 {
     losCpAppSpec.active._cfgFieldTypes = losCpAppSpec.cfgFieldTypes;
+    losCpAppSpec.active._cfgFieldAutoFills = losCpAppSpec.cfgFieldAutoFills;
     l4iTemplate.Render({
         dstid : "loscp-appspec-cfg-fieldlist",
         tplid : "loscp-appspec-cfg-fieldlist-tpl",
@@ -1103,6 +1120,7 @@ losCpAppSpec.CfgFieldSet = function(name)
         field = l4i.Clone(losCpAppSpec.cfgFieldDef);
     }
     field._cfgFieldTypes = losCpAppSpec.cfgFieldTypes;
+    field._cfgFieldAutoFills = losCpAppSpec.cfgFieldAutoFills;
 
     l4iModal.Open({
         id     : "loscp-appspec-cfgfieldset-modal",
@@ -1171,20 +1189,19 @@ losCpAppSpec.CfgFieldSetCommit = function()
         field.prompt = form.find("input[name=prompt]").val();
         field.default = form.find("input[name=default]").val();
 
+        field.auto_fill = form.find("select[name=auto_fill]").val();
+
         field.type = parseInt(form.find("select[name=type]").val());
         if (!field.type || field.type < 1 || field.type > 10) {
             throw "Invalid Type";
         }
 
         form.find(".loscp-app-specset-cfgfield-validator-item").each(function() {
-
             var fv_key = $(this).find("input[name=fv_key]").val();
             var fv_val = $(this).find("input[name=fv_value]").val();
-
             if (!fv_key) {
                 return;
             }
-
             field.validates.push({
                 key: fv_key,
                 value: fv_val,

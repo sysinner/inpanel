@@ -20,6 +20,17 @@
 </div>
 
 <div class="l4i-form-group pure-u-1-2">
+  <label class="">Type</label>
+  <div class="">
+    <select name="type" class="form-control">
+    {[~it._cfgFieldTypes :v]}
+      <option value="{[=v.type]}" {[if (it.type == v.type) {]} selected{[}]}>{[=v.title]}</option>
+    {[~]}
+    </select>
+  </div>
+</div>
+
+<div class="l4i-form-group pure-u-1-2">
   <label class="">Title</label>
   <div class="">
     <input type="text" class="form-control" name="title" value="{[=it.title]}">
@@ -35,18 +46,18 @@
 </div>
 
 <div class="l4i-form-group pure-u-1-2">
-  <label class="">Deault</label>
+  <label class="">Deault Value</label>
   <div class="">
     <input type="text" class="form-control" name="default" value="{[=it.default]}">
   </div>
 </div>
 
-<div class="l4i-form-group pure-u-1-1">
-  <label class="">Type</label>
+<div class="l4i-form-group pure-u-1-2">
+  <label class="">Auto fill value</label>
   <div class="">
-    <select name="type" class="form-control">
-    {[~it._cfgFieldTypes :v]}
-      <option value="{[=v.type]}" {[if (it.type == v.type) {]} selected{[}]}>{[=v.title]}</option>
+    <select name="auto_fill" class="form-control">
+    {[~it._cfgFieldAutoFills :v]}
+      <option value="{[=v.type]}" {[if (it.auto_fill == v.type) {]} selected{[}]}>{[=v.title]}</option>
     {[~]}
     </select>
   </div>

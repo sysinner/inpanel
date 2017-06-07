@@ -16,7 +16,7 @@ losCp.debug_uri = function()
     return "?_="+ Math.random(); 
 }
 
-losCp.Boot = function()
+losCp.Boot = function(login_first)
 {
     seajs.config({
         base: losCp.base,
@@ -29,6 +29,7 @@ losCp.Boot = function()
         "~/twbs/3.3/css/bootstrap.css",
         "~/cp/js/jquery.js",
         "~/lessui/js/browser-detect.js",
+        "~/purecss/css/pure.css",
     ], function() {
 
         var browser = BrowserDetect.browser;
@@ -42,11 +43,14 @@ losCp.Boot = function()
             return;
         }
 
+        if (login_first && login_first === true) {
+            //
+        }
+
         seajs.use([
             "~/twbs/3.3/js/bootstrap.js",
             "~/lessui/css/lessui.css",
             "~/lessui/js/lessui.js",
-            "~/purecss/css/pure.css",
             "~/cp/css/main.css"+ losCp.debug_uri(),
             "~/cp/js/host.js"+ losCp.debug_uri(),
             "~/cp/js/spec.js"+ losCp.debug_uri(),

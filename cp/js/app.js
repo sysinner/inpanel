@@ -170,6 +170,7 @@ losCpApp.OpOptInfo = function(app_id)
 
                 for (var k in rsj.spec.configurator[i].fields) {
                     var name = rsj.spec.configurator[i].fields[k].name;
+                    var auto_fill = rsj.spec.configurator[i].fields[k].auto_fill;
                     var value = null;
                     if (option) {
                         for (var m in option.items) {
@@ -185,6 +186,9 @@ losCpApp.OpOptInfo = function(app_id)
                         } else {
                             value = "";
                         }
+                    }
+                    if (value == "" && auto_fill) {
+                        value = auto_fill;
                     }
                     rsj.spec.configurator[i].fields[k]._value = value;
                 }
@@ -253,6 +257,7 @@ losCpApp.InstConfigurator = function(cb)
         for (var i in losCpApp.instDeployActive.spec.configurator.fields) {
 
             var name = losCpApp.instDeployActive.spec.configurator.fields[i].name;
+			var auto_fill = losCpApp.instDeployActive.spec.configurator.fields[i].auto_fill;
             var value = null;
 
             for (var j in option.items) {
@@ -266,10 +271,19 @@ losCpApp.InstConfigurator = function(cb)
             if (!value) {
                 if (losCpApp.instDeployActive.spec.configurator.fields[i].default) {
                     value = losCpApp.instDeployActive.spec.configurator.fields[i].default;
-                } else {
-                    value = "";
                 }
             }
+			if (!value && auto_fill) {
+				for (var j in losCpAppSpec.cfgFieldAutoFills) {
+					if (losCpAppSpec.cfgFieldAutoFills[j].type == auto_fill) {
+						value = losCpAppSpec.cfgFieldAutoFills[j].title;
+						break;
+					}
+				}
+			}
+            if (!value) {
+				value = "";
+			}
 
             losCpApp.instDeployActive.spec.configurator.fields[i]._value = value;
         }

@@ -17,6 +17,7 @@
       <th>Name</th>
       <th>Type</th>
       <th>Default</th>
+      <th>Auto fill</th>
       <th>Validates</th>
       <th></th>
     </tr>
@@ -31,6 +32,7 @@
       {[~]}
       </td>
       <td>{[=v.default]}</td>
+      <td>{[=v.auto_fill]}</td>
       <td>{[=v.validates.length]}</td>
       <td align="right">
         {[if (it.meta.user == losCp.UserSession.username) {]}

@@ -13,6 +13,7 @@ var losCp = {
     ],
     OpActionStart: 1 << 1,
     OpActionStop:  1 << 3,
+    well_signin_html: '<p>You are not logged in, or your login session has expired. Please sign in.</p><br><p><a href="/los/cp/auth/login" class="button">SIGN IN</a></p>',
 }
 
 losCp.debug_uri = function()
@@ -51,14 +52,19 @@ losCp.Boot = function(login_first)
         }
 
         if (login_first && login_first === true) {
-            //
+            var elem = $("#loscp-well-status");
+            if (elem) {
+                elem.removeClass("status_dark");
+                elem.addClass("info");
+                elem.html(losCp.well_signin_html);
+                return;
+            }
         }
 
         seajs.use([
             "~/twbs/3.3/js/bootstrap.js",
             "~/lessui/css/lessui.css",
             "~/lessui/js/lessui.js",
-            "~/cp/css/main.css"+ losCp.debug_uri(),
             "~/cp/js/host.js"+ losCp.debug_uri(),
             "~/cp/js/spec.js"+ losCp.debug_uri(),
             "~/cp/js/pod.js"+ losCp.debug_uri(),

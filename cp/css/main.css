@@ -1,17 +1,123 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
 body {
+  height: 100%;
+}
+
+body {
+  font-family: Helvetica, Arial, "Liberation Sans", sans-serif;
   margin: 0 auto;
   padding: 0;
   font-size: 16px;
   /*background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.03);*/
   background-color: #f5f5f5;
   min-width: 900px;
+  display: block;
 }
 
+.loscp-well {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  min-width: 800px;
+  min-height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.loscp-well-box {
+  position: absolute;
+  width: 700px;
+  margin: 0 auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.loscp-well-panel {
+  background-color: rgba(255, 255, 255, 1);
+  font-size: 14px;
+}
+.loscp-well-panel > .header {
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  font-size: 20px;
+}
+.loscp-well-panel > .body2c {
+  border-top: 2px solid #333;
+  padding: 40px 0;
+  width: 100%;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loscp-well-panel > .body2c > .body2c1 {
+  width: 160px;
+  float: left;
+  text-align: center;
+  flex: initial;
+}
+.loscp-well-panel > .body2c > .body2c2 {
+  font-size: 180%;
+  flex: 1;
+}
+.loscp-well-panel > .status {
+  margin: 0;
+  padding: 20px;
+}
+.loscp-well-panel > .status_dark {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  font-size: 140%;
+}
+.loscp-well-panel > .info {
+  background-color: #d9edf7;
+  border-color: #bcdff1;
+  color: #31708f;
+}
+.loscp-well-panel .button {
+  margin: 0;
+  padding: 10px 20px;
+  background-color: #fff;
+  border-radius: 3px;
+  cursor: pointer;
+  line-height: 100%;
+}
+.loscp-well-panel > .info .button {
+  border: 1px solid #31708f;
+  border-radius: 3px;
+}
+.loscp-well-panel a {
+  text-decoration: none;
+}
+
+.loscp-well-box > .footer {
+  clear: both;
+  margin: 10px auto;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+.loscp-well-box > .footer > .copy {
+  font-size: 90%;
+}
+.loscp-well-box > .footer a {
+  color: #000;
+}
+
+
 .loscp-query-input {
-    padding-left: 30px !important;
-    background: url(../img/search-16.png) no-repeat 8px;
-    background-color: #fff;
-    width: 220px;
+  padding-left: 30px !important;
+  background: url(../img/search-16.png) no-repeat 8px;
+  background-color: #fff;
+  width: 220px;
 }
 
 .loscp-font-fixspace {
@@ -167,7 +273,7 @@ body {
   margin: 10px 0;
 }
 #loscp-topbar-user-signed-modal .iam-btn:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 #comp-content {
@@ -433,114 +539,114 @@ body {
 
 /* ext::app */
 .loscp-app-list-qry-input {
-    padding: 5px 5px 5px 30px;
-    background: url(../img/search-16.png) no-repeat 8px; 
-    width: 300px;
+  padding: 5px 5px 5px 30px;
+  background: url(../img/search-16.png) no-repeat 8px;
+  width: 300px;
 }
 
 .loscp-app-specset-gn-box {
-    background-color: #f5f5f5;
-    border-radius: 5px;
-    padding: 5px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  padding: 5px;
 }
 
 .loscp-app-specset-gn-box {
-    background-color: #f5f5f5;
-    border-radius: 5px;
-    padding: 5px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  padding: 5px;
 }
 
 .loscp-app-specset-gn-box .head {
-    padding: 0 0 5px 0;
-    position: relative;
-    height: 30px;
+  padding: 0 0 5px 0;
+  position: relative;
+  height: 30px;
 }
 
 .loscp-app-specset-gn-box .title {
-    left: 0;
-    font-size: 15px;
-    font-weight: bold;
+  left: 0;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 .loscp-app-specset-gn-box .options {
-    position: absolute;
-    /*top: 0;*/
-    right: 0;
+  position: absolute;
+  /*top: 0;*/
+  right: 0;
 }
 
 .loscp-app-specset-gn-box .body {
-    padding: 5px; 
-    background-color: #fff;
+  padding: 5px;
+  background-color: #fff;
 }
 
 .loscp-app-specset-gn-box .body td {
-    padding: 3px;
+  padding: 3px;
 }
 
 #loscp-app-instset-bound {
-    /*border-color: #f5f5f5;*/
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #f5f5f5;
+  /*border-color: #f5f5f5;*/
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #f5f5f5;
 }
 
 #loscp-app-instset-bound .lib-ctn {
-    width: 100%;
+  width: 100%;
 }
 
 #loscp-app-instset-bound .lib-ctn tr th {
-    padding-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 #loscp-app-instset-bound .lib-ctn tr td {
-    padding: 10px;
+  padding: 10px;
 }
 
 #loscp-app-instset-bound .bound-item {
-    border: 1px solid #fff;
+  border: 1px solid #fff;
 }
 
 #loscp-app-instset-bound .bound-item:hover {
-    border: 1px solid #5cb85c;
+  border: 1px solid #5cb85c;
 }
 
 #loscp-app-instset-bound .lib-header {
-    background-color: #f5f5f5;
+  background-color: #f5f5f5;
 }
 
 #loscp-app-instset-bound .lib-header-subtitle {
-    font-size: 16px;
+  font-size: 16px;
 }
 
 #loscp-app-instset-bound .lib-header-title {
-    font-size: 18px;
-    padding: 5px 0;
+  font-size: 18px;
+  padding: 5px 0;
 }
 
 #loscp-app-instset-bound .lib-comment {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 #loscp-app-instset-bound .lib-tbody {
-    background-color: #fff;
+  background-color: #fff;
 }
 
 #loscp-app-instset-bound .box-item:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 pre {
-    margin: 0;
-    padding: 0;
-    border: 0px;
+  margin: 0;
+  padding: 0;
+  border: 0px;
 }
 
 pre code {
-	margin: 0;
-	padding: 0;
-    border: 0px;
-	font-size: 12px !important;
-	line-height: 120% !important;
+  margin: 0;
+  padding: 0;
+  border: 0px;
+  font-size: 12px !important;
+  line-height: 120% !important;
 }
 
 button {

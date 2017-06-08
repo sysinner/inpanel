@@ -8,9 +8,9 @@
       <th>Name</th>
       <th>Spec</th>
       <th>Pod</th>
-      <th>Option</th>
-      <th>Action</th>
+      <th>Options</th>
       <th>Updated</th>
+      <th>Action</th>
       <th></th>
     </tr>
   </thead>
@@ -34,16 +34,17 @@
      <button class="loscp-btn loscp-btn-xsmall" onclick="losCpApp.OpOptInfo('{[=v.meta.id]}')" style="width:30px">{[=v.operate.options.length]}</button>
    {[}]}
   </td>
-  <td>
-    {[~it._actions :av]}
-    {[if (av.value == v.operate.action) {]}
-      <span class="label {[if (av.value == 2) {]}label-success{[} else {]}label-default{[}]}">{[=av.name]}</span>
-    {[}]}
-    {[~]}
-  </td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+  <td>
+    <select class="pure-button button-xsmall {[if (v.operate.action == 2) {]} button-success{[}]}" 
+      onchange="losCpApp.InstListOpActionChange('{[=v.meta.id]}', this)">
+    {[~it._actions :av]}
+      <option value="{[=av.action]}" {[if (av.action == v.operate.action) {]}selected{[}]}>{[=av.title]}</div>
+    {[~]}
+    </select>
+  </td>
   <td align="right">
-    <button class="pure-button button-xsmall" onclick="losCpApp.InstDeploy('{[=v.meta.id]}')">
+    <button class="pure-button button-xsmall pure-button-primary" onclick="losCpApp.InstDeploy('{[=v.meta.id]}')">
       <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Deploy 
     </button>
     <button class="pure-button button-xsmall" onclick="losCpApp.InstSet('{[=v.meta.id]}')">

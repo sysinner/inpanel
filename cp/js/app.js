@@ -14,8 +14,9 @@ var losCpApp = {
         operate: {
             pod_id: null,
             options: [],
+			action: 1 << 1,
             res_bound_roles: [],
-        }
+        },
     },
     instBoundPodDef: {
         meta: {
@@ -27,14 +28,6 @@ var losCpApp = {
     },
     instSet : {},
     instDeployActive: null,
-    OpActions: [{
-        name: "Start",
-        value: 2,
-    }, {
-        name: "Stop",
-        value: 8,
-    }],
-    OpActionStop: 8,
 }
 
 losCpApp.Index = function()
@@ -95,7 +88,7 @@ losCpApp.InstListRefresh = function()
                     rsj.items[i].operate.options = [];
                 }
                 if (!rsj.items[i].operate.action) {
-                    rsj.items[i].operate.action = losCpApp.OpActionStop;
+                    rsj.items[i].operate.action = losCp.OpActionStop;
                 }
             }
 
@@ -104,7 +97,7 @@ losCpApp.InstListRefresh = function()
                 tplid: "loscp-app-instls-tpl",
                 data:  {
                     items: rsj.items,
-                    _actions: losCpApp.OpActions,
+                    _actions: losCp.OpActions,
                 },
             });
         });
@@ -138,6 +131,53 @@ losCpApp.InstListRefresh = function()
         losCp.ApiCmd("app-inst/list"+ uri, {
             callback: ep.done("data"),
         });
+    });
+}
+
+
+losCpApp.InstListOpActionChange = function(app_id, obj, tplid)
+{
+    if (!app_id) {
+        return;
+    }
+    var op_action = parseInt($(obj).val());
+    if (op_action < 1) {
+        return;
+    }
+
+    if (!tplid) {
+        tplid = "loscp-app-instls";
+    }
+    var alert_id = "#"+ tplid +"-alert";
+
+    var uri = "?app_id="+ app_id +"&op_action="+ op_action;
+
+    losCp.ApiCmd("app-inst/op-action-set"+ uri, {
+        method  : "GET",
+        timeout : 10000,
+        callback : function(err, rsj) {
+
+            if (err) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed: "+ err);
+            }
+
+            if (!rsj || rsj.kind != "App") {
+                var msg = "Bad Request";
+                if (rsj.error) {
+                    msg = rsj.error.message;
+                }
+                l4i.InnerAlert(alert_id, 'alert-danger', msg);
+                return;
+            }
+
+            if (op_action == 2) {
+                $(obj).addClass("button-success");
+            } else {
+                $(obj).removeClass("button-success");
+            }
+
+            l4i.InnerAlert(alert_id, 'alert-success', "Successful updated");
+        }
     });
 }
 
@@ -715,11 +755,11 @@ losCpApp.InstSet = function(app_id)
                 }
             }
             if (!inst.operate.action) {
-                inst.operate.action = losCpApp.OpActionStop;
+                inst.operate.action = losCp.OpActionStop;
             }
 
             losCpApp.instSet = inst;
-            losCpApp.instSet._op_actions = losCpApp.OpActions;
+            losCpApp.instSet._op_actions = losCp.OpActions;
 
             l4iTemplate.Render({
                 dstid: "loscp-app-instset",

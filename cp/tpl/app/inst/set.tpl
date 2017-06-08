@@ -51,10 +51,10 @@
       <div>
         {[~it._op_actions :v]}
         <span style="margin-right:10px">
-          {[if (v.value == it.operate.action) {]}
-          <input type="radio" name="op_action" value="{[=v.value]}" checked="checked"> {[=v.name]}
+          {[if (v.action == it.operate.action) {]}
+          <input type="radio" name="op_action" value="{[=v.action]}" checked="checked"> {[=v.title]}
           {[} else {]}
-          <input type="radio" name="op_action" value="{[=v.value]}"> {[=v.name]}
+          <input type="radio" name="op_action" value="{[=v.action]}"> {[=v.title]}
           {[}]}
         </span>
         {[~]}

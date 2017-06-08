@@ -33,8 +33,8 @@
       {[if (it._zone_active) {]}
       <th>Ports</th>   
       {[}]}
-      <th>Action</th>   
       <th>Updated</th>
+      <th>Action</th>
       <th></th>
     </tr>
   </thead>
@@ -59,10 +59,15 @@
     {[}]}
     </td>
     {[}]}
-    <td>
-     <span class="label {[if (v.operate.action == "start") {]}label-success{[} else {]}label-default{[}]}">{[=v.operate.action]}</span>
-    </td>
     <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+    <td>
+      <select class="pure-button button-xsmall {[if (v.operate.action == 2) {]} button-success{[}]}" 
+        onchange="losCpPod.ListOpActionChange('{[=v.meta.id]}', this)">
+        {[~it._actions :av]}
+          <option value="{[=av.action]}" {[if (av.action == v.operate.action) {]}selected{[}]}>{[=av.title]}</div>
+        {[~]}
+      </select>
+    </td>
     <td align="right">
       <button class="pure-button button-xsmall" onclick="losCpPod.SetInfo('{[=v.meta.id]}')">
         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setting

@@ -3,10 +3,6 @@ var losCpPod = {
         {phase: "Running", title: "Running"},
         {phase: "Stopped", title: "Stopped"},
     ],
-    op_actions : [
-        {action: "start", title: "Start"},
-        {action: "stop",  title: "Stop"},
-    ],
     statussetls : [
         {phase: "Running", title: "Running"},
         {phase: "Stopped", title: "Stopped"},
@@ -18,7 +14,7 @@ var losCpPod = {
             name : "",
         },
         operate: {
-            action : "start",
+            action : 1 << 1,
         },
         spec : {
             meta : {
@@ -67,7 +63,7 @@ losCpPod.List = function(tplid)
             if (tpl) {
                 $("#work-content").html(tpl);
             }
-			losCp.OpToolActive = null;
+            losCp.OpToolActive = null;
             losCp.OpToolsRefresh("#"+ tplid +"-optools");
 
             if (!data || data.error || !data.kind || data.kind != "PodList") {
@@ -95,6 +91,7 @@ losCpPod.List = function(tplid)
                         data.items[i].operate.ports[j].host_port = 0;
                     }
                 }
+                data.items[i].operate._action = losCp.OpActionTitle(data.items[i].operate.action);
             }
 
             if (losCpPod.zone_active) {
@@ -105,6 +102,7 @@ losCpPod.List = function(tplid)
             if (data.items.length < 1) {
                 return l4i.InnerAlert(alert_id, 'alert-info', "No Item Found Yet ...");
             }
+            data._actions = losCp.OpActions;
 
             l4iTemplate.Render({
                 dstid   : tplid,
@@ -142,6 +140,54 @@ losCpPod.List = function(tplid)
         });
     });
 }
+
+
+losCpPod.ListOpActionChange = function(pod_id, obj, tplid)
+{
+    if (!pod_id) {
+        return;
+    }
+    var op_action = parseInt($(obj).val());
+    if (op_action < 1) {
+        return;
+    }
+
+    if (!tplid) {
+        tplid = "loscp-podls";
+    }
+    var alert_id = "#"+ tplid +"-alert";
+
+    var uri = "?pod_id="+ pod_id +"&op_action="+ op_action;
+
+    losCp.ApiCmd("pod/op-action-set"+ uri, {
+        method  : "GET",
+        timeout : 10000,
+        callback : function(err, rsj) {
+
+            if (err) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed: "+ err);
+            }
+
+            if (!rsj || rsj.kind != "PodInstance") {
+                var msg = "Bad Request";
+                if (rsj.error) {
+                    msg = rsj.error.message;
+                }
+                l4i.InnerAlert(alert_id, 'alert-danger', msg);
+                return;
+            }
+
+            if (op_action == 2) {
+                $(obj).addClass("button-success");
+            } else {
+                $(obj).removeClass("button-success");
+            }
+
+            l4i.InnerAlert(alert_id, 'alert-success', "Successful updated");
+        }
+    });
+}
+
 
 losCpPod.New = function(options)
 {
@@ -551,7 +597,7 @@ losCpPod.SetInfo = function(pod_id)
                 height : 400,
                 data   : {
                     pod : pod,
-                    _op_actions : losCpPod.op_actions,
+                    _op_actions : losCp.OpActions,
                 },
                 buttons: [{
                     onclick : "l4iModal.Close()",
@@ -590,7 +636,7 @@ losCpPod.SetInfoCommit = function()
             name: form.find("input[name=meta_name]").val(),
         },
         operate: {
-            action: form.find("input[name=operate_action]:checked").val(),
+            action: parseInt(form.find("input[name=operate_action]:checked").val()),
         },
     };
 

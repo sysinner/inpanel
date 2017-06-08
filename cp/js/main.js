@@ -6,6 +6,13 @@ var losCp = {
     Zones   : null,
     OpToolActive : null,
     UserSession: null,
+    OpActions : [
+        {action: 1 << 1, title: "Start"},
+        {action: 1 << 3, title: "Stop"},
+        // {action: 1 << 5, title: "Destroy"},
+    ],
+    OpActionStart: 1 << 1,
+    OpActionStop:  1 << 3,
 }
 
 losCp.debug_uri = function()
@@ -324,3 +331,16 @@ losCp.ArrayUint32MatchAny = function(ar, ar2)
     return false;
 }
 */
+
+losCp.OpActionTitle = function(op_action)
+{
+    op_action = parseInt(op_action);
+    for (var i in losCp.OpActions) {
+        if (op_action == losCp.OpActions[i].action) {
+            return (losCp.OpActions[i].title);
+        }
+    }
+
+    return "";
+}
+

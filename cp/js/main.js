@@ -1,4 +1,5 @@
 var losCp = {
+    version : "";
     base    : "/los/cp/",
     tplbase : "/los/cp/-/",
     api     : "/los/v1/",
@@ -19,7 +20,7 @@ var losCp = {
 losCp.debug_uri = function()
 {
     if (!losCp.debug) {
-        return "";
+        return "?_="+ losCp.version;
     }
     return "?_="+ Math.random(); 
 }
@@ -53,12 +54,10 @@ losCp.Boot = function(login_first)
 
         if (login_first && login_first === true) {
             var elem = $("#loscp-well-status");
-            if (elem) {
-                elem.removeClass("status_dark");
-                elem.addClass("info");
-                elem.html(losCp.well_signin_html);
-                return;
-            }
+            elem.removeClass("status_dark");
+            elem.addClass("info");
+            elem.html(losCp.well_signin_html);
+            return;
         }
 
         seajs.use([
@@ -79,6 +78,7 @@ losCp.Boot = function(login_first)
 losCp.load_index = function()
 {
     l4i.debug = losCp.debug;
+    l4i.app_version = losCp.version;
 
     seajs.use(["ep"], function (EventProxy) {
 

@@ -54,7 +54,7 @@ losCpPod.List = function(tplid)
         losCpPod.zone_active = losCp.Zones.items[0].meta.id;
         uri += "zone_id="+ losCpPod.zone_active;
     }
-    uri += "&fields=meta/id|name,operate/action|ports,spec/ref/name,spec/zone|cell"
+    uri += "&fields=meta/id|name,operate/action|replicas,spec/ref/name,spec/zone|cell"
 
     seajs.use(["ep"], function (EventProxy) {
 
@@ -83,12 +83,17 @@ losCpPod.List = function(tplid)
                 if (!data.items[i].apps) {
                     data.items[i].apps = [];
                 }
-                if (!data.items[i].operate.ports) {
-                    data.items[i].operate.ports = [];
+                if (!data.items[i].operate.replicas) {
+                    data.items[i].operate.replicas = [];
                 }
-                for (var j in data.items[i].operate.ports) {
-                    if (!data.items[i].operate.ports[j].host_port) {
-                        data.items[i].operate.ports[j].host_port = 0;
+                for (var j in data.items[i].operate.replicas) {
+                    if (!data.items[i].operate.replicas[j].ports) {
+                        data.items[i].operate.replicas[j].ports = [];
+                    }
+                    for (var k in data.items[i].operate.replicas[j].ports) {
+                        if (!data.items[i].operate.replicas[j].ports[k].host_port) {
+                            data.items[i].operate.replicas[j].ports[k].host_port = 0;
+                        }
                     }
                 }
                 data.items[i].operate._action = losCp.OpActionTitle(data.items[i].operate.action);
@@ -544,12 +549,17 @@ losCpPod.Info = function(pod_id)
 
         var ep = EventProxy.create("tpl", "pod", function (tpl, pod) {
 
-            if (!pod.operate.ports) {
-                pod.operate.ports = [];
+            if (!pod.operate.replicas) {
+                pod.operate.replicas = [];
             }
-            for (var j in pod.operate.ports) {
-                if (!pod.operate.ports[j].host_port) {
-                    pod.operate.ports[j].host_port = 0;
+            for (var j in pod.operate.replicas) {
+                if (!pod.operate.replicas[j].ports) {
+                    pod.operate.replicas[j].ports = [];
+                }
+                for (var j in pod.operate.replicas[j].ports) {
+                    if (!pod.operate.replicas[j].ports[j].host_port) {
+                        pod.operate.replicas[j].ports[j].host_port = 0;
+                    }
                 }
             }
 

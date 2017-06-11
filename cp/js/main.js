@@ -1,5 +1,5 @@
 var losCp = {
-    version : "";
+    version : "",
     base    : "/los/cp/",
     tplbase : "/los/cp/-/",
     api     : "/los/v1/",
@@ -14,7 +14,7 @@ var losCp = {
     ],
     OpActionStart: 1 << 1,
     OpActionStop:  1 << 3,
-    well_signin_html: '<p>You are not logged in, or your login session has expired. Please sign in.</p><br><p><a href="/los/cp/auth/login" class="button">SIGN IN</a></p>',
+    well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/los/cp/auth/login" class="button">SIGN IN</a></div>',
 }
 
 losCp.debug_uri = function()
@@ -64,6 +64,7 @@ losCp.Boot = function(login_first)
             "~/twbs/3.3/js/bootstrap.js",
             "~/lessui/css/lessui.css",
             "~/lessui/js/lessui.js",
+            "~/cp/css/main.css"+ losCp.debug_uri(),
             "~/cp/js/host.js"+ losCp.debug_uri(),
             "~/cp/js/spec.js"+ losCp.debug_uri(),
             "~/cp/js/pod.js"+ losCp.debug_uri(),

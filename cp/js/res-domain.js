@@ -646,7 +646,7 @@ losCpResDomain.DeploySelectApp = function(name)
         var ep = EventProxy.create("tpl", "inst", function (tpl, inst) {
 
             if (!inst || !inst.kind || inst.kind != "AppList") {
-                return alert("AppInst error, Please try again later (EC:loscp-app-instset)");
+                return alert("AppInst error, Please try again later (EC:loscp-appset)");
             }
 
             l4iModal.Open({
@@ -679,7 +679,7 @@ losCpResDomain.DeploySelectApp = function(name)
         });
 
         ep.fail(function (err) {
-            alert("SpecSet error, Please try again later (EC:loscp-app-instset)");
+            alert("SpecSet error, Please try again later (EC:loscp-appset)");
         });
 
         // template
@@ -687,7 +687,7 @@ losCpResDomain.DeploySelectApp = function(name)
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("app-inst/list-op-res?res_type=domain", {
+        losCp.ApiCmd("app/list-op-res?res_type=domain", {
             callback: ep.done("inst"),
         });
     });
@@ -709,7 +709,7 @@ losCpResDomain.DeployCommit = function()
         },
     }
 
-    losCp.ApiCmd("app-inst/op-res-set", {
+    losCp.ApiCmd("app/op-res-set", {
         method  : "POST",
         data    : JSON.stringify(req),
         timeout : 3000,

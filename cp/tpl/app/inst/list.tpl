@@ -1,4 +1,4 @@
-<div id="loscp-app-instls-alert" class="alert hide"></div>
+<div id="loscp-appls-alert" class="alert hide"></div>
 
 <div class="loscp-div-light">
 <table class="table table-hover">
@@ -14,17 +14,17 @@
       <th></th>
     </tr>
   </thead>
-  <tbody id="loscp-app-instls"></tbody>
+  <tbody id="loscp-appls"></tbody>
 </table>
 </div>
 
-<script id="loscp-app-instls-tpl" type="text/html">
+<script id="loscp-appls-tpl" type="text/html">
 {[~it.items :v]}
 <tr>
   <td class="loscp-font-fixspace">{[=v.meta.id]}</td>
   <td>{[=v.meta.name]}</td>
   <td>
-    <a href="#spec.detail" onclick="losCpAppSpec.Info('{[=v.spec.meta.id]}')">{[=v.spec.meta.name]}</a> v{[=v.spec.meta.version]}
+    <a href="#spec.detail" onclick="losCpAppSpec.Info('{[=v.spec.meta.id]}')">{[=v.spec.meta.name]}/v{[=v.spec.meta.version]}</a>
   </td>
   <td>
     <a href="#pod.detail" onclick="losCpPod.Info('{[=v.operate.pod_id]}')" class="loscp-font-fixspace">{[=v.operate.pod_id]}</a>
@@ -57,14 +57,14 @@
 
 <script type="text/javascript">
 
-$("#loscp-app-instls-qry").submit(function(event) {
+$("#loscp-appls-qry").submit(function(event) {
     event.preventDefault();
     losCpApp.InstListRefresh();
 });
 
 </script>
 
-<script type="text/html" id="loscp-app-instls-optools">
+<script type="text/html" id="loscp-appls-optools">
 <!--<li>
   <form action="#" class="form-inlines">
     <input id="query_text" type="text"

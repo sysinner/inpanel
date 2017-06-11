@@ -63,7 +63,7 @@ losCpApp.InstListRefresh = function()
     }
     uri += "&fields=meta/id|name|updated,spec/meta/id|name|version,operate/action|pod_id,operate/options/name";
 
-    var alert_id = "#loscp-app-instls-alert";
+    var alert_id = "#loscp-appls-alert";
 
     seajs.use(["ep"], function (EventProxy) {
 
@@ -72,7 +72,7 @@ losCpApp.InstListRefresh = function()
             if (tpl) {
                 $("#work-content").html(tpl);
             }
-            losCp.OpToolsRefresh("#loscp-app-instls-optools");
+            losCp.OpToolsRefresh("#loscp-appls-optools");
 
             if (!rsj || rsj.kind != "AppList"
                 || !rsj.items || rsj.items.length < 1) {
@@ -93,8 +93,8 @@ losCpApp.InstListRefresh = function()
             }
 
             l4iTemplate.Render({
-                dstid: "loscp-app-instls",
-                tplid: "loscp-app-instls-tpl",
+                dstid: "loscp-appls",
+                tplid: "loscp-appls-tpl",
                 data:  {
                     items: rsj.items,
                     _actions: losCp.OpActions,
@@ -108,7 +108,7 @@ losCpApp.InstListRefresh = function()
         });
 
         // template
-        var el = document.getElementById("loscp-app-instls");
+        var el = document.getElementById("loscp-appls");
         if (!el || el.length < 1) {
             losCp.TplFetch("app/inst/list", {
                 callback: function(err, tpl) {
@@ -128,7 +128,7 @@ losCpApp.InstListRefresh = function()
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("app-inst/list"+ uri, {
+        losCp.ApiCmd("app/list"+ uri, {
             callback: ep.done("data"),
         });
     });
@@ -146,13 +146,13 @@ losCpApp.InstListOpActionChange = function(app_id, obj, tplid)
     }
 
     if (!tplid) {
-        tplid = "loscp-app-instls";
+        tplid = "loscp-appls";
     }
     var alert_id = "#"+ tplid +"-alert";
 
     var uri = "?app_id="+ app_id +"&op_action="+ op_action;
 
-    losCp.ApiCmd("app-inst/op-action-set"+ uri, {
+    losCp.ApiCmd("app/op-action-set"+ uri, {
         method  : "GET",
         timeout : 10000,
         callback : function(err, rsj) {
@@ -258,7 +258,7 @@ losCpApp.OpOptInfo = function(app_id)
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("app-inst/entry?id="+ app_id, {
+        losCp.ApiCmd("app/entry?id="+ app_id, {
             callback: ep.done("data"),
         });
     });
@@ -411,7 +411,7 @@ losCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs)
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("app-inst/list?operate_option="+ cfg_defs, {
+        losCp.ApiCmd("app/list?operate_option="+ cfg_defs, {
             callback: ep.done("data"),
         });
     });
@@ -464,7 +464,7 @@ losCpApp.InstConfigCommit = function(cb)
     }
     // return console.log(req);
 
-    losCp.ApiCmd("app-inst/config", {
+    losCp.ApiCmd("app/config", {
         method  : "POST",
         data    : JSON.stringify(req),
         callback : function(err, rsj) {
@@ -496,10 +496,10 @@ losCpApp.InstConfigCommit = function(cb)
 
 losCpApp.InstDeploy = function(id, auto_start)
 {
-    var tplid = "loscp-app-instls";
+    var tplid = "loscp-appls";
     var alert_id = "#"+ tplid +"-alert";
 
-    losCp.ApiCmd("app-inst/entry?id="+ id, {
+    losCp.ApiCmd("app/entry?id="+ id, {
         timeout : 3000,
         callback : function(err, rsj) {
 
@@ -526,7 +526,7 @@ losCpApp.InstDeploy = function(id, auto_start)
 
 losCpApp.InstDeployCommit = function(app_id, auto_start)
 {
-    var tplid = "loscp-app-instls";
+    var tplid = "loscp-appls";
     var alert_id = "#"+ tplid +"-alert";
 
     var uri = "?app_id="+ app_id;
@@ -562,7 +562,7 @@ losCpApp.InstDeployCommit = function(app_id, auto_start)
 losCpApp.InstNew = function(spec_id)
 {
     if (!spec_id || spec_id.length < 8) {
-        return alert("AppSpec error, Please try again later (EC:loscp-app-instset)");
+        return alert("AppSpec error, Please try again later (EC:loscp-appset)");
     }
 
     seajs.use(["ep"], function (EventProxy) {
@@ -570,7 +570,7 @@ losCpApp.InstNew = function(spec_id)
         var ep = EventProxy.create("tpl", "spec", function (tpl, spec) {
 
             if (!spec || !spec.kind || spec.kind != "AppSpec") {
-                return alert("AppSpec error, Please try again later (EC:loscp-app-instset)");
+                return alert("AppSpec error, Please try again later (EC:loscp-appset)");
             }
 
             losCpApp.instSet = l4i.Clone(losCpApp.instDef);;
@@ -597,7 +597,7 @@ losCpApp.InstNew = function(spec_id)
         });
 
         ep.fail(function (err) {
-            alert("SpecSet error, Please try again later (EC:loscp-app-instset)");
+            alert("SpecSet error, Please try again later (EC:loscp-appset)");
         });
 
         // template
@@ -618,9 +618,9 @@ losCpApp.InstNew = function(spec_id)
 
 losCpApp.InstNewPodSelect = function()
 {
-    var alert_id = "#loscp-app-instnew-alert";
+    var alert_id = "#loscp-appnew-alert";
 
-    var name = $("#loscp-app-instnew-form").find("input[name='name']").val();
+    var name = $("#loscp-appnew-form").find("input[name='name']").val();
     if (!name) {
         return l4i.InnerAlert(alert_id, "alert-danger", "Spec Name Not Found")
     }
@@ -628,7 +628,7 @@ losCpApp.InstNewPodSelect = function()
     losCpApp.instSet.meta.name = name;
 
     l4iModal.Open({
-        id     : "loscp-app-instnew-oppod",
+        id     : "loscp-appnew-oppod",
         title  : "Select a Pod to Bound",
         width  : 800,
         height : 500,
@@ -664,7 +664,7 @@ losCpApp.InstNewPodSelect = function()
 losCpApp.InstNewConfirm = function()
 {
     l4iModal.Open({
-        id     : "loscp-app-instnew-confirm",
+        id     : "loscp-appnew-confirm",
         title  : "Confirm",
         tpluri : losCp.TplPath("app/inst/new.confirm.p5"),
         data   : losCpApp.instSet,
@@ -682,13 +682,13 @@ losCpApp.InstNewConfirm = function()
 
 losCpApp.InstNewCommit = function()
 {
-    losCp.ApiCmd("app-inst/set", {
+    losCp.ApiCmd("app/set", {
         method  : "POST",
         data    : JSON.stringify(losCpApp.instSet),
         timeout : 3000,
         callback : function(err, rsj) {
 
-            var alertid = "#loscp-app-instnew-cf-alert";
+            var alertid = "#loscp-appnew-cf-alert";
 
             if (err || !rsj || rsj.kind != "App") {
                 var msg = "Bad Request";
@@ -762,15 +762,15 @@ losCpApp.InstSet = function(app_id)
             losCpApp.instSet._op_actions = losCp.OpActions;
 
             l4iTemplate.Render({
-                dstid: "loscp-app-instset",
-                tplid: "loscp-app-instset-tpl",
+                dstid: "loscp-appset",
+                tplid: "loscp-appset-tpl",
                 data:  losCpApp.instSet,
             });
         });
 
         ep.fail(function (err) {
             // TODO
-            alert("SpecSet error, Please try again later (EC:loscp-app-instset)");
+            alert("SpecSet error, Please try again later (EC:loscp-appset)");
         });
 
         // template
@@ -783,7 +783,7 @@ losCpApp.InstSet = function(app_id)
         });
 
         // data
-        losCp.ApiCmd("app-inst/entry/?id="+ app_id, {
+        losCp.ApiCmd("app/entry/?id="+ app_id, {
             callback: ep.done("inst"),
         });
     });
@@ -793,10 +793,10 @@ losCpApp.InstSet = function(app_id)
 losCpApp.InstSetCommit = function()
 {
 
-    var alert_id = "#loscp-app-instset-alert";
+    var alert_id = "#loscp-appset-alert";
     try {
 
-        var form = $("#loscp-app-instset");
+        var form = $("#loscp-appset");
         if (!form) {
             throw "No Form Data Found";
         }
@@ -818,7 +818,7 @@ losCpApp.InstSetCommit = function()
         return l4i.InnerAlert(alert_id, 'alert-danger', err);
     }
 
-    losCp.ApiCmd("app-inst/set", {
+    losCp.ApiCmd("app/set", {
         method  : "POST",
         data    : JSON.stringify(losCpApp.instSet),
         timeout : 3000,

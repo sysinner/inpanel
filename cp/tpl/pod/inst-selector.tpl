@@ -20,7 +20,7 @@
   <td class="loscp-font-fixspace">{[=v.meta.id]}</td>
   <td style="width:30%;">{[=v.meta.name]}</td>
   <td>{[=v.spec.zone]}/{[=v.spec.cell]}</td>
-  <td>{[=v.operate.action]}</td>
+  <td>{[=losCp.OpActionTitle(v.operate.action)]}</td>
   <td align="right">
     <buttona class="btn btn-default btn-xs" onclick="_loscp_podls_selector_pod('{[=v.meta.id]}')">Select</a>
   </td>

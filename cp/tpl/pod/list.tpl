@@ -30,9 +30,7 @@
       {[if (!it._zone_active) {]}
       <th>Cluster</th>
       {[}]}
-      {[if (it._zone_active) {]}
-      <th>Ports</th>   
-      {[}]}
+      <th>Replicas</th>   
       <th>Updated</th>
       <th>Action</th>
       <th></th>
@@ -50,15 +48,7 @@
     {[if (!it._zone_active) {]}
     <td>{[=v.spec.zone]} / {[=v.spec.cell]}</td>
     {[}]}
-    {[if (it._zone_active) {]}
-    <td class="loscp-font-fixspace" style="font-size:80%">
-    {[if (v.operate.ports && v.operate.ports.length > 0) {]}
-    {[~v.operate.ports :opv]}
-      <div>{[=opv.host_port]} &gt {[=opv.box_port]}/tcp</div>
-    {[~]}
-    {[}]}
-    </td>
-    {[}]}
+    <td>{[=v.operate.replicas.length]}</td>
     <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
     <td>
       <select class="pure-button button-xsmall {[if (v.operate.action == 2) {]} button-success{[}]}" 

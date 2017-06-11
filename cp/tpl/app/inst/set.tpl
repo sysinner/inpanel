@@ -1,9 +1,9 @@
 
-<div id="loscp-app-instset-alert" class="alert alert-danger" style="display:none"></div>
+<div id="loscp-appset-alert" class="alert alert-danger" style="display:none"></div>
 
-<div id="loscp-app-instset" style="box-sizing: border-box;">loading</div>
+<div id="loscp-appset" style="box-sizing: border-box;">loading</div>
 
-<script id="loscp-app-instset-tpl" type="text/html">
+<script id="loscp-appset-tpl" type="text/html">
 <div class="panel panel-default">
   <div class="panel-heading">App Instance Settings</div>
   <div class="panel-body">
@@ -25,7 +25,7 @@
         Bound Pod 
       </label>
   
-      <div id="loscp-app-instset-bound">{[=it.operate.pod_id]}</div>
+      <div id="loscp-appset-bound">{[=it.operate.pod_id]}</div>
     </div>
 
     <div class="l4i-form-group">

@@ -11,8 +11,12 @@
         <td>{[=it.meta.name]}</td>
       </tr>
       <tr>
-        <td class="lpt-title">Created / Updated</td>
-        <td>{[=l4i.MetaTimeParseFormat(it.meta.created, "Y-m-d")]} / {[=l4i.MetaTimeParseFormat(it.meta.updated, "Y-m-d H:i:s")]}</td>
+        <td class="lpt-title">Created</td>
+        <td>{[=l4i.MetaTimeParseFormat(it.meta.created, "Y-m-d")]}</td>
+      </tr>
+      <tr>
+        <td class="lpt-title">Updated</td>
+        <td>{[=l4i.MetaTimeParseFormat(it.meta.updated, "Y-m-d H:i:s")]}</td>
       </tr>
     </table>
   </div>
@@ -24,41 +28,52 @@
     <table width="100%" class="loscp-panel-table">
       <tr>
         <td width="220" class="lpt-title">Action</td>
-        <td>{[=it.operate.action]}</td>
+        <td>{[=losCp.OpActionTitle(it.operate.action)]}</td>
       </tr>
       <tr>
         <td class="lpt-title">Cluster (Zone / Cell)</td>
         <td>{[=it.spec.zone]} / {[=it.spec.cell]}</td>
       </tr>
-      {[?it.operate.node]}
+
+      {[if (it.operate.replicas && it.operate.replicas.length > 0) {]}
       <tr>
-        <td class="lpt-title">Host</td>
-        <td>{[=it.operate.node]}</td>
-      </tr>
-      {[?]}
-      {[if (it.operate.ports && it.operate.ports.length > 0) {]}
-      <tr>
-        <td class="lpt-title">Service Ports</td>
+        <td class="lpt-title">Replicas</td>
         <td>
-		  <table class="table table-hover">
-		  <thead><tr>
-		  <th>Name</th>
-		  <th>Host Port</th>
-		  <th>Box Port</th>
-		  <th></th>
-		  </thead></tr>
-		  <tbody>
-          {[~it.operate.ports :opv]}
-	      <tr>
-          <td>{[=opv.name]}</td>
-		  <td>{[=opv.host_port]}</td>
-		  <td>{[=opv.box_port]}</td>
-		  <td>TCP</td>
-		  </tr>
-		  {[~]}
-		  </tbody>
-		  </table>
-		</td>
+          <table class="table">
+          {[~it.operate.replicas :rep]}
+            <tr>
+              <td class="lpt-title">Host</td>
+              <td>{[?rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}</td>
+            </tr>
+
+            {[if (rep.ports && rep.ports.length > 0) {]}
+            <tr>
+              <td class="">Service Ports</td>
+              <td>
+                <table class="table table-hover">
+                <thead><tr>
+                  <th>Name</th>
+                  <th>Host Port</th>
+                  <th>Box Port</th>
+                  <th></th>
+                </thead></tr>
+                <tbody>
+                {[~rep.ports :opv]}
+                <tr>
+                  <td>{[=opv.name]}</td>
+                  <td>{[=opv.host_port]}</td>
+                  <td>{[=opv.box_port]}</td>
+                  <td>TCP</td>
+                </tr>
+                {[~]}
+                </tbody>
+                </table>
+              </td>
+            </tr>
+            {[}]}
+          {[~]}
+          </table>
+        </td>
       </tr>
       {[}]}
     </table>

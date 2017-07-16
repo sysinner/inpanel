@@ -22,63 +22,6 @@
   </div>
 </div>
 
-<div class="panel panel-default">
-  <div class="panel-heading">Operating</div>
-  <div class="panel-body">
-    <table width="100%" class="loscp-panel-table">
-      <tr>
-        <td width="220" class="lpt-title">Action</td>
-        <td>{[=losCp.OpActionTitle(it.operate.action)]}</td>
-      </tr>
-      <tr>
-        <td class="lpt-title">Cluster (Zone / Cell)</td>
-        <td>{[=it.spec.zone]} / {[=it.spec.cell]}</td>
-      </tr>
-
-      {[if (it.operate.replicas && it.operate.replicas.length > 0) {]}
-      <tr>
-        <td class="lpt-title">Replicas</td>
-        <td>
-          <table class="table">
-          {[~it.operate.replicas :rep]}
-            <tr>
-              <td class="lpt-title">Host</td>
-              <td>{[?rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}</td>
-            </tr>
-
-            {[if (rep.ports && rep.ports.length > 0) {]}
-            <tr>
-              <td class="">Service Ports</td>
-              <td>
-                <table class="table table-hover">
-                <thead><tr>
-                  <th>Name</th>
-                  <th>Host Port</th>
-                  <th>Box Port</th>
-                  <th></th>
-                </thead></tr>
-                <tbody>
-                {[~rep.ports :opv]}
-                <tr>
-                  <td>{[=opv.name]}</td>
-                  <td>{[=opv.host_port]}</td>
-                  <td>{[=opv.box_port]}</td>
-                  <td>TCP</td>
-                </tr>
-                {[~]}
-                </tbody>
-                </table>
-              </td>
-            </tr>
-            {[}]}
-          {[~]}
-          </table>
-        </td>
-      </tr>
-      {[}]}
-    </table>
-  </div>
-</div>
 
 <div class="panel panel-default">
   <div class="panel-heading">Spec</div>
@@ -161,7 +104,7 @@
             </tr>
             <tr>
               <td>CPU</td>
-              <td>{[=box.resources.cpu_limit]}m</td>
+              <td>{[=box.resources.cpu_limit]} m</td>
             </tr>
             <tr>
               <td>Memory</td>
@@ -175,6 +118,56 @@
     </table>
   </div>
 </div>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">Operating</div>
+  <div class="panel-body">
+    <table width="100%" class="loscp-panel-table">
+      <tr>
+        <td width="220" class="lpt-title">Action</td>
+        <td>{[=losCp.OpActionTitle(it.operate.action)]}</td>
+      </tr>
+      <tr>
+        <td class="lpt-title">Cluster (Zone / Cell)</td>
+        <td>{[=it.spec.zone]} / {[=it.spec.cell]}</td>
+      </tr>
+
+      {[if (it.operate.replicas && it.operate.replicas.length > 0) {]}
+      <tr>
+        <td class="lpt-title">Replicas</td>
+        <td>
+          <table class="table table-condensed">
+          {[~it.operate.replicas :rep]}
+            <tr>
+              <td>Host</td>
+              <td><strong>{[=rep.id]}</strong>-{[?rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}</td>
+            </tr>
+
+            {[if (rep.ports && rep.ports.length > 0) {]}
+            <tr>
+              <td class="">Service Ports</td>
+              <td>
+                <table style="width:100%" class="loscp-font-fixspace">
+                {[~rep.ports :opv]}
+                <tr>
+                  <td>{[=opv.name]}/TCP</td>
+                  <td align="right">host:{[=opv.host_port]} &nbsp;&raquo;&nbsp; pod:{[=opv.box_port]}</td>
+                </tr>
+                {[~]}
+                </table>
+              </td>
+            </tr>
+            {[}]}
+          {[~]}
+          </table>
+        </td>
+      </tr>
+      {[}]}
+    </table>
+  </div>
+</div>
+
 
 {[?it.apps]}
 <div class="panel panel-default">

@@ -552,13 +552,13 @@ losCpPod.Info = function(pod_id)
             if (!pod.operate.replicas) {
                 pod.operate.replicas = [];
             }
-            for (var j in pod.operate.replicas) {
-                if (!pod.operate.replicas[j].ports) {
-                    pod.operate.replicas[j].ports = [];
+            for (var i in pod.operate.replicas) {
+                if (!pod.operate.replicas[i].ports) {
+                    pod.operate.replicas[i].ports = [];
                 }
-                for (var j in pod.operate.replicas[j].ports) {
-                    if (!pod.operate.replicas[j].ports[j].host_port) {
-                        pod.operate.replicas[j].ports[j].host_port = 0;
+                for (var j in pod.operate.replicas[i].ports) {
+                    if (!pod.operate.replicas[i].ports[j].host_port) {
+                        pod.operate.replicas[i].ports[j].host_port = 0;
                     }
                 }
             }

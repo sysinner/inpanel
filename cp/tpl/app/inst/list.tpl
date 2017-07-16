@@ -23,7 +23,7 @@
 <tr>
   <td class="loscp-font-fixspace">{[=v.meta.id]}</td>
   <td>{[=v.meta.name]}</td>
-  <td>
+  <td class="loscp-font-fixspace">
     <a href="#spec.detail" onclick="losCpAppSpec.Info('{[=v.spec.meta.id]}')">{[=v.spec.meta.name]}/v{[=v.spec.meta.version]}</a>
   </td>
   <td>

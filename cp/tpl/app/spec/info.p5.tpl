@@ -20,7 +20,7 @@
         <th>Name</th>
         <th>Version</th>
         <th>Release</th>
-        <th>OS / Arch</th>
+        <th>Dist / Arch</th>
         <th>Volume</th>
       </tr></thead>
       <tbody>

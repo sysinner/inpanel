@@ -136,9 +136,9 @@
     <th>Name</th>
     <th>Version</th>
     <th>Release</th>
-    <th>Distribution</th>
-    <th>Architecture</th>
-    <th>Volume Mount</th>
+    <th>Dist</th>
+    <th>Arch</th>
+    <th>Volume</th>
     <th></th>
   </tr></thead>
   <tbody>

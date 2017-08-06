@@ -78,7 +78,7 @@ body {
   margin-right: 2px;
 }
 
-.loscp-nav > li {
+.loscp-nav>li {
   position: relative;
   padding: 0;
   display: inline-block;
@@ -87,11 +87,11 @@ body {
   line-height: 50px;
 }
 
-.loscp-nav > li:first-child {
+.loscp-nav>li:first-child {
   margin-left: 0;
 }
 
-.loscp-nav > li > a {
+.loscp-nav>li>a {
   padding: 0 10px;
   display: block;
   text-decoration: none;
@@ -100,11 +100,11 @@ body {
   font-size: 16px;
 }
 
-.loscp-nav > li > a:hover {
+.loscp-nav>li>a:hover {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
-.loscp-nav > li > a.active {
+.loscp-nav>li>a.active {
   color: #000;
   background-color: rgba(0, 0, 0, 0.05);
 }
@@ -121,8 +121,10 @@ body {
 }
 
 
+
 /** user bar **/
-#loscp-topbar-userbar > .iam-name {
+
+#loscp-topbar-userbar>.iam-name {
   font-size: 16px;
   color: #666;
   max-width: 120px;
@@ -135,11 +137,11 @@ body {
   display: inline-block;
 }
 
-#loscp-topbar-userbar > .iam-photo {
+#loscp-topbar-userbar>.iam-photo {
   margin-left: 0px;
 }
 
-#loscp-topbar-userbar > .iam-photo > img {
+#loscp-topbar-userbar>.iam-photo>img {
   height: 36px;
   width: 36px;
   border-radius: 50%;
@@ -161,6 +163,7 @@ body {
   /* RGBa with 0.6 opacity */
   background-color: rgba(255, 255, 255, 1);
 }
+
 #loscp-topbar-user-signed-modal .iam-photo {
   width: 96px;
   height: 96px;
@@ -172,16 +175,19 @@ body {
   border-radius: 50%;
   background-color: #dfdfdf;
 }
+
 #loscp-topbar-user-signed-modal .iam-name {
   text-align: center;
   font-size: 16px;
   padding: 0 0 10px 0;
 }
+
 #loscp-topbar-user-signed-modal .iam-btn {
   width: 260px;
   display: block;
   margin: 10px 0;
 }
+
 #loscp-topbar-user-signed-modal .iam-btn:last-child {
   margin-bottom: 0;
 }
@@ -193,11 +199,13 @@ body {
 .loscp-boxlet-grp {
   margin: 0 0 10px;
 }
+
 .loscp-boxlet-grp .lbg-title {
   font-size: 20px;
   font-weight: bold;
   padding: 10px 0;
 }
+
 .loscp-boxlet {
   border-radius: 5px;
   background-color: #fff;
@@ -214,27 +222,33 @@ body {
   padding: 5px 0 10px 0;
   margin-bottom: 10px;
 }
+
 .loscp-boxlet .lb-underline {
   border-bottom: #ccc solid 2px;
 }
+
 .loscp-boxlet .lb-colbox {
   padding: 5px 10px;
   background-color: #eee;
   border-left: #fff 10px solid;
 }
+
 .loscp-boxlet .lb-colbox:first-child {
   border-left: 0;
 }
+
 .loscp-boxlet .lb-colbox .lbc-title {
   font-size: 6px;
   color: #777;
 }
+
 .loscp-boxlet .lb-colbox .lbc-value {
   margin-top: 5px;
   font-size: 16px;
   font-weight: bold;
   color: #333;
 }
+
 .loscp-boxlet .lb-colbox .lbc-value span {
   font-size: 8px;
   font-weight: normal;
@@ -256,7 +270,7 @@ body {
   font-weight: bold;
 }
 
-.loscp-form > .form-group {
+.loscp-form>.form-group {
   padding: 0 !important;
   margin: 0 !important;
 }
@@ -267,6 +281,7 @@ body {
   color: #999;
   white-space: pre;
 }
+
 .loscp-form-checkbox {
   margin: 0 20px 0 0;
   padding: 10px 0;
@@ -326,10 +341,10 @@ body {
   margin-left: 0 !important;
 }
 
-.loscp-module-nav > li {
+.loscp-module-nav>li {
   position: relative;
   padding: 0;
-  margin: 0 0 0 10px;
+  margin: 0 10px 0 0;
   display: inline-block;
   zoom: 1;
   vertical-align: middle;
@@ -338,11 +353,11 @@ body {
   border-radius: 2px;
 }
 
-.loscp-module-nav > li:first-child {
-  margin-left: 0;
+.loscp-module-nav>li:first-child {
+  /* margin-left: 0; */
 }
 
-.loscp-module-nav > li > a {
+.loscp-module-nav>li>a {
   padding: 0 10px;
   display: block;
   text-decoration: none;
@@ -352,7 +367,7 @@ body {
   border-radius: 2px;
 }
 
-.loscp-module-nav > li > a:hover {
+.loscp-module-nav>li>a:hover {
   padding: 0 10px;
   display: block;
   text-decoration: none;
@@ -362,18 +377,18 @@ body {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.loscp-module-nav > li.active,
-.loscp-module-nav > li > a.active {
+.loscp-module-nav>li.active,
+.loscp-module-nav>li>a.active {
   background-color: #333;
   color: #fff;
 }
 
-.loscp-module-nav > li.active > a {
+.loscp-module-nav>li.active>a {
   color: #fff;
 }
 
-.loscp-module-nav > li.active:after,
-.loscp-module-nav > li > a.active:after {
+.loscp-module-nav>li.active:after,
+.loscp-module-nav>li>a.active:after {
   content: '';
   display: block;
   position: absolute;
@@ -385,6 +400,23 @@ body {
   border-color: #333 transparent transparent transparent;
   border-style: solid;
   border-width: 6px;
+}
+
+.loscp-module-nav>li.hover,
+.loscp-module-nav>li>a.hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #777;
+}
+
+.loscp-module-nav>li.hover_border,
+.loscp-module-nav>li>a.hover_border {
+  border: rgba(0, 0, 0, 0.1) 1px solid;
+}
+
+.loscp-module-nav>li.primary,
+.loscp-module-nav>li>a.primary {
+  background-color: rgb(0, 120, 231);
+  color: #fff;
 }
 
 #loscp-module-navbar-optools button {
@@ -447,7 +479,9 @@ body {
   background-color: rgb(0, 120, 231);
 }
 
+
 /* ext::app */
+
 .loscp-app-list-qry-input {
   padding: 5px 5px 5px 30px;
   background: url(../img/search-16.png) no-repeat 8px;
@@ -587,15 +621,23 @@ button {
   border-radius: 4px;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
+
 .button-success {
-  background: rgb(28, 184, 65); /* this is a green */
+  background: rgb(28, 184, 65);
+  /* this is a green */
 }
+
 .button-error {
-  background: rgb(202, 60, 60); /* this is a maroon */
+  background: rgb(202, 60, 60);
+  /* this is a maroon */
 }
+
 .button-warning {
-  background: rgb(223, 117, 20); /* this is an orange */
+  background: rgb(223, 117, 20);
+  /* this is an orange */
 }
+
 .button-secondary {
-  background: rgb(66, 184, 221); /* this is a light blue */
+  background: rgb(66, 184, 221);
+  /* this is a light blue */
 }

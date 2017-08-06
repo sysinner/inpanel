@@ -8,7 +8,7 @@
       <li><a class="l4i-nav-item" href="#app/index">Applications</a></li>
       <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>
       <li><a class="l4i-nav-item" href="#res/index">Resources</a></li>
-      <!-- <li><a class="l4i-nav-item" href="#lpm/~/index">Packages</a></li> -->
+      <li><a class="l4i-nav-item" href="#lps/index">Packages</a></li>
     </ul>
     <ul class="loscp-nav loscp-nav-right" id="loscp-topbar-userbar"></ul>
   </div>

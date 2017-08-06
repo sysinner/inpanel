@@ -1,8 +1,6 @@
 <div id="loscp-module-navbar">
   <ul id="loscp-module-navbar-menus" class="loscp-module-nav">
-    <li>
-	  Pod Instances
-    </li>
+    <li><a class='l4i-nav-item active' href='#pod/instance'>Pod Instance</a></li>
     <!--<li>
       <form id="z28k7l" action="#" class="form-inlines">
         <input id="query_text" type="text"

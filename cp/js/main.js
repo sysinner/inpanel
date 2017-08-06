@@ -1,32 +1,36 @@
 var losCp = {
-    version : "",
-    base    : "/los/cp/",
-    tplbase : "/los/cp/-/",
-    api     : "/los/v1/",
-    debug   : true,
-    Zones   : null,
-    OpToolActive : null,
+    version: "",
+    base: "/los/cp/",
+    tplbase: "/los/cp/-/",
+    api: "/los/v1/",
+    debug: true,
+    Zones: null,
+    OpToolActive: null,
     UserSession: null,
-    OpActions : [
-        {action: 1 << 1, title: "Start"},
-        {action: 1 << 3, title: "Stop"},
-        // {action: 1 << 5, title: "Destroy"},
+    OpActions: [
+        {
+            action: 1 << 1,
+            title: "Start"
+        },
+        {
+            action: 1 << 3,
+            title: "Stop"
+        },
+    // {action: 1 << 5, title: "Destroy"},
     ],
     OpActionStart: 1 << 1,
-    OpActionStop:  1 << 3,
+    OpActionStop: 1 << 3,
     well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/los/cp/auth/login" class="button">SIGN IN</a></div>',
 }
 
-losCp.debug_uri = function()
-{
+losCp.debug_uri = function() {
     if (!losCp.debug) {
-        return "?_="+ losCp.version;
+        return "?_=" + losCp.version;
     }
-    return "?_="+ Math.random(); 
+    return "?_=" + Math.random();
 }
 
-losCp.Boot = function(login_first)
-{
+losCp.Boot = function(login_first) {
     seajs.config({
         base: losCp.base,
         alias: {
@@ -43,7 +47,7 @@ losCp.Boot = function(login_first)
 
         var browser = BrowserDetect.browser;
         var version = BrowserDetect.version;
-        var OS      = BrowserDetect.OS;
+        var OS = BrowserDetect.OS;
 
         if (!((browser == 'Chrome' && version >= 22)
             || (browser == 'Firefox' && version >= 31.0)
@@ -64,31 +68,36 @@ losCp.Boot = function(login_first)
             "~/twbs/3.3/js/bootstrap.js",
             "~/lessui/css/lessui.css",
             "~/lessui/js/lessui.js",
-            "~/cp/css/main.css"+ losCp.debug_uri(),
-            "~/cp/js/host.js"+ losCp.debug_uri(),
-            "~/cp/js/spec.js"+ losCp.debug_uri(),
-            "~/cp/js/pod.js"+ losCp.debug_uri(),
-            "~/cp/js/app.js"+ losCp.debug_uri(),
-            "~/cp/js/app-spec.js"+ losCp.debug_uri(),
-            "~/cp/js/res.js"+ losCp.debug_uri(),
-            "~/cp/js/res-domain.js"+ losCp.debug_uri(),
+            "~/cp/css/main.css" + losCp.debug_uri(),
+            "~/cp/js/host.js" + losCp.debug_uri(),
+            "~/cp/js/spec.js" + losCp.debug_uri(),
+            "~/cp/js/pod.js" + losCp.debug_uri(),
+            "~/cp/js/app.js" + losCp.debug_uri(),
+            "~/cp/js/app-spec.js" + losCp.debug_uri(),
+            "~/cp/js/res.js" + losCp.debug_uri(),
+            "~/cp/js/res-domain.js" + losCp.debug_uri(),
+            "lps/~/lps/js/main.js" + losCp.debug_uri(),
+            "lps/~/lps/css/main.css" + losCp.debug_uri(),
         ], losCp.load_index);
     });
 }
 
-losCp.load_index = function()
-{
+losCp.load_index = function() {
     l4i.debug = losCp.debug;
     l4i.app_version = losCp.version;
 
-    seajs.use(["ep"], function (EventProxy) {
+    lpLps.base = losCp.base + "lps/~/lps/";
+    lpLps.option_navpf = "loscp";
 
-        var ep = EventProxy.create("tpl", "zones", "session", function (tpl, zones, session) {
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "zones", "session", function(tpl, zones, session) {
 
             if (!session || session.username == "") {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
             losCp.UserSession = session;
+			lpLps.UserSession = session;
 
             if (!zones.items || zones.items.length == 0) {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
@@ -98,36 +107,35 @@ losCp.load_index = function()
             $("#body-content").html(tpl);
 
             l4iTemplate.Render({
-                dstid:   "loscp-topbar-userbar",
-                tplid:   "loscp-topbar-user-signed-tpl",
-                data:    losCp.UserSession,
+                dstid: "loscp-topbar-userbar",
+                tplid: "loscp-topbar-user-signed-tpl",
+                data: losCp.UserSession,
                 success: function() {
 
                     $("#loscp-topbar-userbar").hover(
                         function() {
                             $("#loscp-topbar-user-signed-modal").fadeIn(200);
                         },
-                        function() {
-                        }
+                        function() {}
                     );
                     $("#loscp-topbar-user-signed-modal").hover(
-                        function() {
-                        },
+                        function() {},
                         function() {
                             $("#loscp-topbar-user-signed-modal").fadeOut(200);
                         }
                     );
                 },
             });
- 
+
             l4i.UrlEventRegister("app/index", losCpApp.Index, "loscp-topbar-nav-menus");
             l4i.UrlEventRegister("pod/index", losCpPod.Index, "loscp-topbar-nav-menus");
             l4i.UrlEventRegister("res/index", losCpRes.Index, "loscp-topbar-nav-menus");
+            l4i.UrlEventRegister("lps/index", lpLps.Index, "loscp-topbar-nav-menus");
 
             l4i.UrlEventHandler("app/index", true);
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             if (err && err == "AuthSession") {
                 losCp.AlertUserLogin();
             } else {
@@ -155,19 +163,17 @@ losCp.load_index = function()
 }
 
 
-losCp.AlertUserLogin = function()
-{
+losCp.AlertUserLogin = function() {
     l4iAlert.Open("warn", "You are not logged in, or your login session has expired. Please sign in again", {
         close: false,
         buttons: [{
             title: "SIGN IN",
-            href: losCp.base +"auth/login",
+            href: losCp.base + "auth/login",
         }],
     });
 }
 
-losCp.ApiCmd = function(url, options)
-{
+losCp.ApiCmd = function(url, options) {
     var appcb = null;
     if (options.callback) {
         appcb = options.callback;
@@ -184,39 +190,33 @@ losCp.ApiCmd = function(url, options)
     l4i.Ajax(losCp.api + url, options);
 }
 
-losCp.TplPath = function(url)
-{
-    return losCp.tplbase + url +".tpl";
+losCp.TplPath = function(url) {
+    return losCp.tplbase + url + ".tpl";
 }
 
-losCp.TplFetch = function(url, options)
-{
+losCp.TplFetch = function(url, options) {
     l4i.Ajax(losCp.TplPath(url), options);
 }
 
-losCp.Loader = function(target, uri)
-{
-    l4i.Ajax(losCp.tplbase + uri +".tpl", {
+losCp.Loader = function(target, uri) {
+    l4i.Ajax(losCp.tplbase + uri + ".tpl", {
         callback: function(err, data) {
             if (!err) {
-                $("#"+ target).html(data);
+                $("#" + target).html(data);
             }
         }
     });
 }
 
-losCp.CompLoader = function(uri)
-{
+losCp.CompLoader = function(uri) {
     losCp.Loader("comp-content", uri);
 }
 
-losCp.WorkLoader = function(uri)
-{
+losCp.WorkLoader = function(uri) {
     losCp.Loader("work-content", uri);
 }
 
-losCp.UtilResSizeFormat = function(size, tofix)
-{
+losCp.UtilResSizeFormat = function(size, tofix) {
     var ms = [
         [7, "ZB"],
         [6, "EB"],
@@ -235,7 +235,7 @@ losCp.UtilResSizeFormat = function(size, tofix)
 
     for (var i in ms) {
         if (size >= Math.pow(1024, ms[i][0])) {
-            return (size / Math.pow(1024, ms[i][0])).toFixed(tofix) +" "+ ms[i][1];
+            return (size / Math.pow(1024, ms[i][0])).toFixed(tofix) + " " + ms[i][1];
         }
     }
 
@@ -247,31 +247,43 @@ losCp.UtilResSizeFormat = function(size, tofix)
 }
 
 
-losCp.OpToolsRefresh = function(div_target)
-{
-    if (!div_target || typeof div_target == "string" && div_target == losCp.OpToolActive) {
+losCp.OpToolsRefresh = function(div_target, cb) {
+    if (!div_target) {
         return;
+    }
+
+    if (!cb || typeof cb !== "function") {
+        cb = function() {};
+    }
+
+    if (typeof div_target == "string" && div_target == losCp.OpToolActive) {
+        return cb();
     }
 
     // if (!div_target) {
     //     div_target = "#loscp-optools";
     // }
 
-    $("#loscp-module-navbar-optools").empty();
-
+    // $("#loscp-module-navbar-optools").empty();
     if (typeof div_target == "string") {
 
         var opt = $("#work-content").find(div_target);
+        // console.log(opt.html());
         if (opt) {
-            $("#loscp-module-navbar-optools").html(opt.html());
+            // $("#loscp-module-navbar-optools").html(opt.html());
+            l4iTemplate.Render({
+                dstid: "loscp-module-navbar-optools",
+                tplsrc: opt.html(),
+                data: {},
+                callback: cb,
+            });
             losCp.OpToolActive = div_target;
         }
     }
 }
 
 
-losCp.CodeRender = function()
-{
+losCp.CodeRender = function() {
     seajs.use([
         "~/hl/highlight.pack.js",
         "~/hl/styles/arta.css",
@@ -291,12 +303,12 @@ losCp.CodeRender = function()
 
         switch (lang) {
 
-        case "shell":
-            modes.push("~/cm/5/mode/"+ lang +"/"+ lang +".js");
-            break;
+            case "shell":
+                modes.push("~/cm/5/mode/" + lang + "/" + lang + ".js");
+                break;
 
-        default:
-            return;
+            default:
+                return;
         }
 
         seajs.use([
@@ -304,19 +316,19 @@ losCp.CodeRender = function()
             "~/cm/5/lib/codemirror.js",
             "~/cm/5/theme/monokai.css",
         ],
-        function() {
+            function() {
 
-            modes.push("~/cm/5/addon/runmode/runmode.js");
-            modes.push("~/cm/5/mode/clike/clike.js");
+                modes.push("~/cm/5/addon/runmode/runmode.js");
+                modes.push("~/cm/5/mode/clike/clike.js");
 
-            seajs.use(modes, function() {
+                seajs.use(modes, function() {
 
-                // $(el).addClass('cm-s-monokai CodeMirror'); // apply a theme class
-                CodeMirror.runMode($(el).text(), lang, $(el)[0], {
-                    theme: "monokai",
+                    // $(el).addClass('cm-s-monokai CodeMirror'); // apply a theme class
+                    CodeMirror.runMode($(el).text(), lang, $(el)[0], {
+                        theme: "monokai",
+                    });
                 });
             });
-        });
     });
 }
 
@@ -339,8 +351,7 @@ losCp.ArrayUint32MatchAny = function(ar, ar2)
 }
 */
 
-losCp.OpActionTitle = function(op_action)
-{
+losCp.OpActionTitle = function(op_action) {
     op_action = parseInt(op_action);
     for (var i in losCp.OpActions) {
         if (op_action == losCp.OpActions[i].action) {

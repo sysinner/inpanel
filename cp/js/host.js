@@ -1,10 +1,9 @@
 var losCpHost = {
-    zones : null,
+    zones: null,
     single_node: false,
 }
 
-losCpHost.ZoneRefresh = function(cb)
-{
+losCpHost.ZoneRefresh = function(cb) {
     var zoneid = l4iSession.Get("loscp_host_zoneid");
     if (!zoneid) {
         zoneid = l4iStorage.Get("loscp_host_zoneid");

@@ -1,70 +1,83 @@
 var losCpPod = {
-    statusls : [
-        {phase: "Running", title: "Running"},
-        {phase: "Stopped", title: "Stopped"},
+    statusls: [
+        {
+            phase: "Running",
+            title: "Running"
+        },
+        {
+            phase: "Stopped",
+            title: "Stopped"
+        },
     ],
-    statussetls : [
-        {phase: "Running", title: "Running"},
-        {phase: "Stopped", title: "Stopped"},
-        {phase: "Destroy", title: "Destroy"},
+    statussetls: [
+        {
+            phase: "Running",
+            title: "Running"
+        },
+        {
+            phase: "Stopped",
+            title: "Stopped"
+        },
+        {
+            phase: "Destroy",
+            title: "Destroy"
+        },
     ],
-    def : {
-        meta : {
-            id : "",
-            name : "",
+    def: {
+        meta: {
+            id: "",
+            name: "",
         },
         operate: {
-            action : 1 << 1,
+            action: 1 << 1,
         },
-        spec : {
-            meta : {
-                id : "",
+        spec: {
+            meta: {
+                id: "",
             },
-            ref_plan : "",
+            ref_plan: "",
             zone: "",
             cell: "",
         },
     },
-    syszones : null,
-    specs : null,
-    plans : null,
-    plan  : null,
-    plan_selected : null,
-    clusters : null,
-    cluster_selected : null,
-    zone_active : null,
-    new_options : {},
+    syszones: null,
+    specs: null,
+    plans: null,
+    plan: null,
+    plan_selected: null,
+    clusters: null,
+    cluster_selected: null,
+    zone_active: null,
+    new_options: {},
 }
 
-losCpPod.Index = function()
-{
+losCpPod.Index = function() {
     $("#comp-content").html('<div id="work-content"></div>');
     losCpPod.List();
 }
 
-losCpPod.List = function(tplid)
-{
+losCpPod.List = function(tplid) {
     if (!tplid || tplid.indexOf("/") >= 0) {
         tplid = "loscp-podls";
     }
-    var alert_id = "#"+ tplid +"-alert";
+    var alert_id = "#" + tplid + "-alert";
     var uri = "?";
 
     if (losCp.Zones.items && losCp.Zones.items.length == 1) {
         losCpPod.zone_active = losCp.Zones.items[0].meta.id;
-        uri += "zone_id="+ losCpPod.zone_active;
+        uri += "zone_id=" + losCpPod.zone_active;
     }
     uri += "&fields=meta/id|name,operate/action|replicas,spec/ref/name,spec/zone|cell"
 
-    seajs.use(["ep"], function (EventProxy) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
             if (tpl) {
                 $("#work-content").html(tpl);
             }
             losCp.OpToolActive = null;
-            losCp.OpToolsRefresh("#"+ tplid +"-optools");
+            losCp.OpToolsRefresh("#" + tplid + "-optools");
 
             if (!data || data.error || !data.kind || data.kind != "PodList") {
 
@@ -110,16 +123,16 @@ losCpPod.List = function(tplid)
             data._actions = losCp.OpActions;
 
             l4iTemplate.Render({
-                dstid   : tplid,
-                tplid   : tplid +"-tpl",
-                data    : data,
+                dstid: tplid,
+                tplid: tplid + "-tpl",
+                data: data,
                 callback: function(err) {
                     //
                 },
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("ListRefresh error, Please try again later (EC:001)");
         });
 
@@ -140,15 +153,14 @@ losCpPod.List = function(tplid)
             ep.emit("tpl", null);
         }
 
-        losCp.ApiCmd("pod/list"+ uri, {
+        losCp.ApiCmd("pod/list" + uri, {
             callback: ep.done("data"),
         });
     });
 }
 
 
-losCpPod.ListOpActionChange = function(pod_id, obj, tplid)
-{
+losCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
     if (!pod_id) {
         return;
     }
@@ -160,17 +172,17 @@ losCpPod.ListOpActionChange = function(pod_id, obj, tplid)
     if (!tplid) {
         tplid = "loscp-podls";
     }
-    var alert_id = "#"+ tplid +"-alert";
+    var alert_id = "#" + tplid + "-alert";
 
-    var uri = "?pod_id="+ pod_id +"&op_action="+ op_action;
+    var uri = "?pod_id=" + pod_id + "&op_action=" + op_action;
 
-    losCp.ApiCmd("pod/op-action-set"+ uri, {
-        method  : "GET",
-        timeout : 10000,
-        callback : function(err, rsj) {
+    losCp.ApiCmd("pod/op-action-set" + uri, {
+        method: "GET",
+        timeout: 10000,
+        callback: function(err, rsj) {
 
             if (err) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed: "+ err);
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "PodInstance") {
@@ -194,14 +206,13 @@ losCpPod.ListOpActionChange = function(pod_id, obj, tplid)
 }
 
 
-losCpPod.New = function(options)
-{
+losCpPod.New = function(options) {
     options = options || {};
     var alert_id = "#loscp-podnew-alert";
 
-    seajs.use(["ep"], function (EventProxy) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "zones", "plans", function (tpl, zones, plans) {
+        var ep = EventProxy.create("tpl", "zones", "plans", function(tpl, zones, plans) {
 
             if (!zones || !zones.kind || zones.kind != "HostZoneList") {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -237,8 +248,8 @@ losCpPod.New = function(options)
                 l4iTemplate.Render({
                     dstid: "loscp-podnew-plans",
                     tplid: "loscp-podnew-plans-tpl",
-                    data : {
-                        items:          losCpPod.plans.items,
+                    data: {
+                        items: losCpPod.plans.items,
                         _plan_selected: losCpPod.plan_selected,
                     },
                 });
@@ -247,41 +258,41 @@ losCpPod.New = function(options)
             losCpPod.new_options = options;
             if (options.open_modal) {
                 l4iModal.Open({
-                    tplsrc : tpl,
-                    title  : "Create new Pod Instance",
-                    width  : 900,
-                    height : 600,
+                    tplsrc: tpl,
+                    title: "Create new Pod Instance",
+                    width: 900,
+                    height: 600,
                     callback: function() {
                         l4iTemplate.Render({
                             dstid: "loscp-podnew-form",
                             tplid: "loscp-podnew-modal",
-                            data : {
-                                items:          losCpPod.plans.items,
+                            data: {
+                                items: losCpPod.plans.items,
                                 _plan_selected: losCpPod.plan_selected,
                             },
                             callback: fnfre,
                         });
                     },
                     buttons: [{
-                        onclick : "l4iModal.Close()",
-                        title   : "Close",
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
                     }, {
-                        onclick : "losCpPod.NewCommit()",
-                        title   : "Save",
-                        style   : "btn btn-primary",
+                        onclick: "losCpPod.NewCommit()",
+                        title: "Save",
+                        style: "btn btn-primary",
                     }],
                 });
 
             } else {
                 l4iTemplate.Render({
-                    dstid:    "work-content",
-                    tplsrc:   tpl,
+                    dstid: "work-content",
+                    tplsrc: tpl,
                     callback: function() {
                         l4iTemplate.Render({
                             dstid: "loscp-podnew-form",
                             tplid: "loscp-podnew-inner",
-                            data : {
-                                items:          losCpPod.plans.items,
+                            data: {
+                                items: losCpPod.plans.items,
                                 _plan_selected: losCpPod.plan_selected,
                             },
                             callback: fnfre,
@@ -291,7 +302,7 @@ losCpPod.New = function(options)
             }
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("Network Connection Error, Please try again later (EC:loscp-pod)");
         });
 
@@ -310,8 +321,7 @@ losCpPod.New = function(options)
     });
 }
 
-losCpPod.NewPlanChange = function(plan_id)
-{
+losCpPod.NewPlanChange = function(plan_id) {
     if (losCpPod.plan_selected == plan_id) {
         return;
     }
@@ -320,12 +330,11 @@ losCpPod.NewPlanChange = function(plan_id)
     losCpPod.NewRefreshPlan();
 
     $("#loscp-podnew-plans").find(".loscp-form-box-selector-item.selected").removeClass("selected");
-    $("#loscp-podnew-plan-id-"+ plan_id).addClass("selected");
+    $("#loscp-podnew-plan-id-" + plan_id).addClass("selected");
 }
 
 
-losCpPod.NewRefreshPlan = function()
-{
+losCpPod.NewRefreshPlan = function() {
     var alert_id = "#loscp-podnew-alert";
 
     // console.log(losCpPod.plans);
@@ -343,7 +352,7 @@ losCpPod.NewRefreshPlan = function()
 
             var vol = losCpPod.plan.res_volumes[i];
 
-            if (vol.default <  1073741824) {
+            if (vol.default < 1073741824) {
                 vol._valued = (vol.default / 1073741824).toFixed(1);
             } else {
                 vol._valued = (vol.default / 1048576).toFixed(0);
@@ -380,7 +389,7 @@ losCpPod.NewRefreshPlan = function()
                             continue;
                         }
 
-                        var name = losCpPod.plan.zones[i].name +"/"+  losCpPod.plan.zones[i].cells[k];
+                        var name = losCpPod.plan.zones[i].name + "/" + losCpPod.plan.zones[i].cells[k];
                         var zone_title = losCpPod.plan.zones[i].name;
                         if (losCpPod.syszones.items[j].meta.name) {
                             zone_title = losCpPod.syszones.items[j].meta.name;
@@ -391,10 +400,10 @@ losCpPod.NewRefreshPlan = function()
                         }
 
                         losCpPod.plan._zones.push({
-                            id  :       l4iString.CryptoMd5(name),
-                            name:       name,
-                            zone:       losCpPod.plan.zones[i].name,
-                            cell:       losCpPod.plan.zones[i].cells[k],
+                            id: l4iString.CryptoMd5(name),
+                            name: name,
+                            zone: losCpPod.plan.zones[i].name,
+                            cell: losCpPod.plan.zones[i].cells[k],
                             zone_title: zone_title,
                             cell_title: cell_title,
                         });
@@ -429,7 +438,7 @@ losCpPod.NewRefreshPlan = function()
         l4iTemplate.Render({
             dstid: "loscp-podnew-resource-selector",
             tplid: "loscp-podnew-resource-selector-tpl",
-            data : losCpPod.plan,
+            data: losCpPod.plan,
         });
 
         break;
@@ -437,45 +446,41 @@ losCpPod.NewRefreshPlan = function()
 }
 
 
-losCpPod.NewPlanClusterChange = function(zn)
-{
+losCpPod.NewPlanClusterChange = function(zn) {
     if (losCpPod.plan._zone_selected == zn) {
         return;
     }
 
     $("#loscp-podnew-zones").find(".loscp-form-box-selector-item.selected").removeClass("selected");
-    $("#loscp-podnew-zone-id-"+ l4iString.CryptoMd5(zn)).addClass("selected");
+    $("#loscp-podnew-zone-id-" + l4iString.CryptoMd5(zn)).addClass("selected");
 
     losCpPod.plan._zone_selected = zn;
 }
 
-losCpPod.NewPlanResComputeChange = function(res_compute_id)
-{
+losCpPod.NewPlanResComputeChange = function(res_compute_id) {
     if (!losCpPod.plan || losCpPod.plan.res_compute_selected == res_compute_id) {
         return;
     }
 
     $("#loscp-podnew-resource-computes").find(".loscp-form-box-selector-item.selected").removeClass("selected");
-    $("#loscp-podnew-resource-compute-id-"+ res_compute_id).addClass("selected");
+    $("#loscp-podnew-resource-compute-id-" + res_compute_id).addClass("selected");
 
     losCpPod.plan.res_compute_selected = res_compute_id;
 }
 
-losCpPod.NewPlanImageChange = function(image_id)
-{
+losCpPod.NewPlanImageChange = function(image_id) {
     if (!losCpPod.plan || losCpPod.plan.image_selected == image_id) {
         return;
     }
 
     $("#loscp-podnew-images").find(".loscp-form-box-selector-item.selected").removeClass("selected");
-    $("#loscp-podnew-image-id-"+ image_id).addClass("selected");
+    $("#loscp-podnew-image-id-" + image_id).addClass("selected");
 
     losCpPod.plan.image_selected = image_id;
 }
 
 
-losCpPod.NewCommit = function()
-{
+losCpPod.NewCommit = function() {
     var alert_id = "#loscp-podnew-alert",
         vol_size = $("#loscp-podnew-resource-value").val();
     if (vol_size <= 0) {
@@ -494,12 +499,12 @@ losCpPod.NewCommit = function()
         plan: losCpPod.plan_selected,
         zone: losCpPod.plan._zone_selected.split("/")[0],
         cell: losCpPod.plan._zone_selected.split("/")[1],
-        res_volume      : losCpPod.plan._res_volume.meta.id,
-        res_volume_size : parseInt(vol_size),
+        res_volume: losCpPod.plan._res_volume.meta.id,
+        res_volume_size: parseInt(vol_size),
         boxes: [{
-            name        : "main",
-            image       : losCpPod.plan.image_selected,
-            res_compute : losCpPod.plan.res_compute_selected,
+            name: "main",
+            image: losCpPod.plan.image_selected,
+            res_compute: losCpPod.plan.res_compute_selected,
         }],
     };
 
@@ -510,9 +515,9 @@ losCpPod.NewCommit = function()
     $(alert_id).hide();
 
     losCp.ApiCmd("pod/new", {
-        method  : "POST",
-        data    : JSON.stringify(set),
-        callback : function(err, rsj) {
+        method: "POST",
+        data: JSON.stringify(set),
+        callback: function(err, rsj) {
             if (losCpPod.new_options.open_modal) {
                 l4iModal.ScrollTop();
             }
@@ -530,7 +535,7 @@ losCpPod.NewCommit = function()
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 if (!losCpPod.new_options.open_modal) {
                     losCpPod.List();
@@ -543,11 +548,10 @@ losCpPod.NewCommit = function()
     });
 }
 
-losCpPod.Info = function(pod_id)
-{
-    seajs.use(["ep"], function (EventProxy) {
+losCpPod.Info = function(pod_id) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "pod", function (tpl, pod) {
+        var ep = EventProxy.create("tpl", "pod", function(tpl, pod) {
 
             if (!pod.operate.replicas) {
                 pod.operate.replicas = [];
@@ -564,23 +568,23 @@ losCpPod.Info = function(pod_id)
             }
 
             l4iModal.Open({
-                title  : "Pod Instance Info",
-                tplsrc : tpl,
-                width  : 900,
-                height : 600,
-                data   : pod,
+                title: "Pod Instance Info",
+                tplsrc: tpl,
+                width: 900,
+                height: 600,
+                data: pod,
                 buttons: [{
-                    onclick : "l4iModal.Close()",
-                    title   : "Close",
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
                 }],
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("Network Connection Error, Please try again later (EC:loscp-pod)");
         });
 
-        losCp.ApiCmd("pod/entry?id="+ pod_id, {
+        losCp.ApiCmd("pod/entry?id=" + pod_id, {
             callback: ep.done("pod"),
         });
 
@@ -590,41 +594,40 @@ losCpPod.Info = function(pod_id)
     });
 }
 
-losCpPod.SetInfo = function(pod_id)
-{
+losCpPod.SetInfo = function(pod_id) {
     if (!pod_id) {
         return alert("No Pod Found");
     }
 
-    seajs.use(["ep"], function (EventProxy) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "pod", function (tpl, pod) {
+        var ep = EventProxy.create("tpl", "pod", function(tpl, pod) {
 
             l4iModal.Open({
-                title  : "Pod Instance Info",
-                tplsrc : tpl,
-                width  : 800,
-                height : 400,
-                data   : {
-                    pod : pod,
-                    _op_actions : losCp.OpActions,
+                title: "Pod Instance Info",
+                tplsrc: tpl,
+                width: 800,
+                height: 400,
+                data: {
+                    pod: pod,
+                    _op_actions: losCp.OpActions,
                 },
                 buttons: [{
-                    onclick : "l4iModal.Close()",
-                    title   : "Close",
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
                 }, {
-                    onclick : "losCpPod.SetInfoCommit()",
-                    title   : "Save",
-                    style   : "btn btn-primary",
+                    onclick: "losCpPod.SetInfoCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
                 }],
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("Network Connection Error, Please try again later (EC:loscp-pod)");
         });
 
-        losCp.ApiCmd("pod/entry?id="+ pod_id, {
+        losCp.ApiCmd("pod/entry?id=" + pod_id, {
             callback: ep.done("pod"),
         });
 
@@ -635,14 +638,13 @@ losCpPod.SetInfo = function(pod_id)
 }
 
 
-losCpPod.SetInfoCommit = function()
-{
+losCpPod.SetInfoCommit = function() {
     var alert_id = "#loscp-podsetinfo-alert";
     var form = $("#loscp-podsetinfo");
 
     var set = {
-        meta : {
-            id:   form.find("input[name=meta_id]").val(),
+        meta: {
+            id: form.find("input[name=meta_id]").val(),
             name: form.find("input[name=meta_name]").val(),
         },
         operate: {
@@ -653,9 +655,9 @@ losCpPod.SetInfoCommit = function()
     $(alert_id).hide();
 
     losCp.ApiCmd("pod/set-info", {
-        method  : "POST",
-        data    : JSON.stringify(set),
-        callback : function(err, rsj) {
+        method: "POST",
+        data: JSON.stringify(set),
+        callback: function(err, rsj) {
 
             if (err || !rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -671,7 +673,7 @@ losCpPod.SetInfoCommit = function()
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 losCpPod.List();
             }, 500);
@@ -679,13 +681,12 @@ losCpPod.SetInfoCommit = function()
     });
 }
 
-losCpPod.Set = function(pod_id)
-{
+losCpPod.Set = function(pod_id) {
     var alert_id = "#loscp-podset-alert";
 
-    seajs.use(["ep"], function (EventProxy) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "zones", "specs", "pod", function (tpl, zones, specs, pod) {
+        var ep = EventProxy.create("tpl", "zones", "specs", "pod", function(tpl, zones, specs, pod) {
 
             if (!zones || !zones.kind || zones.kind != "HostZoneList") {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -706,25 +707,25 @@ losCpPod.Set = function(pod_id)
             losCpPod.specs = specs;
 
             l4iModal.Open({
-                title  : "Pod Instance Setting",
-                tplsrc : tpl,
-                width  : 900,
-                height : 600,
+                title: "Pod Instance Setting",
+                tplsrc: tpl,
+                width: 900,
+                height: 600,
                 buttons: [{
-                    onclick : "l4iModal.Close()",
-                    title   : "Close",
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
                 }, {
-                    onclick : "losCpPod.SetCommit()",
-                    title   : "Save",
-                    style   : "btn btn-primary",
+                    onclick: "losCpPod.SetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
                 }],
-                success : function() {
+                success: function() {
 
                     l4iTemplate.Render({
-                        dstid  : "loscp-podset",
-                        tplid  : "loscp-podset-tpl",
-                        data   : pod,
-                        success : function() {
+                        dstid: "loscp-podset",
+                        tplid: "loscp-podset-tpl",
+                        data: pod,
+                        success: function() {
 
                             if (pod.spec.meta.id != "") {
 
@@ -745,7 +746,7 @@ losCpPod.Set = function(pod_id)
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("Network Connection Error, Please try again later (EC:loscp-pod)");
         });
 
@@ -760,31 +761,30 @@ losCpPod.Set = function(pod_id)
 
         losCpHost.ZoneRefresh(ep.done("zones"));
 
-        losCp.ApiCmd("pod/entry?id="+ pod_id, {
+        losCp.ApiCmd("pod/entry?id=" + pod_id, {
             callback: ep.done("pod"),
         });
     });
 }
 
-losCpPod.SetCommit = function()
-{
+losCpPod.SetCommit = function() {
     var form = $("#loscp-podset");
 
     var req = {
-        meta : {
-            id : form.find("input[name=meta_id]").val(),
-            name : form.find("input[name=meta_name]").val(),
+        meta: {
+            id: form.find("input[name=meta_id]").val(),
+            name: form.find("input[name=meta_name]").val(),
         },
-        status : {
-            desiredPhase : form.find("input[name=status_desiredPhase]:checked").val(),
-            placement : {
-                zoneid : form.find("input[name=status_placement_zoneid]:checked").val(),
-                cellid : form.find("input[name=status_placement_cellid]:checked").val(),
+        status: {
+            desiredPhase: form.find("input[name=status_desiredPhase]:checked").val(),
+            placement: {
+                zoneid: form.find("input[name=status_placement_zoneid]:checked").val(),
+                cellid: form.find("input[name=status_placement_cellid]:checked").val(),
             }
         },
-        spec : {
-            meta : {
-                id : form.find("select[name=spec_pod_id]").val(),
+        spec: {
+            meta: {
+                id: form.find("select[name=spec_pod_id]").val(),
             }
         },
     };
@@ -794,9 +794,9 @@ losCpPod.SetCommit = function()
     $(alert_id).hide();
 
     losCp.ApiCmd("pod/set", {
-        method  : "POST",
-        data    : JSON.stringify(req),
-        callback : function(err, rsj) {
+        method: "POST",
+        data: JSON.stringify(req),
+        callback: function(err, rsj) {
 
             if (err || !rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -812,7 +812,7 @@ losCpPod.SetCommit = function()
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 losCpPod.List();
             }, 500);

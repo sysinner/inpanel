@@ -1,28 +1,28 @@
 var losCpAppSpec = {
     def: {
         meta: {
-            id     : "",
-            name   : "",
-            user   : "",
+            id: "",
+            name: "",
+            user: "",
         },
-        description : "",
-        packages    : [],
-        executors   : [],
+        description: "",
+        packages: [],
+        executors: [],
         service_ports: [],
-        roles       : [],
+        roles: [],
     },
-    executorDef : {
-        name       : "",
-        exec_start : "",
-        exec_stop  : "",
-        priority   : 0,
-        plan       : {
-            on_boot : true,
+    executorDef: {
+        name: "",
+        exec_start: "",
+        exec_stop: "",
+        priority: 0,
+        plan: {
+            on_boot: true,
         },
     },
-    setActive : {},
+    setActive: {},
     infoCache: null,
-    active:    null,
+    active: null,
     cfgFieldTypes: [{
         type: 1,
         title: "String",
@@ -53,15 +53,14 @@ var losCpAppSpec = {
         type: 1,
         default: "",
         auto_fill: "",
-        validates: [],         
+        validates: [],
     },
     fieldNameRe: /^[a-z]{1}[0-9a-z_\/\-]{1,30}$/,
     iamAppRoles: null,
 }
 
 //
-losCpAppSpec.ListRefresh = function(tplid)
-{
+losCpAppSpec.ListRefresh = function(tplid) {
     if (!tplid || tplid.indexOf("/") >= 0) {
         tplid = "loscp-app-specls";
     }
@@ -79,25 +78,26 @@ losCpAppSpec.ListRefresh = function(tplid)
     }
 }
 
-losCpAppSpec.listDataRefresh = function(tplid)
-{
+losCpAppSpec.listDataRefresh = function(tplid) {
     var uri = "";
-    var alert_id = "#"+ tplid +"-alert";
+    var alert_id = "#" + tplid + "-alert";
 
-    var el = document.getElementById(tplid +"-qry-text");
+    var el = document.getElementById(tplid + "-qry-text");
     if (el && el.value.length > 0) {
-        uri = "qry_text="+ el.value;
+        uri = "qry_text=" + el.value;
     }
     uri += "&fields=meta/id|name|user|version|updated,packages/name,executors/name,configurator/name,configurator/fields/name";
 
-    losCp.ApiCmd("app-spec/list?"+ uri, {
-        timeout : 3000,
-        callback : function(err, rsj) {
+    losCp.ApiCmd("app-spec/list?" + uri, {
+        timeout: 3000,
+        callback: function(err, rsj) {
 
             if (err || !rsj || rsj.kind != "AppSpecList" || !rsj.items) {
                 return l4i.InnerAlert(alert_id, "alert-info", "No more results ...");
             } else {
-                $(alert_id).css({"display": "none"});
+                $(alert_id).css({
+                    "display": "none"
+                });
             }
 
             for (var i in rsj.items) {
@@ -130,7 +130,7 @@ losCpAppSpec.listDataRefresh = function(tplid)
                     if (!rsj.items[i].configurator.fields[j].default) {
                         rsj.items[i].configurator.fields[j].default = ""
                     }
-                
+
                     if (!rsj.items[i].configurator.fields[j].prompt) {
                         rsj.items[i].configurator.fields[j].prompt = ""
                     }
@@ -149,8 +149,8 @@ losCpAppSpec.listDataRefresh = function(tplid)
 
             l4iTemplate.Render({
                 dstid: tplid,
-                tplid: tplid +"-tpl",
-                data:  {
+                tplid: tplid + "-tpl",
+                data: {
                     items: rsj.items,
                 },
             });
@@ -158,11 +158,10 @@ losCpAppSpec.listDataRefresh = function(tplid)
     });
 }
 
-losCpAppSpec.Info = function(id, spec)
-{
-    seajs.use(["ep"], function (EventProxy) {
+losCpAppSpec.Info = function(id, spec) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", "roles", function (tpl, rsj, roles) {
+        var ep = EventProxy.create("tpl", "data", "roles", function(tpl, rsj, roles) {
 
             if (!rsj || rsj.error || rsj.kind != "AppSpec") {
                 return
@@ -181,22 +180,22 @@ losCpAppSpec.Info = function(id, spec)
                 if (!rsj.executors[i].exec_start) {
                     rsj.executors[i].exec_start = "";
                 }
-        
+
                 if (!rsj.executors[i].exec_stop) {
                     rsj.executors[i].exec_stop = "";
                 }
-        
+
                 if (!rsj.executors[i].priority) {
                     rsj.executors[i].priority = 0;
                 }
-        
+
                 if (!rsj.executors[i].plan) {
                     rsj.executors[i].plan = {
                         on_boot: true,
                         on_boot_selected: "selected",
                     }
                 } else {
-        
+
                     if (rsj.executors[i].plan.on_boot == true) {
                         rsj.executors[i].plan.on_boot_selected = "selected";
                     } else if (rsj.executors[i].plan.on_tick > 0) {
@@ -232,12 +231,12 @@ losCpAppSpec.Info = function(id, spec)
             }
 
             l4iModal.Open({
-                title  : "Spec Information",
-                width  : 900,
-                height : 700,
-                tplsrc : tpl,
-                data   : rsj,
-                buttons : [{
+                title: "Spec Information",
+                width: 900,
+                height: 700,
+                tplsrc: tpl,
+                data: rsj,
+                buttons: [{
                     onclick: "l4iModal.Close()",
                     title: "Close",
                 }],
@@ -247,7 +246,7 @@ losCpAppSpec.Info = function(id, spec)
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             // TODO
             alert("SpecSet error, Please try again later (EC:loscp-app-specset)");
         });
@@ -260,7 +259,7 @@ losCpAppSpec.Info = function(id, spec)
         if (losCpAppSpec.iamAppRoles) {
             ep.emit("roles", losCpAppSpec.iamAppRoles);
         } else {
-            l4i.Ajax(losCp.base +"auth/app-role-list", {
+            l4i.Ajax(losCp.base + "auth/app-role-list", {
                 callback: function(err, data) {
                     if (err) {
                         return alert(err);
@@ -278,7 +277,7 @@ losCpAppSpec.Info = function(id, spec)
             ep.emit("data", losCpAppSpec.InfoCache);
         } else if (id) {
 
-            losCp.ApiCmd("app-spec/entry?id="+ id, {
+            losCp.ApiCmd("app-spec/entry?id=" + id, {
                 callback: ep.done("data"),
             });
 
@@ -288,19 +287,17 @@ losCpAppSpec.Info = function(id, spec)
     });
 }
 
-losCpAppSpec.Download = function(id)
-{
+losCpAppSpec.Download = function(id) {
     if (!id) {
         return;
     }
-    window.open(losCp.api +"app-spec/entry?id="+ id +"&download=true&fmt_json_indent=true", "Download");
+    window.open(losCp.api + "app-spec/entry?id=" + id + "&download=true&fmt_json_indent=true", "Download");
 }
 
-losCpAppSpec.Set = function(id)
-{
-    seajs.use(["ep"], function (EventProxy) {
+losCpAppSpec.Set = function(id) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", "roles", function (tpl, rsj, roles) {
+        var ep = EventProxy.create("tpl", "data", "roles", function(tpl, rsj, roles) {
 
             rsj = rsj || l4i.Clone(losCpAppSpec.def);
 
@@ -309,7 +306,7 @@ losCpAppSpec.Set = function(id)
             }
 
             $("#work-content").html(tpl);
-   
+
             if (!rsj.description) {
                 rsj.description = "";
             }
@@ -325,7 +322,7 @@ losCpAppSpec.Set = function(id)
             if (!rsj.service_ports) {
                 rsj.service_ports = [];
             }
-                
+
             if (losCp.UserSession.username == "sysadmin") {
                 rsj._host_port_enable = true;
             }
@@ -361,9 +358,9 @@ losCpAppSpec.Set = function(id)
             l4iTemplate.Render({
                 dstid: "loscp-app-specset",
                 tplid: "loscp-app-specset-tpl",
-                data:  {
-                    actionTitle : ((rsj.meta.id == "") ? "New Spec" : "Setting"),
-                    spec        : rsj,
+                data: {
+                    actionTitle: ((rsj.meta.id == "") ? "New Spec" : "Setting"),
+                    spec: rsj,
                 },
                 success: function() {
                     losCpAppSpec.setPackageRefresh();
@@ -376,7 +373,7 @@ losCpAppSpec.Set = function(id)
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             // TODO
             alert("SpecSet error, Please try again later (EC:loscp-app-specset)");
         });
@@ -389,7 +386,7 @@ losCpAppSpec.Set = function(id)
         if (losCpAppSpec.iamAppRoles) {
             ep.emit("roles", losCpAppSpec.iamAppRoles);
         } else {
-            l4i.Ajax(losCp.base +"auth/app-role-list", {
+            l4i.Ajax(losCp.base + "auth/app-role-list", {
                 callback: function(err, data) {
                     if (err) {
                         return alert(err);
@@ -404,7 +401,7 @@ losCpAppSpec.Set = function(id)
         if (!id) {
             ep.emit("data", "");
         } else {
-            losCp.ApiCmd("app-spec/entry?id="+ id, {
+            losCp.ApiCmd("app-spec/entry?id=" + id, {
                 callback: ep.done("data"),
             });
         }
@@ -412,45 +409,45 @@ losCpAppSpec.Set = function(id)
 }
 
 // TODO
-losCpAppSpec.SetPackageSelect = function()
-{
+losCpAppSpec.SetPackageSelect = function() {
     l4iModal.Open({
-        title  : "Select a Package to Launch",
-        width  : 900,
-        height : 550, 
-        tpluri : "/lps/-/pkginfo/selector.html",
-        fn_selector : function(err, rsp) {
+        title: "Select a Package to Launch",
+        width: 900,
+        height: 600,
+        tpluri: losCp.base + "/lps/~/lps/tpl/pkginfo/selector.html",
+        fn_selector: function(err, rsp) {
             l4iModal.Close();
-            losCpAppSpec.setPackageInfo({id: rsp});
+            losCpAppSpec.setPackageInfo({
+                id: rsp
+            });
         },
-        buttons : [{
+        buttons: [{
             onclick: "l4iModal.Close()",
             title: "Close",
         }],
     });
 }
 
-losCpAppSpec.setPackageInfo = function(opt)
-{
+losCpAppSpec.setPackageInfo = function(opt) {
     var req = "";
     if (opt.id) {
-        req += "&id="+ opt.id;
+        req += "&id=" + opt.id;
     }
     if (opt.name) {
-        req += "&name="+ opt.name;
+        req += "&name=" + opt.name;
     }
     if (opt.version) {
-        req += "&version="+ opt.version;
+        req += "&version=" + opt.version;
     }
     if (opt.release) {
-        req += "&release="+ opt.release;
+        req += "&release=" + opt.release;
     }
 
     var alert_id = "#loscp-app-specset-alert";
 
-    l4i.Ajax("/lps/v1/pkg/entry?"+ req, {
-        timeout : 10000,
-        callback : function(err, rsj) {
+    l4i.Ajax("/lps/v1/pkg/entry?" + req, {
+        timeout: 10000,
+        callback: function(err, rsj) {
 
             if (err) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', err);
@@ -471,28 +468,25 @@ losCpAppSpec.setPackageInfo = function(opt)
             for (var i in losCpAppSpec.setActive.packages) {
 
                 if (losCpAppSpec.setActive.packages[i].name == rsj.meta.name) {
-
                     losCpAppSpec.setActive.packages[i] = {
-                        name:    rsj.meta.name,
-                        version: rsj.version,
-                        release: rsj.release,
-                        dist:    rsj.pkg_os,
-                        arch:    rsj.pkg_arch,
+                        name: rsj.meta.name,
+                        version: rsj.version.version,
+                        release: rsj.version.release,
+                        dist: rsj.version.dist,
+                        arch: rsj.version.arch,
                     }
-
                     rsj = null;
-
                     break;
                 }
             }
 
             if (rsj) {
                 losCpAppSpec.setActive.packages.push({
-                    name:    rsj.meta.name,
-                    version: rsj.version,
-                    release: rsj.release,
-                    dist:    rsj.pkg_os,
-                    arch:    rsj.pkg_arch,
+                    name: rsj.meta.name,
+                    version: rsj.version.version,
+                    release: rsj.version.release,
+                    dist: rsj.version.dist,
+                    arch: rsj.version.arch,
                 });
             }
 
@@ -501,8 +495,7 @@ losCpAppSpec.setPackageInfo = function(opt)
     });
 }
 
-losCpAppSpec.SetPackageRemove = function(name)
-{
+losCpAppSpec.SetPackageRemove = function(name) {
     if (name.length < 4) {
         return;
     }
@@ -517,25 +510,25 @@ losCpAppSpec.SetPackageRemove = function(name)
     losCpAppSpec.setPackageRefresh();
 }
 
-losCpAppSpec.setPackageRefresh = function()
-{
+losCpAppSpec.setPackageRefresh = function() {
     if (!losCpAppSpec.setActive || !losCpAppSpec.setActive.packages) {
         return;
     }
 
     if (losCpAppSpec.setActive.packages.length > 0) {
-        $("#loscp-app-specset-lpmls-msg").css({"display": "none"});
+        $("#loscp-app-specset-lpmls-msg").css({
+            "display": "none"
+        });
     }
 
     l4iTemplate.Render({
-        dstid:  "loscp-app-specset-lpmls",
-        tplid:  "loscp-app-specset-lpmls-tpl",
-        data:   losCpAppSpec.setActive.packages,
+        dstid: "loscp-app-specset-lpmls",
+        tplid: "loscp-app-specset-lpmls-tpl",
+        data: losCpAppSpec.setActive.packages,
     });
 }
 
-losCpAppSpec.SetExecutorSet = function(name)
-{
+losCpAppSpec.SetExecutorSet = function(name) {
     var title = "Executor Setup";
     var executor = null;
     var alert_id = "#loscp-app-specset-executorset-p5-alert";
@@ -560,15 +553,17 @@ losCpAppSpec.SetExecutorSet = function(name)
 
 
     l4iModal.Open({
-        title  : title,
-        width  : 900,
-        height : 600,
-        tpluri : losCp.TplPath("app/spec/executor-set"),
-        data   : executor,
-        callback : function(err) {
-            $(alert_id).css({"display": "block"}).text("No Template Found");
+        title: title,
+        width: 900,
+        height: 600,
+        tpluri: losCp.TplPath("app/spec/executor-set"),
+        data: executor,
+        callback: function(err) {
+            $(alert_id).css({
+                "display": "block"
+            }).text("No Template Found");
         },
-        buttons : [{
+        buttons: [{
             onclick: "l4iModal.Close()",
             title: "Close",
         }, {
@@ -579,8 +574,7 @@ losCpAppSpec.SetExecutorSet = function(name)
     });
 }
 
-losCpAppSpec.SetExecutorSave = function()
-{
+losCpAppSpec.SetExecutorSave = function() {
     var form = $("#loscp-app-specset-executorset-p5");
     var alert_id = "#loscp-app-specset-executorset-p5-alert";
 
@@ -593,17 +587,17 @@ losCpAppSpec.SetExecutorSave = function()
         exec_start: form.find("textarea[name=exec_start]").val(),
         exec_stop: form.find("textarea[name=exec_stop]").val(),
         priority: parseInt(form.find("input[name=priority]").val()),
-        plan : {},
+        plan: {},
     }
 
     var plan = form.find("select[name=plan]").val();
     switch (plan) {
-    case "on_boot":
-        executor.plan.on_boot = true;
-        break;
-    case "on_tick":
-        executor.plan.on_tick = 60;
-        break;
+        case "on_boot":
+            executor.plan.on_boot = true;
+            break;
+        case "on_tick":
+            executor.plan.on_tick = 60;
+            break;
     }
 
     if (!executor.name) {
@@ -628,8 +622,7 @@ losCpAppSpec.SetExecutorSave = function()
     l4iModal.Close();
 }
 
-losCpAppSpec.SetExecutorRemove = function(name)
-{
+losCpAppSpec.SetExecutorRemove = function(name) {
     if (name.length < 4) {
         return;
     }
@@ -644,35 +637,34 @@ losCpAppSpec.SetExecutorRemove = function(name)
     losCpAppSpec.setExecutorRefresh();
 }
 
-losCpAppSpec.SetServicePortAppend = function()
-{
+losCpAppSpec.SetServicePortAppend = function() {
     var data = {};
     if (losCp.UserSession.username == "sysadmin") {
         data._host_port_enable = true;
     }
 
     l4iTemplate.Render({
-        append : true,
-        dstid  : "loscp-app-specset-serviceports",
-        tplid  : "loscp-app-specset-serviceport-tpl",
-        data   : data,
+        append: true,
+        dstid: "loscp-app-specset-serviceports",
+        tplid: "loscp-app-specset-serviceport-tpl",
+        data: data,
     });
 }
 
-losCpAppSpec.SetServicePortDel = function(field)
-{
+losCpAppSpec.SetServicePortDel = function(field) {
     $(field).parent().parent().remove();
 }
 
 
-losCpAppSpec.setExecutorRefresh = function()
-{
+losCpAppSpec.setExecutorRefresh = function() {
     if (!losCpAppSpec.setActive || !losCpAppSpec.setActive.executors) {
         return;
     }
 
     if (losCpAppSpec.setActive.executors.length > 0) {
-        $("#loscp-app-specset-executorls-msg").css({"display": "none"});
+        $("#loscp-app-specset-executorls-msg").css({
+            "display": "none"
+        });
     }
 
     for (var i in losCpAppSpec.setActive.executors) {
@@ -705,17 +697,16 @@ losCpAppSpec.setExecutorRefresh = function()
     }
 
     l4iTemplate.Render({
-        dstid:  "loscp-app-specset-executorls",
-        tplid:  "loscp-app-specset-executorls-tpl",
-        data:   losCpAppSpec.setActive.executors,
+        dstid: "loscp-app-specset-executorls",
+        tplid: "loscp-app-specset-executorls-tpl",
+        data: losCpAppSpec.setActive.executors,
         callback: function() {
             losCp.CodeRender();
         },
     });
 }
 
-losCpAppSpec.SetCommit = function()
-{
+losCpAppSpec.SetCommit = function() {
     var alert_id = "#loscp-app-specset-alert";
 
     try {
@@ -760,19 +751,19 @@ losCpAppSpec.SetCommit = function()
             }
 
             losCpAppSpec.setActive.service_ports.push({
-                name:      sp_name,
-                box_port:  sp_port,
+                name: sp_name,
+                box_port: sp_port,
                 host_port: sp_hport,
             });
         });
 
         losCpAppSpec.setActive.roles = [];
         form.find("input[name=roles]:checked").each(function() {
-            
+
             var val = parseInt($(this).val());
             if (val > 1) {
                 losCpAppSpec.setActive.roles.push(val);
-            }            
+            }
         });
 
     } catch (err) {
@@ -780,10 +771,10 @@ losCpAppSpec.SetCommit = function()
     }
 
     losCp.ApiCmd("app-spec/set", {
-        method  : "POST",
-        data    : JSON.stringify(losCpAppSpec.setActive),
-        timeout : 3000,
-        callback : function(err, rsj) {
+        method: "POST",
+        data: JSON.stringify(losCpAppSpec.setActive),
+        timeout: 3000,
+        callback: function(err, rsj) {
 
             if (err || !rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Failed");
@@ -799,7 +790,7 @@ losCpAppSpec.SetCommit = function()
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successful operation");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 losCpAppSpec.ListRefresh();
                 losCpAppSpec.setActive = {};
             }, 1000);
@@ -807,32 +798,33 @@ losCpAppSpec.SetCommit = function()
     });
 }
 
-losCpAppSpec.SetRaw = function(id)
-{
+losCpAppSpec.SetRaw = function(id) {
     var title = "New Spec",
-        formset = {spec_text: ""};
+        formset = {
+            spec_text: ""
+        };
     if (id) {
-        title = "Setting Spec (#"+ id +")";
+        title = "Setting Spec (#" + id + ")";
         formset.meta_id = id;
     } else {
         formset.meta_id = "";
     }
 
-    seajs.use(["ep"], function (EventProxy) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
             if (data && data.kind && data.kind == "AppSpec") {
                 formset.spec_text = JSON.stringify(data, null, "  ");;
             }
 
             l4iModal.Open({
-                title  : title,
-                width  : 800,
-                height : 500,
-                tplsrc : tpl,
-                data   : formset,
-                buttons : [{
+                title: title,
+                width: 800,
+                height: 500,
+                tplsrc: tpl,
+                data: formset,
+                buttons: [{
                     onclick: "l4iModal.Close()",
                     title: "Close",
                 }, {
@@ -843,7 +835,7 @@ losCpAppSpec.SetRaw = function(id)
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             // TODO
             alert("SpecSet error, Please try again later (EC:loscp-app-specset)");
         });
@@ -856,15 +848,14 @@ losCpAppSpec.SetRaw = function(id)
         if (!id) {
             ep.emit("data", "");
         } else {
-            losCp.ApiCmd("app-spec/entry?id="+ id, {
+            losCp.ApiCmd("app-spec/entry?id=" + id, {
                 callback: ep.done("data"),
             });
         }
     });
 }
 
-losCpAppSpec.SetRawCommit = function()
-{
+losCpAppSpec.SetRawCommit = function() {
     var alert_id = "#loscp-app-specset-raw-alert";
     var setActive = null;
 
@@ -893,7 +884,7 @@ losCpAppSpec.SetRawCommit = function()
             if (!setActive.service_ports[i].name) {
                 throw "Invalid Network Name";
             }
-            if (!setActive.service_ports[i].box_port || 
+            if (!setActive.service_ports[i].box_port ||
                 setActive.service_ports[i].box_port < 1 ||
                 setActive.service_ports[i].box_port > 65535) {
                 throw "Invalid Network BoxPort";
@@ -916,10 +907,10 @@ losCpAppSpec.SetRawCommit = function()
     }
 
     losCp.ApiCmd("app-spec/set", {
-        method  : "POST",
-        data    : JSON.stringify(setActive),
-        timeout : 3000,
-        callback : function(err, rsj) {
+        method: "POST",
+        data: JSON.stringify(setActive),
+        timeout: 3000,
+        callback: function(err, rsj) {
 
             if (err || !rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Failed");
@@ -935,7 +926,7 @@ losCpAppSpec.SetRawCommit = function()
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successful operation");
             losCpAppSpec.ListRefresh();
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
             }, 500);
         }
@@ -943,11 +934,10 @@ losCpAppSpec.SetRawCommit = function()
 }
 
 //
-losCpAppSpec.CfgSet = function(spec_id)
-{
-    seajs.use(["ep"], function (EventProxy) {
+losCpAppSpec.CfgSet = function(spec_id) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
             var alert_id = "#loscp-appspec-cfg-fieldlist-alert";
 
@@ -994,27 +984,27 @@ losCpAppSpec.CfgSet = function(spec_id)
             losCpAppSpec.active = l4i.Clone(data);
 
             var btns = [{
-                title   : "Cancel",
-                onclick : "l4iModal.Close()",
+                title: "Cancel",
+                onclick: "l4iModal.Close()",
             }];
             if (losCp.UserSession.username == data.meta.user) {
                 btns.push({
-                    title   : "New Field",
-                    onclick : 'losCpAppSpec.CfgFieldSet()',
+                    title: "New Field",
+                    onclick: 'losCpAppSpec.CfgFieldSet()',
                 });
                 btns.push({
-                    title   : "Save",
-                    onclick : 'losCpAppSpec.CfgSetCommit()',
-                    style   : "btn-primary",
+                    title: "Save",
+                    onclick: 'losCpAppSpec.CfgSetCommit()',
+                    style: "btn-primary",
                 });
-            }         
+            }
 
             l4iModal.Open({
-                id:      "loscp-appspec-cfg-fieldlist-modal",
-                title  : "Configurator",
-                tplsrc : tpl,
-                width  : 900,
-                height : 600,
+                id: "loscp-appspec-cfg-fieldlist-modal",
+                title: "Configurator",
+                tplsrc: tpl,
+                width: 900,
+                height: 600,
                 buttons: btns,
                 callback: function() {
                     losCpAppSpec.cfgFieldListRefresh();
@@ -1022,7 +1012,7 @@ losCpAppSpec.CfgSet = function(spec_id)
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("ApiCmd error, Please try again later (EC:001)");
         });
 
@@ -1030,25 +1020,23 @@ losCpAppSpec.CfgSet = function(spec_id)
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("app-spec/entry?id="+ spec_id, {
+        losCp.ApiCmd("app-spec/entry?id=" + spec_id, {
             callback: ep.done("data"),
         });
     });
 }
 
-losCpAppSpec.cfgFieldListRefresh = function()
-{
+losCpAppSpec.cfgFieldListRefresh = function() {
     losCpAppSpec.active._cfgFieldTypes = losCpAppSpec.cfgFieldTypes;
     losCpAppSpec.active._cfgFieldAutoFills = losCpAppSpec.cfgFieldAutoFills;
     l4iTemplate.Render({
-        dstid : "loscp-appspec-cfg-fieldlist",
-        tplid : "loscp-appspec-cfg-fieldlist-tpl",
-        data  : losCpAppSpec.active,
+        dstid: "loscp-appspec-cfg-fieldlist",
+        tplid: "loscp-appspec-cfg-fieldlist-tpl",
+        data: losCpAppSpec.active,
     });
 }
 
-losCpAppSpec.CfgSetCommit = function()
-{
+losCpAppSpec.CfgSetCommit = function() {
     var alert_id = "#loscp-appspec-cfg-fieldlist-alert";
     var form = $("#loscp-appspec-cfg-fieldlist");
     if (!form) {
@@ -1066,16 +1054,16 @@ losCpAppSpec.CfgSetCommit = function()
     }
 
     var req = {
-        meta : {
+        meta: {
             id: losCpAppSpec.active.meta.id,
         },
         configurator: losCpAppSpec.active.configurator,
     }
 
     losCp.ApiCmd("app-spec/cfg-set", {
-        method  : "POST",
-        data    : JSON.stringify(req),
-        callback : function(err, rsj) {
+        method: "POST",
+        data: JSON.stringify(req),
+        callback: function(err, rsj) {
 
             if (err || !rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -1092,7 +1080,7 @@ losCpAppSpec.CfgSetCommit = function()
             losCpAppSpec.active = null;
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 losCpAppSpec.ListRefresh();
             }, 500);
@@ -1100,15 +1088,14 @@ losCpAppSpec.CfgSetCommit = function()
     });
 }
 
-losCpAppSpec.CfgFieldSet = function(name)
-{
+losCpAppSpec.CfgFieldSet = function(name) {
     if (!losCpAppSpec.active) {
         return;
     }
 
     var field = null;
     if (name) {
-        
+
         for (var i in losCpAppSpec.active.configurator.fields) {
             if (losCpAppSpec.active.configurator.fields[i].name == name) {
                 field = l4i.Clone(losCpAppSpec.active.configurator.fields[i]);
@@ -1123,16 +1110,16 @@ losCpAppSpec.CfgFieldSet = function(name)
     field._cfgFieldAutoFills = losCpAppSpec.cfgFieldAutoFills;
 
     l4iModal.Open({
-        id     : "loscp-appspec-cfgfieldset-modal",
-        title  : "Setting Field",
-        tpluri : losCp.TplPath("app/spec/cfg-fieldset"),
+        id: "loscp-appspec-cfgfieldset-modal",
+        title: "Setting Field",
+        tpluri: losCp.TplPath("app/spec/cfg-fieldset"),
         buttons: [{
-            title   : "Cancel",
-            onclick : "l4iModal.Close()",
+            title: "Cancel",
+            onclick: "l4iModal.Close()",
         }, {
-            title   : "Save",
-            onclick : 'losCpAppSpec.CfgFieldSetCommit()',
-            style   : "btn-primary",
+            title: "Save",
+            onclick: 'losCpAppSpec.CfgFieldSetCommit()',
+            style: "btn-primary",
         }],
         callback: function(err) {
 
@@ -1141,9 +1128,9 @@ losCpAppSpec.CfgFieldSet = function(name)
             }
 
             l4iTemplate.Render({
-                dstid  : "loscp-appspec-cfg-fieldset-form",
-                tplid  : "loscp-appspec-cfg-fieldset-tpl",
-                data   : field,
+                dstid: "loscp-appspec-cfg-fieldset-form",
+                tplid: "loscp-appspec-cfg-fieldset-tpl",
+                data: field,
                 callback: losCpAppSpec.CfgFieldSetValidatorNew,
             });
         },
@@ -1151,18 +1138,16 @@ losCpAppSpec.CfgFieldSet = function(name)
 }
 
 
-losCpAppSpec.CfgFieldSetValidatorNew = function()
-{
+losCpAppSpec.CfgFieldSetValidatorNew = function() {
     l4iTemplate.Render({
-        append : true,
-        dstid  : "loscp-app-specset-cfgfield-validators",
-        tplid  : "loscp-app-specset-cfgfield-validator-tpl",
+        append: true,
+        dstid: "loscp-app-specset-cfgfield-validators",
+        tplid: "loscp-app-specset-cfgfield-validator-tpl",
     });
 }
 
 
-losCpAppSpec.CfgFieldSetCommit = function()
-{
+losCpAppSpec.CfgFieldSetCommit = function() {
     var alert_id = "#loscp-appspec-cfg-fieldset-alert";
     var form = $("#loscp-appspec-cfg-fieldset-form");
     if (!form) {
@@ -1171,7 +1156,7 @@ losCpAppSpec.CfgFieldSetCommit = function()
 
     var field = {
         type: 1,
-        validates: [],    
+        validates: [],
     }
     var name_prev = form.find("input[name=name_prev]").val();
 
@@ -1233,7 +1218,7 @@ losCpAppSpec.CfgFieldSetCommit = function()
     }
     if (!losCpAppSpec.active.configurator.name) {
         losCpAppSpec.active.configurator.fields = fields;
-        l4iModal.Prev(losCpAppSpec.cfgFieldListRefresh);    
+        l4iModal.Prev(losCpAppSpec.cfgFieldListRefresh);
         return;
     }
     var req = {
@@ -1247,9 +1232,9 @@ losCpAppSpec.CfgFieldSetCommit = function()
     }
 
     losCp.ApiCmd("app-spec/cfg-set", {
-        method  : "POST",
-        data    : JSON.stringify(req),
-        callback : function(err, rsj) {
+        method: "POST",
+        data: JSON.stringify(req),
+        callback: function(err, rsj) {
 
             if (err || !rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -1265,9 +1250,9 @@ losCpAppSpec.CfgFieldSetCommit = function()
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 losCpAppSpec.active.configurator.fields = fields;
-                l4iModal.Prev(losCpAppSpec.cfgFieldListRefresh);    
+                l4iModal.Prev(losCpAppSpec.cfgFieldListRefresh);
             }, 500);
         }
     });

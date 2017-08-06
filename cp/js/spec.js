@@ -1,74 +1,78 @@
 var losCpSpec = {
-    statusls : [
-        {phase: "Active", title: "Active"},
-        {phase: "Suspend", title: "Suspend"},
+    statusls: [
+        {
+            phase: "Active",
+            title: "Active"
+        },
+        {
+            phase: "Suspend",
+            title: "Suspend"
+        },
     ],
-    boxImageSpecs : [{
-        distName : "CentOS 6",
-        dist     : "el6",
-        arch     : "x64",
+    boxImageSpecs: [{
+        distName: "CentOS 6",
+        dist: "el6",
+        arch: "x64",
     }, {
-        distName : "CentOS 7",
-        dist     : "el7",
-        arch     : "x64",
+        distName: "CentOS 7",
+        dist: "el7",
+        arch: "x64",
     }],
-    boxSpecDef : {
-        meta : {
-            id : "",
-            name : "",
+    boxSpecDef: {
+        meta: {
+            id: "",
+            name: "",
         },
-        ports : [],
-        image : null,
-        resource : null,
+        ports: [],
+        image: null,
+        resource: null,
     },
-    boxImageDef : {
-        meta : {
-            id : "",
-            name : "",
+    boxImageDef: {
+        meta: {
+            id: "",
+            name: "",
         },
-        driver : "docker",
-        spec : {
-            dist : "el7",
-            arch : "x64",
+        driver: "docker",
+        spec: {
+            dist: "el7",
+            arch: "x64",
         },
-        status : {
-            phase : "Active",
+        status: {
+            phase: "Active",
         }
     },
-    boxQuotaDef : {
-        meta : {
-            id : "",
-            name : "",
+    boxQuotaDef: {
+        meta: {
+            id: "",
+            name: "",
         },
-        phase : "Active",
-        mem_size  : 100,
-        cpu_num   : 100,
-        stor_size : 100,
+        phase: "Active",
+        mem_size: 100,
+        cpu_num: 100,
+        stor_size: 100,
     },
-    podDef : {
-        meta : {
-            id : "",
-            name : "",
+    podDef: {
+        meta: {
+            id: "",
+            name: "",
         },
-        phase : "Active",
-        volumes : [],
-        boxes : [],
+        phase: "Active",
+        volumes: [],
+        boxes: [],
     },
-    _boxImages : null,
-    _boxQuotas : null,
-    keyreg : /^[A-Za-z]\w{2,30}$/,
+    _boxImages: null,
+    _boxQuotas: null,
+    keyreg: /^[A-Za-z]\w{2,30}$/,
 }
 
-losCpSpec.Index = function()
-{
+losCpSpec.Index = function() {
     losCp.WorkLoader("-/spec/index");
 }
 
-losCpSpec.ImageList = function()
-{
-    seajs.use(["ep"], function (EventProxy) {
+losCpSpec.ImageList = function() {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
             if (tpl) {
                 $("#work-content-spec").html(tpl);
@@ -86,13 +90,13 @@ losCpSpec.ImageList = function()
 
 
             l4iTemplate.Render({
-                dstid : "mix-spec-images",
-                tplid : "mix-spec-images-tpl",
-                data  : data,
+                dstid: "mix-spec-images",
+                tplid: "mix-spec-images-tpl",
+                data: data,
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("ListRefresh error, Please try again later (EC:001)");
         });
 
@@ -107,11 +111,10 @@ losCpSpec.ImageList = function()
 }
 
 
-losCpSpec.ImageSetForm = function(imageid)
-{
-    seajs.use(["ep"], function (EventProxy) {
+losCpSpec.ImageSetForm = function(imageid) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
 
             if (!rsj) {
                 rsj = l4i.Clone(losCpSpec.boxImageDef)
@@ -125,21 +128,21 @@ losCpSpec.ImageSetForm = function(imageid)
             rsj._specs = losCpSpec.boxImageSpecs;
 
             l4iModal.Open({
-                title  : "Box Image Spec Setting",
-                tplsrc : tpl,
-                data   : rsj,
+                title: "Box Image Spec Setting",
+                tplsrc: tpl,
+                data: rsj,
                 buttons: [{
-                    onclick : "l4iModal.Close()",
-                    title   : "Close",
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
                 }, {
-                    onclick : "losCpSpec.ImageSetCommit()",
-                    title   : "Save",
-                    style   : "btn btn-primary",
+                    onclick: "losCpSpec.ImageSetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
                 }],
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("SpecSet error, Please try again later (EC:mix-spec-imageset)");
         });
 
@@ -152,34 +155,33 @@ losCpSpec.ImageSetForm = function(imageid)
         if (!imageid) {
             ep.emit("data", null);
         } else {
-            losCp.ApiCmd("spec/image-entry?imageid="+ imageid, {
+            losCp.ApiCmd("spec/image-entry?imageid=" + imageid, {
                 callback: ep.done("data"),
             });
         }
     });
 }
 
-losCpSpec.ImageSetCommit = function()
-{
+losCpSpec.ImageSetCommit = function() {
     var form = $("#mix-spec-image-form");
 
     var req = {
-        meta : {
-            id : form.find("input[name=meta_id]").val(),
-            name : form.find("input[name=meta_name]").val(),
+        meta: {
+            id: form.find("input[name=meta_id]").val(),
+            name: form.find("input[name=meta_name]").val(),
         },
-        status : {
-            phase : form.find("input[name=status_phase]:checked").val(),
+        status: {
+            phase: form.find("input[name=status_phase]:checked").val(),
         },
-        spec : {
-            dist : form.find("input[name=spec_dist]:checked").val(),
+        spec: {
+            dist: form.find("input[name=spec_dist]:checked").val(),
         }
     };
 
     losCp.ApiCmd("spec/image-set", {
-        method  : "POST",
-        data    : JSON.stringify(req),
-        success : function(rsj) {
+        method: "POST",
+        data: JSON.stringify(req),
+        success: function(rsj) {
 
             if (!rsj) {
                 return l4i.InnerAlert("#mix-spec-imageset-alert", 'alert-danger', "Network Connection Exception");
@@ -195,24 +197,23 @@ losCpSpec.ImageSetCommit = function()
 
             l4i.InnerAlert("#mix-spec-imageset-alert", 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 losCpSpec.ImageList();
             }, 500);
         },
-        error : function(xhr, textStatus, error) {
-            l4i.InnerAlert("#mix-spec-imageset-alert", 'alert-danger', textStatus+' '+xhr.responseText);
+        error: function(xhr, textStatus, error) {
+            l4i.InnerAlert("#mix-spec-imageset-alert", 'alert-danger', textStatus + ' ' + xhr.responseText);
         }
     });
 }
 
 
 
-losCpSpec.QuotaList = function()
-{
-    seajs.use(["ep"], function (EventProxy) {
+losCpSpec.QuotaList = function() {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
             if (tpl) {
                 $("#work-content-spec").html(tpl);
@@ -230,13 +231,13 @@ losCpSpec.QuotaList = function()
 
 
             l4iTemplate.Render({
-                dstid : "mix-spec-quotas",
-                tplid : "mix-spec-quotas-tpl",
-                data  : data,
+                dstid: "mix-spec-quotas",
+                tplid: "mix-spec-quotas-tpl",
+                data: data,
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("ListRefresh error, Please try again later (EC:001)");
         });
 
@@ -251,11 +252,10 @@ losCpSpec.QuotaList = function()
 }
 
 
-losCpSpec.QuotaSetForm = function(quotaid)
-{
-    seajs.use(["ep"], function (EventProxy) {
+losCpSpec.QuotaSetForm = function(quotaid) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
 
             if (!rsj) {
                 rsj = l4i.Clone(losCpSpec.boxQuotaDef)
@@ -268,23 +268,23 @@ losCpSpec.QuotaSetForm = function(quotaid)
             rsj._statusls = losCpSpec.statusls;
 
             l4iModal.Open({
-                title  : "Box Quota Spec Setting",
-                tplsrc : tpl,
-                data   : rsj,
-                width  : 700,
-                height : 500,
+                title: "Box Quota Spec Setting",
+                tplsrc: tpl,
+                data: rsj,
+                width: 700,
+                height: 500,
                 buttons: [{
-                    onclick : "l4iModal.Close()",
-                    title   : "Close",
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
                 }, {
-                    onclick : "losCpSpec.QuotaSetCommit()",
-                    title   : "Save",
-                    style   : "btn btn-primary",
+                    onclick: "losCpSpec.QuotaSetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
                 }],
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("SpecSet error, Please try again later (EC:mix-spec-quotaset)");
         });
 
@@ -297,32 +297,31 @@ losCpSpec.QuotaSetForm = function(quotaid)
         if (!quotaid) {
             ep.emit("data", null);
         } else {
-            losCp.ApiCmd("spec/quota-entry?quotaid="+ quotaid, {
+            losCp.ApiCmd("spec/quota-entry?quotaid=" + quotaid, {
                 callback: ep.done("data"),
             });
         }
     });
 }
 
-losCpSpec.QuotaSetCommit = function()
-{
+losCpSpec.QuotaSetCommit = function() {
     var form = $("#mix-spec-quota-form");
 
     var req = {
-        meta : {
-            id : form.find("input[name=meta_id]").val(),
-            name : form.find("input[name=meta_name]").val(),
+        meta: {
+            id: form.find("input[name=meta_id]").val(),
+            name: form.find("input[name=meta_name]").val(),
         },
-        phase : form.find("input[name=phase]:checked").val(),
-        mem_size : parseInt(form.find("input[name=mem_size]").val()),
-        cpu_num : parseInt(form.find("input[name=cpu_num]").val()),
-        stor_size : parseInt(form.find("input[name=stor_size]").val()),
+        phase: form.find("input[name=phase]:checked").val(),
+        mem_size: parseInt(form.find("input[name=mem_size]").val()),
+        cpu_num: parseInt(form.find("input[name=cpu_num]").val()),
+        stor_size: parseInt(form.find("input[name=stor_size]").val()),
     };
 
     losCp.ApiCmd("spec/quota-set", {
-        method  : "POST",
-        data    : JSON.stringify(req),
-        success : function(rsj) {
+        method: "POST",
+        data: JSON.stringify(req),
+        success: function(rsj) {
 
             if (!rsj) {
                 return l4i.InnerAlert("#mix-spec-quotaset-alert", 'alert-danger', "Network Connection Exception");
@@ -338,23 +337,22 @@ losCpSpec.QuotaSetCommit = function()
 
             l4i.InnerAlert("#mix-spec-quotaset-alert", 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 losCpSpec.QuotaList();
             }, 500);
         },
-        error : function(xhr, textStatus, error) {
-            l4i.InnerAlert("#mix-spec-quotaset-alert", 'alert-danger', textStatus+' '+xhr.responseText);
+        error: function(xhr, textStatus, error) {
+            l4i.InnerAlert("#mix-spec-quotaset-alert", 'alert-danger', textStatus + ' ' + xhr.responseText);
         }
     });
 }
 
 //
-losCpSpec.PodList = function()
-{
-    seajs.use(["ep"], function (EventProxy) {
+losCpSpec.PodList = function() {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
             if (tpl) {
                 $("#work-content-spec").html(tpl);
@@ -374,13 +372,13 @@ losCpSpec.PodList = function()
 
 
             l4iTemplate.Render({
-                dstid : "mix-spec-pods",
-                tplid : "mix-spec-pods-tpl",
-                data  : data,
+                dstid: "mix-spec-pods",
+                tplid: "mix-spec-pods-tpl",
+                data: data,
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("ListRefresh error, Please try again later (EC:001)");
         });
 
@@ -395,11 +393,10 @@ losCpSpec.PodList = function()
 }
 
 
-losCpSpec.PodSetForm = function(podid)
-{
-    seajs.use(["ep"], function (EventProxy) {
+losCpSpec.PodSetForm = function(podid) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "images", "quotas", "data", function (tpl, images, quotas, rsj) {
+        var ep = EventProxy.create("tpl", "images", "quotas", "data", function(tpl, images, quotas, rsj) {
 
             if (!rsj) {
                 rsj = l4i.Clone(losCpSpec.podDef)
@@ -419,26 +416,26 @@ losCpSpec.PodSetForm = function(podid)
             // console.log(rsj);
 
             l4iModal.Open({
-                title  : "Pod Spec Setting",
-                tplsrc : tpl,
+                title: "Pod Spec Setting",
+                tplsrc: tpl,
                 // data   : rsj,
-                width  : 980,
-                height : 600,
+                width: 980,
+                height: 600,
                 buttons: [{
-                    onclick : "l4iModal.Close()",
-                    title   : "Close",
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
                 }, {
-                    onclick : "losCpSpec.PodSetCommit()",
-                    title   : "Save",
-                    style   : "btn btn-primary",
+                    onclick: "losCpSpec.PodSetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
                 }],
-                success : function() {
+                success: function() {
 
                     l4iTemplate.Render({
-                        dstid  : "mix-spec-podset",
-                        tplid  : "mix-spec-podset-tpl",
-                        data   : rsj,
-                        success : function() {
+                        dstid: "mix-spec-podset",
+                        tplid: "mix-spec-podset-tpl",
+                        data: rsj,
+                        success: function() {
 
                             if (!rsj.labels || rsj.labels.length < 1) {
                                 losCpSpec.PodSetLabelAppend();
@@ -451,7 +448,7 @@ losCpSpec.PodSetForm = function(podid)
                                 }
 
                             } else {
-                                 losCpSpec.PodSetBoxAppend();
+                                losCpSpec.PodSetBoxAppend();
                             }
 
                         },
@@ -460,7 +457,7 @@ losCpSpec.PodSetForm = function(podid)
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("SpecSet error, Please try again later (EC:mix-spec-podset)");
         });
 
@@ -481,46 +478,43 @@ losCpSpec.PodSetForm = function(podid)
         if (!podid) {
             ep.emit("data", null);
         } else {
-            losCp.ApiCmd("spec/pod-entry?podid="+ podid, {
+            losCp.ApiCmd("spec/pod-entry?podid=" + podid, {
                 callback: ep.done("data"),
             });
         }
     });
 }
 
-losCpSpec.PodSetLabelAppend = function()
-{
+losCpSpec.PodSetLabelAppend = function() {
     l4iTemplate.Render({
-        append : true,
-        dstid  : "mix-spec-podset-labels",
-        tplid  : "mix-spec-podset-label-tpl",
+        append: true,
+        dstid: "mix-spec-podset-labels",
+        tplid: "mix-spec-podset-label-tpl",
     });
 }
 
-losCpSpec.PodSetLabelDel = function(field)
-{
+losCpSpec.PodSetLabelDel = function(field) {
     $(field).parent().parent().remove();
 }
 
-losCpSpec.PodSetBoxAppend = function(box)
-{
+losCpSpec.PodSetBoxAppend = function(box) {
     if (!box) {
         box = l4i.Clone(losCpSpec.boxSpecDef);
         box.resource = l4i.Clone(losCpSpec.boxQuotaDef);
-        box.image    = l4i.Clone(losCpSpec.boxImageDef);
+        box.image = l4i.Clone(losCpSpec.boxImageDef);
     }
 
     box._images = losCpSpec._boxImages;
     box._quotas = losCpSpec._boxQuotas;
 
-    box._rowid  = Math.random().toString(16).slice(2);
+    box._rowid = Math.random().toString(16).slice(2);
 
     l4iTemplate.Render({
-        append : true,
-        dstid  : "mix-spec-podset-boxes",
-        tplid  : "mix-spec-podset-box-tpl",
-        data   : box,
-        success : function() {
+        append: true,
+        dstid: "mix-spec-podset-boxes",
+        tplid: "mix-spec-podset-box-tpl",
+        data: box,
+        success: function() {
 
             if (!box.ports || box.ports.length < 1) {
                 losCpSpec.PodSetBoxPortAppend(box._rowid);
@@ -529,37 +523,33 @@ losCpSpec.PodSetBoxAppend = function(box)
     });
 }
 
-losCpSpec.PodSetBoxDel = function(rowid)
-{
+losCpSpec.PodSetBoxDel = function(rowid) {
     $("#mix-spec-podset-box-" + rowid).remove();
 }
 
-losCpSpec.PodSetBoxPortAppend = function(rowid)
-{
+losCpSpec.PodSetBoxPortAppend = function(rowid) {
     l4iTemplate.Render({
-        append : true,
-        dstid  : "mix-spec-podset-box-ports-"+ rowid,
-        tplid  : "mix-spec-podset-box-port-tpl",
+        append: true,
+        dstid: "mix-spec-podset-box-ports-" + rowid,
+        tplid: "mix-spec-podset-box-port-tpl",
     });
 }
 
-losCpSpec.PodSetBoxPortDel = function(field)
-{
+losCpSpec.PodSetBoxPortDel = function(field) {
     $(field).parent().parent().remove();
 }
 
-losCpSpec.PodSetCommit = function()
-{
+losCpSpec.PodSetCommit = function() {
     var form = $("#mix-spec-podset");
 
     var req = {
-        meta : {
-            id : form.find("input[name=meta_id]").val(),
-            name : form.find("input[name=meta_name]").val(),
+        meta: {
+            id: form.find("input[name=meta_id]").val(),
+            name: form.find("input[name=meta_name]").val(),
         },
-        phase : form.find("input[name=phase]:checked").val(),
-        labels : [],
-        boxes  : [],
+        phase: form.find("input[name=phase]:checked").val(),
+        labels: [],
+        boxes: [],
     };
 
     if (!losCpSpec.keyreg.test(req.meta.name)) {
@@ -591,21 +581,21 @@ losCpSpec.PodSetCommit = function()
         form.find(".mix-spec-podset-box").each(function() {
 
             var box = {
-                meta : {
-                    id   : $(this).find("input[name=box_id]").val(),
-                    name : $(this).find("input[name=box_name]").val(),
+                meta: {
+                    id: $(this).find("input[name=box_id]").val(),
+                    name: $(this).find("input[name=box_name]").val(),
                 },
-                image : {
-                    meta : {
-                        id : $(this).find("select[name=spec_image_id]").val(),
+                image: {
+                    meta: {
+                        id: $(this).find("select[name=spec_image_id]").val(),
                     },
                 },
-                resource : {
-                    meta : {
-                        id : $(this).find("select[name=spec_quota_id]").val(),
+                resource: {
+                    meta: {
+                        id: $(this).find("select[name=spec_quota_id]").val(),
                     },
                 },
-                ports : [],
+                ports: [],
             }
 
             if (!losCpSpec.keyreg.test(box.meta.name)) {
@@ -639,9 +629,9 @@ losCpSpec.PodSetCommit = function()
     $("#mix-spec-podset-alert").hide();
 
     losCp.ApiCmd("spec/pod-set", {
-        method  : "POST",
-        data    : JSON.stringify(req),
-        success : function(rsj) {
+        method: "POST",
+        data: JSON.stringify(req),
+        success: function(rsj) {
 
             if (!rsj) {
                 return l4i.InnerAlert("#mix-spec-podset-alert", 'alert-danger', "Network Connection Exception");
@@ -657,13 +647,13 @@ losCpSpec.PodSetCommit = function()
 
             l4i.InnerAlert("#mix-spec-podset-alert", 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 losCpSpec.PodList();
             }, 500);
         },
-        error : function(xhr, textStatus, error) {
-            l4i.InnerAlert("#mix-spec-podset-alert", 'alert-danger', textStatus+' '+xhr.responseText);
+        error: function(xhr, textStatus, error) {
+            l4i.InnerAlert("#mix-spec-podset-alert", 'alert-danger', textStatus + ' ' + xhr.responseText);
         }
     });
 }

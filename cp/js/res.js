@@ -1,12 +1,17 @@
 var losCpRes = {
-    statusls : [
-        {phase: "Running", title: "Running"},
-        {phase: "Stopped", title: "Stopped"},
+    statusls: [
+        {
+            phase: "Running",
+            title: "Running"
+        },
+        {
+            phase: "Stopped",
+            title: "Stopped"
+        },
     ]
 }
 
-losCpRes.Index = function()
-{
+losCpRes.Index = function() {
     losCp.TplFetch("res/index", {
         callback: function(err, data) {
             if (err) {
@@ -18,7 +23,4 @@ losCpRes.Index = function()
     });
 }
 
-losCpRes.todo = function()
-{
-
-}
+losCpRes.todo = function() {}

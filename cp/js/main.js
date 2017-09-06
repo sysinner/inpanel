@@ -97,7 +97,7 @@ losCp.load_index = function() {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
             losCp.UserSession = session;
-			lpLps.UserSession = session;
+            lpLps.UserSession = session;
 
             if (!zones.items || zones.items.length == 0) {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
@@ -362,3 +362,28 @@ losCp.OpActionTitle = function(op_action) {
     return "";
 }
 
+losCp.About = function() {
+    seajs.use(["ep"], function(EventProxy) {
+        var ep = EventProxy.create("tpl", function(tpl) {
+
+            l4iModal.Open({
+                title: "System Info",
+                tplsrc: tpl,
+                width: 800,
+                height: 400,
+                buttons: [{
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                }],
+            });
+        });
+
+        ep.fail(function(err) {
+            alert("Network Connection Error, Please try again later (EC:loscp-pod)");
+        });
+
+        losCp.TplFetch("index/about", {
+            callback: ep.done("tpl"),
+        });
+    });
+}

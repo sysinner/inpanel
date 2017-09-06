@@ -11,6 +11,10 @@
       <li><a class="l4i-nav-item" href="#lps/index">Packages</a></li>
     </ul>
     <ul class="loscp-nav loscp-nav-right" id="loscp-topbar-userbar"></ul>
+    <ul class="loscp-nav loscp-nav-right">
+      <li><a class="l4i-nav-item" href="https://github.com/lessos/los-soho/issues" target="_blank">Bug Report</a></li>
+      <li><a class="l4i-nav-item" href="#about" onclick="losCp.About()">About</a></li>
+    </ul>
   </div>
 </div>
 <div id="comp-content" class="">loading</div>

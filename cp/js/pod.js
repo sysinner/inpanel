@@ -49,6 +49,19 @@ var losCpPod = {
     cluster_selected: null,
     zone_active: null,
     new_options: {},
+    entry_active: null,
+    entry_active_past: 3600,
+    hchart_def: {
+        "type": "bar",
+        "options": {
+            "height": "200px",
+            "title": "",
+        },
+        "data": {
+            "labels": [],
+            "datasets": [],
+        },
+    },
 }
 
 losCpPod.Index = function() {
@@ -819,3 +832,259 @@ losCpPod.SetCommit = function() {
         }
     });
 }
+
+losCpPod.EntryStats = function(time_past) {
+    if (time_past) {
+        losCpPod.entry_active_past = parseInt(time_past);
+    }
+    if (losCpPod.entry_active_past < 600) {
+        losCpPod.entry_active_past = 600;
+    }
+    if (losCpPod.entry_active_past > (30 * 86400)) {
+        losCpPod.entry_active_past = 30 * 86400;
+    }
+    losCpPod.Entry();
+}
+
+losCpPod.Entry = function(pod_id) {
+
+    if (pod_id) {
+        losCpPod.entry_active_pod = pod_id;
+    }
+
+    $("#comp-content").html("<div id='loscp-module-navbar'>\
+  <ul id='loscp-module-navbar-menus' class='loscp-module-nav'>\
+    <li><a class='l4i-nav-item primary' href='#' onclick='losCpPod.Index()'>\
+      <span class='glyphicon glyphicon-menu-left' aria-hidden='true'></span> Back\
+    </a></li>\
+    <li><a class='l4i-nav-item active' href='#pod/chart'>Workloads</a></li>\
+  </ul>\
+  <ul id='loscp-module-navbar-optools' class='loscp-module-nav loscp-nav-right'></ul>\
+</div>\
+<div id='work-content'></div>");
+
+    losCpPod.EntryStats();
+}
+
+losCpPod.EntryStatsButton = function(obj) {
+    $("#loscp-module-navbar-optools").find(".hover").removeClass("hover");
+    obj.setAttribute("class", 'hover');
+    losCpPod.EntryStats(parseInt(obj.getAttribute('value')));
+}
+
+losCpPod.EntryStats = function(time_past) {
+
+    if (time_past) {
+        losCpPod.entry_active_past = parseInt(time_past);
+    }
+    if (losCpPod.entry_active_past < 600) {
+        losCpPod.entry_active_past = 600;
+    }
+    if (losCpPod.entry_active_past > (30 * 86400)) {
+        losCpPod.entry_active_past = 30 * 86400;
+    }
+
+    var stats_url = "id=" + losCpPod.entry_active_pod;
+    var stats_query = {
+        tc: 180,
+        tp: losCpPod.entry_active_past,
+        is: [
+            {
+                n: "cpu/us",
+                d: true
+            },
+            {
+                n: "ram/us"
+            },
+            {
+                n: "ram/cc"
+            },
+            {
+                n: "net/rs",
+                d: true
+            },
+            {
+                n: "net/ws",
+                d: true
+            },
+            {
+                n: "fs/rs",
+                d: true
+            },
+            {
+                n: "fs/rn",
+                d: true
+            },
+            {
+                n: "fs/ws",
+                d: true
+            },
+            {
+                n: "fs/wn",
+                d: true
+            },
+        ],
+    };
+
+    var wlimit = 610;
+    var ww = $(window).width();
+    if (ww > wlimit) {
+        ww = wlimit;
+    }
+    if (stats_query.tp >= (30 * 86400)) {
+        stats_query.tc = parseInt(stats_query.tp / 30);
+    } else if (stats_query.tp <= 3600) {
+        stats_query.tc = parseInt(stats_query.tp / 20);
+    } else if (stats_query.tp == 86400) {
+        stats_query.tc = parseInt(stats_query.tp / 24);
+    } else {
+        stats_query.tc = parseInt(stats_query.tp / 20);
+    }
+
+    stats_url += "&qry=" + btoa(JSON.stringify(stats_query));
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "pod", "stats", function(tpl, pod, stats) {
+
+            if (tpl) {
+                $("#work-content").html(tpl);
+                $(".loscp-podentry-stats-item").css({
+                    "flex-basis": ww + "px"
+                });
+                losCp.OpToolsRefresh("#loscp-podentry-optools-stats");
+            }
+
+            var stats_cpu = l4i.Clone(losCpPod.hchart_def);
+            stats_cpu.options.title = "CPU (seconds)";
+            stats_cpu.type = "line";
+
+            var stats_ram = l4i.Clone(losCpPod.hchart_def);
+            stats_ram.options.title = "Memory Usage (MB)";
+            stats_ram.type = "line";
+
+            var stats_net = l4i.Clone(losCpPod.hchart_def);
+            stats_net.options.title = "Network (Mbps)";
+            stats_net.type = "line";
+
+            var stats_fsn = l4i.Clone(losCpPod.hchart_def);
+            stats_fsn.options.title = "Storage IOPS";
+            stats_fsn.type = "line";
+
+            var stats_fss = l4i.Clone(losCpPod.hchart_def);
+            stats_fss.options.title = "Storage IO Bytes (MB)";
+            stats_fss.type = "line";
+
+            for (var i in stats.items) {
+
+                var v = stats.items[i];
+                var dataset = {
+                    data: []
+                };
+                var labels = [];
+                for (var j in v.items) {
+
+                    var v2 = v.items[j];
+                    var t = new Date(v2.time * 1000);
+                    if (losCpPod.entry_active_past <= 600) {
+                        labels.push(t.l4iTimeFormat("H:i:s"));
+                    } else if (losCpPod.entry_active_past <= 3600) {
+                        labels.push(t.l4iTimeFormat("H:i"));
+                    } else if (losCpPod.entry_active_past >= 86400) {
+                        labels.push(t.l4iTimeFormat("m-d H:i"));
+                    }
+
+                    if (v.name == "cpu/us") {
+                        v2.value = (v2.value / 1000000000).toFixed(2);
+                    }
+                    if (v.name == "ram/us" || v.name == "ram/cc") {
+                        v2.value = (v2.value / (1024 * 1024)).toFixed(2);
+                    }
+                    if (v.name == "net/rs" || v.name == "net/ws") {
+                        v2.value = (v2.value / 1000000).toFixed(2);
+                    }
+                    if (v.name == "fs/rs" || v.name == "fs/ws") {
+                        v2.value = (v2.value / (1024 * 1024)).toFixed(2);
+                    }
+                    dataset.data.push(v2.value);
+                }
+
+                switch (v.name) {
+                    case "cpu/us":
+                        stats_cpu.data.labels = labels;
+                        stats_cpu.data.datasets.push(dataset);
+                        break;
+
+                    case "ram/us":
+                        stats_ram.data.labels = labels;
+                        dataset.label = "Usage";
+                        stats_ram.data.datasets.push(dataset);
+                        break
+
+                    case "ram/cc":
+                        stats_ram.data.labels = labels;
+                        dataset.label = "Cache";
+                        stats_ram.data.datasets.push(dataset);
+                        break
+
+                    case "net/rs":
+                        stats_net.data.labels = labels;
+                        dataset.label = "Read";
+                        stats_net.data.datasets.push(dataset);
+                        break
+
+                    case "net/ws":
+                        stats_net.data.labels = labels;
+                        dataset.label = "Send";
+                        stats_net.data.datasets.push(dataset);
+                        break
+
+                    case "fs/rs":
+                        stats_fss.data.labels = labels;
+                        dataset.label = "Read";
+                        stats_fss.data.datasets.push(dataset);
+                        break
+
+                    case "fs/ws":
+                        stats_fss.data.labels = labels;
+                        dataset.label = "Write";
+                        stats_fss.data.datasets.push(dataset);
+                        break
+
+                    case "fs/rn":
+                        stats_fsn.data.labels = labels;
+                        dataset.label = "Read";
+                        stats_fsn.data.datasets.push(dataset);
+                        break
+
+                    case "fs/wn":
+                        stats_fsn.data.labels = labels;
+                        dataset.label = "Write";
+                        stats_fsn.data.datasets.push(dataset);
+                        break
+                }
+            }
+            hooto_chart.RenderElement(stats_cpu, "loscp-podentry-stats-cpu");
+            hooto_chart.RenderElement(stats_ram, "loscp-podentry-stats-ram");
+            hooto_chart.RenderElement(stats_net, "loscp-podentry-stats-net");
+            hooto_chart.RenderElement(stats_fss, "loscp-podentry-stats-fss");
+            hooto_chart.RenderElement(stats_fsn, "loscp-podentry-stats-fsn");
+        });
+
+        ep.fail(function(err) {
+            alert("Network Connection Error, Please try again later (EC:loscp-pod)");
+        });
+
+        losCp.ApiCmd("pod/entry?id=" + losCpPod.entry_active_pod, {
+            callback: ep.done("pod"),
+        });
+
+        losCp.ApiCmd("pod-stats/feed?" + stats_url, {
+            callback: ep.done("stats"),
+        });
+
+        losCp.TplFetch("pod/entry-stats", {
+            callback: ep.done("tpl"),
+        });
+    });
+}
+

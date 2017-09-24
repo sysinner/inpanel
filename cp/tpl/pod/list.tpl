@@ -30,6 +30,7 @@
       {[}]}
       <th>Replicas</th>   
       <th>Updated</th>
+      <th>Status</th>
       <th>Action</th>
       <th></th>
     </tr>
@@ -48,6 +49,11 @@
     {[}]}
     <td>{[=v.operate.replicas.length]}</td>
     <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+    <td>
+      <button class="pure-button button-xsmall" onclick="losCpPod.Entry('{[=v.meta.id]}')">
+        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Detail
+	  </button>
+    </td>
     <td>
       <select class="pure-button button-xsmall {[if (v.operate.action == 2) {]} button-success{[}]}" 
         onchange="losCpPod.ListOpActionChange('{[=v.meta.id]}', this)">

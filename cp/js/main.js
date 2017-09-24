@@ -76,6 +76,7 @@ losCp.Boot = function(login_first) {
             "~/cp/js/app-spec.js" + losCp.debug_uri(),
             "~/cp/js/res.js" + losCp.debug_uri(),
             "~/cp/js/res-domain.js" + losCp.debug_uri(),
+            "hchart/~/hchart.js" + losCp.debug_uri(),
             "lps/~/lps/js/main.js" + losCp.debug_uri(),
             "lps/~/lps/css/main.css" + losCp.debug_uri(),
         ], losCp.load_index);
@@ -88,6 +89,7 @@ losCp.load_index = function() {
 
     lpLps.base = losCp.base + "lps/~/lps/";
     lpLps.option_navpf = "loscp";
+    hooto_chart.basepath = losCp.base + "/hchart/~/";
 
     seajs.use(["ep"], function(EventProxy) {
 
@@ -387,3 +389,23 @@ losCp.About = function() {
         });
     });
 }
+
+losCp.NavBack = function(fn) {
+
+    if (fn && typeof fn === "function") {
+        losCp.nav_back = fn;
+        $("#loscp-navbar-back").css({
+            "display": "block"
+        });
+        return;
+    }
+
+    if (losCp.nav_back) {
+        losCp.nav_back();
+        losCp.nav_back = null;
+        $("#loscp-navbar-back").css({
+            "display": "nono"
+        });
+    }
+}
+

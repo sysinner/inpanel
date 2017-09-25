@@ -11,6 +11,11 @@
 
 <script type="text/html" id="loscp-podentry-optools-stats">
 <li>
+  <a href="#" value="600" onclick="losCpPod.EntryStatsButton(this)" class="l4i-nav-item">
+    Last 10 Minutes
+  </a>
+</li>
+<li>
   <a href="#" value="3600" onclick="losCpPod.EntryStatsButton(this)" class="l4i-nav-item hover">
     Last 1 Hour
   </a>

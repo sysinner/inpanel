@@ -52,7 +52,7 @@ var losCpPod = {
     entry_active: null,
     entry_active_past: 3600,
     hchart_def: {
-        "type": "bar",
+        "type": "line",
         "options": {
             "height": "200px",
             "title": "",
@@ -872,6 +872,22 @@ losCpPod.EntryStatsButton = function(obj) {
     losCpPod.EntryStats(parseInt(obj.getAttribute('value')));
 }
 
+losCpPod.entryStatsFeedMaxValue = function(feed, names) {
+    var max = 0;
+    var arr = names.split(",");
+    for (var i in feed.items) {
+        if (arr.indexOf(feed.items[i].name) < 0) {
+            continue;
+        }
+        for (var j in feed.items[i].items) {
+            if (feed.items[i].items[j].value > max) {
+                max = feed.items[i].items[j].value;
+            }
+        }
+    }
+    return max;
+}
+
 losCpPod.EntryStats = function(time_past) {
 
     if (time_past) {
@@ -927,18 +943,23 @@ losCpPod.EntryStats = function(time_past) {
     };
 
     var wlimit = 610;
+    var tfmt = "";
     var ww = $(window).width();
     if (ww > wlimit) {
         ww = wlimit;
     }
-    if (stats_query.tp >= (30 * 86400)) {
-        stats_query.tc = parseInt(stats_query.tp / 30);
-    } else if (stats_query.tp <= 3600) {
-        stats_query.tc = parseInt(stats_query.tp / 20);
-    } else if (stats_query.tp == 86400) {
-        stats_query.tc = parseInt(stats_query.tp / 24);
+    if (stats_query.tp >= (3 * 86400)) {
+        stats_query.tc = 86400;
+        tfmt = "m-d";
+    } else if (stats_query.tp >= (3 * 3600)) {
+        stats_query.tc = 3600;
+        tfmt = "m-d H:i";
+    } else if (stats_query.tp >= (3 * 600)) {
+        stats_query.tc = 300;
+        tfmt = "H:i";
     } else {
-        stats_query.tc = parseInt(stats_query.tp / 20);
+        stats_query.tc = 60;
+        tfmt = "i:s";
     }
 
     stats_url += "&qry=" + btoa(JSON.stringify(stats_query));
@@ -954,25 +975,60 @@ losCpPod.EntryStats = function(time_past) {
                 losCp.OpToolsRefresh("#loscp-podentry-optools-stats");
             }
 
+            var max = 0;
+
+            //
             var stats_cpu = l4i.Clone(losCpPod.hchart_def);
-            stats_cpu.options.title = "CPU (seconds)";
-            stats_cpu.type = "line";
+            max = losCpPod.entryStatsFeedMaxValue(stats, "cpu/us");
+            if (max > 1000000000) {
+                stats_cpu.options.title = l4i.T("CPU (Seconds / %d seconds)", stats.cycle);
+                stats_cpu._fix = 1000000000;
+            } else if (max > 1000000) {
+                stats_cpu.options.title = l4i.T("CPU (Millisecond / %d seconds)", stats.cycle);
+                stats_cpu._fix = 1000000;
+            } else if (max > 1000) {
+                stats_cpu.options.title = l4i.T("CPU (Microsecond / %d seconds)", stats.cycle);
+                stats_cpu._fix = 1000;
+            } else {
+                stats_cpu.options.title = l4i.T("CPU (Nanosecond / %d seconds)", stats.cycle);
+            }
 
+
+            //
             var stats_ram = l4i.Clone(losCpPod.hchart_def);
-            stats_ram.options.title = "Memory Usage (MB)";
-            stats_ram.type = "line";
+            stats_ram.options.title = l4i.T("Memory Usage (MB)");
+            stats_ram._fix = 1024 * 1024;
 
+            //
             var stats_net = l4i.Clone(losCpPod.hchart_def);
-            stats_net.options.title = "Network (Mbps)";
-            stats_net.type = "line";
+            max = losCpPod.entryStatsFeedMaxValue(stats, "net/rs,net/ws");
+            if (max > (1024 * 1024)) {
+                stats_net.options.title = l4i.T("Network Bytes (MB / %d seconds)", stats.cycle);
+                stats_net._fix = 1024 * 1024;
+            } else if (max > 1024) {
+                stats_net.options.title = l4i.T("Network Bytes (KB / %d seconds)", stats.cycle);
+                stats_net._fix = 1024;
+            } else {
+                stats_net.options.title = l4i.T("Network Bytes (Bytes / %d seconds)", stats.cycle);
+            }
 
+            //
             var stats_fsn = l4i.Clone(losCpPod.hchart_def);
-            stats_fsn.options.title = "Storage IOPS";
-            stats_fsn.type = "line";
+            stats_fsn.options.title = l4i.T("Storage IO / %d seconds", stats.cycle);
 
+            //
             var stats_fss = l4i.Clone(losCpPod.hchart_def);
-            stats_fss.options.title = "Storage IO Bytes (MB)";
-            stats_fss.type = "line";
+            max = losCpPod.entryStatsFeedMaxValue(stats, "fs/rs,fs/ws");
+            if (max > (1024 * 1024)) {
+                stats_fss.options.title = l4i.T("Storage IO Bytes (MB / %d seconds)", stats.cycle);
+                stats_fss._fix = 1024 * 1024;
+            } else if (max > 1024) {
+                stats_fss.options.title = l4i.T("Storage IO Bytes (KB / %d seconds)", stats.cycle);
+                stats_fss._fix = 1024;
+            } else {
+                stats_fss.options.title = l4i.T("Storage IO Bytes (Bytes / %d seconds)", stats.cycle);
+            }
+
 
             for (var i in stats.items) {
 
@@ -981,30 +1037,48 @@ losCpPod.EntryStats = function(time_past) {
                     data: []
                 };
                 var labels = [];
+                var fix = 1;
+                switch (v.name) {
+                    case "cpu/us":
+                        if (stats_cpu._fix && stats_cpu._fix > 1) {
+                            fix = stats_cpu._fix;
+                        }
+                        break;
+
+                    case "ram/us":
+                    case "ram/cc":
+                        if (stats_ram._fix && stats_ram._fix > 1) {
+                            fix = stats_ram._fix;
+                        }
+                        break;
+
+
+                    case "net/rs":
+                    case "net/ws":
+                        if (stats_net._fix && stats_net._fix > 1) {
+                            fix = stats_net._fix;
+                        }
+                        break;
+
+                    case "fs/rs":
+                    case "fs/ws":
+                        if (stats_fss._fix && stats_fss._fix > 1) {
+                            fix = stats_fss._fix;
+                        }
+                        break;
+                }
+
                 for (var j in v.items) {
 
                     var v2 = v.items[j];
+
                     var t = new Date(v2.time * 1000);
-                    if (losCpPod.entry_active_past <= 600) {
-                        labels.push(t.l4iTimeFormat("H:i:s"));
-                    } else if (losCpPod.entry_active_past <= 3600) {
-                        labels.push(t.l4iTimeFormat("H:i"));
-                    } else if (losCpPod.entry_active_past >= 86400) {
-                        labels.push(t.l4iTimeFormat("m-d H:i"));
+                    labels.push(t.l4iTimeFormat(tfmt));
+
+                    if (fix > 1) {
+                        v2.value = (v2.value / fix).toFixed(2);
                     }
 
-                    if (v.name == "cpu/us") {
-                        v2.value = (v2.value / 1000000000).toFixed(2);
-                    }
-                    if (v.name == "ram/us" || v.name == "ram/cc") {
-                        v2.value = (v2.value / (1024 * 1024)).toFixed(2);
-                    }
-                    if (v.name == "net/rs" || v.name == "net/ws") {
-                        v2.value = (v2.value / 1000000).toFixed(2);
-                    }
-                    if (v.name == "fs/rs" || v.name == "fs/ws") {
-                        v2.value = (v2.value / (1024 * 1024)).toFixed(2);
-                    }
                     dataset.data.push(v2.value);
                 }
 
@@ -1063,6 +1137,7 @@ losCpPod.EntryStats = function(time_past) {
                         break
                 }
             }
+
             hooto_chart.RenderElement(stats_cpu, "loscp-podentry-stats-cpu");
             hooto_chart.RenderElement(stats_ram, "loscp-podentry-stats-ram");
             hooto_chart.RenderElement(stats_net, "loscp-podentry-stats-net");

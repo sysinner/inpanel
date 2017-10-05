@@ -1,4 +1,4 @@
-var losOpsHost = {
+var inOpsHost = {
     statusls : [
         {status: 0, title: "Unknown"},
         {status: 1, title: "Active"},
@@ -41,12 +41,12 @@ var losOpsHost = {
     single_node: false,
 }
 
-losOpsHost.NavInit = function()
+inOpsHost.NavInit = function()
 {
-    // l4i.UrlEventRegister("host/index", losOpsHost.Index);
+    // l4i.UrlEventRegister("host/index", inOpsHost.Index);
 }
 
-losOpsHost.Index = function()
+inOpsHost.Index = function()
 {
     seajs.use(["ep"], function (EventProxy) {
 
@@ -59,42 +59,42 @@ losOpsHost.Index = function()
             }
             
             if (zones.items[0].meta.id == "local") {
-                losOpsHost.single_node = true;
-                $("#losops-host-nav-menus").css({"display": "none"});
-                losOpsHost.NodeList("local", "general");
+                inOpsHost.single_node = true;
+                $("#inops-host-nav-menus").css({"display": "none"});
+                inOpsHost.NodeList("local", "general");
             }
             
             // TODO
         });
 
         ep.fail(function (err) {
-            alert("SpecSet error, Please try again later (EC:losops-host-zoneset)");
+            alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
         // template
-        losOps.TplFetch("host/index", {
+        inOps.TplFetch("host/index", {
             callback: ep.done("tpl"),
         });
 
         // zones
-        losOpsHost.ZoneRefresh(ep.done("zones"));
+        inOpsHost.ZoneRefresh(ep.done("zones"));
     });
 
     return;
-    losOps.TplFetch("host/index", {callback: function(err, data) {
+    inOps.TplFetch("host/index", {callback: function(err, data) {
         if (err) {
             return;
         }
         $("#comp-content").html(data);
 
-        l4i.UrlEventRegister("host/node-list", losOpsHost.NodeList, "losops-host-nav-items");
-        l4i.UrlEventRegister("host/cell-list", losOpsHost.CellList, "losops-host-nav-items");
-        l4i.UrlEventRegister("host/zone-list", losOpsHost.ZoneList, "losops-host-nav-items");
+        l4i.UrlEventRegister("host/node-list", inOpsHost.NodeList, "inops-host-nav-items");
+        l4i.UrlEventRegister("host/cell-list", inOpsHost.CellList, "inops-host-nav-items");
+        l4i.UrlEventRegister("host/zone-list", inOpsHost.ZoneList, "inops-host-nav-items");
         l4i.UrlEventHandler("host/node-list");
     }});
 }
 
-losOpsHost.NodeList = function(zoneid, cellid)
+inOpsHost.NodeList = function(zoneid, cellid)
 {
     if (zoneid && zoneid.indexOf("/") >= 0) {
         zoneid = null;
@@ -102,64 +102,64 @@ losOpsHost.NodeList = function(zoneid, cellid)
     }
 
     var uri = "";
-    if (document.getElementById("losops_hostls_qry")) {
-        uri = "qry_text="+ $("#losops_hostls_qry").val();
+    if (document.getElementById("inops_hostls_qry")) {
+        uri = "qry_text="+ $("#inops_hostls_qry").val();
     }
 
     if (zoneid) {
-        l4iSession.Set("losops_host_zoneid", zoneid);
+        l4iSession.Set("inops_host_zoneid", zoneid);
     }
 
     if (cellid) {
-        l4iSession.Set("losops_host_cellid", cellid);
+        l4iSession.Set("inops_host_cellid", cellid);
     }
 
-    losOps.TplFetch("host/node-list", {
+    inOps.TplFetch("host/node-list", {
         callback: function(err, tpl) {
 
             if (tpl) {
                 $("#work-content").html(tpl);
             }
             
-            if (losOpsHost.single_node) {
-                // $("#losops-host-nodes-zones").css({"display": "none"});   
-                // $("#losops-host-nodes-cells").css({"display": "none"});
-                $("#losops-host-nodes-navbar").css({"display": "none"});
+            if (inOpsHost.single_node) {
+                // $("#inops-host-nodes-zones").css({"display": "none"});   
+                // $("#inops-host-nodes-cells").css({"display": "none"});
+                $("#inops-host-nodes-navbar").css({"display": "none"});
             }
 
-            losOpsHost.ZoneRefresh(function(err, zones) {
+            inOpsHost.ZoneRefresh(function(err, zones) {
 
                 if (err) {
                     return alert(err);
                 }
 
                 l4iTemplate.Render({
-                    dstid : "losops-host-nodes-zones",
-                    tplid : "losops-host-nodes-zones-tpl",
+                    dstid : "inops-host-nodes-zones",
+                    tplid : "inops-host-nodes-zones-tpl",
                     data  : zones,
                 });
 
-                losOpsHost.CellRefresh(zones._zoneid, function(err, cells) {
+                inOpsHost.CellRefresh(zones._zoneid, function(err, cells) {
 
                     if (err) {
                         return alert(err);
                     }
 
                     l4iTemplate.Render({
-                        dstid : "losops-host-nodes-cells",
-                        tplid : "losops-host-nodes-cells-tpl",
+                        dstid : "inops-host-nodes-cells",
+                        tplid : "inops-host-nodes-cells-tpl",
                         data  : cells,
                     });
 
-                    losOpsHost.nodeRefresh(zones._zoneid, cells._cellid, function(err, nodes) {
+                    inOpsHost.nodeRefresh(zones._zoneid, cells._cellid, function(err, nodes) {
 
                         if (err) {
                             return alert(err);
                         }
 
                         l4iTemplate.Render({
-                            dstid : "losops-host-nodes",
-                            tplid : "losops-host-nodes-tpl",
+                            dstid : "inops-host-nodes",
+                            tplid : "inops-host-nodes-tpl",
                             data  : nodes,
                         });
                     });
@@ -169,17 +169,17 @@ losOpsHost.NodeList = function(zoneid, cellid)
     });
 }
 
-losOpsHost.NodeSetForm = function(zoneid, cellid, nodeid)
+inOpsHost.NodeSetForm = function(zoneid, cellid, nodeid)
 {
     if (!zoneid) {
-        zoneid = l4iSession.Get("losops_host_zoneid");
+        zoneid = l4iSession.Get("inops_host_zoneid");
     }
 
     if (!cellid) {
-        cellid = l4iSession.Get("losops_host_cellid");
+        cellid = l4iSession.Get("inops_host_cellid");
     }
 
-    var alert_id = "#losops-host-nodeset-alert";
+    var alert_id = "#inops-host-nodeset-alert";
 
     seajs.use(["ep"], function (EventProxy) {
 
@@ -189,7 +189,7 @@ losOpsHost.NodeSetForm = function(zoneid, cellid, nodeid)
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
             }
 
-            rsj._actions = losOpsHost.actions;
+            rsj._actions = inOpsHost.actions;
             if (!rsj.status) {
                 rsj.status = {};
             }
@@ -209,7 +209,7 @@ losOpsHost.NodeSetForm = function(zoneid, cellid, nodeid)
                     onclick : "l4iModal.Close()",
                     title   : "Close",
                 }, {
-                    onclick : "losOpsHost.NodeSetCommit()",
+                    onclick : "inOpsHost.NodeSetCommit()",
                     title   : "Save",
                     style   : "btn btn-primary",
                 }]
@@ -217,25 +217,25 @@ losOpsHost.NodeSetForm = function(zoneid, cellid, nodeid)
         });
 
         ep.fail(function (err) {
-            alert("SpecSet error, Please try again later (EC:losops-host-zoneset)");
+            alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
         // template
-        losOps.TplFetch("host/node-set", {
+        inOps.TplFetch("host/node-set", {
             callback: ep.done("tpl"),
         });
 
         // data
-        losOps.ApiSysCmd("host/node-entry?zoneid="+ zoneid +"&cellid="+ cellid +"&nodeid="+ nodeid, {
+        inOps.ApiSysCmd("host/node-entry?zoneid="+ zoneid +"&cellid="+ cellid +"&nodeid="+ nodeid, {
             callback: ep.done("data"),
         });
     });
 }
 
-losOpsHost.NodeSetCommit = function()
+inOpsHost.NodeSetCommit = function()
 {
-    var form = $("#losops-host-node-form"),
-        alert_id = "#losops-host-nodeset-alert";
+    var form = $("#inops-host-node-form"),
+        alert_id = "#inops-host-nodeset-alert";
 
     var req = {
         meta: {
@@ -251,7 +251,7 @@ losOpsHost.NodeSetCommit = function()
         },
     };
 
-    losOps.ApiSysCmd("host/node-set", {
+    inOps.ApiSysCmd("host/node-set", {
         method  : "POST",
         data    : JSON.stringify(req),
         success : function(rsj) {
@@ -272,7 +272,7 @@ losOpsHost.NodeSetCommit = function()
 
             window.setTimeout(function(){
                 l4iModal.Close();
-                losOpsHost.NodeList();
+                inOpsHost.NodeList();
             }, 500);
         },
         error : function(xhr, textStatus, error) {
@@ -282,17 +282,17 @@ losOpsHost.NodeSetCommit = function()
 }
 
 
-losOpsHost.NodeNewForm = function(zoneid, cellid)
+inOpsHost.NodeNewForm = function(zoneid, cellid)
 {
     if (!zoneid) {
-        zoneid = l4iSession.Get("losops_host_zoneid");
+        zoneid = l4iSession.Get("inops_host_zoneid");
     }
 
     if (!cellid) {
-        cellid = l4iSession.Get("losops_host_cellid");
+        cellid = l4iSession.Get("inops_host_cellid");
     }
 
-    losOps.TplFetch("host/node-new", {
+    inOps.TplFetch("host/node-new", {
         callback: function(err, tpl) {
 
             l4iModal.Open({
@@ -302,14 +302,14 @@ losOpsHost.NodeNewForm = function(zoneid, cellid)
                     zoneid    : zoneid,
                     cellid    : cellid,
                     _phase    : "Running",
-                    _statusls : losOpsHost.node_statusls,
+                    _statusls : inOpsHost.node_statusls,
                 },
                 height : 400,
                 buttons: [{
                     onclick : "l4iModal.Close()",
                     title   : "Close",
                 }, {
-                    onclick : "losOpsHost.NodeNewCommit()",
+                    onclick : "inOpsHost.NodeNewCommit()",
                     title   : "Save",
                     style   : "btn btn-primary",
                 }],
@@ -318,10 +318,10 @@ losOpsHost.NodeNewForm = function(zoneid, cellid)
     });
 }
 
-losOpsHost.NodeNewCommit = function()
+inOpsHost.NodeNewCommit = function()
 {
-    var form = $("#losops-host-node-form"),
-        alert_id ="#losops-host-nodenew-alert";
+    var form = $("#inops-host-node-form"),
+        alert_id ="#inops-host-nodenew-alert";
 
     var req = {
         meta : {
@@ -337,7 +337,7 @@ losOpsHost.NodeNewCommit = function()
         },
     };
 
-    losOps.ApiSysCmd("host/node-new", {
+    inOps.ApiSysCmd("host/node-new", {
         method  : "POST",
         data    : JSON.stringify(req),
         success : function(rsj) {
@@ -358,7 +358,7 @@ losOpsHost.NodeNewCommit = function()
 
             window.setTimeout(function(){
                 l4iModal.Close();
-                losOpsHost.NodeList();
+                inOpsHost.NodeList();
             }, 500);
         },
         error : function(xhr, textStatus, error) {
@@ -367,32 +367,32 @@ losOpsHost.NodeNewCommit = function()
     });
 }
 
-losOpsHost.ZoneRefresh = function(cb)
+inOpsHost.ZoneRefresh = function(cb)
 {
-    var zoneid = l4iSession.Get("losops_host_zoneid");
+    var zoneid = l4iSession.Get("inops_host_zoneid");
     if (!zoneid) {
-        zoneid = l4iStorage.Get("losops_host_zoneid");
+        zoneid = l4iStorage.Get("inops_host_zoneid");
     }
 
-    if (losOpsHost.zones) {
+    if (inOpsHost.zones) {
 
         if (!zoneid || zoneid.indexOf("/") >= 0) {
 
-            for (var i in losOpsHost.zones.items) {
-                zoneid = losOpsHost.zones.items[i].meta.id;
+            for (var i in inOpsHost.zones.items) {
+                zoneid = inOpsHost.zones.items[i].meta.id;
                 break
             }
 
-            l4iSession.Set("losops_host_zoneid", zoneid);
-            l4iStorage.Set("losops_host_zoneid", zoneid);
+            l4iSession.Set("inops_host_zoneid", zoneid);
+            l4iStorage.Set("inops_host_zoneid", zoneid);
         }
 
-        losOpsHost.zones._zoneid = zoneid;
+        inOpsHost.zones._zoneid = zoneid;
 
-        return cb(null, losOpsHost.zones);
+        return cb(null, inOpsHost.zones);
     }
 
-    losOps.ApiSysCmd("host/zone-list", {
+    inOps.ApiSysCmd("host/zone-list", {
         callback: function(err, zones) {
 
             if (err) {
@@ -411,33 +411,33 @@ losOpsHost.ZoneRefresh = function(cb)
                 return cb("Network Connection Exception", null);
             }
 
-            losOpsHost.zones = zones;
+            inOpsHost.zones = zones;
 
             if (!zoneid || zoneid.indexOf("/") >= 0) {
 
-                for (var i in losOpsHost.zones.items) {
-                    zoneid = losOpsHost.zones.items[i].meta.id;
+                for (var i in inOpsHost.zones.items) {
+                    zoneid = inOpsHost.zones.items[i].meta.id;
                     break
                 }
 
-                l4iSession.Set("losops_host_zoneid", zoneid);
-                l4iStorage.Set("losops_host_zoneid", zoneid);
+                l4iSession.Set("inops_host_zoneid", zoneid);
+                l4iStorage.Set("inops_host_zoneid", zoneid);
             }
 
-            losOpsHost.zones._zoneid = zoneid;
+            inOpsHost.zones._zoneid = zoneid;
 
-            cb(null, losOpsHost.zones);
+            cb(null, inOpsHost.zones);
         },
     });
 }
 
-losOpsHost.CellRefresh = function(zoneid, cb)
+inOpsHost.CellRefresh = function(zoneid, cb)
 {
     if (!zoneid || zoneid.indexOf("/") >= 0) {
         return;
     }
 
-    losOps.ApiSysCmd("host/cell-list?zoneid="+ zoneid, {
+    inOps.ApiSysCmd("host/cell-list?zoneid="+ zoneid, {
         callback: function(err, cells) {
 
             if (err) {
@@ -456,9 +456,9 @@ losOpsHost.CellRefresh = function(zoneid, cb)
                 return cb("Network Connection Exception", null);
             }
 
-            var cellid = l4iSession.Get("losops_host_cellid");
+            var cellid = l4iSession.Get("inops_host_cellid");
             if (!cellid) {
-                cellid = l4iStorage.Get("losops_host_cellid");
+                cellid = l4iStorage.Get("inops_host_cellid");
             }
 
             if (!cellid) {
@@ -468,8 +468,8 @@ losOpsHost.CellRefresh = function(zoneid, cb)
                     break
                 }
 
-                l4iSession.Set("losops_host_cellid", cellid);
-                l4iStorage.Set("losops_host_cellid", cellid);
+                l4iSession.Set("inops_host_cellid", cellid);
+                l4iStorage.Set("inops_host_cellid", cellid);
             }
 
             cells._cellid = cellid;
@@ -479,9 +479,9 @@ losOpsHost.CellRefresh = function(zoneid, cb)
     });
 }
 
-losOpsHost.nodeRefresh = function(zoneid, cellid, cb)
+inOpsHost.nodeRefresh = function(zoneid, cellid, cb)
 {
-    losOps.ApiSysCmd("host/node-list?zoneid="+ zoneid +"&cellid="+ cellid, {
+    inOps.ApiSysCmd("host/node-list?zoneid="+ zoneid +"&cellid="+ cellid, {
         callback: function(err, nodes) {
 
             if (err) {
@@ -502,10 +502,10 @@ losOpsHost.nodeRefresh = function(zoneid, cellid, cb)
 
             for (var i in nodes.items) {
 
-                for (var j in losOpsHost.actions) {
+                for (var j in inOpsHost.actions) {
 
-                    if (losOpsHost.actions[j].action == nodes.items[i].operate.action) {
-                        nodes.items[i]._action_display = losOpsHost.actions[j].title;
+                    if (inOpsHost.actions[j].action == nodes.items[i].operate.action) {
+                        nodes.items[i]._action_display = inOpsHost.actions[j].title;
                         break
                     }
                 }
@@ -564,17 +564,17 @@ losOpsHost.nodeRefresh = function(zoneid, cellid, cb)
     });
 }
 
-losOpsHost.CellList = function(zoneid)
+inOpsHost.CellList = function(zoneid)
 {
     if (zoneid && zoneid.indexOf("/") >= 0) {
         zoneid = null;
     }
 
     if (zoneid) {
-        l4iSession.Set("losops_host_zoneid", zoneid);
+        l4iSession.Set("inops_host_zoneid", zoneid);
     }
 
-    losOps.TplFetch("host/cell-list", {
+    inOps.TplFetch("host/cell-list", {
         callback: function(err, tpl) {
 
             if (err) {
@@ -585,19 +585,19 @@ losOpsHost.CellList = function(zoneid)
                 $("#work-content").html(tpl);
             }
 
-            losOpsHost.ZoneRefresh(function(err, zones) {
+            inOpsHost.ZoneRefresh(function(err, zones) {
 
                 if (err) {
                     return alert(err);
                 }
 
                 l4iTemplate.Render({
-                    dstid : "losops-host-cells-zones",
-                    tplid : "losops-host-cells-zones-tpl",
+                    dstid : "inops-host-cells-zones",
+                    tplid : "inops-host-cells-zones-tpl",
                     data  : zones,
                 });
 
-                losOpsHost.CellRefresh(zones._zoneid, function(err, cells) {
+                inOpsHost.CellRefresh(zones._zoneid, function(err, cells) {
 
                     if (err) {
                         return alert(err);
@@ -607,10 +607,10 @@ losOpsHost.CellList = function(zoneid)
 
                         cells.items[i]._status_display = "Unknown";
 
-                        for (var j in losOpsHost.statusls) {
+                        for (var j in inOpsHost.statusls) {
 
-                            if (losOpsHost.statusls[j].status == cells.items[i].phase) {
-                                cells.items[i]._status_display = losOpsHost.statusls[j].title;
+                            if (inOpsHost.statusls[j].status == cells.items[i].phase) {
+                                cells.items[i]._status_display = inOpsHost.statusls[j].title;
                                 break
                             }
                         }
@@ -621,8 +621,8 @@ losOpsHost.CellList = function(zoneid)
                     }
 
                     l4iTemplate.Render({
-                        dstid : "losops-host-cells",
-                        tplid : "losops-host-cells-tpl",
+                        dstid : "inops-host-cells",
+                        tplid : "inops-host-cells-tpl",
                         data  : cells,
                     });
                 });
@@ -632,7 +632,7 @@ losOpsHost.CellList = function(zoneid)
 }
 
 
-losOpsHost.CellSetForm = function(zoneid, cellid)
+inOpsHost.CellSetForm = function(zoneid, cellid)
 {
     seajs.use(["ep"], function (EventProxy) {
 
@@ -644,11 +644,11 @@ losOpsHost.CellSetForm = function(zoneid, cellid)
             }
 
             if (!cell) {
-                cell = l4i.Clone(losOpsHost.cell_def);
+                cell = l4i.Clone(inOpsHost.cell_def);
             }
 
             if (!cell.kind || cell.kind != "HostCell") {
-                cell = l4i.Clone(losOpsHost.cell_def);
+                cell = l4i.Clone(inOpsHost.cell_def);
             }
 
             if (!cell.zoneid && zoneid) {
@@ -656,14 +656,14 @@ losOpsHost.CellSetForm = function(zoneid, cellid)
             }
 
             cell._zones = zones;
-            cell._statusls = losOpsHost.statusls;
+            cell._statusls = inOpsHost.statusls;
 
             if (!cell.description) {
                 cell.description = "";
             }
 
             if (!cell.zone) {
-                cell.zone = l4i.Clone(losOpsHost.zone_def);
+                cell.zone = l4i.Clone(inOpsHost.zone_def);
             }
 
             l4iModal.Open({
@@ -675,7 +675,7 @@ losOpsHost.CellSetForm = function(zoneid, cellid)
                     onclick : "l4iModal.Close()",
                     title   : "Close",
                 }, {
-                    onclick : "losOpsHost.CellSetCommit()",
+                    onclick : "inOpsHost.CellSetCommit()",
                     title   : "Save",
                     style   : "btn btn-primary",
                 }]
@@ -683,11 +683,11 @@ losOpsHost.CellSetForm = function(zoneid, cellid)
         });
 
         ep.fail(function (err) {
-            alert("SpecSet error, Please try again later (EC:losops-host-zoneset)");
+            alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
         // template
-        losOps.TplFetch("host/cell-set", {
+        inOps.TplFetch("host/cell-set", {
             callback: ep.done("tpl"),
         });
 
@@ -695,22 +695,22 @@ losOpsHost.CellSetForm = function(zoneid, cellid)
         if (!cellid) {
             ep.emit("cell", null);
         } else {
-            losOps.ApiSysCmd("host/cell-entry?zoneid="+ zoneid +"&cellid="+ cellid, {
+            inOps.ApiSysCmd("host/cell-entry?zoneid="+ zoneid +"&cellid="+ cellid, {
                 callback: ep.done("cell"),
             });
         }
 
         // zones
-        losOps.ApiSysCmd("host/zone-list", {
+        inOps.ApiSysCmd("host/zone-list", {
             callback: ep.done("zones"),
         });
     });
 }
 
-losOpsHost.CellSetCommit = function()
+inOpsHost.CellSetCommit = function()
 {
-    var form = $("#losops-host-cell-form"),
-        alert_id = "#losops-host-cellset-alert";
+    var form = $("#inops-host-cell-form"),
+        alert_id = "#inops-host-cellset-alert";
 
     var req = {
         meta : {
@@ -721,7 +721,7 @@ losOpsHost.CellSetCommit = function()
         description : form.find("input[name=description]").val(),
     };
 
-    losOps.ApiSysCmd("host/cell-set", {
+    inOps.ApiSysCmd("host/cell-set", {
         method  : "POST",
         data    : JSON.stringify(req),
         success : function(cell) {
@@ -742,7 +742,7 @@ losOpsHost.CellSetCommit = function()
 
             window.setTimeout(function(){
                 l4iModal.Close();
-                losOpsHost.CellList();
+                inOpsHost.CellList();
             }, 500);
         },
         error : function(xhr, textStatus, error) {
@@ -752,9 +752,9 @@ losOpsHost.CellSetCommit = function()
 }
 
 
-losOpsHost.ZoneList = function()
+inOpsHost.ZoneList = function()
 {
-    var alert_id = "#losops-host-zones-alert";
+    var alert_id = "#inops-host-zones-alert";
     seajs.use(["ep"], function (EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
@@ -775,10 +775,10 @@ losOpsHost.ZoneList = function()
 
                 rsj.items[i]._status_display = "Unknown";
 
-                for (var j in losOpsHost.statusls) {
+                for (var j in inOpsHost.statusls) {
 
-                    if (losOpsHost.statusls[j].status == rsj.items[i].phase) {
-                        rsj.items[i]._status_display = losOpsHost.statusls[j].title;
+                    if (inOpsHost.statusls[j].status == rsj.items[i].phase) {
+                        rsj.items[i]._status_display = inOpsHost.statusls[j].title;
                         break
                     }
                 }
@@ -789,8 +789,8 @@ losOpsHost.ZoneList = function()
             }
 
             l4iTemplate.Render({
-                dstid : "losops-host-zones",
-                tplid : "losops-host-zones-tpl",
+                dstid : "inops-host-zones",
+                tplid : "inops-host-zones-tpl",
                 data  : rsj,
             });
         });
@@ -799,28 +799,28 @@ losOpsHost.ZoneList = function()
             alert("ListRefresh error, Please try again later (EC:001)");
         });
 
-        losOps.TplFetch("host/zone-list", {
+        inOps.TplFetch("host/zone-list", {
             callback: ep.done("tpl"),
         });
 
-        losOps.ApiSysCmd("host/zone-list", {
+        inOps.ApiSysCmd("host/zone-list", {
             callback: ep.done("data"),
         });
     });
 }
 
-losOpsHost.ZoneSetForm = function(zoneid)
+inOpsHost.ZoneSetForm = function(zoneid)
 {
     seajs.use(["ep"], function (EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
 
             if (!rsj) {
-                rsj = l4i.Clone(losOpsHost.zone_def)
+                rsj = l4i.Clone(inOpsHost.zone_def)
             }
 
             if (!rsj.kind || rsj.kind != "HostZone") {
-                rsj = l4i.Clone(losOpsHost.zone_def);
+                rsj = l4i.Clone(inOpsHost.zone_def);
             }
 
             var title = "Zone Setting";
@@ -840,7 +840,7 @@ losOpsHost.ZoneSetForm = function(zoneid)
                 rsj.summary = "";
             }
 
-            rsj.statusls = losOpsHost.statusls;
+            rsj.statusls = inOpsHost.statusls;
 
             l4iModal.Open({
                 title  : title,
@@ -852,25 +852,25 @@ losOpsHost.ZoneSetForm = function(zoneid)
                     onclick : "l4iModal.Close()",
                     title   : "Close",
                 }, {
-                    onclick : "losOpsHost.ZoneSetCommit()",
+                    onclick : "inOpsHost.ZoneSetCommit()",
                     title   : "Save",
                     style   : "btn btn-primary",
                 }],
                 success: function() {
                     // console.log(rsj.lan_addrs.length);
                     if (rsj.lan_addrs.length < 1) {
-                        losOpsHost.ZoneLanAddressAppend();
+                        inOpsHost.ZoneLanAddressAppend();
                     }
                 },
             });
         });
 
         ep.fail(function (err) {
-            alert("SpecSet error, Please try again later (EC:losops-host-zoneset)");
+            alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
         // template
-        losOps.TplFetch("host/zone-set", {
+        inOps.TplFetch("host/zone-set", {
             callback: ep.done("tpl"),
         });
 
@@ -878,44 +878,44 @@ losOpsHost.ZoneSetForm = function(zoneid)
         if (!zoneid) {
             ep.emit("data", null);
         } else {
-            losOps.ApiSysCmd("host/zone-entry?id="+ zoneid, {
+            inOps.ApiSysCmd("host/zone-entry?id="+ zoneid, {
                 callback: ep.done("data"),
             });
         }
     });
 }
 
-losOpsHost.ZoneWanAddressAppend = function()
+inOpsHost.ZoneWanAddressAppend = function()
 {
     l4iTemplate.Render({
         append : true,
-        dstid  : "losops-host-zoneset-wanaddrs",
-        tplid  : "losops-host-zoneset-wanaddr-tpl",
+        dstid  : "inops-host-zoneset-wanaddrs",
+        tplid  : "inops-host-zoneset-wanaddr-tpl",
     });
 }
 
-losOpsHost.ZoneWanAddressDel = function(field)
+inOpsHost.ZoneWanAddressDel = function(field)
 {
     $(field).parent().parent().remove();
 }
 
-losOpsHost.ZoneLanAddressAppend = function()
+inOpsHost.ZoneLanAddressAppend = function()
 {
     l4iTemplate.Render({
         append : true,
-        dstid  : "losops-host-zoneset-lanaddrs",
-        tplid  : "losops-host-zoneset-lanaddr-tpl",
+        dstid  : "inops-host-zoneset-lanaddrs",
+        tplid  : "inops-host-zoneset-lanaddr-tpl",
     });
 }
 
-losOpsHost.ZoneLanAddressDel = function(field)
+inOpsHost.ZoneLanAddressDel = function(field)
 {
     $(field).parent().parent().remove();
 }
 
-losOpsHost.ZoneSetCommit = function()
+inOpsHost.ZoneSetCommit = function()
 {
-    var form = $("#losops-host-zone-form");
+    var form = $("#inops-host-zone-form");
 
     var req = {
         meta : {
@@ -929,7 +929,7 @@ losOpsHost.ZoneSetCommit = function()
 
     try {
 
-        form.find(".losops-host-zoneset-wanaddr-item").each(function() {
+        form.find(".inops-host-zoneset-wanaddr-item").each(function() {
 
             var addr = $(this).find("input[name=wan_addr]").val();
 
@@ -940,7 +940,7 @@ losOpsHost.ZoneSetCommit = function()
             req.wan_addrs.push(addr);
         });
 
-        form.find(".losops-host-zoneset-lanaddr-item").each(function() {
+        form.find(".inops-host-zoneset-lanaddr-item").each(function() {
 
             var addr = $(this).find("input[name=lan_addr]").val();
 
@@ -956,36 +956,36 @@ losOpsHost.ZoneSetCommit = function()
         }
 
     } catch (err) {
-        return l4i.InnerAlert("#losops-host-zoneset-alert", 'alert-danger', err);
+        return l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', err);
     }
 
-    losOps.ApiSysCmd("host/zone-set", {
+    inOps.ApiSysCmd("host/zone-set", {
         method  : "POST",
         data    : JSON.stringify(req),
         success : function(rsj) {
 
             if (!rsj) {
-                return l4i.InnerAlert("#losops-host-zoneset-alert", 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert("#losops-host-zoneset-alert", 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "HostZone") {
-                return l4i.InnerAlert("#losops-host-zoneset-alert", 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', "Network Connection Exception");
             }
 
-            l4i.InnerAlert("#losops-host-zoneset-alert", 'alert-success', "Successfully Updated");
+            l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-success', "Successfully Updated");
 
             window.setTimeout(function(){
                 l4iModal.Close();
-                losOpsHost.ZoneList();
-                losOpsHost.zones = null;
+                inOpsHost.ZoneList();
+                inOpsHost.zones = null;
             }, 500);
         },
         error : function(xhr, textStatus, error) {
-            l4i.InnerAlert("#losops-host-zoneset-alert", 'alert-danger', textStatus+' '+xhr.responseText);
+            l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', textStatus+' '+xhr.responseText);
         }
     });
 }

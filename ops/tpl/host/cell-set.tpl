@@ -1,6 +1,6 @@
-<div id="losops-host-cell-form">
+<div id="inops-host-cell-form">
  
-  <div id="losops-host-cellset-alert"></div>
+  <div id="inops-host-cellset-alert"></div>
 
   <div class="l4i-form-group">
     <label>Zone</label>

@@ -1,23 +1,23 @@
-<div id="loscp-module-navbar">
-  <ul id="loscp-module-navbar-menus" class="loscp-module-nav">
+<div id="incp-module-navbar">
+  <ul id="incp-module-navbar-menus" class="incp-module-nav">
     <li><a class='l4i-nav-item active' href='#pod/instance'>Pod Instance</a></li>
     <!--<li>
       <form id="z28k7l" action="#" class="form-inlines">
         <input id="query_text" type="text"
-          class="form-control loscp-query-input" 
+          class="form-control incp-query-input" 
           placeholder="Press Enter to Search" 
           value="">
       </form>
     </li>-->
   </ul>
-  <ul id="loscp-module-navbar-optools" class="loscp-module-nav loscp-nav-right"></ul>
+  <ul id="incp-module-navbar-optools" class="incp-module-nav incp-nav-right"></ul>
 </div>
 
-<div id="loscp-podls-alert"></div>
+<div id="incp-podls-alert"></div>
 
-<div id="loscp-podls" class="loscp-div-light"></div>
+<div id="incp-podls" class="incp-div-light"></div>
 
-<script type="text/html" id="loscp-podls-tpl">
+<script type="text/html" id="incp-podls-tpl">
 <table class="table table-hover">
   <thead>
     <tr>
@@ -38,8 +38,8 @@
   <tbody>
 {[~it.items :v]}
   <tr>
-    <td class="loscp-font-fixspace">
-      <a class="" href="#info/{[=v.meta.id]}" onclick="losCpPod.Info('{[=v.meta.id]}')">{[=v.meta.id]}</a>
+    <td class="incp-font-fixspace">
+      <a class="" href="#info/{[=v.meta.id]}" onclick="inCpPod.Info('{[=v.meta.id]}')">{[=v.meta.id]}</a>
     </td>
     <td>{[=v.meta.name]}</td>
     <td>{[=v.spec.ref.name.substr("pod/spec/plan/".length)]}</td>
@@ -50,20 +50,20 @@
     <td>{[=v.operate.replicas.length]}</td>
     <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
     <td>
-      <button class="pure-button button-xsmall" onclick="losCpPod.Entry('{[=v.meta.id]}')">
+      <button class="pure-button button-xsmall" onclick="inCpPod.Entry('{[=v.meta.id]}')">
         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Detail
 	  </button>
     </td>
     <td>
       <select class="pure-button button-xsmall {[if (v.operate.action == 2) {]} button-success{[}]}" 
-        onchange="losCpPod.ListOpActionChange('{[=v.meta.id]}', this)">
+        onchange="inCpPod.ListOpActionChange('{[=v.meta.id]}', this)">
         {[~it._actions :av]}
           <option value="{[=av.action]}" {[if (av.action == v.operate.action) {]}selected{[}]}>{[=av.title]}</div>
         {[~]}
       </select>
     </td>
     <td align="right">
-      <button class="pure-button button-xsmall" onclick="losCpPod.SetInfo('{[=v.meta.id]}')">
+      <button class="pure-button button-xsmall" onclick="inCpPod.SetInfo('{[=v.meta.id]}')">
         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setting
 	  </button>
     </td>
@@ -74,16 +74,16 @@
 </script>
 
 <script type="text/javascript">
-$("#loscp-podls").on("click", ".loscp-pod-item", function() {
+$("#incp-podls").on("click", ".incp-pod-item", function() {
     var id = $(this).attr("href").substr(1);
-    losCpPod.Set(id);
+    inCpPod.Set(id);
 });
 </script>
 
 
-<script type="text/html" id="loscp-podls-optools">
-<li class="loscp-btn loscp-btn-primary">
-  <a href="#" onclick="losCpPod.New()">
+<script type="text/html" id="incp-podls-optools">
+<li class="incp-btn incp-btn-primary">
+  <a href="#" onclick="inCpPod.New()">
     New Pod Instance
   </a>
 </li>

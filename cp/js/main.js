@@ -1,8 +1,8 @@
-var losCp = {
+var inCp = {
     version: "",
-    base: "/los/cp/",
-    tplbase: "/los/cp/-/",
-    api: "/los/v1/",
+    base: "/in/cp/",
+    tplbase: "/in/cp/-/",
+    api: "/in/v1/",
     debug: true,
     Zones: null,
     OpToolActive: null,
@@ -20,19 +20,19 @@ var losCp = {
     ],
     OpActionStart: 1 << 1,
     OpActionStop: 1 << 3,
-    well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/los/cp/auth/login" class="button">SIGN IN</a></div>',
+    well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/in/cp/auth/login" class="button">SIGN IN</a></div>',
 }
 
-losCp.debug_uri = function() {
-    if (!losCp.debug) {
-        return "?_=" + losCp.version;
+inCp.debug_uri = function() {
+    if (!inCp.debug) {
+        return "?_=" + inCp.version;
     }
     return "?_=" + Math.random();
 }
 
-losCp.Boot = function(login_first) {
+inCp.Boot = function(login_first) {
     seajs.config({
-        base: losCp.base,
+        base: inCp.base,
         alias: {
             ep: "~/lessui/js/eventproxy.js"
         },
@@ -52,15 +52,15 @@ losCp.Boot = function(login_first) {
         if (!((browser == 'Chrome' && version >= 22)
             || (browser == 'Firefox' && version >= 31.0)
             || (browser == 'Safari' && version >= 5.0 && OS == 'Mac'))) {
-            $('body').load(losCp.tplbase + "error/browser.tpl");
+            $('body').load(inCp.tplbase + "error/browser.tpl");
             return;
         }
 
         if (login_first && login_first === true) {
-            var elem = $("#loscp-well-status");
+            var elem = $("#incp-well-status");
             elem.removeClass("status_dark");
             elem.addClass("info");
-            elem.html(losCp.well_signin_html);
+            elem.html(inCp.well_signin_html);
             return;
         }
 
@@ -68,28 +68,28 @@ losCp.Boot = function(login_first) {
             "~/twbs/3.3/js/bootstrap.js",
             "~/lessui/css/lessui.css",
             "~/lessui/js/lessui.js",
-            "~/cp/css/main.css" + losCp.debug_uri(),
-            "~/cp/js/host.js" + losCp.debug_uri(),
-            "~/cp/js/spec.js" + losCp.debug_uri(),
-            "~/cp/js/pod.js" + losCp.debug_uri(),
-            "~/cp/js/app.js" + losCp.debug_uri(),
-            "~/cp/js/app-spec.js" + losCp.debug_uri(),
-            "~/cp/js/res.js" + losCp.debug_uri(),
-            "~/cp/js/res-domain.js" + losCp.debug_uri(),
-            "hchart/~/hchart.js" + losCp.debug_uri(),
-            "lps/~/lps/js/main.js" + losCp.debug_uri(),
-            "lps/~/lps/css/main.css" + losCp.debug_uri(),
-        ], losCp.load_index);
+            "~/cp/css/main.css" + inCp.debug_uri(),
+            "~/cp/js/host.js" + inCp.debug_uri(),
+            "~/cp/js/spec.js" + inCp.debug_uri(),
+            "~/cp/js/pod.js" + inCp.debug_uri(),
+            "~/cp/js/app.js" + inCp.debug_uri(),
+            "~/cp/js/app-spec.js" + inCp.debug_uri(),
+            "~/cp/js/res.js" + inCp.debug_uri(),
+            "~/cp/js/res-domain.js" + inCp.debug_uri(),
+            "hchart/~/hchart.js" + inCp.debug_uri(),
+            "ips/~/ips/js/main.js" + inCp.debug_uri(),
+            "ips/~/ips/css/main.css" + inCp.debug_uri(),
+        ], inCp.load_index);
     });
 }
 
-losCp.load_index = function() {
-    l4i.debug = losCp.debug;
-    l4i.app_version = losCp.version;
+inCp.load_index = function() {
+    l4i.debug = inCp.debug;
+    l4i.app_version = inCp.version;
 
-    lpLps.base = losCp.base + "lps/~/lps/";
-    lpLps.option_navpf = "loscp";
-    hooto_chart.basepath = losCp.base + "/hchart/~/";
+    inpack.base = inCp.base + "ips/~/ips/";
+    inpack.option_navpf = "incp";
+    hooto_chart.basepath = inCp.base + "/hchart/~/";
 
     seajs.use(["ep"], function(EventProxy) {
 
@@ -98,58 +98,58 @@ losCp.load_index = function() {
             if (!session || session.username == "") {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
-            losCp.UserSession = session;
-            lpLps.UserSession = session;
+            inCp.UserSession = session;
+            inpack.UserSession = session;
 
             if (!zones.items || zones.items.length == 0) {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
-            losCp.Zones = zones;
+            inCp.Zones = zones;
 
             $("#body-content").html(tpl);
 
             l4iTemplate.Render({
-                dstid: "loscp-topbar-userbar",
-                tplid: "loscp-topbar-user-signed-tpl",
-                data: losCp.UserSession,
+                dstid: "incp-topbar-userbar",
+                tplid: "incp-topbar-user-signed-tpl",
+                data: inCp.UserSession,
                 success: function() {
 
-                    $("#loscp-topbar-userbar").hover(
+                    $("#incp-topbar-userbar").hover(
                         function() {
-                            $("#loscp-topbar-user-signed-modal").fadeIn(200);
+                            $("#incp-topbar-user-signed-modal").fadeIn(200);
                         },
                         function() {}
                     );
-                    $("#loscp-topbar-user-signed-modal").hover(
+                    $("#incp-topbar-user-signed-modal").hover(
                         function() {},
                         function() {
-                            $("#loscp-topbar-user-signed-modal").fadeOut(200);
+                            $("#incp-topbar-user-signed-modal").fadeOut(200);
                         }
                     );
                 },
             });
 
-            l4i.UrlEventRegister("app/index", losCpApp.Index, "loscp-topbar-nav-menus");
-            l4i.UrlEventRegister("pod/index", losCpPod.Index, "loscp-topbar-nav-menus");
-            l4i.UrlEventRegister("res/index", losCpRes.Index, "loscp-topbar-nav-menus");
-            l4i.UrlEventRegister("lps/index", lpLps.Index, "loscp-topbar-nav-menus");
+            l4i.UrlEventRegister("app/index", inCpApp.Index, "incp-topbar-nav-menus");
+            l4i.UrlEventRegister("pod/index", inCpPod.Index, "incp-topbar-nav-menus");
+            l4i.UrlEventRegister("res/index", inCpRes.Index, "incp-topbar-nav-menus");
+            l4i.UrlEventRegister("ips/index", inpack.Index, "incp-topbar-nav-menus");
 
             l4i.UrlEventHandler("app/index", true);
         });
 
         ep.fail(function(err) {
             if (err && err == "AuthSession") {
-                losCp.AlertUserLogin();
+                inCp.AlertUserLogin();
             } else {
                 alert("Network Exception, Please try again later (EC:zone-list)");
             }
         });
 
-        losCp.ApiCmd("host/zone-list", {
+        inCp.ApiCmd("host/zone-list", {
             callback: ep.done("zones"),
         });
 
-        l4i.Ajax(losCp.base + "auth/session", {
+        l4i.Ajax(inCp.base + "auth/session", {
             callback: function(err, data) {
                 if (!data || data.kind != "AuthSession") {
                     return ep.emit('error', "AuthSession");
@@ -158,50 +158,50 @@ losCp.load_index = function() {
             },
         });
 
-        losCp.TplFetch("index/index", {
+        inCp.TplFetch("index/index", {
             callback: ep.done("tpl"),
         });
     });
 }
 
 
-losCp.AlertUserLogin = function() {
+inCp.AlertUserLogin = function() {
     l4iAlert.Open("warn", "You are not logged in, or your login session has expired. Please sign in again", {
         close: false,
         buttons: [{
             title: "SIGN IN",
-            href: losCp.base + "auth/login",
+            href: inCp.base + "auth/login",
         }],
     });
 }
 
-losCp.ApiCmd = function(url, options) {
+inCp.ApiCmd = function(url, options) {
     var appcb = null;
     if (options.callback) {
         appcb = options.callback;
     }
     options.callback = function(err, data) {
         if (err == "Unauthorized") {
-            return losCp.AlertUserLogin();
+            return inCp.AlertUserLogin();
         }
         if (appcb) {
             appcb(err, data);
         }
     }
 
-    l4i.Ajax(losCp.api + url, options);
+    l4i.Ajax(inCp.api + url, options);
 }
 
-losCp.TplPath = function(url) {
-    return losCp.tplbase + url + ".tpl";
+inCp.TplPath = function(url) {
+    return inCp.tplbase + url + ".tpl";
 }
 
-losCp.TplFetch = function(url, options) {
-    l4i.Ajax(losCp.TplPath(url), options);
+inCp.TplFetch = function(url, options) {
+    l4i.Ajax(inCp.TplPath(url), options);
 }
 
-losCp.Loader = function(target, uri) {
-    l4i.Ajax(losCp.tplbase + uri + ".tpl", {
+inCp.Loader = function(target, uri) {
+    l4i.Ajax(inCp.tplbase + uri + ".tpl", {
         callback: function(err, data) {
             if (!err) {
                 $("#" + target).html(data);
@@ -210,15 +210,15 @@ losCp.Loader = function(target, uri) {
     });
 }
 
-losCp.CompLoader = function(uri) {
-    losCp.Loader("comp-content", uri);
+inCp.CompLoader = function(uri) {
+    inCp.Loader("comp-content", uri);
 }
 
-losCp.WorkLoader = function(uri) {
-    losCp.Loader("work-content", uri);
+inCp.WorkLoader = function(uri) {
+    inCp.Loader("work-content", uri);
 }
 
-losCp.UtilResSizeFormat = function(size, tofix) {
+inCp.UtilResSizeFormat = function(size, tofix) {
     var ms = [
         [7, "ZB"],
         [6, "EB"],
@@ -249,7 +249,7 @@ losCp.UtilResSizeFormat = function(size, tofix) {
 }
 
 
-losCp.OpToolsRefresh = function(div_target, cb) {
+inCp.OpToolsRefresh = function(div_target, cb) {
     if (!div_target) {
         return;
     }
@@ -258,34 +258,34 @@ losCp.OpToolsRefresh = function(div_target, cb) {
         cb = function() {};
     }
 
-    if (typeof div_target == "string" && div_target == losCp.OpToolActive) {
+    if (typeof div_target == "string" && div_target == inCp.OpToolActive) {
         return cb();
     }
 
     // if (!div_target) {
-    //     div_target = "#loscp-optools";
+    //     div_target = "#incp-optools";
     // }
 
-    // $("#loscp-module-navbar-optools").empty();
+    // $("#incp-module-navbar-optools").empty();
     if (typeof div_target == "string") {
 
         var opt = $("#work-content").find(div_target);
         // console.log(opt.html());
         if (opt) {
-            // $("#loscp-module-navbar-optools").html(opt.html());
+            // $("#incp-module-navbar-optools").html(opt.html());
             l4iTemplate.Render({
-                dstid: "loscp-module-navbar-optools",
+                dstid: "incp-module-navbar-optools",
                 tplsrc: opt.html(),
                 data: {},
                 callback: cb,
             });
-            losCp.OpToolActive = div_target;
+            inCp.OpToolActive = div_target;
         }
     }
 }
 
 
-losCp.CodeRender = function() {
+inCp.CodeRender = function() {
     seajs.use([
         "~/hl/highlight.pack.js",
         "~/hl/styles/arta.css",
@@ -335,7 +335,7 @@ losCp.CodeRender = function() {
 }
 
 /*
-losCp.ArrayUint32MatchAny = function(ar, ar2)
+inCp.ArrayUint32MatchAny = function(ar, ar2)
 {
     if (!ar || !ar2) {
         return false;
@@ -353,18 +353,18 @@ losCp.ArrayUint32MatchAny = function(ar, ar2)
 }
 */
 
-losCp.OpActionTitle = function(op_action) {
+inCp.OpActionTitle = function(op_action) {
     op_action = parseInt(op_action);
-    for (var i in losCp.OpActions) {
-        if (op_action == losCp.OpActions[i].action) {
-            return (losCp.OpActions[i].title);
+    for (var i in inCp.OpActions) {
+        if (op_action == inCp.OpActions[i].action) {
+            return (inCp.OpActions[i].title);
         }
     }
 
     return "";
 }
 
-losCp.About = function() {
+inCp.About = function() {
     seajs.use(["ep"], function(EventProxy) {
         var ep = EventProxy.create("tpl", function(tpl) {
 
@@ -381,29 +381,29 @@ losCp.About = function() {
         });
 
         ep.fail(function(err) {
-            alert("Network Connection Error, Please try again later (EC:loscp-pod)");
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
-        losCp.TplFetch("index/about", {
+        inCp.TplFetch("index/about", {
             callback: ep.done("tpl"),
         });
     });
 }
 
-losCp.NavBack = function(fn) {
+inCp.NavBack = function(fn) {
 
     if (fn && typeof fn === "function") {
-        losCp.nav_back = fn;
-        $("#loscp-navbar-back").css({
+        inCp.nav_back = fn;
+        $("#incp-navbar-back").css({
             "display": "block"
         });
         return;
     }
 
-    if (losCp.nav_back) {
-        losCp.nav_back();
-        losCp.nav_back = null;
-        $("#loscp-navbar-back").css({
+    if (inCp.nav_back) {
+        inCp.nav_back();
+        inCp.nav_back = null;
+        $("#incp-navbar-back").css({
             "display": "nono"
         });
     }

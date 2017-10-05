@@ -1,6 +1,6 @@
-<div id="loscp-resdomain-boundset-alert"></div>
+<div id="incp-resdomain-boundset-alert"></div>
 
-<div id="loscp-resdomain-boundset-form">
+<div id="incp-resdomain-boundset-form">
 
 <div class="l4i-form-group">
   <label class="">Base Path</label>
@@ -12,7 +12,7 @@
 <div class="l4i-form-group">
   <label class="">Type</label>
   <div class="">
-    <select name="type" class="form-control" onchange="losCpResDomain.BoundSetTypeOnChange(this)">
+    <select name="type" class="form-control" onchange="inCpResDomain.BoundSetTypeOnChange(this)">
       {[~it._types :v]}
       <option value="{[=v.type]}" {[if (it._type == v.type) {]} selected{[}]}>{[=v.title]}</option>
       {[~]}
@@ -20,7 +20,7 @@
   </div>
 </div>
 
-<div id="loscp-resdomain-boundset-type-pod" style="display:none">
+<div id="incp-resdomain-boundset-type-pod" style="display:none">
 <div class="l4i-form-group">
   <label class="">Pod ID</label>
   <div class="">
@@ -35,7 +35,7 @@
 </div>
 </div>
 
-<div id="loscp-resdomain-boundset-type-upstream" style="display:none">
+<div id="incp-resdomain-boundset-type-upstream" style="display:none">
 <div class="l4i-form-group">
   <label>IP:Port</label>
   <div>
@@ -46,7 +46,7 @@
 </div>
 
 
-<div id="loscp-resdomain-boundset-type-redirect" style="display:none">
+<div id="incp-resdomain-boundset-type-redirect" style="display:none">
 <div class="l4i-form-group">
   <label>Redirect URL</label>
   <div>
@@ -56,7 +56,7 @@
 </div>
 
 <style>
-.loscp-resdomain-boundset-action label {
+.incp-resdomain-boundset-action label {
   margin-right: 20px;
   font-weight: normal;
 }
@@ -64,7 +64,7 @@
 
 <div class="l4i-form-group">
   <label class="">Action</label>
-  <div class="loscp-resdomain-boundset-action">
+  <div class="incp-resdomain-boundset-action">
     {[~it._actions :av]}
     <label class="pure-radio">
       <input type="radio" name="bound_action" value="{[=av.action]}" 

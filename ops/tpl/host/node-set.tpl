@@ -1,6 +1,6 @@
-<div id="losops-host-node-form">
+<div id="inops-host-node-form">
  
-  <div id="losops-host-nodeset-alert"></div>
+  <div id="inops-host-nodeset-alert"></div>
 
   <input type="hidden" name="id" value="{[=it.meta.id]}">
   <input type="hidden" name="operate_zone_id" value="{[=it.operate.zone_id]}">

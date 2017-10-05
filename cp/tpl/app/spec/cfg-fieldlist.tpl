@@ -1,8 +1,8 @@
-<div id="loscp-appspec-cfg-fieldlist-alert"></div>
+<div id="incp-appspec-cfg-fieldlist-alert"></div>
 
-<div id="loscp-appspec-cfg-fieldlist"></div>
+<div id="incp-appspec-cfg-fieldlist"></div>
 
-<script type="text/html" id="loscp-appspec-cfg-fieldlist-tpl">
+<script type="text/html" id="incp-appspec-cfg-fieldlist-tpl">
 <div class="l4i-form-group">
   <label>Name</label>
   <p><input name="name" class="form-control" value="{[=it.configurator.name]}"></p>
@@ -22,10 +22,10 @@
       <th></th>
     </tr>
     </thead>
-    <tbody id="loscp-appspec-cfg-fields">
+    <tbody id="incp-appspec-cfg-fields">
     {[~it.configurator.fields :v]}
     <tr>
-      <td class="loscp-font-fixspace">{[=v.name]}</td>
+      <td class="incp-font-fixspace">{[=v.name]}</td>
       <td>
       {[~it._cfgFieldTypes :vt]}
         {[if (v.type == vt.type) {]}{[=vt.title]}{[}]}
@@ -35,8 +35,8 @@
       <td>{[=v.auto_fill]}</td>
       <td>{[=v.validates.length]}</td>
       <td align="right">
-        {[if (it.meta.user == losCp.UserSession.username) {]}
-        <button class="loscp-btn loscp-btn-xsmall" onclick="losCpAppSpec.CfgFieldSet('{[=v.name]}')">Setting</button>
+        {[if (it.meta.user == inCp.UserSession.username) {]}
+        <button class="incp-btn incp-btn-xsmall" onclick="inCpAppSpec.CfgFieldSet('{[=v.name]}')">Setting</button>
         {[}]}
       </td>
     </tr>

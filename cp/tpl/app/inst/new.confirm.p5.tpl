@@ -1,8 +1,8 @@
 
-<div id="loscp-appnew-cf-alert" class="alert alert-danger" style="display:none"></div>
+<div id="incp-appnew-cf-alert" class="alert alert-danger" style="display:none"></div>
 
 
-<div id="loscp-appnew-cf-form">
+<div id="incp-appnew-cf-form">
   <div class="l4i-form-group">
     <label>Name</label>
     <p>{[=it.meta.name]}</p>

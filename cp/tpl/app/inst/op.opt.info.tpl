@@ -1,6 +1,6 @@
-<div id="loscp-appinst-opopt-info-alert" class="alert" style="display:none"></div>
+<div id="incp-appinst-opopt-info-alert" class="alert" style="display:none"></div>
 
-<div id="loscp-appinst-opopt-info">
+<div id="incp-appinst-opopt-info">
 {[~it.operate.options :cv]}
 {[if (cv.items && cv.items.length > 0) {]}
 <div class="panel panel-default">
@@ -13,7 +13,7 @@
   </div>
 
   <div class="panel-body">
-    <table width="100%" class="loscp-panel-table">
+    <table width="100%" class="incp-panel-table">
       {[~cv.items :cvf]}
       <tr>
         <td width="300" class="lpt-title">{[=cvf.name]}</td>

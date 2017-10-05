@@ -1,4 +1,4 @@
-var losCpResDomain = {
+var inCpResDomain = {
     op_actions: [
         {
             action: 1,
@@ -37,7 +37,7 @@ var losCpResDomain = {
     }],
 }
 
-losCpResDomain.List = function() {
+inCpResDomain.List = function() {
     var uri = "?type=domain";
     uri += "&fields=meta/id|name|updated,bounds/name,operate/app_id,action";
 
@@ -48,9 +48,9 @@ losCpResDomain.List = function() {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
-            losCp.OpToolsRefresh("#loscp-resdomain-optools");
+            inCp.OpToolsRefresh("#incp-resdomain-optools");
 
-            var alert_id = "#loscp-resdomain-list-alert";
+            var alert_id = "#incp-resdomain-list-alert";
 
             if (data.error || !data.kind || data.kind != "ResourceList") {
 
@@ -89,8 +89,8 @@ losCpResDomain.List = function() {
             $(alert_id).hide();
 
             l4iTemplate.Render({
-                dstid: "loscp-resdomain-list",
-                tplid: "loscp-resdomain-list-tpl",
+                dstid: "incp-resdomain-list",
+                tplid: "incp-resdomain-list-tpl",
                 data: data,
                 callback: function(err) {
                     if (err) {
@@ -104,20 +104,20 @@ losCpResDomain.List = function() {
             alert("ListRefresh error, Please try again later (EC:001)");
         });
 
-        losCp.TplFetch("res/domain-list", {
+        inCp.TplFetch("res/domain-list", {
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("resource/list" + uri, {
+        inCp.ApiCmd("resource/list" + uri, {
             callback: ep.done("data"),
         });
     });
 }
 
-losCpResDomain.New = function() {
+inCpResDomain.New = function() {
     l4iModal.Open({
         title: "Domain Add",
-        tpluri: losCp.TplPath("res/domain-new"),
+        tpluri: inCp.TplPath("res/domain-new"),
         width: 600,
         height: 400,
         buttons: [{
@@ -125,15 +125,15 @@ losCpResDomain.New = function() {
             onclick: "l4iModal.Close()",
         }, {
             title: "Save",
-            onclick: 'losCpResDomain.NewCommit()',
+            onclick: 'inCpResDomain.NewCommit()',
             style: "btn-primary",
         }],
     });
 }
 
-losCpResDomain.NewCommit = function() {
-    var form = $("#loscp-resdomain-new-form");
-    var alert_id = "#loscp-resdomain-new-alert";
+inCpResDomain.NewCommit = function() {
+    var form = $("#incp-resdomain-new-form");
+    var alert_id = "#incp-resdomain-new-alert";
 
     if (!form) {
         return;
@@ -145,7 +145,7 @@ losCpResDomain.NewCommit = function() {
         },
     };
 
-    losCp.ApiCmd("resource/domain-new", {
+    inCp.ApiCmd("resource/domain-new", {
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, rsj) {
@@ -166,13 +166,13 @@ losCpResDomain.NewCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                losCpResDomain.List();
+                inCpResDomain.List();
             }, 500);
         }
     });
 }
 
-losCpResDomain.Set = function(name) {
+inCpResDomain.Set = function(name) {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
@@ -181,7 +181,7 @@ losCpResDomain.Set = function(name) {
             //     $("#work-content").html(tpl);
             // }
 
-            var alert_id = "#loscp-resdomain-set-alert";
+            var alert_id = "#incp-resdomain-set-alert";
 
             if (!data || data.error || !data.kind || data.kind != "Resource") {
 
@@ -212,7 +212,7 @@ losCpResDomain.Set = function(name) {
                     onclick: "l4iModal.Close()",
                 }, {
                     title: "Save",
-                    onclick: 'losCpResDomain.SetCommit()',
+                    onclick: 'inCpResDomain.SetCommit()',
                     style: "btn-primary",
                 }],
             });
@@ -222,19 +222,19 @@ losCpResDomain.Set = function(name) {
             alert("ApiCmd error, Please try again later (EC:001)");
         });
 
-        losCp.TplFetch("res/domain-set", {
+        inCp.TplFetch("res/domain-set", {
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("resource/domain?name=" + name, {
+        inCp.ApiCmd("resource/domain?name=" + name, {
             callback: ep.done("data"),
         });
     });
 }
 
-losCpResDomain.SetCommit = function() {
-    var form = $("#loscp-resdomain-set-form");
-    var alert_id = "#loscp-resdomain-set-alert";
+inCpResDomain.SetCommit = function() {
+    var form = $("#incp-resdomain-set-form");
+    var alert_id = "#incp-resdomain-set-alert";
 
     if (!form) {
         return;
@@ -247,7 +247,7 @@ losCpResDomain.SetCommit = function() {
         description: form.find("input[name=description]").val(),
     };
 
-    losCp.ApiCmd("resource/domain-set", {
+    inCp.ApiCmd("resource/domain-set", {
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, rsj) {
@@ -268,19 +268,19 @@ losCpResDomain.SetCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                losCpResDomain.List();
+                inCpResDomain.List();
             }, 500);
         }
     });
 }
 
 
-losCpResDomain.BoundList = function(name) {
+inCpResDomain.BoundList = function(name) {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
-            var alert_id = "#loscp-resdomain-boundlist-alert";
+            var alert_id = "#incp-resdomain-boundlist-alert";
 
             if (!data || data.error || !data.kind || data.kind != "Resource") {
 
@@ -336,13 +336,13 @@ losCpResDomain.BoundList = function(name) {
             }
 
             data._name = data.meta.name.substr("domain/".length);
-            losCpResDomain.inst_active = l4i.Clone(data);
+            inCpResDomain.inst_active = l4i.Clone(data);
 
-            data._actions = losCpResDomain.op_actions;
-            data._types = losCpResDomain.bound_types;
+            data._actions = inCpResDomain.op_actions;
+            data._types = inCpResDomain.bound_types;
 
             l4iModal.Open({
-                id: "loscp-resdomain-boundlist-modal",
+                id: "incp-resdomain-boundlist-modal",
                 title: "Domain Bounds",
                 tplsrc: tpl,
                 width: 900,
@@ -352,7 +352,7 @@ losCpResDomain.BoundList = function(name) {
                     onclick: "l4iModal.Close()",
                 }, {
                     title: "Binding New",
-                    onclick: 'losCpResDomain.BoundSet()',
+                    onclick: 'inCpResDomain.BoundSet()',
                     style: "btn-primary",
                 }],
                 success: function() {
@@ -362,8 +362,8 @@ losCpResDomain.BoundList = function(name) {
                     }
 
                     l4iTemplate.Render({
-                        dstid: "loscp-resdomain-boundlist",
-                        tplid: "loscp-resdomain-boundlist-tpl",
+                        dstid: "incp-resdomain-boundlist",
+                        tplid: "incp-resdomain-boundlist-tpl",
                         data: data,
                     });
                 },
@@ -374,34 +374,34 @@ losCpResDomain.BoundList = function(name) {
             alert("ApiCmd error, Please try again later (EC:001)");
         });
 
-        losCp.TplFetch("res/domain-bound-list", {
+        inCp.TplFetch("res/domain-bound-list", {
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("resource/domain?name=" + name, {
+        inCp.ApiCmd("resource/domain?name=" + name, {
             callback: ep.done("data"),
         });
     });
 }
 
 
-losCpResDomain.BoundSet = function(name) {
-    if (!losCpResDomain.inst_active) {
+inCpResDomain.BoundSet = function(name) {
+    if (!inCpResDomain.inst_active) {
         return;
     }
 
     var bound = null;
     if (name) {
 
-        for (var i in losCpResDomain.inst_active.bounds) {
-            if (losCpResDomain.inst_active.bounds[i].name == name) {
-                bound = l4i.Clone(losCpResDomain.inst_active.bounds[i]);
+        for (var i in inCpResDomain.inst_active.bounds) {
+            if (inCpResDomain.inst_active.bounds[i].name == name) {
+                bound = l4i.Clone(inCpResDomain.inst_active.bounds[i]);
                 break;
             }
         }
     }
     if (!bound) {
-        bound = l4i.Clone(losCpResDomain.boundset_def);
+        bound = l4i.Clone(inCpResDomain.boundset_def);
     }
     if (!bound.value) {
         bound.value = "pod:";
@@ -448,18 +448,18 @@ losCpResDomain.BoundSet = function(name) {
         bound._value = "";
     }
 
-    bound._actions = losCpResDomain.op_actions;
-    bound._types = losCpResDomain.bound_types;
+    bound._actions = inCpResDomain.op_actions;
+    bound._types = inCpResDomain.bound_types;
 
-    losCpResDomain.inst_active_bound = bound;
+    inCpResDomain.inst_active_bound = bound;
 
     l4iModal.Open({
-        id: "loscp-resdomain-boundset-modal",
+        id: "incp-resdomain-boundset-modal",
         title: "Binding",
-        tpluri: losCp.TplPath("res/domain-bound-set"),
+        tpluri: inCp.TplPath("res/domain-bound-set"),
         data: bound,
         callback: function(err, data) {
-            $("#loscp-resdomain-boundset-type-" + bound._type).css({
+            $("#incp-resdomain-boundset-type-" + bound._type).css({
                 "display": "block"
             });
         },
@@ -468,14 +468,14 @@ losCpResDomain.BoundSet = function(name) {
             onclick: "l4iModal.Close()",
         }, {
             title: "Save",
-            onclick: 'losCpResDomain.BoundSetCommit()',
+            onclick: 'inCpResDomain.BoundSetCommit()',
             style: "btn-primary",
         }],
     });
 }
 
-losCpResDomain.BoundSetTypeOnChange = function(elem) {
-    if (!losCpResDomain.inst_active_bound) {
+inCpResDomain.BoundSetTypeOnChange = function(elem) {
+    if (!inCpResDomain.inst_active_bound) {
         return;
     }
 
@@ -484,38 +484,38 @@ losCpResDomain.BoundSetTypeOnChange = function(elem) {
     }
 
     var typeid = $(elem).val();
-    if (losCpResDomain.inst_active_bound._type == typeid) {
+    if (inCpResDomain.inst_active_bound._type == typeid) {
         return;
     }
 
-    $("#loscp-resdomain-boundset-type-" + losCpResDomain.inst_active_bound._type).css({
+    $("#incp-resdomain-boundset-type-" + inCpResDomain.inst_active_bound._type).css({
         "display": "none"
     });
-    $("#loscp-resdomain-boundset-type-" + typeid).css({
+    $("#incp-resdomain-boundset-type-" + typeid).css({
         "display": "block"
     });
 
-    losCpResDomain.inst_active_bound._type = typeid;
+    inCpResDomain.inst_active_bound._type = typeid;
 }
 
-losCpResDomain.BoundSetCommit = function() {
-    var alert_id = "#loscp-resdomain-boundset-alert";
+inCpResDomain.BoundSetCommit = function() {
+    var alert_id = "#incp-resdomain-boundset-alert";
 
-    var form = $("#loscp-resdomain-boundset-form");
+    var form = $("#incp-resdomain-boundset-form");
     if (!form) {
         return;
     }
 
     var req = {
         meta: {
-            name: losCpResDomain.inst_active.meta.name,
+            name: inCpResDomain.inst_active.meta.name,
         },
         bounds: [],
     }
 
     try {
         var basepath = form.find("input[name=bound_basepath]").val();
-        if (!basepath || !losCpResDomain.bound_basepath_re.test(basepath)) {
+        if (!basepath || !inCpResDomain.bound_basepath_re.test(basepath)) {
             throw "Invalid BaseURI";
         }
 
@@ -533,7 +533,7 @@ losCpResDomain.BoundSetCommit = function() {
         switch (type) {
             case "pod":
                 var podid = form.find("input[name=bound_podid]").val();
-                if (!podid || !losCpResDomain.bound_podid_re.test(podid)) {
+                if (!podid || !inCpResDomain.bound_podid_re.test(podid)) {
                     throw "Invalid Pod ID";
                 }
 
@@ -563,7 +563,7 @@ losCpResDomain.BoundSetCommit = function() {
         return l4i.InnerAlert(alert_id, 'alert-danger', err);
     }
 
-    losCp.ApiCmd("resource/domain-bound", {
+    inCp.ApiCmd("resource/domain-bound", {
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, rsj) {
@@ -580,51 +580,51 @@ losCpResDomain.BoundSetCommit = function() {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
             }
 
-            losCpResDomain.inst_active = null;
+            inCpResDomain.inst_active = null;
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                losCpResDomain.List();
+                inCpResDomain.List();
             }, 500);
         }
     });
 }
 
 
-losCpResDomain.Deploy = function(name) {
+inCpResDomain.Deploy = function(name) {
     if (!name) {
         return;
     }
-    losCp.ApiCmd("resource/domain?name=" + name, {
+    inCp.ApiCmd("resource/domain?name=" + name, {
         callback: function(err, data) {
             if (err || !data.kind) {
                 return;
             }
-            losCpResDomain.inst_active = data;
-            // return losCpResDomain.DeploySelectApp();
+            inCpResDomain.inst_active = data;
+            // return inCpResDomain.DeploySelectApp();
             if (!data.operate.app_id || data.operate.app_id.length < 16) {
-                losCpResDomain.DeploySelectApp();
+                inCpResDomain.DeploySelectApp();
             } else {
-                losCpResDomain.DeployWizard(name);
+                inCpResDomain.DeployWizard(name);
             }
         },
     });
 }
 
-losCpResDomain.DeployWizard = function(name) {
+inCpResDomain.DeployWizard = function(name) {
     l4iModal.Open({
-        id: "loscp-resdomain-deploy",
+        id: "incp-resdomain-deploy",
         title: "Resource Domain Deploy Wizard",
         width: 800,
         height: 300,
-        tpluri: losCp.TplPath("res/domain-deploy"),
+        tpluri: inCp.TplPath("res/domain-deploy"),
         callback: function(err, data) {
             l4iTemplate.Render({
-                dstid: "loscp-resdomain-deploy-wizard",
-                tplid: "loscp-resdomain-deploy-wizard-tpl",
+                dstid: "incp-resdomain-deploy-wizard",
+                tplid: "incp-resdomain-deploy-wizard-tpl",
                 data: {
-                    _app_id: losCpResDomain.inst_active.operate.app_id,
+                    _app_id: inCpResDomain.inst_active.operate.app_id,
                 },
             });
         },
@@ -632,15 +632,15 @@ losCpResDomain.DeployWizard = function(name) {
             onclick: "l4iModal.Close()",
             title: "Close",
         }, {
-            onclick: "losCpResDomain.DeployCommit()",
+            onclick: "inCpResDomain.DeployCommit()",
             title: "Next",
             style: "btn-primary",
         }],
     });
 }
 
-losCpResDomain.DeploySelectApp = function(name) {
-    if (!losCpResDomain.inst_active) {
+inCpResDomain.DeploySelectApp = function(name) {
+    if (!inCpResDomain.inst_active) {
         return;
     }
 
@@ -649,7 +649,7 @@ losCpResDomain.DeploySelectApp = function(name) {
         var ep = EventProxy.create("tpl", "inst", function(tpl, inst) {
 
             if (!inst || !inst.kind || inst.kind != "AppList") {
-                return alert("AppInst error, Please try again later (EC:loscp-appset)");
+                return alert("AppInst error, Please try again later (EC:incp-appset)");
             }
 
             l4iModal.Open({
@@ -662,8 +662,8 @@ losCpResDomain.DeploySelectApp = function(name) {
                         return;
                     }
                     l4iTemplate.Render({
-                        dstid: "loscp-appls-selector",
-                        tplid: "loscp-appls-selector-tpl",
+                        dstid: "incp-appls-selector",
+                        tplid: "incp-appls-selector-tpl",
                         data: inst,
                     });
                 },
@@ -671,8 +671,8 @@ losCpResDomain.DeploySelectApp = function(name) {
                     if (err || !data || data.length < 16) {
                         return;
                     }
-                    losCpResDomain.inst_active.operate.app_id = data;
-                    losCpResDomain.DeployCommit();
+                    inCpResDomain.inst_active.operate.app_id = data;
+                    inCpResDomain.DeployCommit();
                 },
                 buttons: [{
                     onclick: "l4iModal.Close()",
@@ -682,36 +682,36 @@ losCpResDomain.DeploySelectApp = function(name) {
         });
 
         ep.fail(function(err) {
-            alert("SpecSet error, Please try again later (EC:loscp-appset)");
+            alert("SpecSet error, Please try again later (EC:incp-appset)");
         });
 
         // template
-        losCp.TplFetch("app/inst/selector", {
+        inCp.TplFetch("app/inst/selector", {
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("app/list-op-res?res_type=domain", {
+        inCp.ApiCmd("app/list-op-res?res_type=domain", {
             callback: ep.done("inst"),
         });
     });
 }
 
-losCpResDomain.DeployCommit = function() {
-    if (!losCpResDomain.inst_active || !losCpResDomain.inst_active.operate.app_id) {
+inCpResDomain.DeployCommit = function() {
+    if (!inCpResDomain.inst_active || !inCpResDomain.inst_active.operate.app_id) {
         return;
     }
 
-    var alert_id = "#loscp-resdomain-list-alert";
+    var alert_id = "#incp-resdomain-list-alert";
     var req = {
         meta: {
-            name: losCpResDomain.inst_active.meta.name,
+            name: inCpResDomain.inst_active.meta.name,
         },
         operate: {
-            app_id: losCpResDomain.inst_active.operate.app_id,
+            app_id: inCpResDomain.inst_active.operate.app_id,
         },
     }
 
-    losCp.ApiCmd("app/op-res-set", {
+    inCp.ApiCmd("app/op-res-set", {
         method: "POST",
         data: JSON.stringify(req),
         timeout: 3000,
@@ -734,8 +734,8 @@ losCpResDomain.DeployCommit = function() {
             l4i.InnerAlert(alert_id, 'alert-success', "Successful operation");
 
             window.setTimeout(function() {
-                losCpResDomain.inst_active = null;
-                losCpResDomain.List();
+                inCpResDomain.inst_active = null;
+                inCpResDomain.List();
             }, 1000);
         }
     });

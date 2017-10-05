@@ -1,9 +1,9 @@
 
-<div id="loscp-appset-alert" class="alert alert-danger" style="display:none"></div>
+<div id="incp-appset-alert" class="alert alert-danger" style="display:none"></div>
 
-<div id="loscp-appset" style="box-sizing: border-box;">loading</div>
+<div id="incp-appset" style="box-sizing: border-box;">loading</div>
 
-<script id="loscp-appset-tpl" type="text/html">
+<script id="incp-appset-tpl" type="text/html">
 <div class="panel panel-default">
   <div class="panel-heading">App Instance Settings</div>
   <div class="panel-body">
@@ -25,7 +25,7 @@
         Bound Pod 
       </label>
   
-      <div id="loscp-appset-bound">{[=it.operate.pod_id]}</div>
+      <div id="incp-appset-bound">{[=it.operate.pod_id]}</div>
     </div>
 
     <div class="l4i-form-group">
@@ -61,11 +61,11 @@
       </div>
     </div>
 
-    <button type="button" class="btn btn-primary" onclick="losCpApp.InstSetCommit()">
+    <button type="button" class="btn btn-primary" onclick="inCpApp.InstSetCommit()">
       Save
     </button>
 
-    <button type="button" class="btn btn-default" onclick="losCpApp.InstListRefresh()" style="margin-left:10px">
+    <button type="button" class="btn btn-default" onclick="inCpApp.InstListRefresh()" style="margin-left:10px">
       Cancel
     </button>
   </div>

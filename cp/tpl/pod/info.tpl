@@ -1,7 +1,7 @@
 <div class="panel panel-default">
   <div class="panel-heading">Info</div>
   <div class="panel-body">
-    <table width="100%" class="loscp-panel-table">
+    <table width="100%" class="incp-panel-table">
       <tr>
         <td width="220" class="lpt-title">ID</td>
         <td>{[=it.meta.id]}</td>
@@ -26,7 +26,7 @@
 <div class="panel panel-default">
   <div class="panel-heading">Spec</div>
   <div class="panel-body">
-    <table width="100%" class="loscp-panel-table">
+    <table width="100%" class="incp-panel-table">
       <tr>
         <td width="220" class="lpt-title">ID</td>
         <td>{[=it.spec.ref.id]}</td>
@@ -63,7 +63,7 @@
             {[~it.spec.volumes :v]}
             <tr>
               <td width="50%">{[=v.name]}</td>
-              <td>{[=losCp.UtilResSizeFormat(v.size_limit)]}</td>
+              <td>{[=inCp.UtilResSizeFormat(v.size_limit)]}</td>
             </tr>
             {[~]}
           </tbody></table>
@@ -108,7 +108,7 @@
             </tr>
             <tr>
               <td>Memory</td>
-              <td>{[=losCp.UtilResSizeFormat(box.resources.mem_limit)]}</td>
+              <td>{[=inCp.UtilResSizeFormat(box.resources.mem_limit)]}</td>
             </tr>
           </tbody></table>
         </td>
@@ -123,10 +123,10 @@
 <div class="panel panel-default">
   <div class="panel-heading">Operating</div>
   <div class="panel-body">
-    <table width="100%" class="loscp-panel-table">
+    <table width="100%" class="incp-panel-table">
       <tr>
         <td width="220" class="lpt-title">Action</td>
-        <td>{[=losCp.OpActionTitle(it.operate.action)]}</td>
+        <td>{[=inCp.OpActionTitle(it.operate.action)]}</td>
       </tr>
       <tr>
         <td class="lpt-title">Cluster (Zone / Cell)</td>
@@ -148,7 +148,7 @@
             <tr>
               <td class="">Service Ports</td>
               <td>
-                <table style="width:100%" class="loscp-font-fixspace">
+                <table style="width:100%" class="incp-font-fixspace">
                 {[~rep.ports :opv]}
                 <tr>
                   <td>{[=opv.name]}/TCP</td>

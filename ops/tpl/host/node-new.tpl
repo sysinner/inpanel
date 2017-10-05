@@ -1,6 +1,6 @@
-<div id="losops-host-node-form">
+<div id="inops-host-node-form">
  
-  <div id="losops-host-nodenew-alert"></div>
+  <div id="inops-host-nodenew-alert"></div>
 
   <input type="hidden" name="operate_zone_id" value="{[=it.operate.zone_id]}">
   <input type="hidden" name="operate_cell_id" value="{[=it.operate.cell_id]}">

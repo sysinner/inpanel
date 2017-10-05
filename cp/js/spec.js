@@ -1,4 +1,4 @@
-var losCpSpec = {
+var inCpSpec = {
     statusls: [
         {
             phase: "Active",
@@ -65,11 +65,11 @@ var losCpSpec = {
     keyreg: /^[A-Za-z]\w{2,30}$/,
 }
 
-losCpSpec.Index = function() {
-    losCp.WorkLoader("-/spec/index");
+inCpSpec.Index = function() {
+    inCp.WorkLoader("-/spec/index");
 }
 
-losCpSpec.ImageList = function() {
+inCpSpec.ImageList = function() {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
@@ -100,32 +100,32 @@ losCpSpec.ImageList = function() {
             alert("ListRefresh error, Please try again later (EC:001)");
         });
 
-        losCp.TplFetch("-/spec/image-list", {
+        inCp.TplFetch("-/spec/image-list", {
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("spec/image-list", {
+        inCp.ApiCmd("spec/image-list", {
             callback: ep.done("data"),
         });
     });
 }
 
 
-losCpSpec.ImageSetForm = function(imageid) {
+inCpSpec.ImageSetForm = function(imageid) {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
 
             if (!rsj) {
-                rsj = l4i.Clone(losCpSpec.boxImageDef)
+                rsj = l4i.Clone(inCpSpec.boxImageDef)
             }
 
             if (!rsj.kind || rsj.kind != "BoxImage") {
-                rsj = l4i.Clone(losCpSpec.boxImageDef);
+                rsj = l4i.Clone(inCpSpec.boxImageDef);
             }
 
-            rsj._statusls = losCpSpec.statusls;
-            rsj._specs = losCpSpec.boxImageSpecs;
+            rsj._statusls = inCpSpec.statusls;
+            rsj._specs = inCpSpec.boxImageSpecs;
 
             l4iModal.Open({
                 title: "Box Image Spec Setting",
@@ -135,7 +135,7 @@ losCpSpec.ImageSetForm = function(imageid) {
                     onclick: "l4iModal.Close()",
                     title: "Close",
                 }, {
-                    onclick: "losCpSpec.ImageSetCommit()",
+                    onclick: "inCpSpec.ImageSetCommit()",
                     title: "Save",
                     style: "btn btn-primary",
                 }],
@@ -147,7 +147,7 @@ losCpSpec.ImageSetForm = function(imageid) {
         });
 
         // template
-        losCp.TplFetch("-/spec/image-set", {
+        inCp.TplFetch("-/spec/image-set", {
             callback: ep.done("tpl"),
         });
 
@@ -155,14 +155,14 @@ losCpSpec.ImageSetForm = function(imageid) {
         if (!imageid) {
             ep.emit("data", null);
         } else {
-            losCp.ApiCmd("spec/image-entry?imageid=" + imageid, {
+            inCp.ApiCmd("spec/image-entry?imageid=" + imageid, {
                 callback: ep.done("data"),
             });
         }
     });
 }
 
-losCpSpec.ImageSetCommit = function() {
+inCpSpec.ImageSetCommit = function() {
     var form = $("#mix-spec-image-form");
 
     var req = {
@@ -178,7 +178,7 @@ losCpSpec.ImageSetCommit = function() {
         }
     };
 
-    losCp.ApiCmd("spec/image-set", {
+    inCp.ApiCmd("spec/image-set", {
         method: "POST",
         data: JSON.stringify(req),
         success: function(rsj) {
@@ -199,7 +199,7 @@ losCpSpec.ImageSetCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                losCpSpec.ImageList();
+                inCpSpec.ImageList();
             }, 500);
         },
         error: function(xhr, textStatus, error) {
@@ -210,7 +210,7 @@ losCpSpec.ImageSetCommit = function() {
 
 
 
-losCpSpec.QuotaList = function() {
+inCpSpec.QuotaList = function() {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
@@ -241,31 +241,31 @@ losCpSpec.QuotaList = function() {
             alert("ListRefresh error, Please try again later (EC:001)");
         });
 
-        losCp.TplFetch("-/spec/quota-list", {
+        inCp.TplFetch("-/spec/quota-list", {
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("spec/quota-list", {
+        inCp.ApiCmd("spec/quota-list", {
             callback: ep.done("data"),
         });
     });
 }
 
 
-losCpSpec.QuotaSetForm = function(quotaid) {
+inCpSpec.QuotaSetForm = function(quotaid) {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
 
             if (!rsj) {
-                rsj = l4i.Clone(losCpSpec.boxQuotaDef)
+                rsj = l4i.Clone(inCpSpec.boxQuotaDef)
             }
 
             if (!rsj.kind || rsj.kind != "BoxQuota") {
-                rsj = l4i.Clone(losCpSpec.boxQuotaDef);
+                rsj = l4i.Clone(inCpSpec.boxQuotaDef);
             }
 
-            rsj._statusls = losCpSpec.statusls;
+            rsj._statusls = inCpSpec.statusls;
 
             l4iModal.Open({
                 title: "Box Quota Spec Setting",
@@ -277,7 +277,7 @@ losCpSpec.QuotaSetForm = function(quotaid) {
                     onclick: "l4iModal.Close()",
                     title: "Close",
                 }, {
-                    onclick: "losCpSpec.QuotaSetCommit()",
+                    onclick: "inCpSpec.QuotaSetCommit()",
                     title: "Save",
                     style: "btn btn-primary",
                 }],
@@ -289,7 +289,7 @@ losCpSpec.QuotaSetForm = function(quotaid) {
         });
 
         // template
-        losCp.TplFetch("-/spec/quota-set", {
+        inCp.TplFetch("-/spec/quota-set", {
             callback: ep.done("tpl"),
         });
 
@@ -297,14 +297,14 @@ losCpSpec.QuotaSetForm = function(quotaid) {
         if (!quotaid) {
             ep.emit("data", null);
         } else {
-            losCp.ApiCmd("spec/quota-entry?quotaid=" + quotaid, {
+            inCp.ApiCmd("spec/quota-entry?quotaid=" + quotaid, {
                 callback: ep.done("data"),
             });
         }
     });
 }
 
-losCpSpec.QuotaSetCommit = function() {
+inCpSpec.QuotaSetCommit = function() {
     var form = $("#mix-spec-quota-form");
 
     var req = {
@@ -318,7 +318,7 @@ losCpSpec.QuotaSetCommit = function() {
         stor_size: parseInt(form.find("input[name=stor_size]").val()),
     };
 
-    losCp.ApiCmd("spec/quota-set", {
+    inCp.ApiCmd("spec/quota-set", {
         method: "POST",
         data: JSON.stringify(req),
         success: function(rsj) {
@@ -339,7 +339,7 @@ losCpSpec.QuotaSetCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                losCpSpec.QuotaList();
+                inCpSpec.QuotaList();
             }, 500);
         },
         error: function(xhr, textStatus, error) {
@@ -349,7 +349,7 @@ losCpSpec.QuotaSetCommit = function() {
 }
 
 //
-losCpSpec.PodList = function() {
+inCpSpec.PodList = function() {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
@@ -382,34 +382,34 @@ losCpSpec.PodList = function() {
             alert("ListRefresh error, Please try again later (EC:001)");
         });
 
-        losCp.TplFetch("-/spec/pod-list", {
+        inCp.TplFetch("-/spec/pod-list", {
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("spec/pod-list", {
+        inCp.ApiCmd("spec/pod-list", {
             callback: ep.done("data"),
         });
     });
 }
 
 
-losCpSpec.PodSetForm = function(podid) {
+inCpSpec.PodSetForm = function(podid) {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "images", "quotas", "data", function(tpl, images, quotas, rsj) {
 
             if (!rsj) {
-                rsj = l4i.Clone(losCpSpec.podDef)
+                rsj = l4i.Clone(inCpSpec.podDef)
             }
 
             if (!rsj.kind || rsj.kind != "PodSpec") {
-                rsj = l4i.Clone(losCpSpec.podDef);
+                rsj = l4i.Clone(inCpSpec.podDef);
             }
 
-            losCpSpec._boxQuotas = quotas;
-            losCpSpec._boxImages = images;
+            inCpSpec._boxQuotas = quotas;
+            inCpSpec._boxImages = images;
 
-            rsj._statusls = losCpSpec.statusls;
+            rsj._statusls = inCpSpec.statusls;
             rsj._quotas = quotas;
             rsj._images = images;
 
@@ -425,7 +425,7 @@ losCpSpec.PodSetForm = function(podid) {
                     onclick: "l4iModal.Close()",
                     title: "Close",
                 }, {
-                    onclick: "losCpSpec.PodSetCommit()",
+                    onclick: "inCpSpec.PodSetCommit()",
                     title: "Save",
                     style: "btn btn-primary",
                 }],
@@ -438,17 +438,17 @@ losCpSpec.PodSetForm = function(podid) {
                         success: function() {
 
                             if (!rsj.labels || rsj.labels.length < 1) {
-                                losCpSpec.PodSetLabelAppend();
+                                inCpSpec.PodSetLabelAppend();
                             }
 
                             if (rsj.boxes && rsj.boxes.length > 0) {
 
                                 for (var i in rsj.boxes) {
-                                    losCpSpec.PodSetBoxAppend(rsj.boxes[i]);
+                                    inCpSpec.PodSetBoxAppend(rsj.boxes[i]);
                                 }
 
                             } else {
-                                losCpSpec.PodSetBoxAppend();
+                                inCpSpec.PodSetBoxAppend();
                             }
 
                         },
@@ -462,15 +462,15 @@ losCpSpec.PodSetForm = function(podid) {
         });
 
         // template
-        losCp.TplFetch("-/spec/pod-set", {
+        inCp.TplFetch("-/spec/pod-set", {
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("spec/image-list", {
+        inCp.ApiCmd("spec/image-list", {
             callback: ep.done("images"),
         });
 
-        losCp.ApiCmd("spec/quota-list", {
+        inCp.ApiCmd("spec/quota-list", {
             callback: ep.done("quotas"),
         });
 
@@ -478,14 +478,14 @@ losCpSpec.PodSetForm = function(podid) {
         if (!podid) {
             ep.emit("data", null);
         } else {
-            losCp.ApiCmd("spec/pod-entry?podid=" + podid, {
+            inCp.ApiCmd("spec/pod-entry?podid=" + podid, {
                 callback: ep.done("data"),
             });
         }
     });
 }
 
-losCpSpec.PodSetLabelAppend = function() {
+inCpSpec.PodSetLabelAppend = function() {
     l4iTemplate.Render({
         append: true,
         dstid: "mix-spec-podset-labels",
@@ -493,19 +493,19 @@ losCpSpec.PodSetLabelAppend = function() {
     });
 }
 
-losCpSpec.PodSetLabelDel = function(field) {
+inCpSpec.PodSetLabelDel = function(field) {
     $(field).parent().parent().remove();
 }
 
-losCpSpec.PodSetBoxAppend = function(box) {
+inCpSpec.PodSetBoxAppend = function(box) {
     if (!box) {
-        box = l4i.Clone(losCpSpec.boxSpecDef);
-        box.resource = l4i.Clone(losCpSpec.boxQuotaDef);
-        box.image = l4i.Clone(losCpSpec.boxImageDef);
+        box = l4i.Clone(inCpSpec.boxSpecDef);
+        box.resource = l4i.Clone(inCpSpec.boxQuotaDef);
+        box.image = l4i.Clone(inCpSpec.boxImageDef);
     }
 
-    box._images = losCpSpec._boxImages;
-    box._quotas = losCpSpec._boxQuotas;
+    box._images = inCpSpec._boxImages;
+    box._quotas = inCpSpec._boxQuotas;
 
     box._rowid = Math.random().toString(16).slice(2);
 
@@ -517,17 +517,17 @@ losCpSpec.PodSetBoxAppend = function(box) {
         success: function() {
 
             if (!box.ports || box.ports.length < 1) {
-                losCpSpec.PodSetBoxPortAppend(box._rowid);
+                inCpSpec.PodSetBoxPortAppend(box._rowid);
             }
         },
     });
 }
 
-losCpSpec.PodSetBoxDel = function(rowid) {
+inCpSpec.PodSetBoxDel = function(rowid) {
     $("#mix-spec-podset-box-" + rowid).remove();
 }
 
-losCpSpec.PodSetBoxPortAppend = function(rowid) {
+inCpSpec.PodSetBoxPortAppend = function(rowid) {
     l4iTemplate.Render({
         append: true,
         dstid: "mix-spec-podset-box-ports-" + rowid,
@@ -535,11 +535,11 @@ losCpSpec.PodSetBoxPortAppend = function(rowid) {
     });
 }
 
-losCpSpec.PodSetBoxPortDel = function(field) {
+inCpSpec.PodSetBoxPortDel = function(field) {
     $(field).parent().parent().remove();
 }
 
-losCpSpec.PodSetCommit = function() {
+inCpSpec.PodSetCommit = function() {
     var form = $("#mix-spec-podset");
 
     var req = {
@@ -552,7 +552,7 @@ losCpSpec.PodSetCommit = function() {
         boxes: [],
     };
 
-    if (!losCpSpec.keyreg.test(req.meta.name)) {
+    if (!inCpSpec.keyreg.test(req.meta.name)) {
         return l4i.InnerAlert("#mix-spec-podset-alert", 'alert-danger', "Invalid Pod Name");
     }
 
@@ -567,7 +567,7 @@ losCpSpec.PodSetCommit = function() {
                 return;
             }
 
-            if (!losCpSpec.keyreg.test(key)) {
+            if (!inCpSpec.keyreg.test(key)) {
                 throw "Invalid Lable Key";
             }
 
@@ -598,7 +598,7 @@ losCpSpec.PodSetCommit = function() {
                 ports: [],
             }
 
-            if (!losCpSpec.keyreg.test(box.meta.name)) {
+            if (!inCpSpec.keyreg.test(box.meta.name)) {
                 throw "Invalid Box Name";
             }
 
@@ -628,7 +628,7 @@ losCpSpec.PodSetCommit = function() {
 
     $("#mix-spec-podset-alert").hide();
 
-    losCp.ApiCmd("spec/pod-set", {
+    inCp.ApiCmd("spec/pod-set", {
         method: "POST",
         data: JSON.stringify(req),
         success: function(rsj) {
@@ -649,7 +649,7 @@ losCpSpec.PodSetCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                losCpSpec.PodList();
+                inCpSpec.PodList();
             }, 500);
         },
         error: function(xhr, textStatus, error) {

@@ -1,33 +1,33 @@
-var losCpHost = {
+var inCpHost = {
     zones: null,
     single_node: false,
 }
 
-losCpHost.ZoneRefresh = function(cb) {
-    var zoneid = l4iSession.Get("loscp_host_zoneid");
+inCpHost.ZoneRefresh = function(cb) {
+    var zoneid = l4iSession.Get("incp_host_zoneid");
     if (!zoneid) {
-        zoneid = l4iStorage.Get("loscp_host_zoneid");
+        zoneid = l4iStorage.Get("incp_host_zoneid");
     }
 
-    if (losCpHost.zones) {
+    if (inCpHost.zones) {
 
         if (!zoneid || zoneid.indexOf("/") >= 0) {
 
-            for (var i in losCpHost.zones.items) {
-                zoneid = losCpHost.zones.items[i].meta.id;
+            for (var i in inCpHost.zones.items) {
+                zoneid = inCpHost.zones.items[i].meta.id;
                 break
             }
 
-            l4iSession.Set("loscp_host_zoneid", zoneid);
-            l4iStorage.Set("loscp_host_zoneid", zoneid);
+            l4iSession.Set("incp_host_zoneid", zoneid);
+            l4iStorage.Set("incp_host_zoneid", zoneid);
         }
 
-        losCpHost.zones._zoneid = zoneid;
+        inCpHost.zones._zoneid = zoneid;
 
-        return cb(null, losCpHost.zones);
+        return cb(null, inCpHost.zones);
     }
 
-    losCp.ApiCmd("host/zone-list", {
+    inCp.ApiCmd("host/zone-list", {
         callback: function(err, zones) {
 
             if (err) {
@@ -46,22 +46,22 @@ losCpHost.ZoneRefresh = function(cb) {
                 return cb("Network Connection Exception", null);
             }
 
-            losCpHost.zones = zones;
+            inCpHost.zones = zones;
 
             if (!zoneid || zoneid.indexOf("/") >= 0) {
 
-                for (var i in losCpHost.zones.items) {
-                    zoneid = losCpHost.zones.items[i].meta.id;
+                for (var i in inCpHost.zones.items) {
+                    zoneid = inCpHost.zones.items[i].meta.id;
                     break
                 }
 
-                l4iSession.Set("loscp_host_zoneid", zoneid);
-                l4iStorage.Set("loscp_host_zoneid", zoneid);
+                l4iSession.Set("incp_host_zoneid", zoneid);
+                l4iStorage.Set("incp_host_zoneid", zoneid);
             }
 
-            losCpHost.zones._zoneid = zoneid;
+            inCpHost.zones._zoneid = zoneid;
 
-            cb(null, losCpHost.zones);
+            cb(null, inCpHost.zones);
         },
     });
 }

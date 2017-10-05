@@ -1,2 +1,2 @@
-## lessOS Core WebUI
+## SysInner Core Panel
 

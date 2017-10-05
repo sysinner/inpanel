@@ -1,5 +1,5 @@
-<div id="loscp-podsetinfo-alert"></div>
-<div id="loscp-podsetinfo">  
+<div id="incp-podsetinfo-alert"></div>
+<div id="incp-podsetinfo">  
 
 <div class="">
     <input type="hidden" name="meta_id" value="{[=it.pod.meta.id]}">
@@ -15,7 +15,7 @@
       <label class="">Status</label>
       <div class="">
       {[~it._op_actions :v]}
-        <span class="loscp-form-checkbox checkbox-inline">
+        <span class="incp-form-checkbox checkbox-inline">
           <input type="radio" name="operate_action" value="{[=v.action]}" {[ if (v.action == it.pod.operate.action) { ]}checked="checked"{[ } ]}> {[=v.title]}
         </span>
       {[~]}
@@ -25,7 +25,7 @@
 </div>
 
 
-<script id="loscp-pod-spec-info-tpl" type="text/html">
+<script id="incp-pod-spec-info-tpl" type="text/html">
   <table class="table table-condensed">
     {[?it.labels]}
     <tr>

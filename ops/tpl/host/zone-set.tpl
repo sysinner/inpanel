@@ -1,6 +1,6 @@
-<div id="losops-host-zone-form">
+<div id="inops-host-zone-form">
 
-  <div id="losops-host-zoneset-alert"></div>
+  <div id="inops-host-zoneset-alert"></div>
 
   {[ if (it.meta.id) { ]}
     <input type="hidden" name="id" value="{[=it.meta.id]}">
@@ -36,7 +36,7 @@
     <label>
       WAN Addresss
       <button type="button" class="btn btn-default btn-xs" 
-        onclick="losOpsHost.ZoneWanAddressAppend()">
+        onclick="inOpsHost.ZoneWanAddressAppend()">
         Append new Address
       </button>
     </label>
@@ -48,11 +48,11 @@
           <th></th>
         </tr>
         </thead>
-        <tbody id="losops-host-zoneset-wanaddrs">
+        <tbody id="inops-host-zoneset-wanaddrs">
           {[~it.wan_addrs :vaddr]}
-          <tr class="losops-host-zoneset-wanaddr-item">
+          <tr class="inops-host-zoneset-wanaddr-item">
             <td><input name="wan_addr" type="text" value="{[=vaddr]}" class="input-sm"/></td>
-            <td><a href="#" onclick="losOpsHost.ZoneWanAddressDel(this)">Delete</a></td>
+            <td><a href="#" onclick="inOpsHost.ZoneWanAddressDel(this)">Delete</a></td>
           </tr>
           {[~]}
         </tbody>
@@ -64,7 +64,7 @@
     <label>
       <span>LAN Addresss</span>
       <button type="button" class="btn btn-default btn-xs" 
-        onclick="losOpsHost.ZoneLanAddressAppend()">
+        onclick="inOpsHost.ZoneLanAddressAppend()">
         Append new Address
       </button>
     </label>
@@ -76,11 +76,11 @@
           <th></th>
         </tr>
         </thead>
-        <tbody id="losops-host-zoneset-lanaddrs">
+        <tbody id="inops-host-zoneset-lanaddrs">
           {[~it.lan_addrs :vaddr]}
-          <tr class="losops-host-zoneset-lanaddr-item">
+          <tr class="inops-host-zoneset-lanaddr-item">
             <td><input name="lan_addr" type="text" value="{[=vaddr]}" class="input-sm"/></td>
-            <td><a href="#" onclick="losOpsHost.ZoneLanAddressDel(this)">Delete</a></td>
+            <td><a href="#" onclick="inOpsHost.ZoneLanAddressDel(this)">Delete</a></td>
           </tr>
           {[~]}
         </tbody>
@@ -90,16 +90,16 @@
 
 </div>
 
-<script id="losops-host-zoneset-wanaddr-tpl" type="text/html">
-<tr class="losops-host-zoneset-wanaddr-item">
+<script id="inops-host-zoneset-wanaddr-tpl" type="text/html">
+<tr class="inops-host-zoneset-wanaddr-item">
   <td><input name="wan_addr" type="text" value="" class="input-sm"/></td>
-  <td><a href="#" onclick="losOpsHost.ZoneWanAddressDel(this)">Delete</a></td>
+  <td><a href="#" onclick="inOpsHost.ZoneWanAddressDel(this)">Delete</a></td>
 </tr>
 </script>
 
-<script id="losops-host-zoneset-lanaddr-tpl" type="text/html">
-<tr class="losops-host-zoneset-lanaddr-item">
+<script id="inops-host-zoneset-lanaddr-tpl" type="text/html">
+<tr class="inops-host-zoneset-lanaddr-item">
   <td><input name="lan_addr" type="text" value="" class="input-sm"/></td>
-  <td><a href="#" onclick="losOpsHost.ZoneLanAddressDel(this)">Delete</a></td>
+  <td><a href="#" onclick="inOpsHost.ZoneLanAddressDel(this)">Delete</a></td>
 </tr>
 </script>

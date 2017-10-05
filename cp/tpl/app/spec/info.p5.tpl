@@ -14,7 +14,7 @@
 <div class="l4i-form-group">
   <label>Packages</label>
 
-  <div id="loscp-app-specset-lpmls">
+  <div id="incp-app-specset-ipmls">
     <table class="table table-hover">
       <thead><tr>
         <th>Name</th>
@@ -25,12 +25,12 @@
       </tr></thead>
       <tbody>
       {[~it.packages :v]}
-      <tr id="loscp-app-specset-lpmls-name{[=v.name]}">
+      <tr id="incp-app-specset-ipmls-name{[=v.name]}">
         <td>{[=v.name]}</td>
         <td>{[=v.version]}</td>
         <td>{[=v.release]}</td>
         <td>{[=v.dist]} / {[=v.arch]}</td>
-        <td>/usr/los/{[=v.name]}/{[=v.version]}</td>
+        <td>/usr/sysinner/{[=v.name]}/{[=v.version]}</td>
       </tr>
       {[~]}
       </tbody>
@@ -43,9 +43,9 @@
 <div class="l4i-form-group">
   <label>Executors</label>
 
-  <div id="loscp-app-specset-executorls">
+  <div id="incp-app-specset-executorls">
     {[~it.executors :v]}
-    <div class="loscp-app-specset-gn-box">
+    <div class="incp-app-specset-gn-box">
       <div class="head">
         <span class="title">{[=v.name]}</span>
       </div>

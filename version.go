@@ -1,4 +1,4 @@
-package los_webui
+package inpanel
 
 const (
 	Version = "0.0.1.dev"

@@ -10,18 +10,18 @@ body {
   padding: 10px 20px 10px 20px;
 }
 
-.losops-header {
+.inops-header {
   /*background-color: #fff;*/
   /*opacity: 0.94;*/
 }
 
-.losops-query-input-icon {
+.inops-query-input-icon {
   padding: 5px 5px 5px 30px;
   background: url(../img/search-16.png) no-repeat 8px; 
   width: 300px;
 }
 
-.losops-font-mono {
+.inops-font-mono {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
   font-size: 1em;
 }
@@ -29,15 +29,15 @@ body {
 
 
 
-.losops-boxlet-grp {
+.inops-boxlet-grp {
   margin: 0 0 10px;
 }
-.losops-boxlet-grp .lbg-title {
+.inops-boxlet-grp .lbg-title {
   font-size: 20px;
   font-weight: bold;
   padding: 10px 0;
 }
-.losops-boxlet {
+.inops-boxlet {
   border-radius: 5px;
   background-color: #fff;
   border-radius: 4px;
@@ -47,57 +47,57 @@ body {
   margin-bottom: 20px;
 }
 
-.losops-boxlet .lb-title {
+.inops-boxlet .lb-title {
   font-size: 20px;
   font-weight: bold;
   padding: 5px 0 10px 0;
   margin-bottom: 10px;
 }
-.losops-boxlet .lb-underline {
+.inops-boxlet .lb-underline {
   border-bottom: #ccc solid 2px;
 }
-.losops-boxlet .lb-colbox {
+.inops-boxlet .lb-colbox {
   padding: 5px 10px;
   background-color: #eee;
   border-left: #fff 10px solid;
 }
-.losops-boxlet .lb-colbox:first-child {
+.inops-boxlet .lb-colbox:first-child {
   border-left: 0;
 }
-.losops-boxlet .lb-colbox .lbc-title {
+.inops-boxlet .lb-colbox .lbc-title {
   font-size: 6px;
   color: #777;
 }
-.losops-boxlet .lb-colbox .lbc-value {
+.inops-boxlet .lb-colbox .lbc-value {
   margin-top: 5px;
   font-size: 16px;
   font-weight: bold;
   color: #333;
 }
-.losops-boxlet .lb-colbox .lbc-value span {
+.inops-boxlet .lb-colbox .lbc-value span {
   font-size: 8px;
   font-weight: normal;
 }
 
-.losops-form > .form-group {
+.inops-form > .form-group {
   padding: 0 !important;
   margin: 0 !important;
 }
 
-.losops-form-group-title {
+.inops-form-group-title {
   margin: 15px 0;
   font-size: 16px;
   color: #999;
   white-space: pre;
 }
-.losops-form-checkbox {
+.inops-form-checkbox {
   margin: 0 20px 0 0;
   padding: 10px 0;
 }
 
 
 
-#losops-topbar {
+#inops-topbar {
   padding: 0 15px;
   margin-bottom: 10px;
   background-color: #fff;
@@ -109,7 +109,7 @@ body {
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.15);
 }
 
-.losops-topbar-collapse {
+.inops-topbar-collapse {
   position: relative;
   display: block !important;
   height: auto !important;
@@ -118,7 +118,7 @@ body {
   white-space: nowrap;
 }
 
-.losops-topnav {
+.inops-topnav {
   position: relative;
   list-style: none;
   padding: 0;
@@ -129,11 +129,11 @@ body {
   vertical-align: middle;
 }
 
-.losops-topnav:first-child {
+.inops-topnav:first-child {
   margin-left: 0;
 }
 
-.losops-topnav > li {
+.inops-topnav > li {
   position: relative;
   padding: 0;
   display: inline-block;
@@ -142,11 +142,11 @@ body {
   line-height: 50px;
 }
 
-.losops-topnav > li:first-child {
+.inops-topnav > li:first-child {
   margin-left: 0;
 }
 
-.losops-topnav > li > a {
+.inops-topnav > li > a {
   padding: 0 20px;
   display: block;
   text-decoration: none;
@@ -155,66 +155,66 @@ body {
   font-size: 16px;
 }
 
-.losops-topnav > li > a:hover {
+.inops-topnav > li > a:hover {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
-.losops-topnav > li > a.active {
+.inops-topnav > li > a.active {
   color: #000;
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.losops-topnav-right {
+.inops-topnav-right {
   float: right !important;
   margin-right: 2px;
 }
 
-.losops-topnav-logo {
+.inops-topnav-logo {
   margin-right: 10px;
   max-height: 30px;
   max-width: 100px;
 }
 
-.losops-topnav-brand {
+.inops-topnav-brand {
   font-size: 16px;
   font-weight: bold;
 }
 
 
-.losops-nav {
+.inops-nav {
   padding-left: 0;
   margin-bottom: 0;
   list-style: none;
 }
-.losops-nav > li {
+.inops-nav > li {
   position: relative;
   display: block;
 }
-.losops-nav > li > a {
+.inops-nav > li > a {
   position: relative;
   display: block;
   padding: 5px 10px;
 }
-.losops-nav > li > a:hover,
-.losops-nav > li > a:focus {
+.inops-nav > li > a:hover,
+.inops-nav > li > a:focus {
   text-decoration: none;
   background-color: #eee;
   color: #111; 
 }
 
-.losops-nav-pills > li {
+.inops-nav-pills > li {
   float: left;
 }
-.losops-nav-pills > li + li {
+.inops-nav-pills > li + li {
   margin-left: 2px;
 }
-.losops-nav-pills > li.active-default > a,
-.losops-nav-pills > li.active-default > a:hover,
-.losops-nav-pills > li.active-default > a:focus {
+.inops-nav-pills > li.active-default > a,
+.inops-nav-pills > li.active-default > a:hover,
+.inops-nav-pills > li.active-default > a:focus {
   color: #fff; 
   background-color: #777;
 }
-.losops-nav-pills > li.arrow-right:after {
+.inops-nav-pills > li.arrow-right:after {
   content: '';
   display: block;
   position: absolute;

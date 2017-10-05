@@ -1,4 +1,4 @@
-var losCpRes = {
+var inCpRes = {
     statusls: [
         {
             phase: "Running",
@@ -11,16 +11,16 @@ var losCpRes = {
     ]
 }
 
-losCpRes.Index = function() {
-    losCp.TplFetch("res/index", {
+inCpRes.Index = function() {
+    inCp.TplFetch("res/index", {
         callback: function(err, data) {
             if (err) {
                 return;
             }
             $("#comp-content").html(data);
-            losCpResDomain.List();
+            inCpResDomain.List();
         },
     });
 }
 
-losCpRes.todo = function() {}
+inCpRes.todo = function() {}

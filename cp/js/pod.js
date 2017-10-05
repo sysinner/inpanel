@@ -1,4 +1,4 @@
-var losCpPod = {
+var inCpPod = {
     statusls: [
         {
             phase: "Running",
@@ -64,21 +64,21 @@ var losCpPod = {
     },
 }
 
-losCpPod.Index = function() {
+inCpPod.Index = function() {
     $("#comp-content").html('<div id="work-content"></div>');
-    losCpPod.List();
+    inCpPod.List();
 }
 
-losCpPod.List = function(tplid) {
+inCpPod.List = function(tplid) {
     if (!tplid || tplid.indexOf("/") >= 0) {
-        tplid = "loscp-podls";
+        tplid = "incp-podls";
     }
     var alert_id = "#" + tplid + "-alert";
     var uri = "?";
 
-    if (losCp.Zones.items && losCp.Zones.items.length == 1) {
-        losCpPod.zone_active = losCp.Zones.items[0].meta.id;
-        uri += "zone_id=" + losCpPod.zone_active;
+    if (inCp.Zones.items && inCp.Zones.items.length == 1) {
+        inCpPod.zone_active = inCp.Zones.items[0].meta.id;
+        uri += "zone_id=" + inCpPod.zone_active;
     }
     uri += "&fields=meta/id|name,operate/action|replicas,spec/ref/name,spec/zone|cell"
 
@@ -89,8 +89,8 @@ losCpPod.List = function(tplid) {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
-            losCp.OpToolActive = null;
-            losCp.OpToolsRefresh("#" + tplid + "-optools");
+            inCp.OpToolActive = null;
+            inCp.OpToolsRefresh("#" + tplid + "-optools");
 
             if (!data || data.error || !data.kind || data.kind != "PodList") {
 
@@ -122,18 +122,18 @@ losCpPod.List = function(tplid) {
                         }
                     }
                 }
-                data.items[i].operate._action = losCp.OpActionTitle(data.items[i].operate.action);
+                data.items[i].operate._action = inCp.OpActionTitle(data.items[i].operate.action);
             }
 
-            if (losCpPod.zone_active) {
-                data._zone_active = losCpPod.zone_active;
+            if (inCpPod.zone_active) {
+                data._zone_active = inCpPod.zone_active;
             }
 
-            // $("#loscp-podls-alert").hide();
+            // $("#incp-podls-alert").hide();
             if (data.items.length < 1) {
                 return l4i.InnerAlert(alert_id, 'alert-info', "No Item Found Yet ...");
             }
-            data._actions = losCp.OpActions;
+            data._actions = inCp.OpActions;
 
             l4iTemplate.Render({
                 dstid: tplid,
@@ -152,7 +152,7 @@ losCpPod.List = function(tplid) {
         // template
         var el = document.getElementById(tplid);
         if (!el || el.length < 1) {
-            losCp.TplFetch("pod/list", {
+            inCp.TplFetch("pod/list", {
                 callback: function(err, tpl) {
 
                     if (err) {
@@ -166,14 +166,14 @@ losCpPod.List = function(tplid) {
             ep.emit("tpl", null);
         }
 
-        losCp.ApiCmd("pod/list" + uri, {
+        inCp.ApiCmd("pod/list" + uri, {
             callback: ep.done("data"),
         });
     });
 }
 
 
-losCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
+inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
     if (!pod_id) {
         return;
     }
@@ -183,13 +183,13 @@ losCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
     }
 
     if (!tplid) {
-        tplid = "loscp-podls";
+        tplid = "incp-podls";
     }
     var alert_id = "#" + tplid + "-alert";
 
     var uri = "?pod_id=" + pod_id + "&op_action=" + op_action;
 
-    losCp.ApiCmd("pod/op-action-set" + uri, {
+    inCp.ApiCmd("pod/op-action-set" + uri, {
         method: "GET",
         timeout: 10000,
         callback: function(err, rsj) {
@@ -219,9 +219,9 @@ losCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
 }
 
 
-losCpPod.New = function(options) {
+inCpPod.New = function(options) {
     options = options || {};
-    var alert_id = "#loscp-podnew-alert";
+    var alert_id = "#incp-podnew-alert";
 
     seajs.use(["ep"], function(EventProxy) {
 
@@ -230,13 +230,13 @@ losCpPod.New = function(options) {
             if (!zones || !zones.kind || zones.kind != "HostZoneList") {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
             }
-            losCpPod.syszones = zones;
+            inCpPod.syszones = zones;
 
             if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
             }
 
-            var pod = l4i.Clone(losCpPod.def);
+            var pod = l4i.Clone(inCpPod.def);
 
             pod._plans = plans;
             pod._plan_selected = null;
@@ -251,24 +251,24 @@ losCpPod.New = function(options) {
             }
 
 
-            losCpPod.plans = plans;
-            losCpPod.plan_selected = pod._plan_selected;
-            // losCpPod.zones = zones;
+            inCpPod.plans = plans;
+            inCpPod.plan_selected = pod._plan_selected;
+            // inCpPod.zones = zones;
 
-            // console.log(losCpPod)
+            // console.log(inCpPod)
 
             var fnfre = function() {
                 l4iTemplate.Render({
-                    dstid: "loscp-podnew-plans",
-                    tplid: "loscp-podnew-plans-tpl",
+                    dstid: "incp-podnew-plans",
+                    tplid: "incp-podnew-plans-tpl",
                     data: {
-                        items: losCpPod.plans.items,
-                        _plan_selected: losCpPod.plan_selected,
+                        items: inCpPod.plans.items,
+                        _plan_selected: inCpPod.plan_selected,
                     },
                 });
-                losCpPod.NewRefreshPlan();
+                inCpPod.NewRefreshPlan();
             }
-            losCpPod.new_options = options;
+            inCpPod.new_options = options;
             if (options.open_modal) {
                 l4iModal.Open({
                     tplsrc: tpl,
@@ -277,11 +277,11 @@ losCpPod.New = function(options) {
                     height: 600,
                     callback: function() {
                         l4iTemplate.Render({
-                            dstid: "loscp-podnew-form",
-                            tplid: "loscp-podnew-modal",
+                            dstid: "incp-podnew-form",
+                            tplid: "incp-podnew-modal",
                             data: {
-                                items: losCpPod.plans.items,
-                                _plan_selected: losCpPod.plan_selected,
+                                items: inCpPod.plans.items,
+                                _plan_selected: inCpPod.plan_selected,
                             },
                             callback: fnfre,
                         });
@@ -290,7 +290,7 @@ losCpPod.New = function(options) {
                         onclick: "l4iModal.Close()",
                         title: "Close",
                     }, {
-                        onclick: "losCpPod.NewCommit()",
+                        onclick: "inCpPod.NewCommit()",
                         title: "Save",
                         style: "btn btn-primary",
                     }],
@@ -302,11 +302,11 @@ losCpPod.New = function(options) {
                     tplsrc: tpl,
                     callback: function() {
                         l4iTemplate.Render({
-                            dstid: "loscp-podnew-form",
-                            tplid: "loscp-podnew-inner",
+                            dstid: "incp-podnew-form",
+                            tplid: "incp-podnew-inner",
                             data: {
-                                items: losCpPod.plans.items,
-                                _plan_selected: losCpPod.plan_selected,
+                                items: inCpPod.plans.items,
+                                _plan_selected: inCpPod.plan_selected,
                             },
                             callback: fnfre,
                         });
@@ -316,54 +316,54 @@ losCpPod.New = function(options) {
         });
 
         ep.fail(function(err) {
-            alert("Network Connection Error, Please try again later (EC:loscp-pod)");
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
         // template
-        losCp.TplFetch("pod/new", {
+        inCp.TplFetch("pod/new", {
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("pod-spec/plan-list", {
+        inCp.ApiCmd("pod-spec/plan-list", {
             callback: ep.done("plans"),
         });
 
-        losCp.ApiCmd("host/zone-list?fields=cells", {
+        inCp.ApiCmd("host/zone-list?fields=cells", {
             callback: ep.done("zones"),
         })
     });
 }
 
-losCpPod.NewPlanChange = function(plan_id) {
-    if (losCpPod.plan_selected == plan_id) {
+inCpPod.NewPlanChange = function(plan_id) {
+    if (inCpPod.plan_selected == plan_id) {
         return;
     }
 
-    losCpPod.plan_selected = plan_id;
-    losCpPod.NewRefreshPlan();
+    inCpPod.plan_selected = plan_id;
+    inCpPod.NewRefreshPlan();
 
-    $("#loscp-podnew-plans").find(".loscp-form-box-selector-item.selected").removeClass("selected");
-    $("#loscp-podnew-plan-id-" + plan_id).addClass("selected");
+    $("#incp-podnew-plans").find(".incp-form-box-selector-item.selected").removeClass("selected");
+    $("#incp-podnew-plan-id-" + plan_id).addClass("selected");
 }
 
 
-losCpPod.NewRefreshPlan = function() {
-    var alert_id = "#loscp-podnew-alert";
+inCpPod.NewRefreshPlan = function() {
+    var alert_id = "#incp-podnew-alert";
 
-    // console.log(losCpPod.plans);
-    // console.log(losCpPod.syszones);
-    for (var i in losCpPod.plans.items) {
+    // console.log(inCpPod.plans);
+    // console.log(inCpPod.syszones);
+    for (var i in inCpPod.plans.items) {
 
-        if (losCpPod.plans.items[i].meta.id != losCpPod.plan_selected) {
+        if (inCpPod.plans.items[i].meta.id != inCpPod.plan_selected) {
             continue;
         }
 
-        losCpPod.plan = losCpPod.plans.items[i];
+        inCpPod.plan = inCpPod.plans.items[i];
 
         //
-        for (var i in losCpPod.plan.res_volumes) {
+        for (var i in inCpPod.plan.res_volumes) {
 
-            var vol = losCpPod.plan.res_volumes[i];
+            var vol = inCpPod.plan.res_volumes[i];
 
             if (vol.default < 1073741824) {
                 vol._valued = (vol.default / 1073741824).toFixed(1);
@@ -371,58 +371,58 @@ losCpPod.NewRefreshPlan = function() {
                 vol._valued = (vol.default / 1048576).toFixed(0);
             }
 
-            losCpPod.plan._res_volume = vol;
+            inCpPod.plan._res_volume = vol;
 
             break; // TODO
         }
 
-        if (!losCpPod.plan._res_volume) {
+        if (!inCpPod.plan._res_volume) {
             return l4i.InnerAlert(alert_id, 'alert-danger', "No SpecPodPlan/Volume Found");
         }
 
         //
-        losCpPod.plan._zones = [];
-        losCpPod.plan._zone_selected = null;
+        inCpPod.plan._zones = [];
+        inCpPod.plan._zone_selected = null;
 
-        // console.log(losCpPod.plan);
+        // console.log(inCpPod.plan);
 
-        for (var i in losCpPod.plan.zones) {
+        for (var i in inCpPod.plan.zones) {
 
-            for (var j in losCpPod.syszones.items) {
+            for (var j in inCpPod.syszones.items) {
 
-                if (losCpPod.plan.zones[i].name != losCpPod.syszones.items[j].meta.id) {
+                if (inCpPod.plan.zones[i].name != inCpPod.syszones.items[j].meta.id) {
                     continue;
                 }
 
-                for (var k in losCpPod.plan.zones[i].cells) {
+                for (var k in inCpPod.plan.zones[i].cells) {
 
-                    for (var m in losCpPod.syszones.items[j].cells) {
+                    for (var m in inCpPod.syszones.items[j].cells) {
 
-                        if (losCpPod.plan.zones[i].cells[k] != losCpPod.syszones.items[j].cells[m].meta.id) {
+                        if (inCpPod.plan.zones[i].cells[k] != inCpPod.syszones.items[j].cells[m].meta.id) {
                             continue;
                         }
 
-                        var name = losCpPod.plan.zones[i].name + "/" + losCpPod.plan.zones[i].cells[k];
-                        var zone_title = losCpPod.plan.zones[i].name;
-                        if (losCpPod.syszones.items[j].meta.name) {
-                            zone_title = losCpPod.syszones.items[j].meta.name;
+                        var name = inCpPod.plan.zones[i].name + "/" + inCpPod.plan.zones[i].cells[k];
+                        var zone_title = inCpPod.plan.zones[i].name;
+                        if (inCpPod.syszones.items[j].meta.name) {
+                            zone_title = inCpPod.syszones.items[j].meta.name;
                         }
-                        var cell_title = losCpPod.plan.zones[i].cells[k];
-                        if (losCpPod.syszones.items[j].cells[m].meta.name) {
-                            cell_title = losCpPod.syszones.items[j].cells[m].meta.name;
+                        var cell_title = inCpPod.plan.zones[i].cells[k];
+                        if (inCpPod.syszones.items[j].cells[m].meta.name) {
+                            cell_title = inCpPod.syszones.items[j].cells[m].meta.name;
                         }
 
-                        losCpPod.plan._zones.push({
+                        inCpPod.plan._zones.push({
                             id: l4iString.CryptoMd5(name),
                             name: name,
-                            zone: losCpPod.plan.zones[i].name,
-                            cell: losCpPod.plan.zones[i].cells[k],
+                            zone: inCpPod.plan.zones[i].name,
+                            cell: inCpPod.plan.zones[i].cells[k],
                             zone_title: zone_title,
                             cell_title: cell_title,
                         });
 
-                        if (!losCpPod.plan._zone_selected) {
-                            losCpPod.plan._zone_selected = name;
+                        if (!inCpPod.plan._zone_selected) {
+                            inCpPod.plan._zone_selected = name;
                         }
 
                         break
@@ -434,24 +434,24 @@ losCpPod.NewRefreshPlan = function() {
         }
 
         //
-        if (!losCpPod.plan._zone_selected) {
+        if (!inCpPod.plan._zone_selected) {
             return l4i.InnerAlert(alert_id, 'alert-danger', "No SpecZone Found");
         }
 
         //
-        if (!losCpPod.plan.image_selected) {
-            losCpPod.plan.image_selected = losCpPod.plan.image_default;
+        if (!inCpPod.plan.image_selected) {
+            inCpPod.plan.image_selected = inCpPod.plan.image_default;
         }
 
         // //
-        if (!losCpPod.plan.res_compute_selected) {
-            losCpPod.plan.res_compute_selected = losCpPod.plan.res_compute_default;
+        if (!inCpPod.plan.res_compute_selected) {
+            inCpPod.plan.res_compute_selected = inCpPod.plan.res_compute_default;
         }
 
         l4iTemplate.Render({
-            dstid: "loscp-podnew-resource-selector",
-            tplid: "loscp-podnew-resource-selector-tpl",
-            data: losCpPod.plan,
+            dstid: "incp-podnew-resource-selector",
+            tplid: "incp-podnew-resource-selector-tpl",
+            data: inCpPod.plan,
         });
 
         break;
@@ -459,43 +459,43 @@ losCpPod.NewRefreshPlan = function() {
 }
 
 
-losCpPod.NewPlanClusterChange = function(zn) {
-    if (losCpPod.plan._zone_selected == zn) {
+inCpPod.NewPlanClusterChange = function(zn) {
+    if (inCpPod.plan._zone_selected == zn) {
         return;
     }
 
-    $("#loscp-podnew-zones").find(".loscp-form-box-selector-item.selected").removeClass("selected");
-    $("#loscp-podnew-zone-id-" + l4iString.CryptoMd5(zn)).addClass("selected");
+    $("#incp-podnew-zones").find(".incp-form-box-selector-item.selected").removeClass("selected");
+    $("#incp-podnew-zone-id-" + l4iString.CryptoMd5(zn)).addClass("selected");
 
-    losCpPod.plan._zone_selected = zn;
+    inCpPod.plan._zone_selected = zn;
 }
 
-losCpPod.NewPlanResComputeChange = function(res_compute_id) {
-    if (!losCpPod.plan || losCpPod.plan.res_compute_selected == res_compute_id) {
+inCpPod.NewPlanResComputeChange = function(res_compute_id) {
+    if (!inCpPod.plan || inCpPod.plan.res_compute_selected == res_compute_id) {
         return;
     }
 
-    $("#loscp-podnew-resource-computes").find(".loscp-form-box-selector-item.selected").removeClass("selected");
-    $("#loscp-podnew-resource-compute-id-" + res_compute_id).addClass("selected");
+    $("#incp-podnew-resource-computes").find(".incp-form-box-selector-item.selected").removeClass("selected");
+    $("#incp-podnew-resource-compute-id-" + res_compute_id).addClass("selected");
 
-    losCpPod.plan.res_compute_selected = res_compute_id;
+    inCpPod.plan.res_compute_selected = res_compute_id;
 }
 
-losCpPod.NewPlanImageChange = function(image_id) {
-    if (!losCpPod.plan || losCpPod.plan.image_selected == image_id) {
+inCpPod.NewPlanImageChange = function(image_id) {
+    if (!inCpPod.plan || inCpPod.plan.image_selected == image_id) {
         return;
     }
 
-    $("#loscp-podnew-images").find(".loscp-form-box-selector-item.selected").removeClass("selected");
-    $("#loscp-podnew-image-id-" + image_id).addClass("selected");
+    $("#incp-podnew-images").find(".incp-form-box-selector-item.selected").removeClass("selected");
+    $("#incp-podnew-image-id-" + image_id).addClass("selected");
 
-    losCpPod.plan.image_selected = image_id;
+    inCpPod.plan.image_selected = image_id;
 }
 
 
-losCpPod.NewCommit = function() {
-    var alert_id = "#loscp-podnew-alert",
-        vol_size = $("#loscp-podnew-resource-value").val();
+inCpPod.NewCommit = function() {
+    var alert_id = "#incp-podnew-alert",
+        vol_size = $("#incp-podnew-resource-value").val();
     if (vol_size <= 0) {
         return;
     }
@@ -508,16 +508,16 @@ losCpPod.NewCommit = function() {
 
     var set = {
         kind: "SpecPodPlanSetup",
-        name: $("#loscp-podnew-meta-name").val(),
-        plan: losCpPod.plan_selected,
-        zone: losCpPod.plan._zone_selected.split("/")[0],
-        cell: losCpPod.plan._zone_selected.split("/")[1],
-        res_volume: losCpPod.plan._res_volume.meta.id,
+        name: $("#incp-podnew-meta-name").val(),
+        plan: inCpPod.plan_selected,
+        zone: inCpPod.plan._zone_selected.split("/")[0],
+        cell: inCpPod.plan._zone_selected.split("/")[1],
+        res_volume: inCpPod.plan._res_volume.meta.id,
         res_volume_size: parseInt(vol_size),
         boxes: [{
             name: "main",
-            image: losCpPod.plan.image_selected,
-            res_compute: losCpPod.plan.res_compute_selected,
+            image: inCpPod.plan.image_selected,
+            res_compute: inCpPod.plan.res_compute_selected,
         }],
     };
 
@@ -527,11 +527,11 @@ losCpPod.NewCommit = function() {
 
     $(alert_id).hide();
 
-    losCp.ApiCmd("pod/new", {
+    inCp.ApiCmd("pod/new", {
         method: "POST",
         data: JSON.stringify(set),
         callback: function(err, rsj) {
-            if (losCpPod.new_options.open_modal) {
+            if (inCpPod.new_options.open_modal) {
                 l4iModal.ScrollTop();
             }
             if (err || !rsj) {
@@ -550,18 +550,18 @@ losCpPod.NewCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                if (!losCpPod.new_options.open_modal) {
-                    losCpPod.List();
+                if (!inCpPod.new_options.open_modal) {
+                    inCpPod.List();
                 }
-                if (losCpPod.new_options.callback) {
-                    losCpPod.new_options.callback(null);
+                if (inCpPod.new_options.callback) {
+                    inCpPod.new_options.callback(null);
                 }
             }, 1000);
         }
     });
 }
 
-losCpPod.Info = function(pod_id) {
+inCpPod.Info = function(pod_id) {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "pod", function(tpl, pod) {
@@ -594,20 +594,20 @@ losCpPod.Info = function(pod_id) {
         });
 
         ep.fail(function(err) {
-            alert("Network Connection Error, Please try again later (EC:loscp-pod)");
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
-        losCp.ApiCmd("pod/entry?id=" + pod_id, {
+        inCp.ApiCmd("pod/entry?id=" + pod_id, {
             callback: ep.done("pod"),
         });
 
-        losCp.TplFetch("pod/info", {
+        inCp.TplFetch("pod/info", {
             callback: ep.done("tpl"),
         });
     });
 }
 
-losCpPod.SetInfo = function(pod_id) {
+inCpPod.SetInfo = function(pod_id) {
     if (!pod_id) {
         return alert("No Pod Found");
     }
@@ -623,13 +623,13 @@ losCpPod.SetInfo = function(pod_id) {
                 height: 400,
                 data: {
                     pod: pod,
-                    _op_actions: losCp.OpActions,
+                    _op_actions: inCp.OpActions,
                 },
                 buttons: [{
                     onclick: "l4iModal.Close()",
                     title: "Close",
                 }, {
-                    onclick: "losCpPod.SetInfoCommit()",
+                    onclick: "inCpPod.SetInfoCommit()",
                     title: "Save",
                     style: "btn btn-primary",
                 }],
@@ -637,23 +637,23 @@ losCpPod.SetInfo = function(pod_id) {
         });
 
         ep.fail(function(err) {
-            alert("Network Connection Error, Please try again later (EC:loscp-pod)");
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
-        losCp.ApiCmd("pod/entry?id=" + pod_id, {
+        inCp.ApiCmd("pod/entry?id=" + pod_id, {
             callback: ep.done("pod"),
         });
 
-        losCp.TplFetch("pod/set-info", {
+        inCp.TplFetch("pod/set-info", {
             callback: ep.done("tpl"),
         });
     });
 }
 
 
-losCpPod.SetInfoCommit = function() {
-    var alert_id = "#loscp-podsetinfo-alert";
-    var form = $("#loscp-podsetinfo");
+inCpPod.SetInfoCommit = function() {
+    var alert_id = "#incp-podsetinfo-alert";
+    var form = $("#incp-podsetinfo");
 
     var set = {
         meta: {
@@ -667,7 +667,7 @@ losCpPod.SetInfoCommit = function() {
 
     $(alert_id).hide();
 
-    losCp.ApiCmd("pod/set-info", {
+    inCp.ApiCmd("pod/set-info", {
         method: "POST",
         data: JSON.stringify(set),
         callback: function(err, rsj) {
@@ -688,14 +688,14 @@ losCpPod.SetInfoCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                losCpPod.List();
+                inCpPod.List();
             }, 500);
         }
     });
 }
 
-losCpPod.Set = function(pod_id) {
-    var alert_id = "#loscp-podset-alert";
+inCpPod.Set = function(pod_id) {
+    var alert_id = "#incp-podset-alert";
 
     seajs.use(["ep"], function(EventProxy) {
 
@@ -715,9 +715,9 @@ losCpPod.Set = function(pod_id) {
 
             pod._zones = zones;
             pod._specs = specs;
-            pod._statusls = losCpPod.statussetls;
+            pod._statusls = inCpPod.statussetls;
 
-            losCpPod.specs = specs;
+            inCpPod.specs = specs;
 
             l4iModal.Open({
                 title: "Pod Instance Setting",
@@ -728,27 +728,27 @@ losCpPod.Set = function(pod_id) {
                     onclick: "l4iModal.Close()",
                     title: "Close",
                 }, {
-                    onclick: "losCpPod.SetCommit()",
+                    onclick: "inCpPod.SetCommit()",
                     title: "Save",
                     style: "btn btn-primary",
                 }],
                 success: function() {
 
                     l4iTemplate.Render({
-                        dstid: "loscp-podset",
-                        tplid: "loscp-podset-tpl",
+                        dstid: "incp-podset",
+                        tplid: "incp-podset-tpl",
                         data: pod,
                         success: function() {
 
                             if (pod.spec.meta.id != "") {
 
-                                losCpPod.SetSpecRefresh(pod.spec.meta.id);
+                                inCpPod.SetSpecRefresh(pod.spec.meta.id);
 
                             } else {
 
-                                for (var i in losCpPod.specs.items) {
+                                for (var i in inCpPod.specs.items) {
 
-                                    losCpPod.SetSpecRefresh(losCpPod.specs.items[i].meta.id);
+                                    inCpPod.SetSpecRefresh(inCpPod.specs.items[i].meta.id);
 
                                     break;
                                 }
@@ -760,28 +760,28 @@ losCpPod.Set = function(pod_id) {
         });
 
         ep.fail(function(err) {
-            alert("Network Connection Error, Please try again later (EC:loscp-pod)");
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
         // template
-        losCp.TplFetch("pod/set", {
+        inCp.TplFetch("pod/set", {
             callback: ep.done("tpl"),
         });
 
-        losCp.ApiCmd("spec/pod-list", {
+        inCp.ApiCmd("spec/pod-list", {
             callback: ep.done("specs"),
         });
 
-        losCpHost.ZoneRefresh(ep.done("zones"));
+        inCpHost.ZoneRefresh(ep.done("zones"));
 
-        losCp.ApiCmd("pod/entry?id=" + pod_id, {
+        inCp.ApiCmd("pod/entry?id=" + pod_id, {
             callback: ep.done("pod"),
         });
     });
 }
 
-losCpPod.SetCommit = function() {
-    var form = $("#loscp-podset");
+inCpPod.SetCommit = function() {
+    var form = $("#incp-podset");
 
     var req = {
         meta: {
@@ -802,11 +802,11 @@ losCpPod.SetCommit = function() {
         },
     };
 
-    var alert_id = "#loscp-podset-alert";
+    var alert_id = "#incp-podset-alert";
 
     $(alert_id).hide();
 
-    losCp.ApiCmd("pod/set", {
+    inCp.ApiCmd("pod/set", {
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, rsj) {
@@ -827,52 +827,52 @@ losCpPod.SetCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                losCpPod.List();
+                inCpPod.List();
             }, 500);
         }
     });
 }
 
-losCpPod.EntryStats = function(time_past) {
+inCpPod.EntryStats = function(time_past) {
     if (time_past) {
-        losCpPod.entry_active_past = parseInt(time_past);
+        inCpPod.entry_active_past = parseInt(time_past);
     }
-    if (losCpPod.entry_active_past < 600) {
-        losCpPod.entry_active_past = 600;
+    if (inCpPod.entry_active_past < 600) {
+        inCpPod.entry_active_past = 600;
     }
-    if (losCpPod.entry_active_past > (30 * 86400)) {
-        losCpPod.entry_active_past = 30 * 86400;
+    if (inCpPod.entry_active_past > (30 * 86400)) {
+        inCpPod.entry_active_past = 30 * 86400;
     }
-    losCpPod.Entry();
+    inCpPod.Entry();
 }
 
-losCpPod.Entry = function(pod_id) {
+inCpPod.Entry = function(pod_id) {
 
     if (pod_id) {
-        losCpPod.entry_active_pod = pod_id;
+        inCpPod.entry_active_pod = pod_id;
     }
 
-    $("#comp-content").html("<div id='loscp-module-navbar'>\
-  <ul id='loscp-module-navbar-menus' class='loscp-module-nav'>\
-    <li><a class='l4i-nav-item primary' href='#' onclick='losCpPod.Index()'>\
+    $("#comp-content").html("<div id='incp-module-navbar'>\
+  <ul id='incp-module-navbar-menus' class='incp-module-nav'>\
+    <li><a class='l4i-nav-item primary' href='#' onclick='inCpPod.Index()'>\
       <span class='glyphicon glyphicon-menu-left' aria-hidden='true'></span> Back\
     </a></li>\
     <li><a class='l4i-nav-item active' href='#pod/chart'>Workloads</a></li>\
   </ul>\
-  <ul id='loscp-module-navbar-optools' class='loscp-module-nav loscp-nav-right'></ul>\
+  <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
 </div>\
 <div id='work-content'></div>");
 
-    losCpPod.EntryStats();
+    inCpPod.EntryStats();
 }
 
-losCpPod.EntryStatsButton = function(obj) {
-    $("#loscp-module-navbar-optools").find(".hover").removeClass("hover");
+inCpPod.EntryStatsButton = function(obj) {
+    $("#incp-module-navbar-optools").find(".hover").removeClass("hover");
     obj.setAttribute("class", 'hover');
-    losCpPod.EntryStats(parseInt(obj.getAttribute('value')));
+    inCpPod.EntryStats(parseInt(obj.getAttribute('value')));
 }
 
-losCpPod.entryStatsFeedMaxValue = function(feed, names) {
+inCpPod.entryStatsFeedMaxValue = function(feed, names) {
     var max = 0;
     var arr = names.split(",");
     for (var i in feed.items) {
@@ -888,22 +888,22 @@ losCpPod.entryStatsFeedMaxValue = function(feed, names) {
     return max;
 }
 
-losCpPod.EntryStats = function(time_past) {
+inCpPod.EntryStats = function(time_past) {
 
     if (time_past) {
-        losCpPod.entry_active_past = parseInt(time_past);
+        inCpPod.entry_active_past = parseInt(time_past);
     }
-    if (losCpPod.entry_active_past < 600) {
-        losCpPod.entry_active_past = 600;
+    if (inCpPod.entry_active_past < 600) {
+        inCpPod.entry_active_past = 600;
     }
-    if (losCpPod.entry_active_past > (30 * 86400)) {
-        losCpPod.entry_active_past = 30 * 86400;
+    if (inCpPod.entry_active_past > (30 * 86400)) {
+        inCpPod.entry_active_past = 30 * 86400;
     }
 
-    var stats_url = "id=" + losCpPod.entry_active_pod;
+    var stats_url = "id=" + inCpPod.entry_active_pod;
     var stats_query = {
         tc: 180,
-        tp: losCpPod.entry_active_past,
+        tp: inCpPod.entry_active_past,
         is: [
             {
                 n: "cpu/us",
@@ -945,15 +945,27 @@ losCpPod.EntryStats = function(time_past) {
     var wlimit = 610;
     var tfmt = "";
     var ww = $(window).width();
+    var hh = $(window).height();
     if (ww > wlimit) {
         ww = wlimit;
     }
-    if (stats_query.tp >= (3 * 86400)) {
+    if (hh < 800) {
+        inCpPod.hchart_def.options.height = "180px";
+    } else {
+        inCpPod.hchart_def.options.height = "220px";
+    }
+    if (stats_query.tp > (3 * 86400)) {
         stats_query.tc = 86400;
+        tfmt = "m-d";
+    } else if (stats_query.tp > 86400) {
+        stats_query.tc = 3 * 3600;
+        tfmt = "d H:i";
+    } else if (stats_query.tp > 86400) {
+        stats_query.tc = 3600;
         tfmt = "m-d";
     } else if (stats_query.tp >= (3 * 3600)) {
         stats_query.tc = 3600;
-        tfmt = "m-d H:i";
+        tfmt = "H:i";
     } else if (stats_query.tp >= (3 * 600)) {
         stats_query.tc = 300;
         tfmt = "H:i";
@@ -969,64 +981,81 @@ losCpPod.EntryStats = function(time_past) {
 
             if (tpl) {
                 $("#work-content").html(tpl);
-                $(".loscp-podentry-stats-item").css({
+                $(".incp-podentry-stats-item").css({
                     "flex-basis": ww + "px"
                 });
-                losCp.OpToolsRefresh("#loscp-podentry-optools-stats");
+                inCp.OpToolsRefresh("#incp-podentry-optools-stats");
             }
 
             var max = 0;
+            var tc_title = stats.cycle + " seconds";
+            if (stats.cycle >= 86400 && stats.cycle % 86400 == 0) {
+                tc_title = (stats.cycle / 86400) + " Day";
+                if (stats.cycle > 86400) {
+                    tc_title += "s";
+                }
+            } else if (stats.cycle >= 3600 && stats.cycle % 3600 == 0) {
+                tc_title = (stats.cycle / 3600) + " Hour";
+                if (stats.cycle > 3600) {
+                    tc_title += "s";
+                }
+            } else if (stats.cycle >= 60 && stats.cycle % 60 == 0) {
+                tc_title = (stats.cycle / 60) + " Minute";
+                if (stats.cycle > 60) {
+                    tc_title += "s";
+                }
+            }
 
             //
-            var stats_cpu = l4i.Clone(losCpPod.hchart_def);
-            max = losCpPod.entryStatsFeedMaxValue(stats, "cpu/us");
+            var stats_cpu = l4i.Clone(inCpPod.hchart_def);
+            max = inCpPod.entryStatsFeedMaxValue(stats, "cpu/us");
             if (max > 1000000000) {
-                stats_cpu.options.title = l4i.T("CPU (Seconds / %d seconds)", stats.cycle);
+                stats_cpu.options.title = l4i.T("CPU (Seconds / %s)", tc_title);
                 stats_cpu._fix = 1000000000;
             } else if (max > 1000000) {
-                stats_cpu.options.title = l4i.T("CPU (Millisecond / %d seconds)", stats.cycle);
+                stats_cpu.options.title = l4i.T("CPU (Millisecond / %s)", tc_title);
                 stats_cpu._fix = 1000000;
             } else if (max > 1000) {
-                stats_cpu.options.title = l4i.T("CPU (Microsecond / %d seconds)", stats.cycle);
+                stats_cpu.options.title = l4i.T("CPU (Microsecond / %s)", tc_title);
                 stats_cpu._fix = 1000;
             } else {
-                stats_cpu.options.title = l4i.T("CPU (Nanosecond / %d seconds)", stats.cycle);
+                stats_cpu.options.title = l4i.T("CPU (Nanosecond / %s)", tc_title);
             }
 
 
             //
-            var stats_ram = l4i.Clone(losCpPod.hchart_def);
+            var stats_ram = l4i.Clone(inCpPod.hchart_def);
             stats_ram.options.title = l4i.T("Memory Usage (MB)");
             stats_ram._fix = 1024 * 1024;
 
             //
-            var stats_net = l4i.Clone(losCpPod.hchart_def);
-            max = losCpPod.entryStatsFeedMaxValue(stats, "net/rs,net/ws");
+            var stats_net = l4i.Clone(inCpPod.hchart_def);
+            max = inCpPod.entryStatsFeedMaxValue(stats, "net/rs,net/ws");
             if (max > (1024 * 1024)) {
-                stats_net.options.title = l4i.T("Network Bytes (MB / %d seconds)", stats.cycle);
+                stats_net.options.title = l4i.T("Network Bytes (MB / %s)", tc_title);
                 stats_net._fix = 1024 * 1024;
             } else if (max > 1024) {
-                stats_net.options.title = l4i.T("Network Bytes (KB / %d seconds)", stats.cycle);
+                stats_net.options.title = l4i.T("Network Bytes (KB / %s)", tc_title);
                 stats_net._fix = 1024;
             } else {
-                stats_net.options.title = l4i.T("Network Bytes (Bytes / %d seconds)", stats.cycle);
+                stats_net.options.title = l4i.T("Network Bytes (Bytes / %s)", tc_title);
             }
 
             //
-            var stats_fsn = l4i.Clone(losCpPod.hchart_def);
-            stats_fsn.options.title = l4i.T("Storage IO / %d seconds", stats.cycle);
+            var stats_fsn = l4i.Clone(inCpPod.hchart_def);
+            stats_fsn.options.title = l4i.T("Storage IO / %s", tc_title);
 
             //
-            var stats_fss = l4i.Clone(losCpPod.hchart_def);
-            max = losCpPod.entryStatsFeedMaxValue(stats, "fs/rs,fs/ws");
+            var stats_fss = l4i.Clone(inCpPod.hchart_def);
+            max = inCpPod.entryStatsFeedMaxValue(stats, "fs/rs,fs/ws");
             if (max > (1024 * 1024)) {
-                stats_fss.options.title = l4i.T("Storage IO Bytes (MB / %d seconds)", stats.cycle);
+                stats_fss.options.title = l4i.T("Storage IO Bytes (MB / %s)", tc_title);
                 stats_fss._fix = 1024 * 1024;
             } else if (max > 1024) {
-                stats_fss.options.title = l4i.T("Storage IO Bytes (KB / %d seconds)", stats.cycle);
+                stats_fss.options.title = l4i.T("Storage IO Bytes (KB / %s)", tc_title);
                 stats_fss._fix = 1024;
             } else {
-                stats_fss.options.title = l4i.T("Storage IO Bytes (Bytes / %d seconds)", stats.cycle);
+                stats_fss.options.title = l4i.T("Storage IO Bytes (Bytes / %s)", tc_title);
             }
 
 
@@ -1085,6 +1114,7 @@ losCpPod.EntryStats = function(time_past) {
                 switch (v.name) {
                     case "cpu/us":
                         stats_cpu.data.labels = labels;
+                        dataset.label = "Usage";
                         stats_cpu.data.datasets.push(dataset);
                         break;
 
@@ -1138,26 +1168,26 @@ losCpPod.EntryStats = function(time_past) {
                 }
             }
 
-            hooto_chart.RenderElement(stats_cpu, "loscp-podentry-stats-cpu");
-            hooto_chart.RenderElement(stats_ram, "loscp-podentry-stats-ram");
-            hooto_chart.RenderElement(stats_net, "loscp-podentry-stats-net");
-            hooto_chart.RenderElement(stats_fss, "loscp-podentry-stats-fss");
-            hooto_chart.RenderElement(stats_fsn, "loscp-podentry-stats-fsn");
+            hooto_chart.RenderElement(stats_cpu, "incp-podentry-stats-cpu");
+            hooto_chart.RenderElement(stats_ram, "incp-podentry-stats-ram");
+            hooto_chart.RenderElement(stats_net, "incp-podentry-stats-net");
+            hooto_chart.RenderElement(stats_fss, "incp-podentry-stats-fss");
+            hooto_chart.RenderElement(stats_fsn, "incp-podentry-stats-fsn");
         });
 
         ep.fail(function(err) {
-            alert("Network Connection Error, Please try again later (EC:loscp-pod)");
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
-        losCp.ApiCmd("pod/entry?id=" + losCpPod.entry_active_pod, {
+        inCp.ApiCmd("pod/entry?id=" + inCpPod.entry_active_pod, {
             callback: ep.done("pod"),
         });
 
-        losCp.ApiCmd("pod-stats/feed?" + stats_url, {
+        inCp.ApiCmd("pod-stats/feed?" + stats_url, {
             callback: ep.done("stats"),
         });
 
-        losCp.TplFetch("pod/entry-stats", {
+        inCp.TplFetch("pod/entry-stats", {
             callback: ep.done("tpl"),
         });
     });

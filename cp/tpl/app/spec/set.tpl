@@ -1,8 +1,8 @@
-<div id="loscp-app-specset-alert" class="alert alert-danger hide"></div>
+<div id="incp-app-specset-alert" class="alert alert-danger hide"></div>
 
-<div id="loscp-app-specset" style="box-sizing: border-box;">loading</div>
+<div id="incp-app-specset" style="box-sizing: border-box;">loading</div>
 
-<script id="loscp-app-specset-tpl" type="text/html">
+<script id="incp-app-specset-tpl" type="text/html">
 <div class="panel panel-default">
   <div class="panel-heading">{[=it.actionTitle]}</div>
   <div class="panel-body">
@@ -29,34 +29,34 @@
     <div class="l4i-form-group">
       <label>Packages</label>
 
-      <button class="btn btn-default btn-xs" onclick="losCpAppSpec.SetPackageSelect()">
+      <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetPackageSelect()">
         <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Standard Package
       </button>
       <button class="btn btn-default btn-xs hidden">
         <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Git Repository
       </button>
 
-      <div id="loscp-app-specset-lpmls-msg">no packages yet ...</div>
-      <div id="loscp-app-specset-lpmls"></div>
+      <div id="incp-app-specset-ipmls-msg">no packages yet ...</div>
+      <div id="incp-app-specset-ipmls"></div>
     </div>
 
 
     <div class="l4i-form-group">
       <label>Executors</label>
 
-      <button class="btn btn-default btn-xs" onclick="losCpAppSpec.SetExecutorSet()">
+      <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetExecutorSet()">
         <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Create new  Executor
       </button>
 
-      <p id="loscp-app-specset-executorls-msg">no executor yet ...</p>
-      <div id="loscp-app-specset-executorls"></div>
+      <p id="incp-app-specset-executorls-msg">no executor yet ...</p>
+      <div id="incp-app-specset-executorls"></div>
     </div>
 
     <div class="l4i-form-group">
 
       <label>Service Ports</label>
 
-      <button class="btn btn-default btn-xs" onclick="losCpAppSpec.SetServicePortAppend()">
+      <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetServicePortAppend()">
         <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add new Port
       </button>
 
@@ -72,9 +72,9 @@
               <th></th>
             <tr>
           </thead>
-          <tbody id="loscp-app-specset-serviceports">
+          <tbody id="incp-app-specset-serviceports">
             {[~it.spec.service_ports :vp]}
-            <tr class="loscp-app-specset-serviceport-item">
+            <tr class="incp-app-specset-serviceport-item">
               <td>
                 <input name="sp_name" type="text" value="{[=vp.name]}" class="form-control input-sm" style="width:200px">
               </td>
@@ -87,7 +87,7 @@
               </td>
               {[?]}
               <td align="right">
-                <button class="btn btn-default btn-xs" onclick="losCpAppSpec.SetServicePortDel(this)">
+                <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetServicePortDel(this)">
                   Delete
                 </button>
               </td>
@@ -118,11 +118,11 @@
     </div>
 
 
-    <button class="btn btn-primary" onclick="losCpAppSpec.SetCommit()">
+    <button class="btn btn-primary" onclick="inCpAppSpec.SetCommit()">
       Save
     </button>
 
-    <button class="btn btn-default" onclick="losCpAppSpec.ListRefresh()" style="margin-left:10px">
+    <button class="btn btn-default" onclick="inCpAppSpec.ListRefresh()" style="margin-left:10px">
       Cancel
     </button>
   </div>
@@ -130,7 +130,7 @@
 </script>
 
 
-<script id="loscp-app-specset-lpmls-tpl" type="text/html">
+<script id="incp-app-specset-ipmls-tpl" type="text/html">
 <table class="table table-hover">
   <thead><tr>
     <th>Name</th>
@@ -143,15 +143,15 @@
   </tr></thead>
   <tbody>
   {[~it :v]}
-  <tr id="loscp-app-specset-lpmls-name{[=v.name]}">
+  <tr id="incp-app-specset-ipmls-name{[=v.name]}">
     <td>{[=v.name]}</td>
     <td>{[=v.version]}</td>
     <td>{[=v.release]}</td>
     <td>{[=v.dist]}</td>
     <td>{[=v.arch]}</td>
-    <td>/usr/los/{[=v.name]}/{[=v.version]}</td>
+    <td>/usr/sysinner/{[=v.name]}/{[=v.version]}</td>
     <td align="right">
-      <button class="btn btn-default btn-xs" onclick="losCpAppSpec.SetPackageRemove('{[=v.name]}')">
+      <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetPackageRemove('{[=v.name]}')">
         Delete
       </button>
     </td>
@@ -161,16 +161,16 @@
 </table>
 </script>
 
-<script id="loscp-app-specset-executorls-tpl" type="text/html">
+<script id="incp-app-specset-executorls-tpl" type="text/html">
 {[~it :v]}
-<div class="loscp-app-specset-gn-box">
+<div class="incp-app-specset-gn-box">
   <div class="head">
     <span class="title">{[=v.name]}</span>
     <span class="options">
-      <button class="btn btn-default btn-xs" onclick="losCpAppSpec.SetExecutorSet('{[=v.name]}')">
+      <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetExecutorSet('{[=v.name]}')">
         Setting
       </button>
-      <button class="btn btn-default btn-xs" onclick="losCpAppSpec.SetExecutorRemove('{[=v.name]}')">
+      <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetExecutorRemove('{[=v.name]}')">
         Delete
       </button>
     </span>
@@ -205,8 +205,8 @@
 {[~]}
 </script>
 
-<script id="loscp-app-specset-serviceport-tpl" type="text/html">
-<tr class="loscp-app-specset-serviceport-item">
+<script id="incp-app-specset-serviceport-tpl" type="text/html">
+<tr class="incp-app-specset-serviceport-item">
   <td>
     <input name="sp_name" type="text" value="" class="form-control input-sm" placeholder="Port Name" style="width:200px">
   </td>
@@ -219,7 +219,7 @@
   </td>
   {[?]}
   <td align="right">
-    <button class="btn btn-default btn-xs" onclick="losCpAppSpec.SetServicePortDel(this)">
+    <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetServicePortDel(this)">
       Delete
     </button>
   </td>

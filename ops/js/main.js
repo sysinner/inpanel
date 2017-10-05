@@ -1,24 +1,24 @@
-var losOps = {
-    base    : "/los/ops/",
-    basetpl : "/los/ops/-/",
-    api     : "/los/ops/",
-    apisys  : "/los/ops/",
+var inOps = {
+    base    : "/in/ops/",
+    basetpl : "/in/ops/-/",
+    api     : "/in/ops/",
+    apisys  : "/in/ops/",
     debug   : true,
     UserSession: null,
 }
 
-losOps.debug_uri = function()
+inOps.debug_uri = function()
 {
-    if (!losOps.debug) {
+    if (!inOps.debug) {
         return "";
     }
     return "?_="+ Math.random(); 
 }
 
-losOps.Boot = function()
+inOps.Boot = function()
 {
     seajs.config({
-        base: losOps.base,
+        base: inOps.base,
         alias: {
             ep: "~/lessui/js/eventproxy.js"
         },
@@ -27,8 +27,8 @@ losOps.Boot = function()
     seajs.use([
         "~/twbs/3.3/css/bootstrap.css",
         "~/cp/js/jquery.js",
-        "~/cp/js/main.js"+ losOps.debug_uri(),
-        "~/cp/css/main.css"+ losOps.debug_uri(),
+        "~/cp/js/main.js"+ inOps.debug_uri(),
+        "~/cp/css/main.css"+ inOps.debug_uri(),
         "~/lessui/js/browser-detect.js",
     ], function() {
 
@@ -39,7 +39,7 @@ losOps.Boot = function()
         if (!((browser == 'Chrome' && version >= 22)
             || (browser == 'Firefox' && version >= 31.0)
             || (browser == 'Safari' && version >= 5.0 && OS == 'Mac'))) {
-            $('body').load(losOps.base +"~/cp/tpl/error/browser.tpl");
+            $('body').load(inOps.base +"~/cp/tpl/error/browser.tpl");
             return;
         }
 
@@ -48,16 +48,16 @@ losOps.Boot = function()
             "~/twbs/3.3/js/bootstrap.js",
             "~/lessui/js/lessui.js",
             "~/purecss/css/pure.css",
-            "~/ops/css/main.css"+ losOps.debug_uri(),
-            "~/ops/js/host.js"+ losOps.debug_uri(),
-        ], losOps.load_index);
+            "~/ops/css/main.css"+ inOps.debug_uri(),
+            "~/ops/js/host.js"+ inOps.debug_uri(),
+        ], inOps.load_index);
     });
 }
 
 
-losOps.load_index = function()
+inOps.load_index = function()
 {
-    l4i.debug = losOps.debug;
+    l4i.debug = inOps.debug;
 
     seajs.use(["ep"], function (EventProxy) {
 
@@ -66,23 +66,23 @@ losOps.load_index = function()
             if (!session || session.username == "") {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
-            losOps.UserSession = session;
+            inOps.UserSession = session;
 
             $("#body-content").html(tpl);
  
-            l4i.UrlEventRegister("host/index", losOpsHost.Index, "losops-topbar-menus");
+            l4i.UrlEventRegister("host/index", inOpsHost.Index, "inops-topbar-menus");
             l4i.UrlEventHandler("host/index");
         });
 
         ep.fail(function (err) {
             if (err && err == "AuthSession") {
-                losCp.AlertUserLogin();
+                inCp.AlertUserLogin();
             } else {
                 alert("Network Exception, Please try again later (EC:zone-list)");
             }
         });
 
-        l4i.Ajax(losCp.base + "auth/session", {
+        l4i.Ajax(inCp.base + "auth/session", {
             callback: function(err, data) {
                 if (!data || data.kind != "AuthSession") {
                     return ep.emit('error', "AuthSession");
@@ -91,14 +91,14 @@ losOps.load_index = function()
             },
         });
 
-        losOps.TplFetch("index/index", {
+        inOps.TplFetch("index/index", {
             callback: ep.done("tpl"),
         });
     });
 
 }
 
-losOps.ApiCmd = function(url, options)
+inOps.ApiCmd = function(url, options)
 {
     var appcb = null;
     if (options.callback) {
@@ -106,17 +106,17 @@ losOps.ApiCmd = function(url, options)
     }
     options.callback = function(err, data) {
         if (err == "Unauthorized") {
-            return losCp.AlertUserLogin();
+            return inCp.AlertUserLogin();
         }
         if (appcb) {
             appcb(err, data);
         }
     }
 
-    l4i.Ajax(losOps.api + url, options);
+    l4i.Ajax(inOps.api + url, options);
 }
 
-losOps.ApiSysCmd = function(url, options)
+inOps.ApiSysCmd = function(url, options)
 {
     var appcb = null;
     if (options.callback) {
@@ -124,34 +124,34 @@ losOps.ApiSysCmd = function(url, options)
     }
     options.callback = function(err, data) {
         if (err == "Unauthorized") {
-            return losCp.AlertUserLogin();
+            return inCp.AlertUserLogin();
         }
         if (appcb) {
             appcb(err, data);
         }
     }
 
-    l4i.Ajax(losOps.apisys + url, options);
+    l4i.Ajax(inOps.apisys + url, options);
 }
 
-losOps.TplFetch = function(url, options)
+inOps.TplFetch = function(url, options)
 {
-    l4i.Ajax(losOps.basetpl + url +".tpl", options);
+    l4i.Ajax(inOps.basetpl + url +".tpl", options);
 }
 
-losOps.Loader = function(target, uri)
+inOps.Loader = function(target, uri)
 {
-    l4i.Ajax(losOps.basetpl + uri +".tpl", {callback: function(err, data) {
+    l4i.Ajax(inOps.basetpl + uri +".tpl", {callback: function(err, data) {
         $("#"+ target).html(data);
     }});
 }
 
-losOps.CompLoader = function(uri)
+inOps.CompLoader = function(uri)
 {
-    losOps.Loader("comp-content", uri);
+    inOps.Loader("comp-content", uri);
 }
 
-losOps.WorkLoader = function(uri)
+inOps.WorkLoader = function(uri)
 {
-    losOps.Loader("work-content", uri);
+    inOps.Loader("work-content", uri);
 }

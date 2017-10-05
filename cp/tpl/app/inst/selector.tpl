@@ -1,4 +1,4 @@
-<div id="loscp-appls-selector-alert" class="alert" style="display:none"></div>
+<div id="incp-appls-selector-alert" class="alert" style="display:none"></div>
 
 <table class="table table-hover">
   <thead>
@@ -9,17 +9,17 @@
       <th></th>
     </tr>
   </thead>
-  <tbody id="loscp-appls-selector"></tbody>
+  <tbody id="incp-appls-selector"></tbody>
 </table>
 
-<script id="loscp-appls-selector-tpl" type="text/html">
+<script id="incp-appls-selector-tpl" type="text/html">
 {[~it.items :v]}
 <tr>
-  <td class="loscp-font-fixspace">{[=v.meta.id]}</td>
+  <td class="incp-font-fixspace">{[=v.meta.id]}</td>
   <td>{[=v.meta.name]}</td>
-  <td class="loscp-font-fixspace">{[=v.operate.pod_id]}</td>
+  <td class="incp-font-fixspace">{[=v.operate.pod_id]}</td>
   <td align="right">
-    <buttona class="btn btn-default btn-xs" onclick="_loscp_appls_selector_app('{[=v.meta.id]}')">Select</a>
+    <buttona class="btn btn-default btn-xs" onclick="_incp_appls_selector_app('{[=v.meta.id]}')">Select</a>
   </td>
 </tr>
 {[~]}
@@ -27,7 +27,7 @@
 
 <script type="text/javascript">
 
-function _loscp_appls_selector_app(app_id)
+function _incp_appls_selector_app(app_id)
 {
     if (l4iModal.CurOptions.fn_selector) {
         l4iModal.CurOptions.fn_selector(null, app_id);

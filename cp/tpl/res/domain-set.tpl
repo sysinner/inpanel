@@ -1,6 +1,6 @@
-<div id="loscp-resdomain-set-alert"></div>
+<div id="incp-resdomain-set-alert"></div>
 
-<div id="loscp-resdomain-set-form" class="loscp-form">
+<div id="incp-resdomain-set-form" class="incp-form">
 	<div class="l4i-form-group">
 	  <label class="">Name</label>
 	  <div class="">

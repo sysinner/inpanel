@@ -1,11 +1,11 @@
-<div id="loscp-podset-alert"></div>
-<div id="loscp-podset"></div>    
+<div id="incp-podset-alert"></div>
+<div id="incp-podset"></div>    
 
-<script id="loscp-podset-tpl" type="text/html">
+<script id="incp-podset-tpl" type="text/html">
 
 <input type="hidden" name="meta_id" value="{[=it.meta.id]}">
 
-<div class="form-horizontal loscp-form">
+<div class="form-horizontal incp-form">
 
     <div class="form-group">
       <label class="col-sm-2 control-label">Name</label>
@@ -18,7 +18,7 @@
       <label class="col-sm-2 control-label">Status</label>
       <div class="col-sm-10">
       {[~it._statusls :v]}
-        <span class="loscp-form-checkbox checkbox-inline">
+        <span class="incp-form-checkbox checkbox-inline">
           <input type="radio" name="status_desiredPhase" value="{[=v.phase]}" {[ if (v.phase == it.status.desiredPhase) { ]}checked="checked"{[ } ]}> {[=v.title]}
         </span>
       {[~]}
@@ -28,7 +28,7 @@
     <div class="form-group">
       <label class="col-sm-2 control-label">Template</label>
       <div class="col-sm-10">
-        <select name="spec_pod_id" class="form-control" onchange="losCpPod.SetFormSpecChange(this)">
+        <select name="spec_pod_id" class="form-control" onchange="inCpPod.SetFormSpecChange(this)">
           {[~it._specs.items :v]}
           <option value="{[=v.meta.id]}" {[ if (v.meta.id == it.spec.meta.id) { ]}selected="selected"{[ } ]}>{[=v.meta.name]}</option>
           {[~]}
@@ -39,13 +39,13 @@
     <div class="form-group">
       <label class="col-sm-2 control-label"></label>
       <div class="col-sm-10">
-        <div id="loscp-pod-spec-info"></div>
+        <div id="incp-pod-spec-info"></div>
       </div>
     </div>
 </div>
 </script>
 
-<script id="loscp-pod-spec-info-tpl" type="text/html">
+<script id="incp-pod-spec-info-tpl" type="text/html">
   <table class="table table-condensed">
     {[?it.labels]}
     <tr>

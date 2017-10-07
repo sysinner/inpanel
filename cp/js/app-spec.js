@@ -1117,6 +1117,9 @@ inCpAppSpec.CfgFieldSet = function(name) {
             title: "Cancel",
             onclick: "l4iModal.Close()",
         }, {
+            title: "Delete",
+            onclick: "inCpAppSpec.CfgFieldDelCommit()",
+        }, {
             title: "Save",
             onclick: 'inCpAppSpec.CfgFieldSetCommit()',
             style: "btn-primary",
@@ -1232,6 +1235,78 @@ inCpAppSpec.CfgFieldSetCommit = function() {
     }
 
     inCp.ApiCmd("app-spec/cfg-set", {
+        method: "POST",
+        data: JSON.stringify(req),
+        callback: function(err, rsj) {
+
+            if (err || !rsj) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            if (rsj.error) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+            }
+
+            if (!rsj.kind || rsj.kind != "AppSpec") {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+
+            window.setTimeout(function() {
+                inCpAppSpec.active.configurator.fields = fields;
+                l4iModal.Prev(inCpAppSpec.cfgFieldListRefresh);
+            }, 500);
+        }
+    });
+}
+
+
+inCpAppSpec.CfgFieldDelCommit = function() {
+    var alert_id = "#incp-appspec-cfg-fieldset-alert";
+    var form = $("#incp-appspec-cfg-fieldset-form");
+    if (!form) {
+        return;
+    }
+
+    var field = {
+    }
+
+    try {
+        field.name = form.find("input[name=name]").val();
+        if (!field.name || !inCpAppSpec.fieldNameRe.test(field.name)) {
+            throw "Invalid Name";
+        }
+
+    } catch (err) {
+        return l4i.InnerAlert(alert_id, 'alert-danger', err);
+    }
+
+    var fields = [];
+    var req = {
+        meta: {
+            id: inCpAppSpec.active.meta.id,
+        },
+        configurator: {
+            name: inCpAppSpec.active.configurator.name,
+            fields: [],
+        },
+    }
+
+    for (var i in inCpAppSpec.active.configurator.fields) {
+
+        if (inCpAppSpec.active.configurator.fields[i].name == field.name) {
+            req.configurator.fields.push(l4i.Clone(field));
+        } else {
+            fields.push(inCpAppSpec.active.configurator.fields[i]);
+        }
+    }
+
+    if (req.configurator.fields.length == 0) {
+        return l4i.InnerAlert(alert_id, 'alert-danger', "No field name Found");
+    }
+
+    inCp.ApiCmd("app-spec/cfg-field-del", {
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, rsj) {

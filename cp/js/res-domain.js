@@ -39,7 +39,7 @@ var inCpResDomain = {
 
 inCpResDomain.List = function() {
     var uri = "?type=domain";
-    uri += "&fields=meta/id|name|updated,bounds/name,operate/app_id,action";
+    uri += "&fields=meta/id|name|updated,description,bounds/name,operate/app_id,action";
 
     seajs.use(["ep"], function(EventProxy) {
 
@@ -243,9 +243,11 @@ inCpResDomain.SetCommit = function() {
     var req = {
         meta: {
             name: form.find("input[name=meta_name]").val(),
+            user: form.find("input[name=meta_user]").val(),
         },
         description: form.find("input[name=description]").val(),
     };
+	console.log(req);
 
     inCp.ApiCmd("resource/domain-set", {
         method: "POST",

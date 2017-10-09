@@ -9,9 +9,17 @@
 	</div>
 	
 	<div class="l4i-form-group">
+	  <label class="">Owner</label>
+	  <div class="">
+	    <input type="text" class="form-control" name="meta_user" value="{[=it.meta.user]}">
+	  </div>
+	</div>
+
+	<div class="l4i-form-group">
 	  <label class="">Description</label>
 	  <div class="">
 	    <input type="text" class="form-control" name="description" value="{[=it.description]}">
 	  </div>
 	</div>
+
 </div>

@@ -262,37 +262,95 @@ inCpApp.OpOptInfo = function(app_id) {
 
 
 inCpApp.instConfiguratorCallback = null;
-inCpApp.InstConfigurator = function(cb) {
+
+inCpApp.instConfigurator = function(cb) {
+
+    if (cb && typeof cb === "function" && !inCpApp.instConfiguratorCallback) {
+        inCpApp.instConfiguratorCallback = cb;
+    }
+
+    if (!inCpApp.instConfiguratorCallback) {
+        return;
+    }
+
     if (!inCpApp.instDeployActive) {
-        return cb();
+        return inCpApp.instConfiguratorCallback();
+    }
+
+    if (!inCpApp.instDeployActive.spec.depends) {
+        inCpApp.instDeployActive.spec.depends = [];
+    }
+
+    for (var i in inCpApp.instDeployActive.spec.depends) {
+
+        if (inCpApp.instDeployActive.spec.depends[i]._setid) {
+            continue;
+        }
+        inCpApp.instDeployActive.spec.depends[i]._setid = inCpApp.instDeployActive.spec.depends[i].id;
+
+        return inCp.ApiCmd("app-spec/entry?id=" + inCpApp.instDeployActive.spec.depends[i].id, {
+            callback: function(err, data) {
+                if (err) {
+                    return alert(err); // TODO
+                }
+                if (data && data.meta.id == inCpApp.instDeployActive.spec.depends[i].id) {
+                    return inCpApp.instConfiguratorEntry(data.configurator, data.meta.id);
+                }
+            },
+        });
     }
 
     if (inCpApp.instDeployActive.spec.configurator &&
-        inCpApp.instDeployActive.spec.configurator.fields &&
-        inCpApp.instDeployActive.spec.configurator.fields.length > 0) {
+        !inCpApp.instDeployActive.spec.configurator._setid) {
+        inCpApp.instDeployActive.spec.configurator._setid = inCpApp.instDeployActive.spec.meta.id;
+        return inCpApp.instConfiguratorEntry(inCpApp.instDeployActive.spec.configurator);
+    }
+
+    for (var i in inCpApp.instDeployActive.spec.depends) {
+        inCpApp.instDeployActive.spec.depends[i]._setid = null;
+    }
+    if (inCpApp.instDeployActive.spec.configurator) {
+        inCpApp.instDeployActive.spec.configurator._setid = null;
+    }
+
+    inCpApp.instConfiguratorCallback();
+
+    inCpApp.instDeployActive = null;
+    inCpApp.instConfiguratorCallback = null;
+}
+
+inCpApp.instConfiguratorEntryActive = null;
+inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
+
+    if (configurator &&
+        configurator.fields &&
+        configurator.fields.length > 0) {
+
+        inCpApp.instConfiguratorEntryActive = configurator;
+        inCpApp.instConfiguratorEntryActive.spec_id = spec_id;
 
         if (!inCpApp.instDeployActive.operate.options) {
             inCpApp.instDeployActive.operate.options = [];
         }
         var option = null;
         for (var i in inCpApp.instDeployActive.operate.options) {
-            if (inCpApp.instDeployActive.operate.options[i].name == inCpApp.instDeployActive.spec.configurator.name) {
+            if (inCpApp.instDeployActive.operate.options[i].name == configurator.name) {
                 option = inCpApp.instDeployActive.operate.options[i];
             }
         }
         if (!option) {
             option = {
-                name: inCpApp.instDeployActive.spec.configurator.name,
+                name: configurator.name,
                 items: [],
             }
         } else if (!option.items) {
             option.items = [];
         }
 
-        for (var i in inCpApp.instDeployActive.spec.configurator.fields) {
+        for (var i in configurator.fields) {
 
-            var name = inCpApp.instDeployActive.spec.configurator.fields[i].name;
-            var auto_fill = inCpApp.instDeployActive.spec.configurator.fields[i].auto_fill;
+            var name = configurator.fields[i].name;
+            var auto_fill = configurator.fields[i].auto_fill;
             var value = null;
 
             for (var j in option.items) {
@@ -304,8 +362,8 @@ inCpApp.InstConfigurator = function(cb) {
             }
 
             if (!value) {
-                if (inCpApp.instDeployActive.spec.configurator.fields[i].default) {
-                    value = inCpApp.instDeployActive.spec.configurator.fields[i].default;
+                if (configurator.fields[i].default) {
+                    value = configurator.fields[i].default;
                 }
             }
             if (!value && auto_fill) {
@@ -320,23 +378,23 @@ inCpApp.InstConfigurator = function(cb) {
                 value = "";
             }
 
-            inCpApp.instDeployActive.spec.configurator.fields[i]._value = value;
+            configurator.fields[i]._value = value;
         }
 
         l4iModal.Open({
             id: "incp-appinst-cfgwizard",
-            title: "App Configuration Wizard",
+            title: "App Configuration Wizard : " + configurator.name,
             width: 900,
             height: 600,
             tpluri: inCp.TplPath("app/inst/cfg-wizard"),
             callback: function(err, data) {
 
-                inCpApp.instConfiguratorCallback = cb;
                 l4iTemplate.Render({
                     dstid: "incp-appinst-cfg-wizard",
                     tplid: "incp-appinst-cfg-wizard-tpl",
                     data: {
-                        fields: inCpApp.instDeployActive.spec.configurator.fields,
+                        name: configurator.name,
+                        fields: configurator.fields,
                     }
                 });
             },
@@ -344,13 +402,13 @@ inCpApp.InstConfigurator = function(cb) {
                 onclick: "l4iModal.Close()",
                 title: "Close",
             }, {
-                onclick: "inCpApp.InstConfigCommit()",
+                onclick: "inCpApp.instConfigCommit()",
                 title: "Next",
                 style: "btn-primary",
             }],
         });
     } else {
-        cb();
+        inCpApp.instConfigurator();
     }
 }
 
@@ -411,7 +469,13 @@ inCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs) {
     });
 }
 
-inCpApp.InstConfigCommit = function(cb) {
+
+inCpApp.instConfigCommit = function() {
+
+    if (!inCpApp.instConfiguratorEntryActive) {
+        return;
+    }
+
     var alert_id = "#incp-appinst-cfg-wizard-alert";
     var form = $("#incp-appinst-cfg-wizard");
     if (!form) {
@@ -419,21 +483,22 @@ inCpApp.InstConfigCommit = function(cb) {
     }
 
     var option = {
-        name: inCpApp.instDeployActive.spec.configurator.name,
+        name: inCpApp.instConfiguratorEntryActive.name,
         items: [],
     }
 
     try {
 
-        for (var i in inCpApp.instDeployActive.spec.configurator.fields) {
+        for (var i in inCpApp.instConfiguratorEntryActive.fields) {
 
-            var field = inCpApp.instDeployActive.spec.configurator.fields[i];
+            var field = inCpApp.instConfiguratorEntryActive.fields[i];
             var value = null;
 
             switch (field.type) {
                 case 1:
                     value = form.find("input[name=fn_" + field.name + "]").val();
                     break;
+
                 case 10:
                     value = form.find("input[name=fn_" + field.name + "]").val();
                     break;
@@ -456,6 +521,11 @@ inCpApp.InstConfigCommit = function(cb) {
         option: option,
     }
     // return console.log(req);
+    if (inCpApp.instConfiguratorEntryActive.spec_id &&
+        inCpApp.instConfiguratorEntryActive.spec_id.length > 8) {
+        req.spec_id = inCpApp.instConfiguratorEntryActive.spec_id;
+    }
+
 
     inCp.ApiCmd("app/config", {
         method: "POST",
@@ -477,12 +547,13 @@ inCpApp.InstConfigCommit = function(cb) {
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
             window.setTimeout(function() {
-                if (inCpApp.instConfiguratorCallback) {
-                    inCpApp.instConfiguratorCallback();
-                    inCpApp.instConfiguratorCallback = null;
-                }
-                l4iModal.Close();
-            }, 1000);
+                l4i.InnerAlert(alert_id, "");
+                l4iModal.Close(function() {
+                    if (inCpApp.instConfiguratorCallback) {
+                        inCpApp.instConfigurator();
+                    }
+                });
+            }, 300);
         }
     });
 }
@@ -509,7 +580,8 @@ inCpApp.InstDeploy = function(id, auto_start) {
 
             inCpApp.instDeployActive = rsj;
 
-            inCpApp.InstConfigurator(function() {
+            inCpApp.instConfiguratorCallback = null;
+            inCpApp.instConfigurator(function() {
                 inCpApp.InstDeployCommit(id, auto_start);
             });
         },

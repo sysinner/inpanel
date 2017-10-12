@@ -10,6 +10,31 @@
 </div>
 {[?]}
 
+{[if (it.depends.length > 0) {]}
+<div class="l4i-form-group">
+  <label>Depends</label>
+
+  <div id="incp-app-specset-depls">
+    <table class="table table-hover">
+      <thead><tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Version</th>
+      </tr></thead>
+      <tbody>
+      {[~it.depends :v]}
+      <tr id="incp-app-specset-depls-id{[=v.id]}">
+        <td>{[=v.id]}</td>
+        <td>{[=v.name]}</td>
+        <td>{[=v.version]}</td>
+      </tr>
+      {[~]}
+      </tbody>
+    </table>
+  </div>
+</div>
+{[}]}
+
 {[if (it.packages.length > 0) {]}
 <div class="l4i-form-group">
   <label>Packages</label>

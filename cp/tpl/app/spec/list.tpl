@@ -7,9 +7,10 @@
       <th>Name</th>
       <th>Version</th>
       <th>Owner</th>
+      <th>Depends</th>
       <th>Packages</th>
       <th>Executors</th>
-      <th>Configurator</th>
+      <th>Config</th>
       <th>Updated</th>
       <th></th>
     </tr>
@@ -26,6 +27,7 @@
   </td>
   <td>{[=v.meta.version]}</td>
   <td>{[=v.meta.user]}</td>
+  <td>{[=v.depends.length]}</td>
   <td>{[=v._ipm_num]}</td>
   <td>{[=v._executor_num]}</td>
   <td>
@@ -36,16 +38,20 @@
   </td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
+    {[if (inCp.UserSession.username == "sysadmin") {]}
     <button class="pure-button button-xsmall" onclick="inCpAppSpec.Download('{[=v.meta.id]}')">
       <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Download
     </button>
+    {[}]}
     <button class="pure-button button-xsmall" onclick="inCpApp.InstNew('{[=v.meta.id]}')">
       <span class="glyphicon glyphicon-cloud" aria-hidden="true"></span> Launch
     </button>
-    {[if (v.meta.user == inCp.UserSession.username) {]}
+    {[if (inCp.UserSession.username == "sysadmin") {]}
     <button class="pure-button button-xsmall" onclick="inCpAppSpec.SetRaw('{[=v.meta.id]}')">
       <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setting Raw
     </button>
+    {[}]}
+    {[if (v.meta.user == inCp.UserSession.username) {]}
     <button class="pure-button button-xsmall" onclick="inCpAppSpec.Set('{[=v.meta.id]}')">
       <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setting
     </button>

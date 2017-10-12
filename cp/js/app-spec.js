@@ -86,7 +86,7 @@ inCpAppSpec.listDataRefresh = function(tplid) {
     if (el && el.value.length > 0) {
         uri = "qry_text=" + el.value;
     }
-    uri += "&fields=meta/id|name|user|version|updated,packages/name,executors/name,configurator/name,configurator/fields/name";
+    uri += "&fields=meta/id|name|user|version|updated,depends/name,packages/name,executors/name,configurator/name,configurator/fields/name";
 
     inCp.ApiCmd("app-spec/list?" + uri, {
         timeout: 3000,
@@ -101,6 +101,10 @@ inCpAppSpec.listDataRefresh = function(tplid) {
             }
 
             for (var i in rsj.items) {
+
+                if (!rsj.items[i].depends) {
+                    rsj.items[i].depends = [];
+                }
 
                 if (rsj.items[i].packages) {
                     rsj.items[i]._ipm_num = rsj.items[i].packages.length;
@@ -165,6 +169,10 @@ inCpAppSpec.Info = function(id, spec) {
 
             if (!rsj || rsj.error || rsj.kind != "AppSpec") {
                 return
+            }
+
+            if (!rsj.depends) {
+                rsj.depends = [];
             }
 
             if (!rsj.packages) {
@@ -232,8 +240,8 @@ inCpAppSpec.Info = function(id, spec) {
 
             l4iModal.Open({
                 title: "Spec Information",
-                width: 900,
-                height: 700,
+                width: 1000,
+                height: 750,
                 tplsrc: tpl,
                 data: rsj,
                 buttons: [{
@@ -363,6 +371,7 @@ inCpAppSpec.Set = function(id) {
                     spec: rsj,
                 },
                 success: function() {
+                    inCpAppSpec.setDependRefresh();
                     inCpAppSpec.setPackageRefresh();
                     inCpAppSpec.setExecutorRefresh();
 
@@ -405,6 +414,115 @@ inCpAppSpec.Set = function(id) {
                 callback: ep.done("data"),
             });
         }
+    });
+}
+
+// TODO
+inCpAppSpec.SetDependSelect = function() {
+    l4iModal.Open({
+        title: "Select a Depend AppSpec",
+        width: 950,
+        height: 600,
+        tpluri: inCp.TplPath("app/spec/selector"),
+        fn_selector: function(err, rsp) {
+            l4iModal.Close();
+            inCpAppSpec.setDependEntry({
+                id: rsp
+            });
+        },
+        buttons: [{
+            onclick: "l4iModal.Close()",
+            title: "Close",
+        }],
+    });
+}
+
+inCpAppSpec.setDependEntry = function(opt) {
+    if (!opt || !opt.id) {
+        return;
+    }
+    if (opt.id == inCpAppSpec.setActive.meta.id) {
+        return;
+    }
+
+    var alert_id = "#incp-app-specset-alert";
+
+    inCp.ApiCmd("app-spec/entry?id=" + opt.id, {
+        timeout: 10000,
+        callback: function(err, rsj) {
+
+            if (err) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', err);
+            }
+
+            if (!rsj || rsj.kind != "AppSpec") {
+                var msg = "Bad Request";
+                if (rsj.error) {
+                    msg = rsj.error.message;
+                }
+                return l4i.InnerAlert(alert_id, 'alert-danger', msg);
+            }
+
+            if (!inCpAppSpec.setActive.depends) {
+                inCpAppSpec.setActive.depends = [];
+            }
+
+            for (var i in inCpAppSpec.setActive.depends) {
+
+                if (inCpAppSpec.setActive.depends[i].id == rsj.meta.id) {
+                    inCpAppSpec.setActive.depends[i] = {
+                        id: rsj.meta.id,
+                        name: rsj.meta.name,
+                        version: rsj.meta.version,
+                    }
+                    rsj = null;
+                    break;
+                }
+            }
+
+            if (rsj) {
+                inCpAppSpec.setActive.depends.push({
+                    id: rsj.meta.id,
+                    name: rsj.meta.name,
+                    version: rsj.meta.version,
+                });
+            }
+
+            inCpAppSpec.setDependRefresh();
+        }
+    });
+}
+
+inCpAppSpec.SetDependRemove = function(id) {
+    if (id.length < 8) {
+        return;
+    }
+
+    for (var i in inCpAppSpec.setActive.depends) {
+        if (inCpAppSpec.setActive.depends[i].id == id) {
+            inCpAppSpec.setActive.depends.splice(i, 1);
+            break
+        }
+    }
+
+    inCpAppSpec.setDependRefresh();
+}
+
+inCpAppSpec.setDependRefresh = function() {
+    if (!inCpAppSpec.setActive || !inCpAppSpec.setActive.depends) {
+        return;
+    }
+
+    if (inCpAppSpec.setActive.depends.length > 0) {
+        $("#incp-app-specset-depls-msg").css({
+            "display": "none"
+        });
+    }
+
+    l4iTemplate.Render({
+        dstid: "incp-app-specset-depls",
+        tplid: "incp-app-specset-depls-tpl",
+        data: inCpAppSpec.setActive.depends,
     });
 }
 

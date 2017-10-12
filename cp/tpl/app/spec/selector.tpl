@@ -30,10 +30,10 @@
   {[~it.items :v]}
     <tr>
       <td>{[=v.meta.name]}</td>
-      <td>{[=v.meta.userID]}</td>
-      <td>{[=v.meta.updated]}</td>
+      <td>{[=v.meta.user]}</td>
+      <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
       <td align="right">
-        <a class="spec-item" href="#{[=v.meta.id]}">Select</a>
+        <button class="btn btn-default btn-xs" onclick="incp_app_specls_selector_on('{[=v.meta.id]}')">Select</button>
       </td>
     </tr>
   {[~]}
@@ -46,12 +46,11 @@ $("#incp-app-specls-s6r-qry").submit(function(event) {
     inCpAppSpec.ListRefresh("incp-app-specls-s6r");
 });
 
-$("#incp-app-specls-s6r").on("click", ".spec-item", function() {
-    var id = $(this).attr("href").substr(1);
+function incp_app_specls_selector_on(id) {
     if (l4iModal.CurOptions.fn_selector) {
         l4iModal.CurOptions.fn_selector(null, id);
     }
-});
+}
 
 inCpAppSpec.ListRefresh("incp-app-specls-s6r");
 

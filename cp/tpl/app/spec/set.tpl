@@ -27,6 +27,18 @@
     </div> -->
 
     <div class="l4i-form-group">
+      <label>Depends</label>
+
+      <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetDependSelect()">
+        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Depends on the AppSpec
+      </button>
+
+      <div id="incp-app-specset-depls-msg">no depend yet ...</div>
+      <div id="incp-app-specset-depls"></div>
+    </div>
+
+
+    <div class="l4i-form-group">
       <label>Packages</label>
 
       <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetPackageSelect()">
@@ -127,6 +139,32 @@
     </button>
   </div>
 </div>
+</script>
+
+
+<script id="incp-app-specset-depls-tpl" type="text/html">
+<table class="table table-hover">
+  <thead><tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Version</th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+  {[~it :v]}
+  <tr id="incp-app-specset-depls-id{[=v.id]}">
+    <td>{[=v.id]}</td>
+    <td>{[=v.name]}</td>
+    <td>{[=v.version]}</td>
+    <td align="right">
+      <button class="btn btn-default btn-xs" onclick="inCpAppSpec.SetDependRemove('{[=v.id]}')">
+        Delete
+      </button>
+    </td>
+  </tr>
+  {[~]}
+  </tbody>
+</table>
 </script>
 
 

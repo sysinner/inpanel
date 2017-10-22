@@ -48,7 +48,7 @@
       <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Deploy 
     </button>
     <button class="pure-button button-xsmall" onclick="inCpApp.InstSet('{[=v.meta.id]}')">
-      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setting
+      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setup
     </button>
   </td>
 </tr>

@@ -12,11 +12,11 @@
     </div>
 
     <div class="l4i-form-group">
-      <label class="">Status</label>
+      <label class="">Operate</label>
       <div class="">
       {[~it._op_actions :v]}
         <span class="incp-form-checkbox checkbox-inline">
-          <input type="radio" name="operate_action" value="{[=v.action]}" {[ if (v.action == it.pod.operate.action) { ]}checked="checked"{[ } ]}> {[=v.title]}
+          <input type="radio" name="operate_action" value="{[=v.action]}" {[ if (v.active) { ]}checked="checked"{[ } ]}> {[=v.title]}
         </span>
       {[~]}
       </div>

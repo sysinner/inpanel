@@ -35,6 +35,9 @@ body {
   font-size: 1em;
 }
 
+.incp-font-ok {
+  color: #28a745;
+}
 
 #incp-topbar {
   padding: 0 15px;
@@ -437,6 +440,10 @@ body {
   border: 1px solid #ccc;
 }
 
+.incp-div-h-title {
+   padding: 20px 0 10px 0;
+   font-size : 18px;
+}
 
 .incp-div-light {
   clear: both;
@@ -643,6 +650,54 @@ button {
 .button-secondary {
   background: rgb(66, 184, 221);
   /* this is a light blue */
+}
+
+
+.incp-div-label-block-frame-inline {
+  left: 0px;
+  right: 0px;
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.incp-div-label-block-frame-inline>div:last-child {
+  margin-right: 0;
+}
+.incp-div-label-block {
+  padding: 10px;
+  position: relative;
+  flex: 1 0 160px;
+  margin-right: 10px;
+}
+.incp-div-label-block > .name {
+  font-size: 12px;
+  color: #868e96;
+}
+.incp-div-label-block > .value {
+  padding-top: 5px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #464a4e;
+}
+
+#incp-podentry-index {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+#incp-podentry-overview {
+  position: relative;
+  flex: 2 0 700px;
+  margin: 0 10px 20px 10px;
+}
+#incp-podentry-sidebar {
+  position: relative;
+  flex: 4 1 900px;
+  margin: 0 10px 20px 10px;
 }
 
 .incp-podentry-stats-box {

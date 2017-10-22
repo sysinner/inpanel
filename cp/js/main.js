@@ -10,16 +10,41 @@ var inCp = {
     OpActions: [
         {
             action: 1 << 1,
-            title: "Start"
+            title: "Start",
         },
         {
             action: 1 << 3,
-            title: "Stop"
+            title: "Stop",
         },
-    // {action: 1 << 5, title: "Destroy"},
+    /*
+    {
+        action: 1 << 5,
+        title: "Destroy",
+    },
+    */
+    ],
+    OpActionStatus: [
+        {
+            action: 1 << 2,
+            title: "Running",
+        },
+        {
+            action: 1 << 4,
+            title: "Stopped",
+        },
+        {
+            action: 1 << 6,
+            title: "Destroyed",
+        },
+        {
+            action: 1 << 11,
+            title: "Warning",
+        },
     ],
     OpActionStart: 1 << 1,
+    OpActionRunning: 1 << 2,
     OpActionStop: 1 << 3,
+    OpActionStopped: 1 << 4,
     well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/in/cp/auth/login" class="button">SIGN IN</a></div>',
 }
 
@@ -284,6 +309,10 @@ inCp.OpToolsRefresh = function(div_target, cb) {
     }
 }
 
+inCp.OpToolsClean = function() {
+    $("#incp-module-navbar-optools").html("");
+    inCp.OpToolActive = null;
+}
 
 inCp.CodeRender = function() {
     seajs.use([
@@ -356,12 +385,27 @@ inCp.ArrayUint32MatchAny = function(ar, ar2)
 inCp.OpActionTitle = function(op_action) {
     op_action = parseInt(op_action);
     for (var i in inCp.OpActions) {
-        if (op_action == inCp.OpActions[i].action) {
+        if (inCp.OpActionAllow(op_action, inCp.OpActions[i].action)) {
             return (inCp.OpActions[i].title);
         }
     }
-
     return "";
+}
+
+inCp.OpActionStatusTitle = function(action) {
+    for (var i in inCp.OpActionStatus) {
+        if (inCp.OpActionAllow(action, inCp.OpActionStatus[i].action)) {
+            return inCp.OpActionStatus[i].title;
+        }
+    }
+    return "";
+}
+
+inCp.OpActionAllow = function(opbase, action) {
+    if ((opbase & action) == action) {
+        return true;
+    }
+    return false;
 }
 
 inCp.About = function() {

@@ -247,7 +247,6 @@ inCpResDomain.SetCommit = function() {
         },
         description: form.find("input[name=description]").val(),
     };
-	console.log(req);
 
     inCp.ApiCmd("resource/domain-set", {
         method: "POST",

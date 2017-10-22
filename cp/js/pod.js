@@ -255,8 +255,6 @@ inCpPod.New = function(options) {
             inCpPod.plan_selected = pod._plan_selected;
             // inCpPod.zones = zones;
 
-            // console.log(inCpPod)
-
             var fnfre = function() {
                 l4iTemplate.Render({
                     dstid: "incp-podnew-plans",
@@ -350,8 +348,6 @@ inCpPod.NewPlanChange = function(plan_id) {
 inCpPod.NewRefreshPlan = function() {
     var alert_id = "#incp-podnew-alert";
 
-    // console.log(inCpPod.plans);
-    // console.log(inCpPod.syszones);
     for (var i in inCpPod.plans.items) {
 
         if (inCpPod.plans.items[i].meta.id != inCpPod.plan_selected) {
@@ -383,8 +379,6 @@ inCpPod.NewRefreshPlan = function() {
         //
         inCpPod.plan._zones = [];
         inCpPod.plan._zone_selected = null;
-
-        // console.log(inCpPod.plan);
 
         for (var i in inCpPod.plan.zones) {
 
@@ -608,6 +602,9 @@ inCpPod.Info = function(pod_id) {
 }
 
 inCpPod.SetInfo = function(pod_id) {
+    if (!pod_id && inCpPod.entry_active_pod) {
+        pod_id = inCpPod.entry_active_pod;
+    }
     if (!pod_id) {
         return alert("No Pod Found");
     }
@@ -616,6 +613,15 @@ inCpPod.SetInfo = function(pod_id) {
 
         var ep = EventProxy.create("tpl", "pod", function(tpl, pod) {
 
+            var actions = [];
+            for (var i in inCp.OpActions) {
+                actions.push({
+                    action: inCp.OpActions[i].action,
+                    title: inCp.OpActions[i].title,
+                    active: inCp.OpActionAllow(pod.operate.action, inCp.OpActions[i].action),
+                });
+            }
+
             l4iModal.Open({
                 title: "Pod Instance Info",
                 tplsrc: tpl,
@@ -623,7 +629,7 @@ inCpPod.SetInfo = function(pod_id) {
                 height: 400,
                 data: {
                     pod: pod,
-                    _op_actions: inCp.OpActions,
+                    _op_actions: actions,
                 },
                 buttons: [{
                     onclick: "l4iModal.Close()",
@@ -688,7 +694,10 @@ inCpPod.SetInfoCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                inCpPod.List();
+                var el = document.getElementById("incp-podls");
+                if (el) {
+                    inCpPod.List();
+                }
             }, 500);
         }
     });
@@ -833,20 +842,7 @@ inCpPod.SetCommit = function() {
     });
 }
 
-inCpPod.EntryStats = function(time_past) {
-    if (time_past) {
-        inCpPod.entry_active_past = parseInt(time_past);
-    }
-    if (inCpPod.entry_active_past < 600) {
-        inCpPod.entry_active_past = 600;
-    }
-    if (inCpPod.entry_active_past > (30 * 86400)) {
-        inCpPod.entry_active_past = 30 * 86400;
-    }
-    inCpPod.Entry();
-}
-
-inCpPod.Entry = function(pod_id) {
+inCpPod.EntryIndex = function(pod_id, nav_target) {
 
     if (pod_id) {
         inCpPod.entry_active_pod = pod_id;
@@ -857,13 +853,119 @@ inCpPod.Entry = function(pod_id) {
     <li><a class='l4i-nav-item primary' href='#' onclick='inCpPod.Index()'>\
       <span class='glyphicon glyphicon-menu-left' aria-hidden='true'></span> Back\
     </a></li>\
-    <li><a class='l4i-nav-item active' href='#pod/chart'>Workloads</a></li>\
+    <li><a class='l4i-nav-item' href='#pod/entry/overview'>Dashboard</a></li>\
+    <li><a class='l4i-nav-item' href='#pod/entry/stats'>Graphs</a></li>\
+    <li><a class='' href='#pod/entry/setup' onclick='inCpPod.SetInfo()'>Setup</a></li>\
   </ul>\
   <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
 </div>\
 <div id='work-content'></div>");
 
-    inCpPod.EntryStats();
+    l4i.UrlEventClean("incp-module-navbar-menus");
+    l4i.UrlEventRegister("pod/entry/overview", inCpPod.EntryOverview, "incp-module-navbar-menus");
+    l4i.UrlEventRegister("pod/entry/stats", inCpPod.EntryStats, "incp-module-navbar-menus");
+
+    switch (nav_target) {
+        case "stats":
+            l4i.UrlEventHandler("pod/entry/stats", false);
+            break;
+
+        default:
+            l4i.UrlEventHandler("pod/entry/overview", false);
+            break;
+    }
+}
+
+inCpPod.EntryOverview = function() {
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "pod", "pstatus", function(tpl, pod, pstatus) {
+
+            if (!pod.operate.replicas) {
+                pod.operate.replicas = [];
+            }
+            for (var i in pod.operate.replicas) {
+                if (!pod.operate.replicas[i].ports) {
+                    pod.operate.replicas[i].ports = [];
+                }
+                for (var j in pod.operate.replicas[i].ports) {
+                    if (!pod.operate.replicas[i].ports[j].host_port) {
+                        pod.operate.replicas[i].ports[j].host_port = 0;
+                    }
+                }
+            }
+            pod.spec._cpu_limit = 0;
+            pod.spec._mem_limit = 0;
+            for (var i in pod.spec.boxes) {
+                pod.spec._cpu_limit += pod.spec.boxes[i].resources.cpu_limit;
+                pod.spec._mem_limit += pod.spec.boxes[i].resources.mem_limit;
+            }
+
+            inCp.OpToolsClean();
+            $("#work-content").html(tpl);
+
+            l4iTemplate.Render({
+                dstid: "incp-podentry-overview",
+                tplid: "incp-podentry-overview-info-tpl",
+                data: pod,
+            });
+
+            l4iTemplate.Render({
+                dstid: "incp-podentry-sidebar",
+                tplid: "incp-podentry-overview-oplog-tpl",
+                data: pstatus,
+            });
+
+            setTimeout(inCpPod.entryAutoRefresh, 3000);
+        });
+
+        ep.fail(function(err) {
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
+        });
+
+        inCp.ApiCmd("pod/entry?id=" + inCpPod.entry_active_pod, {
+            callback: ep.done("pod"),
+        });
+
+        inCp.ApiCmd("pod/status?id=" + inCpPod.entry_active_pod, {
+            callback: ep.done("pstatus"),
+        });
+
+        inCp.TplFetch("pod/entry-overview", {
+            callback: ep.done("tpl"),
+        });
+    });
+}
+
+inCpPod.entryAutoRefresh = function() {
+    var el = document.getElementById("incp-podentry-status-value");
+    if (!el || !inCpPod.entry_active_pod) {
+        return;
+    }
+
+    inCp.ApiCmd("pod/status?id=" + inCpPod.entry_active_pod, {
+        callback: function(err, data) {
+
+            if (err || !data || data.error || !data.kind) {
+                return;
+            }
+
+            if (data.phase == "running") {
+                el.innerHTML = '<span class="incp-font-ok">Running</span>';
+            } else {
+                el.innerHTML = data.phase;
+            }
+
+            l4iTemplate.Render({
+                dstid: "incp-podentry-sidebar",
+                tplid: "incp-podentry-overview-oplog-tpl",
+                data: data,
+            });
+
+            setTimeout(inCpPod.entryAutoRefresh, 3000);
+        },
+    });
 }
 
 inCpPod.EntryStatsButton = function(obj) {

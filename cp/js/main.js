@@ -453,3 +453,40 @@ inCp.NavBack = function(fn) {
     }
 }
 
+inCp.TimeUptime = function(sec) {
+    var s = [];
+
+    var d = parseInt(sec / 86400);
+    if (d > 1) {
+        s.push(d + " days");
+    } else if (d == 1) {
+        s.push(d + " day");
+    }
+
+    var s2 = [];
+    sec = sec % 86400;
+    var h = parseInt(sec / 3600);
+    if (h < 10) {
+        s2.push("0" + h);
+    } else {
+        s2.push(h);
+    }
+
+    sec = sec % 3600;
+    var m = parseInt(sec / 60);
+    if (m < 10) {
+        s2.push("0" + m);
+    } else {
+        s2.push(m);
+    }
+
+    sec = sec % 60;
+    if (sec < 10) {
+        s2.push("0" + sec);
+    } else {
+        s2.push(sec);
+    }
+    s.push(s2.join(":"));
+
+    return s.join(", ");
+}

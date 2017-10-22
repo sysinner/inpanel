@@ -917,7 +917,7 @@ inCpPod.EntryOverview = function() {
                 data: pstatus,
             });
 
-            setTimeout(inCpPod.entryAutoRefresh, 3000);
+            setTimeout(inCpPod.entryAutoRefresh, 5000);
         });
 
         ep.fail(function(err) {
@@ -957,13 +957,40 @@ inCpPod.entryAutoRefresh = function() {
                 el.innerHTML = data.phase;
             }
 
+            for (var i in data.replicas) {
+
+                if (data.phase != "running") {
+                    var elrep = document.getElementById("incp-podentry-box-uptime-value-" + i);
+                    if (elrep) {
+                        elrep.innerHTML = "00:00:00"
+                    }
+                    continue;
+                }
+
+                for (var j in data.replicas[i].boxes) {
+                    if (data.replicas[i].boxes[j].name != "main") {
+                        continue;
+                    }
+                    if (!data.replicas[i].boxes[j].updated || !data.replicas[i].boxes[j].started) {
+                        continue;
+                    }
+                    var elrep = document.getElementById("incp-podentry-box-uptime-value-" + i);
+                    if (elrep) {
+                        var sec = data.replicas[i].boxes[j].updated - data.replicas[i].boxes[j].started;
+                        if (sec > 0) {
+                            elrep.innerHTML = inCp.TimeUptime(sec);
+                        }
+                    }
+                }
+            }
+
             l4iTemplate.Render({
                 dstid: "incp-podentry-sidebar",
                 tplid: "incp-podentry-overview-oplog-tpl",
                 data: data,
             });
 
-            setTimeout(inCpPod.entryAutoRefresh, 3000);
+            setTimeout(inCpPod.entryAutoRefresh, 5000);
         },
     });
 }

@@ -6,7 +6,7 @@
 <script type="text/html" id="incp-podentry-overview-oplog-tpl">
 {[? it.replicas]}
 {[~it.replicas :rep]}
-<div class="incp-div-h-title" style="padding-top:10px">Operation Queue</div>
+<div class="incp-div-h-title" style="padding-top:10px">Operation Queue v{[=rep.op_log.version]}</div>
 <div class="incp-div-light">
 <table class="table table-hover" style="margin-bottom:0">
   <thead>
@@ -14,7 +14,7 @@
       <th>Name</th>
       <th>Status</th>
       <th>Message</th>
-      <th>Updated</th>
+      <th style="text-align:right"></th>
     </tr>
   </thead>
   {[~rep.op_log.items :log]}
@@ -32,7 +32,7 @@
       {[ } ]}
     </td>
     <td>{[=log.message]}</td>
-    <td>{[=l4i.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}</td>
+    <td align="right">{[=l4i.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}</td>
   </tr>
   {[~]}
 </table>
@@ -108,7 +108,8 @@
     <tr>
       <th>Rep ID</th>
       <th>Host</th>
-      <th width="50%">Service Ports</th>
+      <th>Service Ports</th>
+      <th style="text-align:right">Uptime</th>
     </tr>
   </thead>
   {[~it.operate.replicas :rep]}
@@ -117,16 +118,17 @@
     <td>{[?rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}</td>
     <td>
       {[? rep.ports]}
-      <table style="width:100%" class="incp-font-fixspace">
+      <table style="" class="incp-font-fixspace">
         {[~rep.ports :opv]}
         <tr>
-          <td>{[=opv.name]}/TCP</td>
+          <td style="width:160px">TCP/{[=opv.name]}</td>
           <td align="right">host:{[=opv.host_port]} &nbsp;&raquo;&nbsp; pod:{[=opv.box_port]}</td>
         </tr>
         {[~]}
       </table>
 	  {[?]}
     </td>
+    <td id="incp-podentry-box-uptime-value-{[=rep.id]}" align="right">00:00:00</td>
   </tr>
   {[~]}
 </table>
@@ -136,7 +138,7 @@
 {[?it.apps]}
 <div class="incp-div-h-title">Applications</div>
 <div class="incp-div-light">
-<table class="table table-hover">
+<table class="table table-hover" style="margin-bottom:0">
   <thead>
     <tr>
       <th>Name</th>
@@ -145,7 +147,7 @@
       <th>Packages</th>
       <th>Executors</th>
       <th>Service Ports</th>
-      <th>Updated</th>
+      <th style="text-align:right"></th>
     </tr>
   </thead>
   <tbody>
@@ -157,7 +159,7 @@
       <td>{[if (v.spec.packages) { ]}{[=v.spec.packages.length]}{[ } ]}</td>
       <td>{[if (v.spec.executors) { ]}{[=v.spec.executors.length]}{[ } ]}</td>
       <td>{[if (v.spec.service_ports) { ]}{[=v.spec.service_ports.length]}{[ } ]}</td>
-      <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+      <td align="right">{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
     </tr>
     {[~]}
   </tbody>

@@ -363,6 +363,20 @@ inCp.CodeRender = function() {
     });
 }
 
+inCp.ArrayStringHas = function(ar, v) {
+    if (!ar || !v) {
+        return false;
+    }
+
+    for (var i in ar) {
+        if (ar[i] == v) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 /*
 inCp.ArrayUint32MatchAny = function(ar, ar2)
 {

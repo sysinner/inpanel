@@ -446,6 +446,7 @@ inCpPod.NewRefreshPlan = function() {
             dstid: "incp-podnew-resource-selector",
             tplid: "incp-podnew-resource-selector-tpl",
             data: inCpPod.plan,
+            callback: inCpPod.newAccountChargeRefresh,
         });
 
         break;
@@ -462,6 +463,7 @@ inCpPod.NewPlanClusterChange = function(zn) {
     $("#incp-podnew-zone-id-" + l4iString.CryptoMd5(zn)).addClass("selected");
 
     inCpPod.plan._zone_selected = zn;
+    inCpPod.newAccountChargeRefresh();
 }
 
 inCpPod.NewPlanResComputeChange = function(res_compute_id) {
@@ -473,6 +475,7 @@ inCpPod.NewPlanResComputeChange = function(res_compute_id) {
     $("#incp-podnew-resource-compute-id-" + res_compute_id).addClass("selected");
 
     inCpPod.plan.res_compute_selected = res_compute_id;
+    inCpPod.newAccountChargeRefresh();
 }
 
 inCpPod.NewPlanImageChange = function(image_id) {
@@ -486,6 +489,59 @@ inCpPod.NewPlanImageChange = function(image_id) {
     inCpPod.plan.image_selected = image_id;
 }
 
+inCpPod.newAccountChargeRefresh = function() {
+    var alert_id = "#incp-podnew-alert",
+        vol_size = $("#incp-podnew-resource-value").val();
+    if (vol_size <= 0) {
+        return;
+    }
+
+    if (vol_size >= 1) {
+        vol_size = vol_size * 1073741824; // GB
+    } else {
+        vol_size = vol_size * 1000 * 1048576; // MB
+    }
+
+    var set = {
+        kind: "SpecPodPlanSetup",
+        name: "pod-estimate",
+        plan: inCpPod.plan_selected,
+        zone: inCpPod.plan._zone_selected.split("/")[0],
+        cell: inCpPod.plan._zone_selected.split("/")[1],
+        res_volume: inCpPod.plan._res_volume.ref_id,
+        res_volume_size: parseInt(vol_size),
+        boxes: [{
+            name: "main",
+            image: inCpPod.plan.image_selected,
+            res_compute: inCpPod.plan.res_compute_selected,
+        }],
+    };
+
+
+    inCp.ApiCmd("charge/pod-estimate?fields=pod&cycles=3600,86400", {
+        method: "POST",
+        data: JSON.stringify(set),
+        callback: function(err, data) {
+            if (err || !data || data.error || data.kind != "PodEstimate") {
+                return;
+            }
+            var cas = [];
+            for (var i in data.items) {
+                if (data.items[i].cycle_time == 3600) {
+                    cas.push(data.items[i].cycle_amount + " / hour");
+                } else if (data.items[i].cycle_time == 86400) {
+                    cas.push(data.items[i].cycle_amount + " / day");
+                }
+            }
+            if (cas.length > 0) {
+                var el = document.getElementById("incp-podnew-charge-estimate-value");
+                if (el) {
+                    el.innerHTML = cas.join(" or ");
+                }
+            }
+        }
+    });
+}
 
 inCpPod.NewCommit = function() {
     var alert_id = "#incp-podnew-alert",
@@ -501,12 +557,11 @@ inCpPod.NewCommit = function() {
     }
 
     var set = {
-        kind: "SpecPodPlanSetup",
         name: $("#incp-podnew-meta-name").val(),
         plan: inCpPod.plan_selected,
         zone: inCpPod.plan._zone_selected.split("/")[0],
         cell: inCpPod.plan._zone_selected.split("/")[1],
-        res_volume: inCpPod.plan._res_volume.meta.id,
+        res_volume: inCpPod.plan._res_volume.ref_id,
         res_volume_size: parseInt(vol_size),
         boxes: [{
             name: "main",
@@ -544,11 +599,14 @@ inCpPod.NewCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                if (!inCpPod.new_options.open_modal) {
-                    inCpPod.List();
-                }
                 if (inCpPod.new_options.callback) {
                     inCpPod.new_options.callback(null);
+                } else if (!inCpPod.new_options.open_modal) {
+                    if (rsj.pod && rsj.pod.length > 8) {
+                        inCpPod.EntryIndex(rsj.pod);
+                    } else {
+                        inCpPod.List();
+                    }
                 }
             }, 1000);
         }

@@ -681,6 +681,12 @@ button {
   color: #464a4e;
 }
 
+#incp-podnew-charge-estimate-value {
+	padding: 20px 0;
+	font-size: 30px !important;
+	color: #5cb85c !important;
+}
+
 #incp-podentry-index {
   position: absolute;
   left: 0px;

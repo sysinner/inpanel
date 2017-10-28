@@ -6,7 +6,7 @@
 <script type="text/html" id="incp-podentry-overview-oplog-tpl">
 {[? it.replicas]}
 {[~it.replicas :rep]}
-<div class="incp-div-h-title" style="padding-top:10px">Operation Queue v{[=rep.op_log.version]}</div>
+<div class="incp-div-h-title" style="padding-top:10px">Operation Queue</div>
 <div class="incp-div-light">
 <table class="table table-hover" style="margin-bottom:0">
   <thead>
@@ -75,7 +75,7 @@
 <div class="incp-div-label-block-frame-inline">
   <div class="incp-div-label-block incp-div-light">
     <div class="name">Name</div>
-    <div class="value">{[=it.spec.ref.name.substr("pod/spec/plan/".length)]}</div>
+    <div class="value">{[=it.spec.ref.name]}</div>
   </div>
   <div class="incp-div-label-block incp-div-light">
     <div class="name">System Volume</div>

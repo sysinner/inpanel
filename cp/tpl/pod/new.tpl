@@ -19,6 +19,10 @@
 
     <div id="incp-podnew-resource-selector"></div>
 
+    <div class="l4i-form-group">
+	  <div id="incp-podnew-charge-estimate-value" class="font-size:30px"></div>
+	</div>
+
     <button type="button" class="pure-button pure-button-primary" onclick="inCpPod.NewCommit()">
       Save
     </button>
@@ -74,11 +78,11 @@
   <label>Resources</label>
   <div class="incp-form-box-selector" id="incp-podnew-resource-computes">
     {[~it.res_computes :v]}
-    <div class="incp-form-box-selector-item {[if (v.meta.id == it.res_compute_selected) { ]}selected{[ } ]}" 
-      id="incp-podnew-resource-compute-id-{[=v.meta.id]}"
-      onclick="inCpPod.NewPlanResComputeChange('{[=v.meta.id]}')">
+    <div class="incp-form-box-selector-item {[if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
+      id="incp-podnew-resource-compute-id-{[=v.ref_id]}"
+      onclick="inCpPod.NewPlanResComputeChange('{[=v.ref_id]}')">
       <div>CPU: {[=v.cpu_limit]}m</div>
-      <div>Memory: {[=inCp.UtilResSizeFormat(v.memory_limit)]}</div>
+      <div>Memory: {[=inCp.UtilResSizeFormat(v.mem_limit)]}</div>
     </div>
     {[~]}
   </div>
@@ -89,10 +93,11 @@
   <label>Image</label>
   <div class="incp-form-box-selector" id="incp-podnew-images">
     {[~it.images :v]}
-    <div class="incp-form-box-selector-item {[if (v.meta.id == it.image_selected) { ]}selected{[ } ]}" 
-      id="incp-podnew-image-id-{[=v.meta.id]}"
-      onclick="inCpPod.NewPlanImageChange('{[=v.meta.id]}')">
-      <div>{[=v.driver]} / {[=v.os_name]}</div>
+    <div class="incp-form-box-selector-item {[if (v.ref_id == it.image_selected) { ]}selected{[ } ]}" 
+      id="incp-podnew-image-id-{[=v.ref_id]}"
+      onclick="inCpPod.NewPlanImageChange('{[=v.ref_id]}')">
+      <div>{[=v.ref_id]}</div>
+      <div>{[=v.driver]} / {[=v.os_dist]}</div>
     </div>
     {[~]}
   </div>

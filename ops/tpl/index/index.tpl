@@ -1,22 +1,28 @@
-<nav id="inops-topbar">
-  <div class="inops-topbar-collapse">
-    <ul class="inops-topnav" style="">
-      <!-- <a class="navbar-brand" href="#">
-          <img alt="" src="/~/cmf/logo.png" width="20px" height="20px">
-      </a> -->
-      <li class="inops-topnav-brand">Ops</li>
+<div id="incp-topbar">
+  <div class="incp-topbar-collapse">
+    <ul class="incp-nav" id="incp-topbar-siteinfo">
+	    <li><img class="incp-topbar-logo" src="/in/cp/~/cp/img/logo-g1s48.png" title="frontend_header_site_logo_url"></li>
+      <li class="incp-topbar-brand">Panel</li>
     </ul>
-    <ul class="inops-topnav" id="inops-topnav-menus">
-      <li class=""><a href="#host/index">Hosts</a></li>
-      <!-- <li class=""><a href="#pod/index">Pods</a></li> -->
-      <!-- <li class=""><a href="#app/index">Applications</a></li>
-      <li class=""><a href="#ips/index">Packages</a></li>
-      <li class=""><a href="#iam/index">IAM</a></li> -->
+    <ul class="incp-nav incp-topbar-nav" id="inops-topbar-nav-menus">
+      <li><a class="l4i-nav-item" href="#host/index">Cluster</a></li>
+      <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>
     </ul>
-    <ul class="inops-topnav inops-topnav-right">
-      <li><a href="#">Login</a></li>
-    </ul>
+    <ul class="incp-nav incp-nav-right" id="incp-topbar-userbar"></ul>
   </div>
-</nav>
+</div>
+<div id="comp-content" class="">loading</div>
 
-<div id="comp-content">loading</div>
+<script id="incp-topbar-user-signed-tpl" type="text/html">
+
+<li class="iam-name">{[=it.display_name]}</li>
+<li class="iam-photo" id="incp-topbar-user-signed"><img src="{[=it.photo_url]}"/></li>
+
+<div id="incp-topbar-user-signed-modal" style="display:none;">
+  <img class="iam-photo" src="{[=it.photo_url]}">
+  <div class="iam-name">{[=it.display_name]}</div>
+  <a class="btn btn-default iam-btn" href="{[=it.iam_url]}" target="_blank">Account Center</a>
+  <a class="btn btn-default iam-btn" href="/in/cp/auth/sign-out">Sign out</a>
+</div>
+</script>
+

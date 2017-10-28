@@ -1,18 +1,13 @@
+/*
 body {
   margin: 0 auto;
   min-width: 900px;
-  /*background-color: #f5f5f5;*/
   padding: 0;
   font-size: 16px;
 }
 
 #comp-content {
   padding: 10px 20px 10px 20px;
-}
-
-.inops-header {
-  /*background-color: #fff;*/
-  /*opacity: 0.94;*/
 }
 
 .inops-query-input-icon {
@@ -227,3 +222,4 @@ body {
   border-width: 10px;
 }
 
+*/

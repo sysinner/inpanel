@@ -1,22 +1,20 @@
 var inOps = {
-    base    : "/in/ops/",
-    basetpl : "/in/ops/-/",
-    api     : "/in/ops/",
-    apisys  : "/in/ops/",
-    debug   : true,
+    base: "/in/ops/",
+    basetpl: "/in/ops/-/",
+    api: "/in/ops/",
+    apisys: "/in/ops/",
+    debug: true,
     UserSession: null,
 }
 
-inOps.debug_uri = function()
-{
+inOps.debug_uri = function() {
     if (!inOps.debug) {
         return "";
     }
-    return "?_="+ Math.random(); 
+    return "?_=" + Math.random();
 }
 
-inOps.Boot = function()
-{
+inOps.Boot = function() {
     seajs.config({
         base: inOps.base,
         alias: {
@@ -27,19 +25,19 @@ inOps.Boot = function()
     seajs.use([
         "~/twbs/3.3/css/bootstrap.css",
         "~/cp/js/jquery.js",
-        "~/cp/js/main.js"+ inOps.debug_uri(),
-        "~/cp/css/main.css"+ inOps.debug_uri(),
+        "~/cp/js/main.js" + inOps.debug_uri(),
+        "~/cp/css/main.css" + inOps.debug_uri(),
         "~/lessui/js/browser-detect.js",
     ], function() {
 
         var browser = BrowserDetect.browser;
         var version = BrowserDetect.version;
-        var OS      = BrowserDetect.OS;
+        var OS = BrowserDetect.OS;
 
         if (!((browser == 'Chrome' && version >= 22)
             || (browser == 'Firefox' && version >= 31.0)
             || (browser == 'Safari' && version >= 5.0 && OS == 'Mac'))) {
-            $('body').load(inOps.base +"~/cp/tpl/error/browser.tpl");
+            $('body').load(inOps.base + "~/cp/tpl/error/browser.tpl");
             return;
         }
 
@@ -48,20 +46,21 @@ inOps.Boot = function()
             "~/twbs/3.3/js/bootstrap.js",
             "~/lessui/js/lessui.js",
             "~/purecss/css/pure.css",
-            "~/ops/css/main.css"+ inOps.debug_uri(),
-            "~/ops/js/host.js"+ inOps.debug_uri(),
+            "~/cp/css/main.css" + inOps.debug_uri(),
+            "~/ops/css/main.css" + inOps.debug_uri(),
+            "~/ops/js/host.js" + inOps.debug_uri(),
+            "~/ops/js/pod.js" + inOps.debug_uri(),
         ], inOps.load_index);
     });
 }
 
 
-inOps.load_index = function()
-{
+inOps.load_index = function() {
     l4i.debug = inOps.debug;
 
-    seajs.use(["ep"], function (EventProxy) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "session", function (tpl, session) {
+        var ep = EventProxy.create("tpl", "session", function(tpl, session) {
 
             if (!session || session.username == "") {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
@@ -69,12 +68,34 @@ inOps.load_index = function()
             inOps.UserSession = session;
 
             $("#body-content").html(tpl);
- 
-            l4i.UrlEventRegister("host/index", inOpsHost.Index, "inops-topbar-menus");
-            l4i.UrlEventHandler("host/index");
+
+            l4iTemplate.Render({
+                dstid: "incp-topbar-userbar",
+                tplid: "incp-topbar-user-signed-tpl",
+                data: inOps.UserSession,
+                success: function() {
+
+                    $("#incp-topbar-userbar").hover(
+                        function() {
+                            $("#incp-topbar-user-signed-modal").fadeIn(200);
+                        },
+                        function() {}
+                    );
+                    $("#incp-topbar-user-signed-modal").hover(
+                        function() {},
+                        function() {
+                            $("#incp-topbar-user-signed-modal").fadeOut(200);
+                        }
+                    );
+                },
+            });
+
+            l4i.UrlEventRegister("host/index", inOpsHost.Index, "inops-topbar-nav-menus");
+            l4i.UrlEventRegister("pod/index", inOpsPod.Index, "inops-topbar-nav-menus");
+            l4i.UrlEventHandler("pod/index", true);
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             if (err && err == "AuthSession") {
                 inCp.AlertUserLogin();
             } else {
@@ -98,8 +119,7 @@ inOps.load_index = function()
 
 }
 
-inOps.ApiCmd = function(url, options)
-{
+inOps.ApiCmd = function(url, options) {
     var appcb = null;
     if (options.callback) {
         appcb = options.callback;
@@ -116,8 +136,7 @@ inOps.ApiCmd = function(url, options)
     l4i.Ajax(inOps.api + url, options);
 }
 
-inOps.ApiSysCmd = function(url, options)
-{
+inOps.ApiSysCmd = function(url, options) {
     var appcb = null;
     if (options.callback) {
         appcb = options.callback;
@@ -134,24 +153,22 @@ inOps.ApiSysCmd = function(url, options)
     l4i.Ajax(inOps.apisys + url, options);
 }
 
-inOps.TplFetch = function(url, options)
-{
-    l4i.Ajax(inOps.basetpl + url +".tpl", options);
+inOps.TplFetch = function(url, options) {
+    l4i.Ajax(inOps.basetpl + url + ".tpl", options);
 }
 
-inOps.Loader = function(target, uri)
-{
-    l4i.Ajax(inOps.basetpl + uri +".tpl", {callback: function(err, data) {
-        $("#"+ target).html(data);
-    }});
+inOps.Loader = function(target, uri) {
+    l4i.Ajax(inOps.basetpl + uri + ".tpl", {
+        callback: function(err, data) {
+            $("#" + target).html(data);
+        }
+    });
 }
 
-inOps.CompLoader = function(uri)
-{
+inOps.CompLoader = function(uri) {
     inOps.Loader("comp-content", uri);
 }
 
-inOps.WorkLoader = function(uri)
-{
+inOps.WorkLoader = function(uri) {
     inOps.Loader("work-content", uri);
 }

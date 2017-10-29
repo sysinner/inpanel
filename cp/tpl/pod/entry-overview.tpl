@@ -4,6 +4,41 @@
 </div>
 
 <script type="text/html" id="incp-podentry-overview-oplog-tpl">
+{[?it.op_log]}
+<div class="incp-div-h-title" style="padding-top:10px">Pod Operation Log</div>
+<div class="incp-div-light">
+<table class="table table-hover" style="margin-bottom:0">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Message</th>
+      <th style="text-align:right"></th>
+    </tr>
+  </thead>
+  {[~it.op_log :log]}
+  <tr>
+    <td>{[=log.name]}</td>
+    <td>
+      {[ if (log.status == "ok") { ]}
+		<span class="label label-success">OK</span>
+	  {[ } else if (log.status == "error" || log.status == "fatal") { ]}
+		<span class="label label-danger">{[=log.status]}</span>
+	  {[ } else if (log.status == "warn") { ]}
+		<span class="label label-warning">{[=log.status]}</span>
+      {[ } else { ]}
+		<span class="label label-info">{[=log.status]}</span>
+      {[ } ]}
+    </td>
+    <td>{[=log.message]}</td>
+    <td align="right">{[=l4i.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}</td>
+  </tr>
+  {[~]}
+</table>
+</div>
+{[?]}
+
+
 {[? it.replicas]}
 {[~it.replicas :rep]}
 <div class="incp-div-h-title" style="padding-top:10px">Operation Queue</div>

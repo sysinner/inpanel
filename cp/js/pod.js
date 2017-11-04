@@ -471,8 +471,8 @@ inCpPod.NewPlanResComputeChange = function(res_compute_id) {
         return;
     }
 
-    $("#incp-podnew-resource-computes").find(".incp-form-box-selector-item.selected").removeClass("selected");
-    $("#incp-podnew-resource-compute-id-" + res_compute_id).addClass("selected");
+    $("#incp-podnew-res-computes").find(".incp-form-box-selector-item.selected").removeClass("selected");
+    $("#incp-podnew-res-compute-id-" + res_compute_id).addClass("selected");
 
     inCpPod.plan.res_compute_selected = res_compute_id;
     inCpPod.newAccountChargeRefresh();
@@ -1009,15 +1009,15 @@ inCpPod.entryAutoRefresh = function() {
                 return;
             }
 
-            if (data.phase == "running") {
+            if (inCp.OpActionAllow(data.action, inCp.OpActionRunning)) {
                 el.innerHTML = '<span class="incp-font-ok">Running</span>';
             } else {
-                el.innerHTML = data.phase;
+                el.innerHTML = inCp.OpActionStatusTitle(data.action);
             }
 
             for (var i in data.replicas) {
 
-                if (data.phase != "running") {
+                if (inCp.OpActionAllow(data.action, inCp.OpActionRunning)) {
                     var elrep = document.getElementById("incp-podentry-box-uptime-value-" + i);
                     if (elrep) {
                         elrep.innerHTML = "00:00:00"

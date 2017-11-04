@@ -124,16 +124,16 @@ inOpsPod.SpecPlanSet = function(name) {
                     return alert("HostZoneList Not Found");
                 }
 
-                if (!rescomputes.kind || rescomputes.kind != "PodSpecResourceComputeList") {
-                    return alert("PodSpecResourceComputeList Not Found");
+                if (!rescomputes.kind || rescomputes.kind != "PodSpecResComputeList") {
+                    return alert("PodSpecResComputeList Not Found");
                 }
 
                 if (!images.kind || images.kind != "PodSpecBoxImageList") {
                     return alert("PodSpecBoxImageList Not Found");
                 }
 
-                if (!resvolumes.kind || resvolumes.kind != "PodSpecResourceVolumeList") {
-                    return alert("PodSpecResourceVolumeList Not Found");
+                if (!resvolumes.kind || resvolumes.kind != "PodSpecResVolumeList") {
+                    return alert("PodSpecResVolumeList Not Found");
                 }
 
                 if (tpl) {
@@ -335,10 +335,10 @@ inOpsPod.SpecPlanSetResComputeChange = function(res_compute_id) {
         }
         if (inOpsPod.planset_active._rescomputes.items[i]._selected) {
             inOpsPod.planset_active._rescomputes.items[i]._selected = false;
-            $("#inops-podspec-planset-resource-compute-id-" + res_compute_id).removeClass("selected");
+            $("#inops-podspec-planset-res-compute-id-" + res_compute_id).removeClass("selected");
         } else {
             inOpsPod.planset_active._rescomputes.items[i]._selected = true;
-            $("#inops-podspec-planset-resource-compute-id-" + res_compute_id).addClass("selected");
+            $("#inops-podspec-planset-res-compute-id-" + res_compute_id).addClass("selected");
         }
         break;
     }
@@ -373,10 +373,10 @@ inOpsPod.SpecPlanSetResVolumeChange = function(res_volume_id) {
         }
         if (inOpsPod.planset_active._resvolumes.items[i]._selected) {
             inOpsPod.planset_active._resvolumes.items[i]._selected = false;
-            $("#inops-podspec-planset-resource-volume-id-" + res_volume_id).removeClass("selected");
+            $("#inops-podspec-planset-res-volume-id-" + res_volume_id).removeClass("selected");
         } else {
             inOpsPod.planset_active._resvolumes.items[i]._selected = true;
-            $("#inops-podspec-planset-resource-volume-id-" + res_volume_id).addClass("selected");
+            $("#inops-podspec-planset-res-volume-id-" + res_volume_id).addClass("selected");
         }
         break;
     }

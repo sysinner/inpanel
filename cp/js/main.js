@@ -16,12 +16,10 @@ var inCp = {
             action: 1 << 3,
             title: "Stop",
         },
-    /*
-    {
-        action: 1 << 5,
-        title: "Destroy",
-    },
-    */
+        {
+            action: 1 << 5,
+            title: "Destroy",
+        },
     ],
     OpActionStatus: [
         {
@@ -38,6 +36,10 @@ var inCp = {
         },
         {
             action: 1 << 11,
+            title: "Pending",
+        },
+        {
+            action: 1 << 12,
             title: "Warning",
         },
     ],
@@ -45,6 +47,10 @@ var inCp = {
     OpActionRunning: 1 << 2,
     OpActionStop: 1 << 3,
     OpActionStopped: 1 << 4,
+    OpActionDestroy: 1 << 5,
+    OpActionDestroyed: 1 << 6,
+    OpActionPending: 1 << 11,
+    OpActionWarning: 1 << 12,
     well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/in/cp/auth/login" class="button">SIGN IN</a></div>',
 }
 
@@ -412,7 +418,7 @@ inCp.OpActionStatusTitle = function(action) {
             return inCp.OpActionStatus[i].title;
         }
     }
-    return "";
+    return "Pending";
 }
 
 inCp.OpActionAllow = function(opbase, action) {

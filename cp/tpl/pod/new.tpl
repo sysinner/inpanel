@@ -76,10 +76,10 @@
 
 <div class="l4i-form-group">
   <label>Resources</label>
-  <div class="incp-form-box-selector" id="incp-podnew-resource-computes">
+  <div class="incp-form-box-selector" id="incp-podnew-res-computes">
     {[~it.res_computes :v]}
     <div class="incp-form-box-selector-item {[if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
-      id="incp-podnew-resource-compute-id-{[=v.ref_id]}"
+      id="incp-podnew-res-compute-id-{[=v.ref_id]}"
       onclick="inCpPod.NewPlanResComputeChange('{[=v.ref_id]}')">
       <div>CPU: {[=v.cpu_limit]}m</div>
       <div>Memory: {[=inCp.UtilResSizeFormat(v.mem_limit)]}</div>
@@ -105,7 +105,7 @@
 
 <div class="l4i-form-group">
   <label>System Storage</label>
-  <div class="incp-form-box-selector form-inline" id="incp-podnew-resource-volumes">
+  <div class="incp-form-box-selector form-inline" id="incp-podnew-res-volumes">
 
     <div class="input-group" style="width:200px;">
       <input type="text" class="form-control" id="incp-podnew-resource-value" value="{[=it._res_volume._valued]}">

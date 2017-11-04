@@ -177,7 +177,7 @@
   <div class="incp-form-box-selector">
     {[~it.items :v]}
     <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
-      id="inops-podspec-planset-resource-compute-id-{[=v.meta.id]}"
+      id="inops-podspec-planset-res-compute-id-{[=v.meta.id]}"
       onclick="inOpsPod.SpecPlanSetResComputeChange('{[=v.meta.id]}')">
       <div>CPU: {[=v.cpu_limit]}m</div>
       <div>Memory: {[=inCp.UtilResSizeFormat(v.mem_limit)]}</div>
@@ -210,7 +210,7 @@
   <div class="incp-form-box-selector">
     {[~it.items :v]}
     <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
-      id="inops-podspec-planset-resource-volume-id-{[=v.meta.id]}"
+      id="inops-podspec-planset-res-volume-id-{[=v.meta.id]}"
       onclick="inOpsPod.SpecPlanSetResVolumeChange('{[=v.meta.id]}')">
       <div>Default: {[=inCp.UtilResSizeFormat(v.default)]}</div>
       <div>Range: {[=inCp.UtilResSizeFormat(v.request)]} ~ {[=inCp.UtilResSizeFormat(v.limit)]}</div>

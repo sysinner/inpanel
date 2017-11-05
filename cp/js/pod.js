@@ -497,7 +497,7 @@ inCpPod.newAccountChargeRefresh = function() {
     }
 
     // GB
-    vol_size = parseInt(vol_size) * 1073741824;
+    vol_size = parseInt(vol_size * 1073741824);
 
     var set = {
         kind: "SpecPodPlanSetup",
@@ -548,7 +548,7 @@ inCpPod.NewCommit = function() {
     }
 
     // GB
-    vol_size = parseInt(vol_size) * 1073741824;
+    vol_size = parseInt(vol_size * 1073741824);
 
     var set = {
         name: $("#incp-podnew-meta-name").val(),
@@ -1011,7 +1011,7 @@ inCpPod.entryAutoRefresh = function() {
 
             for (var i in data.replicas) {
 
-                if (inCp.OpActionAllow(data.action, inCp.OpActionRunning)) {
+                if (!inCp.OpActionAllow(data.action, inCp.OpActionRunning)) {
                     var elrep = document.getElementById("incp-podentry-box-uptime-value-" + i);
                     if (elrep) {
                         elrep.innerHTML = "00:00:00"

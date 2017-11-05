@@ -156,8 +156,8 @@
       <table style="" class="incp-font-fixspace">
         {[~rep.ports :opv]}
         <tr>
-          <td style="width:160px">TCP/{[=opv.name]}</td>
-          <td align="right">host:{[=opv.host_port]} &nbsp;&raquo;&nbsp; pod:{[=opv.box_port]}</td>
+          <td style="padding-right:40px">{[=opv.name]}</td>
+          <td align="right">{[=opv.wan_addr]}:{[=opv.host_port]} &nbsp;&raquo;&nbsp; pod:{[=opv.box_port]}</td>
         </tr>
         {[~]}
       </table>

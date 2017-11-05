@@ -66,21 +66,27 @@ var inCpPod = {
 
 inCpPod.Index = function() {
     $("#comp-content").html('<div id="work-content"></div>');
-    inCpPod.List();
+    inCpPod.List(null, {
+        destroy_enable: true
+    });
 }
 
-inCpPod.List = function(tplid) {
+inCpPod.List = function(tplid, options) {
     if (!tplid || tplid.indexOf("/") >= 0) {
         tplid = "incp-podls";
     }
     var alert_id = "#" + tplid + "-alert";
     var uri = "?";
+    options = options || {};
 
     if (inCp.Zones.items && inCp.Zones.items.length == 1) {
         inCpPod.zone_active = inCp.Zones.items[0].meta.id;
         uri += "zone_id=" + inCpPod.zone_active;
     }
-    uri += "&fields=meta/id|name,operate/action|replicas,spec/ref/name,spec/zone|cell"
+    uri += "&fields=meta/id|name,operate/action|replicas,spec/ref/name,spec/zone|cell";
+    if (options.destroy_enable) {
+        uri += "&destroy_enable=1";
+    }
 
     seajs.use(["ep"], function(EventProxy) {
 
@@ -599,7 +605,9 @@ inCpPod.NewCommit = function() {
                     if (rsj.pod && rsj.pod.length > 8) {
                         inCpPod.EntryIndex(rsj.pod);
                     } else {
-                        inCpPod.List();
+                        inCpPod.List(null, {
+                            destroy_enable: true
+                        });
                     }
                 }
             }, 1000);
@@ -748,7 +756,9 @@ inCpPod.SetInfoCommit = function() {
                 l4iModal.Close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
-                    inCpPod.List();
+                    inCpPod.List(null, {
+                        destroy_enable: true
+                    });
                 }
             }, 500);
         }
@@ -888,7 +898,9 @@ inCpPod.SetCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                inCpPod.List();
+                inCpPod.List(null, {
+                    destroy_enable: true
+                });
             }, 500);
         }
     });

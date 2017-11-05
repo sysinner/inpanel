@@ -364,7 +364,7 @@ inCpPod.NewRefreshPlan = function() {
             if (vol.default < 1073741824) {
                 vol._valued = (vol.default / 1073741824).toFixed(1);
             } else {
-                vol._valued = (vol.default / 1048576).toFixed(0);
+                vol._valued = (vol.default / 1073741824).toFixed(0);
             }
 
             inCpPod.plan._res_volume = vol;
@@ -491,16 +491,13 @@ inCpPod.NewPlanImageChange = function(image_id) {
 
 inCpPod.newAccountChargeRefresh = function() {
     var alert_id = "#incp-podnew-alert",
-        vol_size = $("#incp-podnew-resource-value").val();
+        vol_size = parseFloat($("#incp-podnew-resource-value").val());
     if (vol_size <= 0) {
         return;
     }
 
-    if (vol_size >= 1) {
-        vol_size = vol_size * 1073741824; // GB
-    } else {
-        vol_size = vol_size * 1000 * 1048576; // MB
-    }
+    // GB
+    vol_size = parseInt(vol_size) * 1073741824;
 
     var set = {
         kind: "SpecPodPlanSetup",
@@ -545,16 +542,13 @@ inCpPod.newAccountChargeRefresh = function() {
 
 inCpPod.NewCommit = function() {
     var alert_id = "#incp-podnew-alert",
-        vol_size = $("#incp-podnew-resource-value").val();
+        vol_size = parseFloat($("#incp-podnew-resource-value").val());
     if (vol_size <= 0) {
         return;
     }
 
-    if (vol_size >= 1) {
-        vol_size = vol_size * 1073741824; // GB
-    } else {
-        vol_size = vol_size * 1000 * 1048576; // MB
-    }
+    // GB
+    vol_size = parseInt(vol_size) * 1073741824;
 
     var set = {
         name: $("#incp-podnew-meta-name").val(),

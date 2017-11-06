@@ -204,6 +204,10 @@ inOpsPod.SpecPlanSet = function(name) {
                     }
                 }
 
+                if (!plan.sort_order) {
+                    plan.sort_order = 0;
+                }
+
                 //
                 inOpsPod.planset_active = plan;
                 inOpsPod.planset_active._zones = zones;
@@ -395,6 +399,7 @@ inOpsPod.SpecPlanSetCommit = function() {
     var req = {
         meta: {},
         status: "",
+        sort_order: 0,
         labels: [],
         annotations: [],
         zones: [],
@@ -424,6 +429,7 @@ inOpsPod.SpecPlanSetCommit = function() {
         });
 
         req.status = form.find("input[name=plan_status]:checked").val();
+        req.sort_order = parseInt(form.find("input[name=plan_sort_order]").val());
         req.meta.id = form.find("input[name=plan_meta_id]").val();
         req.meta.name = form.find("input[name=plan_meta_name]").val();
 
@@ -496,7 +502,7 @@ inOpsPod.SpecPlanSetCommit = function() {
 
             window.setTimeout(function() {
                 inOpsPod.SpecPlanList();
-            }, 1000);
+            }, 500);
         }
     });
 }

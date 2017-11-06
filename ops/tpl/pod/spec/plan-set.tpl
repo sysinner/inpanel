@@ -118,6 +118,13 @@
   </div>
 </div>
 
+<div class="l4i-form-group">
+  <label class="">Sort Order (0 ~ 15)</label>
+  <div class="">
+    <input type="text" class="form-control" name="plan_sort_order" value="{[=it.sort_order]}">
+  </div>
+</div>
+
 </script>
 
 <script type="text/html" id="inops-podspec-planset-label-tpl">

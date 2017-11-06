@@ -503,7 +503,11 @@ inCpPod.newAccountChargeRefresh = function() {
     }
 
     // GB
-    vol_size = parseInt(vol_size * 1073741824);
+    if (vol_size < 1.0) {
+        vol_size = vol_size * 1048576000;
+    } else {
+        vol_size = vol_size * 1073741824;
+    }
 
     var set = {
         kind: "SpecPodPlanSetup",
@@ -554,7 +558,11 @@ inCpPod.NewCommit = function() {
     }
 
     // GB
-    vol_size = parseInt(vol_size * 1073741824);
+    if (vol_size < 1.0) {
+        vol_size = vol_size * 1048576000;
+    } else {
+        vol_size = vol_size * 1073741824;
+    }
 
     var set = {
         name: $("#incp-podnew-meta-name").val(),

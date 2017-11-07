@@ -670,8 +670,8 @@ inCpPod.Info = function(pod_id) {
 }
 
 inCpPod.SetInfo = function(pod_id) {
-    if (!pod_id && inCpPod.entry_active_pod) {
-        pod_id = inCpPod.entry_active_pod;
+    if (!pod_id && inCpPod.entry_active_id) {
+        pod_id = inCpPod.entry_active_id;
     }
     if (!pod_id) {
         return alert("No Pod Found");
@@ -917,7 +917,7 @@ inCpPod.SetCommit = function() {
 inCpPod.EntryIndex = function(pod_id, nav_target) {
 
     if (pod_id) {
-        inCpPod.entry_active_pod = pod_id;
+        inCpPod.entry_active_id = pod_id;
     }
 
     $("#comp-content").html("<div id='incp-module-navbar'>\
@@ -977,6 +977,8 @@ inCpPod.EntryOverview = function() {
             inCp.OpToolsClean();
             $("#work-content").html(tpl);
 
+            inCpPod.entry_active = pod;
+
             l4iTemplate.Render({
                 dstid: "incp-podentry-overview",
                 tplid: "incp-podentry-overview-info-tpl",
@@ -996,11 +998,11 @@ inCpPod.EntryOverview = function() {
             alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
-        inCp.ApiCmd("pod/entry?id=" + inCpPod.entry_active_pod, {
+        inCp.ApiCmd("pod/entry?id=" + inCpPod.entry_active_id, {
             callback: ep.done("pod"),
         });
 
-        inCp.ApiCmd("pod/status?id=" + inCpPod.entry_active_pod, {
+        inCp.ApiCmd("pod/status?id=" + inCpPod.entry_active_id, {
             callback: ep.done("pstatus"),
         });
 
@@ -1012,11 +1014,11 @@ inCpPod.EntryOverview = function() {
 
 inCpPod.entryAutoRefresh = function() {
     var el = document.getElementById("incp-podentry-status-value");
-    if (!el || !inCpPod.entry_active_pod) {
+    if (!el || !inCpPod.entry_active_id) {
         return;
     }
 
-    inCp.ApiCmd("pod/status?id=" + inCpPod.entry_active_pod, {
+    inCp.ApiCmd("pod/status?id=" + inCpPod.entry_active_id, {
         callback: function(err, data) {
 
             if (err || !data || data.error || !data.kind) {
@@ -1027,6 +1029,24 @@ inCpPod.entryAutoRefresh = function() {
                 el.innerHTML = '<span class="incp-font-ok">Running</span>';
             } else {
                 el.innerHTML = inCp.OpActionStatusTitle(data.action);
+            }
+
+            if (!data.replicas) {
+                data.replicas = [];
+            }
+            if (data.replicas.length > inCpPod.entry_active.operate.replicas.length) {
+                inCpPod.entry_active.operate.replicas = [];
+                for (var i in data.replicas) {
+                    inCpPod.entry_active.operate.replicas.push({
+                        id: i,
+                        node: data.replicas[i].id,
+                    });
+                }
+                l4iTemplate.Render({
+                    dstid: "incp-podentry-overview",
+                    tplid: "incp-podentry-overview-info-tpl",
+                    data: inCpPod.entry_active,
+                });
             }
 
             for (var i in data.replicas) {
@@ -1101,7 +1121,7 @@ inCpPod.EntryStats = function(time_past) {
         inCpPod.entry_active_past = 30 * 86400;
     }
 
-    var stats_url = "id=" + inCpPod.entry_active_pod;
+    var stats_url = "id=" + inCpPod.entry_active_id;
     var stats_query = {
         tc: 180,
         tp: inCpPod.entry_active_past,
@@ -1380,7 +1400,7 @@ inCpPod.EntryStats = function(time_past) {
             alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
-        inCp.ApiCmd("pod/entry?id=" + inCpPod.entry_active_pod, {
+        inCp.ApiCmd("pod/entry?id=" + inCpPod.entry_active_id, {
             callback: ep.done("pod"),
         });
 

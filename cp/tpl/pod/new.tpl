@@ -53,7 +53,7 @@
 <div class="incp-form-box-selector-item {[if (v.meta.id == it._plan_selected) { ]}selected{[ } ]}" 
   id="incp-podnew-plan-id-{[=v.meta.id]}"
   onclick="inCpPod.NewPlanChange('{[=v.meta.id]}')">
-  <div>{[=v.meta.title]}</div>
+  <div>{[=v.meta.name]}</div>
 </div>
 {[~]}
 </script>

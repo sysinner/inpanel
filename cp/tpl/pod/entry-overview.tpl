@@ -21,13 +21,13 @@
     <td>{[=log.name]}</td>
     <td>
       {[ if (log.status == "ok") { ]}
-		<span class="label label-success">OK</span>
-	  {[ } else if (log.status == "error" || log.status == "fatal") { ]}
-		<span class="label label-danger">{[=log.status]}</span>
-	  {[ } else if (log.status == "warn") { ]}
-		<span class="label label-warning">{[=log.status]}</span>
+    <span class="label label-success">OK</span>
+    {[ } else if (log.status == "error" || log.status == "fatal") { ]}
+    <span class="label label-danger">{[=log.status]}</span>
+    {[ } else if (log.status == "warn") { ]}
+    <span class="label label-warning">{[=log.status]}</span>
       {[ } else { ]}
-		<span class="label label-info">{[=log.status]}</span>
+    <span class="label label-info">{[=log.status]}</span>
       {[ } ]}
     </td>
     <td>{[=log.message]}</td>
@@ -57,13 +57,13 @@
     <td>{[=log.name]}</td>
     <td>
       {[ if (log.status == "ok") { ]}
-		<span class="label label-success">OK</span>
-	  {[ } else if (log.status == "error" || log.status == "fatal") { ]}
-		<span class="label label-danger">{[=log.status]}</span>
-	  {[ } else if (log.status == "warn") { ]}
-		<span class="label label-warning">{[=log.status]}</span>
+    <span class="label label-success">OK</span>
+    {[ } else if (log.status == "error" || log.status == "fatal") { ]}
+    <span class="label label-danger">{[=log.status]}</span>
+    {[ } else if (log.status == "warn") { ]}
+    <span class="label label-warning">{[=log.status]}</span>
       {[ } else { ]}
-		<span class="label label-info">{[=log.status]}</span>
+    <span class="label label-info">{[=log.status]}</span>
       {[ } ]}
     </td>
     <td>{[=log.message]}</td>
@@ -156,12 +156,20 @@
       <table style="" class="incp-font-fixspace">
         {[~rep.ports :opv]}
         <tr>
-          <td style="padding-right:40px">{[=opv.name]}</td>
-          <td align="right">{[=opv.wan_addr]}:{[=opv.host_port]} &nbsp;&raquo;&nbsp; pod:{[=opv.box_port]}</td>
+          <td>
+          {[if (opv.name == "http" || opv.name == "https") {]}
+            <a href="{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}" target="_blank">{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}</a>
+          {[ } else {]}
+            {[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}
+          {[}]}
+          </td>
+          <td>
+            &nbsp;&raquo;&nbsp; pod:{[=opv.box_port]}
+          </td>
         </tr>
         {[~]}
       </table>
-	  {[?]}
+    {[?]}
     </td>
     <td id="incp-podentry-box-uptime-value-{[=rep.id]}" align="right">00:00:00</td>
   </tr>

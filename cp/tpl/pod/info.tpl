@@ -35,25 +35,6 @@
         <td class="lpt-title">Name</td>
         <td>{[=it.spec.ref.name]}</td>
       </tr>
-      <tr>
-        <td class="lpt-title">Version</td>
-        <td>{[=it.spec.ref.version]}</td>
-      </tr>
-      {[ if (it.spec.labels && it.spec.labels.length > 0) { ]}
-      <tr>
-        <td class="lpt-title">Lables (Name / Value)</td>
-        <td>
-          <table width="100%"><tbody>
-            {[~it.spec.labels :v]}
-            <tr>
-              <td width="50%">{[=v.name]}</td>
-              <td>{[=v.value]}</td>
-            </tr>
-            {[~]}
-          </tbody></table>
-        </td>
-      </tr>
-      {[ } ]}
 
       {[ if (it.spec.volumes && it.spec.volumes.length > 0) { ]}
       <tr>
@@ -62,7 +43,7 @@
           <table width="100%"><tbody>
             {[~it.spec.volumes :v]}
             <tr>
-              <td width="50%">{[=v.name]}</td>
+              <td width="40%">{[=v.name]}</td>
               <td>{[=inCp.UtilResSizeFormat(v.size_limit)]}</td>
             </tr>
             {[~]}
@@ -78,28 +59,11 @@
         <td>
           <table width="100%"><tbody>
             <tr>
-              <td>Image Name</td>
-              <td>{[=box.image.ref.name]}</td>
+              <td width="40%">Image</td>
+              <td>{[=box.image.driver]} / {[=box.image.ref.name]}</td>
             </tr>
             <tr>
-              <td>Image Driver</td>
-              <td>{[=box.image.driver]}</td>
-            </tr>
-            <tr>
-              <td>Image Options</td>
-              <td>
-                <table width="100%">
-                {[~box.image.options :lv]}
-                <tr>
-                  <td>{[=lv.name]}</td>
-                  <td>{[=lv.value]}</td>
-                </tr>
-                {[~]}
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td>Image OS / Arch</td>
+              <td>OS / Arch</td>
               <td>{[=box.image.os_dist]} / {[=box.image.arch]}</td>
             </tr>
             <tr>
@@ -134,16 +98,15 @@
       </tr>
 
       {[if (it.operate.replicas && it.operate.replicas.length > 0) {]}
+      {[~it.operate.replicas :rep]}
       <tr>
-        <td class="lpt-title">Replicas</td>
+        <td class="lpt-title">Replicas #{[=rep.id]}</td>
         <td>
           <table class="table table-condensed">
-          {[~it.operate.replicas :rep]}
             <tr>
               <td>Host</td>
-              <td><strong>{[=rep.id]}</strong>-{[?rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}</td>
+              <td>{[?rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}</td>
             </tr>
-
             {[if (rep.ports && rep.ports.length > 0) {]}
             <tr>
               <td class="">Service Ports</td>
@@ -151,18 +114,18 @@
                 <table style="width:100%" class="incp-font-fixspace">
                 {[~rep.ports :opv]}
                 <tr>
-                  <td>{[=opv.name]}/TCP</td>
-                  <td align="right">host:{[=opv.host_port]} &nbsp;&raquo;&nbsp; pod:{[=opv.box_port]}</td>
+                  <td>{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}</td>
+                  <td>&nbsp;&raquo;&nbsp; pod:{[=opv.box_port]}</td>
                 </tr>
                 {[~]}
                 </table>
               </td>
             </tr>
             {[}]}
-          {[~]}
           </table>
         </td>
       </tr>
+      {[~]}
       {[}]}
     </table>
   </div>

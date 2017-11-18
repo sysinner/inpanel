@@ -9,7 +9,7 @@
 
     <div class="l4i-form-group">
       <label>ExecStart</label>
-      <textarea name="exec_start" class="form-control" rows="5">{[=it.exec_start]}</textarea>
+      <textarea name="exec_start" class="form-control" rows="12">{[=it.exec_start]}</textarea>
     </div>
 
     <div class="l4i-form-group">

@@ -672,8 +672,8 @@ inCpAppSpec.SetExecutorSet = function(name) {
 
     l4iModal.Open({
         title: title,
-        width: 900,
-        height: 600,
+        width: 960,
+        height: 700,
         tpluri: inCp.TplPath("app/spec/executor-set"),
         data: executor,
         callback: function(err) {

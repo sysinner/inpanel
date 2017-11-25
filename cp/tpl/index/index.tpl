@@ -2,7 +2,7 @@
   <div class="incp-topbar-collapse">
     <ul class="incp-nav" id="incp-topbar-siteinfo">
 	    <li><img class="incp-topbar-logo" src="/in/cp/~/cp/img/logo-g1s48.png" title="frontend_header_site_logo_url"></li>
-      <li class="incp-topbar-brand">Control Panel</li>
+      <li class="incp-topbar-brand">SysInner</li>
     </ul>
     <ul class="incp-nav incp-topbar-nav" id="incp-topbar-nav-menus">
       <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>

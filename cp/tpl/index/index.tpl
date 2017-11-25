@@ -31,3 +31,8 @@
   <a class="btn btn-default iam-btn" href="/in/cp/auth/sign-out">Sign out</a>
 </div>
 </script>
+
+<div class="incp-footer">
+  <span class="copy">&copy;2017&nbsp;</span>
+  Powered by <a href="http://www.sysinner.com" target="_blank">SysInner.com</a>
+</div>

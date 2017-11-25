@@ -682,9 +682,9 @@ button {
 }
 
 #incp-podnew-charge-estimate-value {
-	padding: 20px 0;
-	font-size: 30px !important;
-	color: #5cb85c !important;
+  padding: 20px 0;
+  font-size: 30px !important;
+  color: #5cb85c !important;
 }
 
 #incp-podentry-index {
@@ -718,16 +718,28 @@ button {
 .incp-podentry-stats-item {
   position: relative;
   overflow: hidden;
-  padding: 5px 10px;	
+  padding: 5px 10px;
   margin: 0 10px 20px 10px;
   flex: 1 0 400px;
   text-align: center;
 }
 
 .incp-podentry-stats-item:empty {
-  padding: 0;	
+  padding: 0;
   margin: 1px 10px;
   height: 0;
   border: none;
 }
 
+.incp-footer {
+  clear: both;
+  padding: 10px 0;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+}
+
+.incp-footer a {
+  color: #333;
+  font-weight: bold;
+}

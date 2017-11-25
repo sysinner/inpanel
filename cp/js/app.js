@@ -558,6 +558,7 @@ inCpApp.instConfigCommit = function() {
     });
 }
 
+var inCpAppInstDeployActivePod = null;
 inCpApp.InstDeploy = function(id, auto_start) {
     var tplid = "incp-appls";
     var alert_id = "#" + tplid + "-alert";
@@ -579,6 +580,7 @@ inCpApp.InstDeploy = function(id, auto_start) {
             }
 
             inCpApp.instDeployActive = rsj;
+            inCpAppInstDeployActivePod = rsj.operate.pod_id;
 
             inCpApp.instConfiguratorCallback = null;
             inCpApp.instConfigurator(function() {
@@ -618,6 +620,10 @@ inCpApp.InstDeployCommit = function(app_id, auto_start) {
             l4i.InnerAlert(alert_id, 'alert-success', "Successful deployed");
             inCpApp.instDeployActive = null;
             l4iModal.Close();
+
+            //
+            l4i.UrlEventActive("pod/index");
+            inCpPod.EntryIndex(inCpAppInstDeployActivePod);
         }
     });
 }

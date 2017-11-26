@@ -7,14 +7,19 @@
   <div class="panel-heading">{[=it.actionTitle]}</div>
   <div class="panel-body">
 
-    <input type="hidden" name="id" value="{[=it.spec.meta.id]}">
-
+    {[if (it.spec.meta.id && it.spec.meta.id.length > 0) {]}
+    <input type="hidden" name="meta_id" value="{[=it.spec.meta.id]}">
+    {[} else {]}
+    <div class="l4i-form-group">
+      <label>ID</label>
+      <p><input name="meta_id" class="form-control" value="{[=it.spec.meta.id]}"></p>
+    </div>
+    {[}]}
 
     <div class="l4i-form-group">
       <label>Name</label>
-      <p><input name="name" class="form-control" value="{[=it.spec.meta.name]}"></p>
+      <p><input name="meta_name" class="form-control" value="{[=it.spec.meta.name]}"></p>
     </div>
-
 
     <div class="l4i-form-group">
       <label>Description</label>
@@ -145,7 +150,7 @@
 <script id="incp-app-specset-depls-tpl" type="text/html">
 <table class="table table-hover">
   <thead><tr>
-    <th>ID</th>
+    <th>Spec ID</th>
     <th>Name</th>
     <th>Version</th>
     <th></th>

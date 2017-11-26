@@ -200,6 +200,11 @@ body {
 
 #comp-content {
   padding: 0 10px;
+  clear: both;
+}
+
+#work-content {
+  clear: both;
 }
 
 .incp-boxlet-grp {
@@ -688,7 +693,7 @@ button {
 }
 
 #incp-podentry-index {
-  position: absolute;
+  /*position: absolute;*/
   left: 0px;
   right: 0px;
   width: 100%;
@@ -707,7 +712,7 @@ button {
 }
 
 .incp-podentry-stats-box {
-  position: absolute;
+  /*position: absolute;*/
   left: 0px;
   right: 0px;
   width: 100%;
@@ -737,9 +742,10 @@ button {
   text-align: center;
   font-size: 12px;
   color: #666;
+  /*color: #248bfb;*/
 }
 
 .incp-footer a {
-  color: #333;
+  color: #666;
   font-weight: bold;
 }

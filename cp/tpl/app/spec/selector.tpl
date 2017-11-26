@@ -17,7 +17,7 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th>Name</th>
+      <th>ID</th>
       <th>User</th>
       <th>Updated</th>
       <th></th>
@@ -27,16 +27,16 @@
 </table>
 
 <script id="incp-app-specls-s6r-tpl" type="text/html">
-  {[~it.items :v]}
-    <tr>
-      <td>{[=v.meta.name]}</td>
-      <td>{[=v.meta.user]}</td>
-      <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
-      <td align="right">
-        <button class="btn btn-default btn-xs" onclick="incp_app_specls_selector_on('{[=v.meta.id]}')">Select</button>
-      </td>
-    </tr>
-  {[~]}
+{[~it.items :v]}
+<tr>
+  <td>{[=v.meta.id]}</td>
+  <td>{[=v.meta.user]}</td>
+  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+  <td align="right">
+    <button class="btn btn-default btn-xs" onclick="incp_app_specls_selector_on('{[=v.meta.id]}')">Select</button>
+  </td>
+</tr>
+{[~]}
 </script>
 
 <script type="text/javascript">

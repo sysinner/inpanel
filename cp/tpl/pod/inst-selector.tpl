@@ -37,6 +37,6 @@ function _incp_podls_selector_pod(id)
     }
 }
 
-inCpPod.List("incp-podls-selector");
+inCpPod.List("incp-podls-selector", {"operate_action": inCp.OpActionStart});
 
 </script>

@@ -24,7 +24,7 @@
   <td class="incp-font-fixspace">{[=v.meta.id]}</td>
   <td>{[=v.meta.name]}</td>
   <td class="incp-font-fixspace">
-    <a href="#spec.detail" onclick="inCpAppSpec.Info('{[=v.spec.meta.id]}')">{[=v.spec.meta.name]}/v{[=v.spec.meta.version]}</a>
+    <a href="#spec.detail" onclick="inCpAppSpec.Info('{[=v.spec.meta.id]}')">{[=v.spec.meta.id]}/v{[=v.spec.meta.version]}</a>
   </td>
   <td>
     <a href="#pod.detail" onclick="inCpPod.Info('{[=v.operate.pod_id]}')" class="incp-font-fixspace">{[=v.operate.pod_id]}</a>

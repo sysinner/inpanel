@@ -4,7 +4,7 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th>Name</th>
+      <th>ID</th>
       <th>Version</th>
       <th>Owner</th>
       <th>Depends</th>
@@ -23,7 +23,7 @@
 {[~it.items :v]}
 <tr>
   <td>
-    <a href="#app/spec/info" onclick="inCpAppSpec.Info('{[=v.meta.id]}')">{[=v.meta.name]}</a>
+    <a href="#app/spec/info" onclick="inCpAppSpec.Info('{[=v.meta.id]}')">{[=v.meta.id]}</a>
   </td>
   <td>{[=v.meta.version]}</td>
   <td>{[=v.meta.user]}</td>

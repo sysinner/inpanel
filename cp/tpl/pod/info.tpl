@@ -150,7 +150,7 @@
         {[~it.apps :v]}
         <tr>
           <td>{[=v.meta.name]}</td>
-          <td>{[=v.spec.meta.name]}</td>
+          <td>{[=v.spec.meta.id]}</td>
           <td>{[if (v.spec.packages) { ]}{[=v.spec.packages.length]}{[ } ]}</td>
           <td>{[if (v.spec.executors) { ]}{[=v.spec.executors.length]}{[ } ]}</td>
           <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>

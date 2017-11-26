@@ -87,6 +87,9 @@ inCpPod.List = function(tplid, options) {
     if (options.destroy_enable) {
         uri += "&destroy_enable=1";
     }
+    if (options.operate_action) {
+        uri += "&operate_action=" + options.operate_action;
+    }
 
     seajs.use(["ep"], function(EventProxy) {
 

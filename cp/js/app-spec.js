@@ -9,6 +9,7 @@ var inCpAppSpec = {
         packages: [],
         executors: [],
         service_ports: [],
+        depends: [],
         roles: [],
     },
     executorDef: {
@@ -225,6 +226,12 @@ inCpAppSpec.Info = function(id, spec) {
                 }
             }
 
+            for (var i in rsj.depends) {
+                if (!rsj.depends[i].name) {
+                    rsj.depends[i].name = "";
+                }
+            }
+
             rsj._roles = [];
             if (!rsj.roles) {
                 rsj.roles = [];
@@ -315,6 +322,10 @@ inCpAppSpec.Set = function(id) {
 
             $("#work-content").html(tpl);
 
+            if (!rsj.meta.name) {
+                rsj.meta.name = "";
+            }
+
             if (!rsj.description) {
                 rsj.description = "";
             }
@@ -347,6 +358,12 @@ inCpAppSpec.Set = function(id) {
                 }
             }
 
+            for (var i in rsj.depends) {
+                if (!rsj.depends[i].name) {
+                    rsj.depends[i].name = "";
+                }
+            }
+
             rsj._roles = l4i.Clone(roles);
             if (!rsj.roles) {
                 rsj.roles = [];
@@ -367,7 +384,7 @@ inCpAppSpec.Set = function(id) {
                 dstid: "incp-app-specset",
                 tplid: "incp-app-specset-tpl",
                 data: {
-                    actionTitle: ((rsj.meta.id == "") ? "New Spec" : "Setting"),
+                    actionTitle: ((rsj.meta.id == "") ? "New Spec" : "Setting (" + rsj.meta.id + ")"),
                     spec: rsj,
                 },
                 success: function() {
@@ -836,7 +853,8 @@ inCpAppSpec.SetCommit = function() {
             throw "No Form Data Found";
         }
 
-        inCpAppSpec.setActive.meta.name = form.find("input[name=name]").val();
+        inCpAppSpec.setActive.meta.id = form.find("input[name=meta_id]").val();
+        inCpAppSpec.setActive.meta.name = form.find("input[name=meta_name]").val();
         inCpAppSpec.setActive.description = form.find("input[name=description]").val();
 
         if (!inCpAppSpec.setActive.packages || inCpAppSpec.setActive.packages.length < 1) {
@@ -922,7 +940,7 @@ inCpAppSpec.SetRaw = function(id) {
             spec_text: ""
         };
     if (id) {
-        title = "Setting Spec (#" + id + ")";
+        title = "Setting Spec (" + id + ")";
         formset.meta_id = id;
     } else {
         formset.meta_id = "";
@@ -993,8 +1011,8 @@ inCpAppSpec.SetRawCommit = function() {
             throw "Invalid JSON Data";
         }
 
-        if (!setActive.meta || !setActive.meta.name) {
-            throw "No Meta/Name Found";
+        if (!setActive.meta || !setActive.meta.id) {
+            throw "No Meta/ID Found";
         }
 
         for (var i in setActive.service_ports) {

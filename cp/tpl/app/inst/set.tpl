@@ -16,7 +16,7 @@
     <div class="l4i-form-group">
       <label>Spec</label>
       <div>
-        {[=it.spec.meta.name]}
+        {[=it.spec.meta.id]}
       </div>
     </div>
   

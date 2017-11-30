@@ -20,15 +20,15 @@
   <tr>
     <td>{[=log.name]}</td>
     <td>
-      {[ if (log.status == "ok") { ]}
+    {[ if (log.status == "ok") { ]}
     <span class="label label-success">OK</span>
     {[ } else if (log.status == "error" || log.status == "fatal") { ]}
     <span class="label label-danger">{[=log.status]}</span>
     {[ } else if (log.status == "warn") { ]}
     <span class="label label-warning">{[=log.status]}</span>
-      {[ } else { ]}
+    {[ } else { ]}
     <span class="label label-info">{[=log.status]}</span>
-      {[ } ]}
+    {[ } ]}
     </td>
     <td>{[=log.message]}</td>
     <td align="right">{[=l4i.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}</td>
@@ -56,15 +56,15 @@
   <tr>
     <td>{[=log.name]}</td>
     <td>
-      {[ if (log.status == "ok") { ]}
+    {[ if (log.status == "ok") { ]}
     <span class="label label-success">OK</span>
     {[ } else if (log.status == "error" || log.status == "fatal") { ]}
     <span class="label label-danger">{[=log.status]}</span>
     {[ } else if (log.status == "warn") { ]}
     <span class="label label-warning">{[=log.status]}</span>
-      {[ } else { ]}
+    {[ } else { ]}
     <span class="label label-info">{[=log.status]}</span>
-      {[ } ]}
+    {[ } ]}
     </td>
     <td>{[=log.message]}</td>
     <td align="right">{[=l4i.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}</td>

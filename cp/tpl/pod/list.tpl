@@ -41,7 +41,7 @@
       <a class="" href="#info/{[=v.meta.id]}" onclick="inCpPod.EntryIndex('{[=v.meta.id]}')">{[=v.meta.id]}</a>
     </td>
     <td>{[=v.meta.name]}</td>
-    <td>{[=v.spec.ref.name.substr("pod/spec/plan/".length)]}</td>
+    <td>{[=v.spec.ref.name]}</td>
     <td>{[=v.apps.length]}</td>
     {[if (!it._zone_active) {]}
     <td>{[=v.spec.zone]} / {[=v.spec.cell]}</td>

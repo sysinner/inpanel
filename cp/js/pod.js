@@ -83,7 +83,7 @@ inCpPod.List = function(tplid, options) {
         inCpPod.zone_active = inCp.Zones.items[0].meta.id;
         uri += "zone_id=" + inCpPod.zone_active;
     }
-    uri += "&fields=meta/id|name,operate/action|replicas,spec/ref/name,spec/zone|cell";
+    uri += "&fields=meta/id|name,operate/action|replicas,spec/ref/id|name,spec/zone|cell";
     if (options.destroy_enable) {
         uri += "&destroy_enable=1";
     }
@@ -1052,6 +1052,9 @@ inCpPod.entryAutoRefresh = function() {
                 });
             }
 
+            if (data.replicas.length != inCpPod.entry_active.operate.replicas.length) {
+                return inCpPod.EntryOverview();
+            }
             for (var i in data.replicas) {
 
                 if (!inCp.OpActionAllow(data.action, inCp.OpActionRunning)) {
@@ -1069,6 +1072,10 @@ inCpPod.entryAutoRefresh = function() {
                     if (!data.replicas[i].boxes[j].updated || !data.replicas[i].boxes[j].started) {
                         continue;
                     }
+                    if (data.replicas[i].boxes[j].ports &&
+                        data.replicas[i].boxes[j].ports.length != inCpPod.entry_active.operate.replicas[i].ports.length) {
+                        return inCpPod.EntryOverview();
+                    }
                     var elrep = document.getElementById("incp-podentry-box-uptime-value-" + i);
                     if (elrep) {
                         var sec = data.replicas[i].boxes[j].updated - data.replicas[i].boxes[j].started;
@@ -1078,6 +1085,7 @@ inCpPod.entryAutoRefresh = function() {
                     }
                 }
             }
+
 
             l4iTemplate.Render({
                 dstid: "incp-podentry-sidebar",

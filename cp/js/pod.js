@@ -90,6 +90,9 @@ inCpPod.List = function(tplid, options) {
     if (options.operate_action) {
         uri += "&operate_action=" + options.operate_action;
     }
+    if (options.exp_app_filter_notin) {
+        uri += "&exp_app_filter_notin=" + options.exp_app_filter_notin;
+    }
 
     seajs.use(["ep"], function(EventProxy) {
 

@@ -700,6 +700,12 @@ inCpApp.InstNewPodSelect = function() {
         height: 500,
         tpluri: inCp.TplPath("pod/inst-selector"),
         backEnable: true,
+        callback: function() {
+            inCpPod.List("incp-podls-selector", {
+                "operate_action": inCp.OpActionStart,
+                "exp_app_filter_notin": inCpApp.instSet.spec.meta.id,
+            });
+        },
         fn_selector: function(err, rsp) {
 
             inCp.ApiCmd("pod/entry?id=" + rsp, {

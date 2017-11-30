@@ -10,7 +10,7 @@
       <th>Pod</th>
       <th>Options</th>
       <th>Updated</th>
-      <th>Action</th>
+      <th>Status</th>
       <th></th>
     </tr>
   </thead>
@@ -36,12 +36,9 @@
   </td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td>
-    <select class="pure-button button-xsmall {[if (v.operate.action == 2) {]} button-success{[}]}" 
-      onchange="inCpApp.InstListOpActionChange('{[=v.meta.id]}', this)">
-    {[~it._actions :av]}
-      <option value="{[=av.action]}" {[if (av.action == v.operate.action) {]}selected{[}]}>{[=av.title]}</div>
-    {[~]}
-    </select>
+    <span class="label label-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionStart)) {]}success{[} else {]}default{[}]}">
+      {[=inCp.OpActionTitle(v.operate.action)]}
+    </span>
   </td>
   <td align="right">
     <button class="pure-button button-xsmall pure-button-primary" onclick="inCpApp.InstDeploy('{[=v.meta.id]}')">

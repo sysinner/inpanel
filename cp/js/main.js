@@ -405,6 +405,9 @@ inCp.ArrayUint32MatchAny = function(ar, ar2)
 inCp.OpActionTitle = function(op_action) {
     op_action = parseInt(op_action);
     for (var i in inCp.OpActions) {
+        if (inCp.OpActionAllow(op_action, inCp.OpActionDestroy)) {
+            return "Destroy";
+        }
         if (inCp.OpActionAllow(op_action, inCp.OpActions[i].action)) {
             return (inCp.OpActions[i].title);
         }

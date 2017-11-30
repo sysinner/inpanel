@@ -5,7 +5,6 @@
   <thead>
     <tr>
       <th>ID</th>
-      <th>Version</th>
       <th>Owner</th>
       <th>Depends</th>
       <th>Packages</th>
@@ -22,10 +21,9 @@
 <script id="incp-app-specls-tpl" type="text/html">  
 {[~it.items :v]}
 <tr>
-  <td>
-    <a href="#app/spec/info" onclick="inCpAppSpec.Info('{[=v.meta.id]}')">{[=v.meta.id]}</a>
+  <td class="incp-font-fixspace">
+    <a href="#app/spec/info" onclick="inCpAppSpec.Info('{[=v.meta.id]}')">{[=v.meta.id]}</a> v{[=v.meta.version]}
   </td>
-  <td>{[=v.meta.version]}</td>
   <td>{[=v.meta.user]}</td>
   <td>{[=v.depends.length]}</td>
   <td>{[=v._ipm_num]}</td>

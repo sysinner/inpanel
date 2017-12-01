@@ -7,13 +7,13 @@
   <input type="hidden" name="operate_cell_id" value="{[=it.operate.cell_id]}">
 
   <div class="l4i-form-group">
-    <label>Host</label>
-    <div>{[=it.spec.peer_lan_addr]}</div>
+    <label>Name</label>
+    <input type="text" name="name" class="form-control" placeholder="Enter the Host Name" value="{[=it.meta.name]}">
   </div>
 
   <div class="l4i-form-group">
-    <label>Name</label>
-    <input type="text" name="name" class="form-control" placeholder="Enter the Host Name" value="{[=it.meta.name]}">
+    <label>LAN Address</label>
+    <div>{[=it.spec.peer_lan_addr]}</div>
   </div>
 
   <div class="l4i-form-group">

@@ -1,14 +1,17 @@
 <div id="incp-topbar">
   <div class="incp-topbar-collapse">
     <ul class="incp-nav" id="incp-topbar-siteinfo">
-	    <li><img class="incp-topbar-logo" src="/in/cp/~/cp/img/logo-g1s48.png" title="frontend_header_site_logo_url"></li>
-      <li class="incp-topbar-brand">Panel</li>
+      <li><img class="incp-topbar-logo" src="/in/cp/~/cp/img/logo-g1s48.png" title="frontend_header_site_logo_url"></li>
+      <li class="incp-topbar-brand">SysInner Ops</li>
     </ul>
     <ul class="incp-nav incp-topbar-nav" id="inops-topbar-nav-menus">
       <li><a class="l4i-nav-item" href="#host/index">Cluster</a></li>
       <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>
     </ul>
     <ul class="incp-nav incp-nav-right" id="incp-topbar-userbar"></ul>
+    <ul class="incp-nav incp-nav-right">
+      <li><a class="l4i-nav-item" href="https://github.com/sysinner/insoho/issues" target="_blank">Bug Report</a></li>
+    </ul>
   </div>
 </div>
 <div id="comp-content" class="">loading</div>
@@ -26,3 +29,7 @@
 </div>
 </script>
 
+<div class="incp-footer">
+  <span class="copy">&copy;2017&nbsp;</span>
+  <span class="url-info">Powered by <a href="http://www.sysinner.com" target="_blank">Sysinner.com</a></span>
+</div>

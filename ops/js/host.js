@@ -1,73 +1,100 @@
 var inOpsHost = {
-    statusls : [
-        {status: 0, title: "Unknown"},
-        {status: 1, title: "Active"},
-        {status: 2, title: "Suspend"},
+    statusls: [
+        {
+            status: 0,
+            title: "Unknown"
+        },
+        {
+            status: 1,
+            title: "Active"
+        },
+        {
+            status: 2,
+            title: "Suspend"
+        },
     ],
-    node_statusls : [
-        {phase: "Running", title: "Running"},
-        {phase: "Suspended", title: "Suspended"},
-        {phase: "Terminated", title: "Terminated"},
+    node_statusls: [
+        {
+            phase: "Running",
+            title: "Running"
+        },
+        {
+            phase: "Suspended",
+            title: "Suspended"
+        },
+        {
+            phase: "Terminated",
+            title: "Terminated"
+        },
     ],
-    actions : [
+    actions: [
         // {action: 0, title: "Unknown"},
-        {action: 1, title: "Active"},
-        {action: 2, title: "Suspended"},
+        {
+            action: 1,
+            title: "Active"
+        },
+        {
+            action: 2,
+            title: "Suspended"
+        },
     ],
-    zone_def : {
+    zone_def: {
         kind: "HostZone",
         meta: {
             id: "",
             name: ""
         },
-        status : 1,
-        desc   : "",
+        status: 1,
+        desc: "",
         wan_addrs: [],
         lan_addrs: [],
     },
-    cell_def : {
+    cell_def: {
         kind: "HostCell",
         meta: {
             id: "",
             name: ""
         },
-        zoneid : "",
-        status : 1,
-        desc   : "",
+        zoneid: "",
+        status: 1,
+        desc: "",
     },
-    zones : null,
-    cells : null,
-    nodes : null,
+    zones: null,
+    cells: null,
+    nodes: null,
     single_node: false,
+    nav_zone: null,
+    nav_cell: null,
+    nav_node: null,
 }
 
-inOpsHost.NavInit = function()
-{
+inOpsHost.NavInit = function() {
     // l4i.UrlEventRegister("host/index", inOpsHost.Index);
 }
 
-inOpsHost.Index = function()
-{
-    seajs.use(["ep"], function (EventProxy) {
+inOpsHost.Index = function() {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "zones", function (tpl, zones) {
+        var ep = EventProxy.create("tpl", "zones", function(tpl, zones) {
 
             $("#comp-content").html(tpl);
 
             if (!zones || !zones.items) {
                 return alert("Zone Not Found");
             }
-            
+
             if (zones.items[0].meta.id == "local") {
                 inOpsHost.single_node = true;
-                $("#inops-host-nav-menus").css({"display": "none"});
+                $("#inops-host-nav-menus").css({
+                    "display": "none"
+                });
                 inOpsHost.NodeList("local", "general");
             }
-            
-            // TODO
+
+        // TODO
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -81,96 +108,137 @@ inOpsHost.Index = function()
     });
 
     return;
-    inOps.TplFetch("host/index", {callback: function(err, data) {
-        if (err) {
-            return;
-        }
-        $("#comp-content").html(data);
+    inOps.TplFetch("host/index", {
+        callback: function(err, data) {
+            if (err) {
+                return;
+            }
+            $("#comp-content").html(data);
 
-        l4i.UrlEventRegister("host/node-list", inOpsHost.NodeList, "inops-host-nav-items");
-        l4i.UrlEventRegister("host/cell-list", inOpsHost.CellList, "inops-host-nav-items");
-        l4i.UrlEventRegister("host/zone-list", inOpsHost.ZoneList, "inops-host-nav-items");
-        l4i.UrlEventHandler("host/node-list");
-    }});
+            l4i.UrlEventRegister("host/node-list", inOpsHost.NodeList, "inops-host-nav-items");
+            l4i.UrlEventRegister("host/cell-list", inOpsHost.CellList, "inops-host-nav-items");
+            l4i.UrlEventRegister("host/zone-list", inOpsHost.ZoneList, "inops-host-nav-items");
+            l4i.UrlEventHandler("host/node-list");
+        }
+    });
 }
 
-inOpsHost.NodeList = function(zoneid, cellid)
-{
-    if (zoneid && zoneid.indexOf("/") >= 0) {
-        zoneid = null;
-        cellid = null;
-    }
+inOpsHost.NodeList = function(zoneid, cellid) {
 
     var uri = "";
     if (document.getElementById("inops_hostls_qry")) {
-        uri = "qry_text="+ $("#inops_hostls_qry").val();
+        uri = "qry_text=" + $("#inops_hostls_qry").val();
     }
 
-    if (zoneid) {
-        l4iSession.Set("inops_host_zoneid", zoneid);
+    if (!zoneid) {
+        zoneid = l4iSession.Get("inops_host_zoneid");
+        if (!zoneid) {
+            zoneid = l4iStorage.Get("inops_host_zoneid");
+        }
     }
 
-    if (cellid) {
-        l4iSession.Set("inops_host_cellid", cellid);
+    if (!cellid) {
+        cellid = l4iSession.Get("inops_host_cellid");
+        if (!cellid) {
+            cellid = l4iStorage.Get("inops_host_cellid");
+        }
     }
 
-    inOps.TplFetch("host/node-list", {
-        callback: function(err, tpl) {
+    //
+    var zone_active = null;
+    for (var i in inOpsHost.zones.items) {
+        if (!zoneid) {
+            zoneid = inOpsHost.zones.items[i].meta.id;
+        }
+        if (zoneid == inOpsHost.zones.items[i].meta.id) {
+            zone_active = inOpsHost.zones.items[i];
+            break;
+        }
+    }
+    if (!zone_active) {
+        if (inOpsHost.zones.items.length < 1) {
+            return; // TODO
+        }
+        zone_active = inOpsHost.zones.items[0];
+    }
+
+    //
+    var cell_active = null;
+    for (var j in zone_active.cells) {
+        if (!cellid) {
+            cellid = zone_active.cells[j].meta.id;
+        }
+        if (cellid == zone_active.cells[j].meta.id) {
+            cell_active = zone_active.cells[j];
+            break;
+        }
+    }
+    if (!cell_active) {
+        if (zone_active.cells.length < 1) {
+            return; // TODO
+        }
+        cell_active = zone_active.cells[0];
+    }
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
             if (tpl) {
                 $("#work-content").html(tpl);
             }
-            
             if (inOpsHost.single_node) {
-                // $("#inops-host-nodes-zones").css({"display": "none"});   
-                // $("#inops-host-nodes-cells").css({"display": "none"});
-                $("#inops-host-nodes-navbar").css({"display": "none"});
+                $("#inops-host-nodes-navbar").css({
+                    "display": "none"
+                });
             }
 
-            inOpsHost.ZoneRefresh(function(err, zones) {
-
-                if (err) {
-                    return alert(err);
-                }
-
-                l4iTemplate.Render({
-                    dstid : "inops-host-nodes-zones",
-                    tplid : "inops-host-nodes-zones-tpl",
-                    data  : zones,
-                });
-
-                inOpsHost.CellRefresh(zones._zoneid, function(err, cells) {
-
-                    if (err) {
-                        return alert(err);
-                    }
-
-                    l4iTemplate.Render({
-                        dstid : "inops-host-nodes-cells",
-                        tplid : "inops-host-nodes-cells-tpl",
-                        data  : cells,
-                    });
-
-                    inOpsHost.nodeRefresh(zones._zoneid, cells._cellid, function(err, nodes) {
-
-                        if (err) {
-                            return alert(err);
-                        }
-
-                        l4iTemplate.Render({
-                            dstid : "inops-host-nodes",
-                            tplid : "inops-host-nodes-tpl",
-                            data  : nodes,
-                        });
-                    });
-                });
+            l4iTemplate.Render({
+                dstid: "inops-host-nodes",
+                tplid: "inops-host-nodes-tpl",
+                data: data,
             });
-        },
+        });
+
+        ep.fail(function(err) {
+            alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
+        });
+
+        inOps.TplFetch("host/node-list", {
+            callback: ep.done("tpl"),
+        });
+
+        inOpsHost.node_list_refresh(zone_active.meta.id, cell_active.meta.id, ep.done("data"));
     });
 }
 
-inOpsHost.NodeSetForm = function(zoneid, cellid, nodeid)
-{
+inOpsHost.NodeOpPortUsedInfo = function(z, c, node_id) {
+
+    for (var i in inOpsHost.nodes.items) {
+
+        if (node_id != inOpsHost.nodes.items[i].meta.id) {
+            continue;
+        }
+
+        var s = "no port assigned yet...";
+        if (inOpsHost.nodes.items[i].operate.port_used && inOpsHost.nodes.items[i].operate.port_used.length > 0) {
+            s = inOpsHost.nodes.items[i].operate.port_used.join(", ");
+        }
+
+        return l4iModal.Open({
+            title: "Network Port already assigned",
+            tplsrc: s,
+            width: 700,
+            height: 350,
+            buttons: [{
+                onclick: "l4iModal.Close()",
+                title: "Close",
+            }]
+        });
+    }
+}
+
+inOpsHost.NodeSetForm = function(zoneid, cellid, nodeid) {
     if (!zoneid) {
         zoneid = l4iSession.Get("inops_host_zoneid");
     }
@@ -181,9 +249,9 @@ inOpsHost.NodeSetForm = function(zoneid, cellid, nodeid)
 
     var alert_id = "#inops-host-nodeset-alert";
 
-    seajs.use(["ep"], function (EventProxy) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
 
             if (!rsj || !rsj.kind || rsj.kind != "HostNode") {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -201,22 +269,23 @@ inOpsHost.NodeSetForm = function(zoneid, cellid, nodeid)
             }
 
             l4iModal.Open({
-                title  : "Host Setting",
-                tplsrc : tpl,
-                data   : rsj,
-                height : 400,
+                title: "Host Setting",
+                tplsrc: tpl,
+                data: rsj,
+                width: 800,
+                height: 500,
                 buttons: [{
-                    onclick : "l4iModal.Close()",
-                    title   : "Close",
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
                 }, {
-                    onclick : "inOpsHost.NodeSetCommit()",
-                    title   : "Save",
-                    style   : "btn btn-primary",
+                    onclick: "inOpsHost.NodeSetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
                 }]
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -226,35 +295,38 @@ inOpsHost.NodeSetForm = function(zoneid, cellid, nodeid)
         });
 
         // data
-        inOps.ApiSysCmd("host/node-entry?zoneid="+ zoneid +"&cellid="+ cellid +"&nodeid="+ nodeid, {
+        inOps.ApiSysCmd("host/node-entry?zoneid=" + zoneid + "&cellid=" + cellid + "&nodeid=" + nodeid, {
             callback: ep.done("data"),
         });
     });
 }
 
-inOpsHost.NodeSetCommit = function()
-{
+inOpsHost.NodeSetCommit = function() {
     var form = $("#inops-host-node-form"),
         alert_id = "#inops-host-nodeset-alert";
 
     var req = {
         meta: {
-            id   : form.find("input[name=id]").val(),
-            name : form.find("input[name=name]").val(),
+            id: form.find("input[name=id]").val(),
+            name: form.find("input[name=name]").val(),
         },
-		operate : {
-            action  : parseInt(form.find("input[name=operate_action]:checked").val()),
-            zone_id : form.find("input[name=operate_zone_id]").val(),
-            cell_id : form.find("input[name=operate_cell_id]").val(),
-		},
+        operate: {
+            action: parseInt(form.find("input[name=operate_action]:checked").val()),
+            zone_id: form.find("input[name=operate_zone_id]").val(),
+            cell_id: form.find("input[name=operate_cell_id]").val(),
+        },
         spec: {
         },
     };
 
     inOps.ApiSysCmd("host/node-set", {
-        method  : "POST",
-        data    : JSON.stringify(req),
-        success : function(rsj) {
+        method: "POST",
+        data: JSON.stringify(req),
+        callback: function(err, rsj) {
+
+            if (err) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', err);
+            }
 
             if (!rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -270,20 +342,19 @@ inOpsHost.NodeSetCommit = function()
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 inOpsHost.NodeList();
             }, 500);
         },
-        error : function(xhr, textStatus, error) {
-            l4i.InnerAlert(alert_id, 'alert-danger', textStatus+' '+xhr.responseText);
+        error: function(xhr, textStatus, error) {
+            l4i.InnerAlert(alert_id, 'alert-danger', textStatus + ' ' + xhr.responseText);
         }
     });
 }
 
 
-inOpsHost.NodeNewForm = function(zoneid, cellid)
-{
+inOpsHost.NodeNewForm = function(zoneid, cellid) {
     if (!zoneid) {
         zoneid = l4iSession.Get("inops_host_zoneid");
     }
@@ -296,51 +367,50 @@ inOpsHost.NodeNewForm = function(zoneid, cellid)
         callback: function(err, tpl) {
 
             l4iModal.Open({
-                title  : "New Node",
-                tplsrc : tpl,
-                data   : {
-                    zoneid    : zoneid,
-                    cellid    : cellid,
-                    _phase    : "Running",
-                    _statusls : inOpsHost.node_statusls,
+                title: "New Node",
+                tplsrc: tpl,
+                data: {
+                    zoneid: zoneid,
+                    cellid: cellid,
+                    _phase: "Running",
+                    _statusls: inOpsHost.node_statusls,
                 },
-                height : 400,
+                height: 400,
                 buttons: [{
-                    onclick : "l4iModal.Close()",
-                    title   : "Close",
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
                 }, {
-                    onclick : "inOpsHost.NodeNewCommit()",
-                    title   : "Save",
-                    style   : "btn btn-primary",
+                    onclick: "inOpsHost.NodeNewCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
                 }],
             });
         },
     });
 }
 
-inOpsHost.NodeNewCommit = function()
-{
+inOpsHost.NodeNewCommit = function() {
     var form = $("#inops-host-node-form"),
-        alert_id ="#inops-host-nodenew-alert";
+        alert_id = "#inops-host-nodenew-alert";
 
     var req = {
-        meta : {
-            name : form.find("input[name=name]").val(),
+        meta: {
+            name: form.find("input[name=name]").val(),
         },
-		operate : {
-            action  : parseInt(form.find("input[name=operate_action]").val()),
-            zone_id : form.find("input[name=operate_zone_id]").val(),
-            cell_id : form.find("input[name=operate_cell_id]").val(),
-		},
+        operate: {
+            action: parseInt(form.find("input[name=operate_action]").val()),
+            zone_id: form.find("input[name=operate_zone_id]").val(),
+            cell_id: form.find("input[name=operate_cell_id]").val(),
+        },
         spec: {
             peer_lan_addr: form.find("input[name=peer_lan_addr]").val(),
         },
     };
 
     inOps.ApiSysCmd("host/node-new", {
-        method  : "POST",
-        data    : JSON.stringify(req),
-        success : function(rsj) {
+        method: "POST",
+        data: JSON.stringify(req),
+        success: function(rsj) {
 
             if (!rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -356,43 +426,23 @@ inOpsHost.NodeNewCommit = function()
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 inOpsHost.NodeList();
             }, 500);
         },
-        error : function(xhr, textStatus, error) {
-            l4i.InnerAlert(alert_id, 'alert-danger', textStatus+' '+xhr.responseText);
+        error: function(xhr, textStatus, error) {
+            l4i.InnerAlert(alert_id, 'alert-danger', textStatus + ' ' + xhr.responseText);
         },
     });
 }
 
-inOpsHost.ZoneRefresh = function(cb)
-{
-    var zoneid = l4iSession.Get("inops_host_zoneid");
-    if (!zoneid) {
-        zoneid = l4iStorage.Get("inops_host_zoneid");
-    }
-
+inOpsHost.ZoneRefresh = function(cb) {
     if (inOpsHost.zones) {
-
-        if (!zoneid || zoneid.indexOf("/") >= 0) {
-
-            for (var i in inOpsHost.zones.items) {
-                zoneid = inOpsHost.zones.items[i].meta.id;
-                break
-            }
-
-            l4iSession.Set("inops_host_zoneid", zoneid);
-            l4iStorage.Set("inops_host_zoneid", zoneid);
-        }
-
-        inOpsHost.zones._zoneid = zoneid;
-
         return cb(null, inOpsHost.zones);
     }
 
-    inOps.ApiSysCmd("host/zone-list", {
+    inOps.ApiSysCmd("host/zone-list?fields=cells", {
         callback: function(err, zones) {
 
             if (err) {
@@ -412,32 +462,17 @@ inOpsHost.ZoneRefresh = function(cb)
             }
 
             inOpsHost.zones = zones;
-
-            if (!zoneid || zoneid.indexOf("/") >= 0) {
-
-                for (var i in inOpsHost.zones.items) {
-                    zoneid = inOpsHost.zones.items[i].meta.id;
-                    break
-                }
-
-                l4iSession.Set("inops_host_zoneid", zoneid);
-                l4iStorage.Set("inops_host_zoneid", zoneid);
-            }
-
-            inOpsHost.zones._zoneid = zoneid;
-
             cb(null, inOpsHost.zones);
         },
     });
 }
 
-inOpsHost.CellRefresh = function(zoneid, cb)
-{
+inOpsHost.CellRefresh = function(zoneid, cb) {
     if (!zoneid || zoneid.indexOf("/") >= 0) {
         return;
     }
 
-    inOps.ApiSysCmd("host/cell-list?zoneid="+ zoneid, {
+    inOps.ApiSysCmd("host/cell-list?zoneid=" + zoneid, {
         callback: function(err, cells) {
 
             if (err) {
@@ -479,9 +514,8 @@ inOpsHost.CellRefresh = function(zoneid, cb)
     });
 }
 
-inOpsHost.nodeRefresh = function(zoneid, cellid, cb)
-{
-    inOps.ApiSysCmd("host/node-list?zoneid="+ zoneid +"&cellid="+ cellid, {
+inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
+    inOps.ApiSysCmd("host/node-list?zoneid=" + zoneid + "&cellid=" + cellid, {
         callback: function(err, nodes) {
 
             if (err) {
@@ -528,7 +562,7 @@ inOpsHost.nodeRefresh = function(zoneid, cellid, cb)
                     nodes.items[i].spec.http_port = "";
                 }
 
-				//
+                //
                 if (!nodes.items[i].spec.platform) {
                     nodes.items[i].spec.platform = {};
                 }
@@ -543,7 +577,7 @@ inOpsHost.nodeRefresh = function(zoneid, cellid, cb)
                     nodes.items[i].spec.platform.arch = "";
                 }
 
-				//
+                //
                 if (!nodes.items[i].spec.capacity) {
                     nodes.items[i].spec.capacity = {};
                 }
@@ -559,13 +593,13 @@ inOpsHost.nodeRefresh = function(zoneid, cellid, cb)
                 }
             }
 
+            inOpsHost.nodes = nodes;
             cb(null, nodes);
         },
     });
 }
 
-inOpsHost.CellList = function(zoneid)
-{
+inOpsHost.CellList = function(zoneid) {
     if (zoneid && zoneid.indexOf("/") >= 0) {
         zoneid = null;
     }
@@ -592,9 +626,9 @@ inOpsHost.CellList = function(zoneid)
                 }
 
                 l4iTemplate.Render({
-                    dstid : "inops-host-cells-zones",
-                    tplid : "inops-host-cells-zones-tpl",
-                    data  : zones,
+                    dstid: "inops-host-cells-zones",
+                    tplid: "inops-host-cells-zones-tpl",
+                    data: zones,
                 });
 
                 inOpsHost.CellRefresh(zones._zoneid, function(err, cells) {
@@ -621,9 +655,9 @@ inOpsHost.CellList = function(zoneid)
                     }
 
                     l4iTemplate.Render({
-                        dstid : "inops-host-cells",
-                        tplid : "inops-host-cells-tpl",
-                        data  : cells,
+                        dstid: "inops-host-cells",
+                        tplid: "inops-host-cells-tpl",
+                        data: cells,
                     });
                 });
             });
@@ -632,11 +666,10 @@ inOpsHost.CellList = function(zoneid)
 }
 
 
-inOpsHost.CellSetForm = function(zoneid, cellid)
-{
-    seajs.use(["ep"], function (EventProxy) {
+inOpsHost.CellSetForm = function(zoneid, cellid) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "cell", "zones", function (tpl, cell, zones) {
+        var ep = EventProxy.create("tpl", "cell", "zones", function(tpl, cell, zones) {
 
             if (!zones || !zones.items) {
                 alert("Zone Not Found");
@@ -667,22 +700,22 @@ inOpsHost.CellSetForm = function(zoneid, cellid)
             }
 
             l4iModal.Open({
-                title  : "Cell Setting",
-                tplsrc : tpl,
-                data   : cell,
-                height : 400,
+                title: "Cell Setting",
+                tplsrc: tpl,
+                data: cell,
+                height: 400,
                 buttons: [{
-                    onclick : "l4iModal.Close()",
-                    title   : "Close",
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
                 }, {
-                    onclick : "inOpsHost.CellSetCommit()",
-                    title   : "Save",
-                    style   : "btn btn-primary",
+                    onclick: "inOpsHost.CellSetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
                 }]
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -695,7 +728,7 @@ inOpsHost.CellSetForm = function(zoneid, cellid)
         if (!cellid) {
             ep.emit("cell", null);
         } else {
-            inOps.ApiSysCmd("host/cell-entry?zoneid="+ zoneid +"&cellid="+ cellid, {
+            inOps.ApiSysCmd("host/cell-entry?zoneid=" + zoneid + "&cellid=" + cellid, {
                 callback: ep.done("cell"),
             });
         }
@@ -707,24 +740,23 @@ inOpsHost.CellSetForm = function(zoneid, cellid)
     });
 }
 
-inOpsHost.CellSetCommit = function()
-{
+inOpsHost.CellSetCommit = function() {
     var form = $("#inops-host-cell-form"),
         alert_id = "#inops-host-cellset-alert";
 
     var req = {
-        meta : {
-            id : form.find("input[name=id]").val(),
+        meta: {
+            id: form.find("input[name=id]").val(),
         },
-        zone_id : form.find("input[name=zone_id]:checked").val(),
-        phase : parseInt(form.find("input[name=phase]:checked").val()),
-        description : form.find("input[name=description]").val(),
+        zone_id: form.find("input[name=zone_id]:checked").val(),
+        phase: parseInt(form.find("input[name=phase]:checked").val()),
+        description: form.find("input[name=description]").val(),
     };
 
     inOps.ApiSysCmd("host/cell-set", {
-        method  : "POST",
-        data    : JSON.stringify(req),
-        success : function(cell) {
+        method: "POST",
+        data: JSON.stringify(req),
+        success: function(cell) {
 
             if (!cell) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -740,24 +772,23 @@ inOpsHost.CellSetCommit = function()
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 inOpsHost.CellList();
             }, 500);
         },
-        error : function(xhr, textStatus, error) {
-            l4i.InnerAlert(alert_id, 'alert-danger', textStatus+' '+xhr.responseText);
+        error: function(xhr, textStatus, error) {
+            l4i.InnerAlert(alert_id, 'alert-danger', textStatus + ' ' + xhr.responseText);
         }
     });
 }
 
 
-inOpsHost.ZoneList = function()
-{
+inOpsHost.ZoneList = function() {
     var alert_id = "#inops-host-zones-alert";
-    seajs.use(["ep"], function (EventProxy) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
 
             if (tpl) {
                 $("#work-content").html(tpl);
@@ -789,13 +820,13 @@ inOpsHost.ZoneList = function()
             }
 
             l4iTemplate.Render({
-                dstid : "inops-host-zones",
-                tplid : "inops-host-zones-tpl",
-                data  : rsj,
+                dstid: "inops-host-zones",
+                tplid: "inops-host-zones-tpl",
+                data: rsj,
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("ListRefresh error, Please try again later (EC:001)");
         });
 
@@ -809,11 +840,10 @@ inOpsHost.ZoneList = function()
     });
 }
 
-inOpsHost.ZoneSetForm = function(zoneid)
-{
-    seajs.use(["ep"], function (EventProxy) {
+inOpsHost.ZoneSetForm = function(zoneid) {
+    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
+        var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
 
             if (!rsj) {
                 rsj = l4i.Clone(inOpsHost.zone_def)
@@ -843,18 +873,18 @@ inOpsHost.ZoneSetForm = function(zoneid)
             rsj.statusls = inOpsHost.statusls;
 
             l4iModal.Open({
-                title  : title,
-                tplsrc : tpl,
-                data   : rsj,
-                width  : 800,
-                height : 600,
+                title: title,
+                tplsrc: tpl,
+                data: rsj,
+                width: 800,
+                height: 600,
                 buttons: [{
-                    onclick : "l4iModal.Close()",
-                    title   : "Close",
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
                 }, {
-                    onclick : "inOpsHost.ZoneSetCommit()",
-                    title   : "Save",
-                    style   : "btn btn-primary",
+                    onclick: "inOpsHost.ZoneSetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
                 }],
                 success: function() {
                     // console.log(rsj.lan_addrs.length);
@@ -865,7 +895,7 @@ inOpsHost.ZoneSetForm = function(zoneid)
             });
         });
 
-        ep.fail(function (err) {
+        ep.fail(function(err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -878,51 +908,46 @@ inOpsHost.ZoneSetForm = function(zoneid)
         if (!zoneid) {
             ep.emit("data", null);
         } else {
-            inOps.ApiSysCmd("host/zone-entry?id="+ zoneid, {
+            inOps.ApiSysCmd("host/zone-entry?id=" + zoneid, {
                 callback: ep.done("data"),
             });
         }
     });
 }
 
-inOpsHost.ZoneWanAddressAppend = function()
-{
+inOpsHost.ZoneWanAddressAppend = function() {
     l4iTemplate.Render({
-        append : true,
-        dstid  : "inops-host-zoneset-wanaddrs",
-        tplid  : "inops-host-zoneset-wanaddr-tpl",
+        append: true,
+        dstid: "inops-host-zoneset-wanaddrs",
+        tplid: "inops-host-zoneset-wanaddr-tpl",
     });
 }
 
-inOpsHost.ZoneWanAddressDel = function(field)
-{
+inOpsHost.ZoneWanAddressDel = function(field) {
     $(field).parent().parent().remove();
 }
 
-inOpsHost.ZoneLanAddressAppend = function()
-{
+inOpsHost.ZoneLanAddressAppend = function() {
     l4iTemplate.Render({
-        append : true,
-        dstid  : "inops-host-zoneset-lanaddrs",
-        tplid  : "inops-host-zoneset-lanaddr-tpl",
+        append: true,
+        dstid: "inops-host-zoneset-lanaddrs",
+        tplid: "inops-host-zoneset-lanaddr-tpl",
     });
 }
 
-inOpsHost.ZoneLanAddressDel = function(field)
-{
+inOpsHost.ZoneLanAddressDel = function(field) {
     $(field).parent().parent().remove();
 }
 
-inOpsHost.ZoneSetCommit = function()
-{
+inOpsHost.ZoneSetCommit = function() {
     var form = $("#inops-host-zone-form");
 
     var req = {
-        meta : {
-            id : form.find("input[name=id]").val(),
+        meta: {
+            id: form.find("input[name=id]").val(),
         },
-        phase : parseInt(form.find("input[name=phase]:checked").val()),
-        summary : form.find("input[name=summary]").val(),
+        phase: parseInt(form.find("input[name=phase]:checked").val()),
+        summary: form.find("input[name=summary]").val(),
         wan_addrs: [],
         lan_addrs: [],
     };
@@ -960,9 +985,9 @@ inOpsHost.ZoneSetCommit = function()
     }
 
     inOps.ApiSysCmd("host/zone-set", {
-        method  : "POST",
-        data    : JSON.stringify(req),
-        success : function(rsj) {
+        method: "POST",
+        data: JSON.stringify(req),
+        success: function(rsj) {
 
             if (!rsj) {
                 return l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', "Network Connection Exception");
@@ -978,14 +1003,14 @@ inOpsHost.ZoneSetCommit = function()
 
             l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function(){
+            window.setTimeout(function() {
                 l4iModal.Close();
                 inOpsHost.ZoneList();
                 inOpsHost.zones = null;
             }, 500);
         },
-        error : function(xhr, textStatus, error) {
-            l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', textStatus+' '+xhr.responseText);
+        error: function(xhr, textStatus, error) {
+            l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', textStatus + ' ' + xhr.responseText);
         }
     });
 }

@@ -749,3 +749,7 @@ button {
   color: #666;
   font-weight: bold;
 }
+
+.incp-footer .url-info {
+  font-size: 1.1em;
+}

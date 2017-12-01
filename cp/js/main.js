@@ -51,6 +51,8 @@ var inCp = {
     OpActionDestroyed: 1 << 6,
     OpActionPending: 1 << 11,
     OpActionWarning: 1 << 12,
+    ByteMB: 1024 * 1024,
+    ByteGB: 1024 * 1024 * 1024,
     well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/in/cp/auth/login" class="button">SIGN IN</a></div>',
 }
 

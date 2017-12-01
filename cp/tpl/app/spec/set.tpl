@@ -1,7 +1,17 @@
 <div id="incp-app-specset-alert" class="alert alert-danger hide"></div>
 
 <div id="incp-app-specset" style="box-sizing: border-box;">loading</div>
-
+<style>
+._table_right_space td {
+  padding-right: 20px;
+}
+._table_right_space td > label {
+  font-weight: normal;
+}
+._table_right_space .input-group {
+  width: 260px;
+}
+</style>
 <script id="incp-app-specset-tpl" type="text/html">
 <div class="panel panel-default">
   <div class="panel-heading">{[=it.actionTitle]}</div>
@@ -134,6 +144,36 @@
       </div>
     </div>
 
+    <div class="l4i-form-group">
+      <label>Resource Requirements</label>
+      <div>
+        <table class="_table_right_space">
+        <tr>
+          <td>
+            <label>CPU units (minimum)</label>
+            <div class="input-group">
+              <input type="text" class="form-control" name="exp_res_cpu_min" value="{[=it.spec.exp_res.cpu_min]}">
+              <span class="input-group-addon" id="basic-addon2">m</span>
+            </div>
+          </td>
+          <td>
+            <label>Memory Size (minimum)</label>
+            <div class="input-group">
+              <input type="text" class="form-control" name="exp_res_mem_min" value="{[=it.spec.exp_res._mem_min]}">
+              <span class="input-group-addon" id="basic-addon2">MB</span>
+            </div>
+          </td>
+          <td>
+            <label>System Volume Size (minimum)</label>
+            <div class="input-group">
+              <input type="text" class="form-control" name="exp_res_vol_min" value="{[=it.spec.exp_res._vol_min]}">
+              <span class="input-group-addon" id="basic-addon2">GB</span>
+            </div>
+          </td>
+        </tr>
+        </table>
+      </div>
+    </div>
 
     <button class="btn btn-primary" onclick="inCpAppSpec.SetCommit()">
       Save

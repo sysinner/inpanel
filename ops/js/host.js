@@ -584,12 +584,15 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
                 if (!nodes.items[i].spec.capacity.cpu) {
                     nodes.items[i].spec.capacity.cpu = 1000;
                 }
-                if (!nodes.items[i].spec.capacity.memory) {
-                    nodes.items[i].spec.capacity.memory = 0;
+                if (!nodes.items[i].spec.capacity.mem) {
+                    nodes.items[i].spec.capacity.mem = 0;
                 }
 
                 if (!nodes.items[i].operate.ports) {
                     nodes.items[i].operate.ports = [];
+                }
+                if (!nodes.items[i].operate.port_used) {
+                    nodes.items[i].operate.port_used = [];
                 }
             }
 

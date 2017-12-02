@@ -180,6 +180,11 @@ inOpsHost.NodeList = function(zoneid, cellid) {
         cell_active = zone_active.cells[0];
     }
 
+    l4iSession.Set("inops_host_zoneid", zone_active.meta.id);
+    l4iStorage.Set("inops_host_zoneid", zone_active.meta.id);
+    l4iSession.Set("inops_host_cellid", cell_active.meta.id);
+    l4iStorage.Set("inops_host_cellid", cell_active.meta.id);
+
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {

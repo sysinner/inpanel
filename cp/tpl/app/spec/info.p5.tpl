@@ -141,3 +141,32 @@
   </div>
 </div>
 {[}]}
+
+<div class="l4i-form-group">
+  <label>Resource Requirements</label>
+
+  <div>
+    <table width="100%" class="_table_right_space">
+    <tr>
+      <td>
+        <div>CPU units (minimum)</div>
+        <div class="input-group">
+          {[=it.exp_res.cpu_min]} m
+        </div>
+      </td>
+      <td>
+        <div>Memory Size (minimum)</div>
+        <div class="input-group">
+          {[=inCp.UtilResSizeFormat(it.exp_res.mem_min)]}
+        </div>
+      </td>
+      <td>
+        <div>System Volume Size (minimum)</div>
+        <div class="input-group">
+          {[=inCp.UtilResSizeFormat(it.exp_res.vol_min, 1)]}
+        </div>
+      </td>
+    </tr>
+    </table>
+  </div>
+</div>

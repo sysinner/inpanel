@@ -120,15 +120,13 @@ body {
   clear: both;
   margin: 10px auto;
   text-align: center;
-  color: #555;
+  color: #666;
   font-size: 14px;
-  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
-.incp-well-box > .footer > .copy {
-  font-size: 100%;
+.incp-well-box > .footer > .url-info {
+  font-size: 1.1em;
 }
 .incp-well-box > .footer a {
-  color: #000;
+  color: #666;
+  font-weight: bold;
 }
-
-

@@ -392,7 +392,7 @@ inCpAppSpec.Set = function(id) {
                 rsj.exp_res.vol_min += (rsj.exp_res.vol_min % (100 * inCp.ByteMB));
             }
             if (rsj.exp_res.vol_min < inCp.ByteGB) {
-                rsj.exp_res._vol_min = (rsj.exp_res.vol_min / inCp.ByteGB).toFixed(1);
+                rsj.exp_res._vol_min = (rsj.exp_res.vol_min / (1000 * inCp.ByteMB)).toFixed(1);
             } else {
                 rsj.exp_res._vol_min = parseInt(rsj.exp_res.vol_min / inCp.ByteGB);
             }
@@ -922,8 +922,8 @@ inCpAppSpec.SetCommit = function() {
         });
 
         inCpAppSpec.setActive.exp_res.cpu_min = parseInt(form.find("input[name=exp_res_cpu_min]").val());
-        inCpAppSpec.setActive.exp_res.mem_min = parseInt(form.find("input[name=exp_res_mem_min]").val()) * inCp.ByteMB;
-        inCpAppSpec.setActive.exp_res.vol_min = parseInt(form.find("input[name=exp_res_vol_min]").val()) * inCp.ByteGB;
+        inCpAppSpec.setActive.exp_res.mem_min = parseInt(form.find("input[name=exp_res_mem_min]").val() * inCp.ByteMB);
+        inCpAppSpec.setActive.exp_res.vol_min = parseInt(form.find("input[name=exp_res_vol_min]").val() * inCp.ByteGB);
 
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'alert-danger', err);

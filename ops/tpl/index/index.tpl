@@ -11,6 +11,7 @@
     <ul class="incp-nav incp-nav-right" id="incp-topbar-userbar"></ul>
     <ul class="incp-nav incp-nav-right">
       <li><a class="l4i-nav-item" href="https://github.com/sysinner/insoho/issues" target="_blank">Bug Report</a></li>
+      <li><a class="l4i-nav-item" href="/in">inPanel</a></li>
     </ul>
   </div>
 </div>

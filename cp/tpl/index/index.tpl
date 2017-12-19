@@ -14,6 +14,7 @@
     <ul class="incp-nav incp-nav-right">
       <li><a class="l4i-nav-item" href="https://github.com/sysinner/insoho/issues" target="_blank">Bug Report</a></li>
       <li><a class="l4i-nav-item" href="#about" onclick="inCp.About()">About</a></li>
+      <li><a class="l4i-nav-item" href="/in/ops" id="incp-nav-ops-entry" style="display:none">Management</a></li>
     </ul>
   </div>
 </div>

@@ -159,6 +159,12 @@ inCp.load_index = function() {
                             $("#incp-topbar-user-signed-modal").fadeOut(200);
                         }
                     );
+
+                    if (inCp.UserSession.username == "sysadmin") {
+                        $("#incp-nav-ops-entry").css({
+                            "display": "block"
+                        });
+                    }
                 },
             });
 

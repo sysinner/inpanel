@@ -6,7 +6,7 @@
     </ul>
     <ul class="incp-nav incp-topbar-nav" id="inops-topbar-nav-menus">
       <li><a class="l4i-nav-item" href="#host/index">Cluster</a></li>
-      <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>
+      <li><a class="l4i-nav-item" href="#pod/index">Pod</a></li>
     </ul>
     <ul class="incp-nav incp-nav-right" id="incp-topbar-userbar"></ul>
     <ul class="incp-nav incp-nav-right">

@@ -5,8 +5,8 @@
 <div class="incp-div-h-title" style="padding-top:10px">Overview</div>
 <div class="incp-div-label-block-frame-inline">
   <div class="incp-div-label-block incp-div-light">
-    <div class="name">ID</div>
-    <div class="value">{[=it.meta.id]}</div>
+    <div class="name">Name</div>
+    <div class="value">{[=it.meta.name]}</div>
   </div>
   <div class="incp-div-label-block incp-div-light">
     <div class="name">Zone / Cell</div>
@@ -42,7 +42,7 @@
   </div>
 </div>
 
-<div class="incp-div-h-title" style="padding-top:10px">Address</div>
+<div class="incp-div-h-title" style="padding-top:10px">Network</div>
 <div class="incp-div-label-block-frame-inline">
   <div class="incp-div-label-block incp-div-light">
     <div class="name">Peer</div>

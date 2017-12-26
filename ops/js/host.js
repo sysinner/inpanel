@@ -299,8 +299,8 @@ inOpsHost.NodeSetForm = function(zoneid, cellid, nodeid) {
                 title: "Host Setting",
                 tplsrc: tpl,
                 data: rsj,
-                width: 800,
-                height: 500,
+                width: 700,
+                height: 350,
                 buttons: [{
                     onclick: "l4iModal.Close()",
                     title: "Close",
@@ -526,6 +526,10 @@ inOpsHost.NodeOverview = function() {
 
             if (node.spec.platform.kernel) {
                 node.spec.platform.kernel = node.spec.platform.kernel.replace(/.el7.x86_64$/g, '');
+            }
+
+            if (!node.meta.name) {
+                node.meta.name = node.meta.id;
             }
 
             inCp.OpToolsClean();

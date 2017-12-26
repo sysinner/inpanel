@@ -36,7 +36,7 @@
 {[~it.items :v]}
 <tr>
   <td class="inops-font-mono">
-    <a href="#" onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">{[=v.meta.id]}</a>
+    <a href="#node-{[=v.meta.id]}" onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">{[=v.meta.id]}</a>
   </td>
   <td>{[=v.spec.peer_lan_addr]}</td>
   <td>{[=v.spec.peer_wan_addr]}</td>
@@ -52,11 +52,11 @@
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="pure-button button-xsmall" onclick="inOpsHost.Node(null, '{[=v.meta.id]}', 'stats')">
-        <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Graphs
+      <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Graphs
     </button>
     <button class="pure-button button-xsmall"
       onclick="inOpsHost.NodeSetForm(null, null, '{[=v.meta.id]}')">
-      Setting
+      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setup
     </button>
   </td>
 </tr>

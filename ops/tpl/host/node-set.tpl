@@ -12,11 +12,6 @@
   </div>
 
   <div class="l4i-form-group">
-    <label>LAN Address</label>
-    <div>{[=it.spec.peer_lan_addr]}</div>
-  </div>
-
-  <div class="l4i-form-group">
     <label>Action</label>
     <div class="">
       {[~it._actions :v]}

@@ -203,7 +203,7 @@ inOpsHost.NodeList = function(zoneid, cellid) {
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
             if (tpl) {
-                $("#work-content").html(tpl);
+                $("#comp-content").html('<div id="work-content">' + tpl + '</div>');
             }
             if (inOpsHost.single_node) {
                 $("#inops-host-nodes-navbar").css({

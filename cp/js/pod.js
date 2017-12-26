@@ -1127,6 +1127,9 @@ inCpPod.EntryStats = function(time_past) {
 
     if (time_past) {
         inCpPod.entry_active_past = parseInt(time_past);
+        if (!inCpPod.entry_active_past) {
+            inCpPod.entry_active_past = 3600;
+        }
     }
     if (inCpPod.entry_active_past < 600) {
         inCpPod.entry_active_past = 600;
@@ -1338,6 +1341,10 @@ inCpPod.EntryStats = function(time_past) {
 
                     var t = new Date(v2.time * 1000);
                     labels.push(t.l4iTimeFormat(tfmt));
+
+                    if (!v2.value) {
+                        v2.value = 0;
+                    }
 
                     if (fix > 1) {
                         v2.value = (v2.value / fix).toFixed(2);

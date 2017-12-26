@@ -1,24 +1,24 @@
-<table id="inops-host-nodes-navbar" width="100%"><tr>
-<td>
-  <form id="" action="#" class="">
-    <input type="text" class="form-control inops-query-input-icon" id="xs_hostls_qry"
-      placeholder="Press Enter to search" value="" />
-  </form>
-</td>
-  <td align="right">
-  <!-- <button type="button" 
-    class="pure-button pure-button-primary button-small" 
-    onclick="inOpsHost.NodeNewForm()">
-    New Node
-  </button> -->
-</td>
-</tr></table>
+<div id="incp-module-navbar">
+  <ul id="incp-module-navbar-menus" class="incp-module-nav">
+    <li><a class='l4i-nav-item active' href='#node/list'>Hosts</a></li>
+    <!--<li>
+      <form id="z28k7l" action="#" class="form-inlines">
+        <input id="query_text" type="text"
+          class="form-control incp-query-input" 
+          placeholder="Press Enter to Search" 
+          value="">
+      </form>
+    </li>-->
+  </ul>
+  <ul id="incp-module-navbar-optools" class="incp-module-nav incp-nav-right"></ul>
+</div>
 
+<div class="incp-div-light">
 <table class="table table-hover">
 <thead>
 <tr>
-  <th>Host ID</th>
-  <th>LAN</th>
+  <th>ID</th>
+  <th>Peer</th>
   <th>WAN</th>
   <th>CPU / RAM</th>
   <th>Kernel</th>
@@ -30,11 +30,14 @@
 </thead>
 <tbody id="inops-host-nodes"></tbody>
 </table>
+</div>
 
 <script id="inops-host-nodes-tpl" type="text/html">
 {[~it.items :v]}
 <tr>
-  <td class="inops-font-mono">{[=v.meta.id]}</td>
+  <td class="inops-font-mono">
+    <a href="#" onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">{[=v.meta.id]}</a>
+  </td>
   <td>{[=v.spec.peer_lan_addr]}</td>
   <td>{[=v.spec.peer_wan_addr]}</td>
   <td>{[=v.spec.capacity.cpu/1e3]} / {[=inCp.UtilResSizeFormat(v.spec.capacity.mem)]}</td>
@@ -48,11 +51,17 @@
   <td>{[=v._action_display]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
+    <button class="pure-button button-xsmall" onclick="inOpsHost.Node(null, '{[=v.meta.id]}', 'stats')">
+        <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Graphs
+    </button>
     <button class="pure-button button-xsmall"
-	    onclick="inOpsHost.NodeSetForm(null, null, '{[=v.meta.id]}')">
-	    Setting
-	  </button>
+      onclick="inOpsHost.NodeSetForm(null, null, '{[=v.meta.id]}')">
+      Setting
+    </button>
   </td>
 </tr>
 {[~]}
+</script>
+
+<script id="inops-host-nodels-optools" type="text/html">
 </script>

@@ -48,8 +48,10 @@ inOps.Boot = function() {
             "~/purecss/css/pure.css",
             "~/cp/css/main.css" + inOps.debug_uri(),
             "~/ops/css/main.css" + inOps.debug_uri(),
+            "~/cp/js/main.js" + inOps.debug_uri(),
             "~/ops/js/host.js" + inOps.debug_uri(),
             "~/ops/js/pod.js" + inOps.debug_uri(),
+            "hchart/~/hchart.js" + inCp.debug_uri(),
         ], inOps.load_index);
     });
 }
@@ -57,6 +59,8 @@ inOps.Boot = function() {
 
 inOps.load_index = function() {
     l4i.debug = inOps.debug;
+
+    hooto_chart.basepath = inOps.base + "/hchart/~/";
 
     seajs.use(["ep"], function(EventProxy) {
 

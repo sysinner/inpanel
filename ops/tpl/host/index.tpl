@@ -14,5 +14,5 @@
 </div>
 
 <div id="inops-host-alert"></div>
-<div id="work-content" class="incp-div-light"></div>
+<div id="work-content"></div>
 

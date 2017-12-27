@@ -199,12 +199,12 @@ body {
 }
 
 #comp-content {
-  padding: 0 10px;
   clear: both;
 }
 
 #work-content {
   clear: both;
+  padding: 0 10px;
 }
 
 .incp-boxlet-grp {
@@ -332,9 +332,11 @@ body {
 #incp-module-navbar {
   clear: both;
   height: 30px;
-  padding: 0;
   margin-bottom: 10px;
   display: block;
+}
+#comp-content > #incp-module-navbar {
+  padding: 0 10px;
 }
 
 .incp-module-nav {

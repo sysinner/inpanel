@@ -1,12 +1,12 @@
 <div class="inops-node-stats-box">
-  <div id="inops-node-stats-net" class="inops-node-stats-item inops-div-light"></div>
-  <div id="inops-node-stats-cpu" class="inops-node-stats-item inops-div-light"></div>
-  <div id="inops-node-stats-ram" class="inops-node-stats-item inops-div-light"></div>
-  <div id="inops-node-stats-fss" class="inops-node-stats-item inops-div-light"></div>
-  <div id="inops-node-stats-fsn" class="inops-node-stats-item inops-div-light"></div>
-  <div class="inops-node-stats-item"></div>
-  <div class="inops-node-stats-item"></div>
-  <div class="inops-node-stats-item"></div>
+  <div id="inops-node-stats-net" class="incp-podentry-stats-item incp-div-light"></div>
+  <div id="inops-node-stats-cpu" class="incp-podentry-stats-item incp-div-light"></div>
+  <div id="inops-node-stats-ram" class="incp-podentry-stats-item incp-div-light"></div>
+  <div id="inops-node-stats-fss" class="incp-podentry-stats-item incp-div-light"></div>
+  <div id="inops-node-stats-fsn" class="incp-podentry-stats-item incp-div-light"></div>
+  <div class="incp-podentry-stats-item"></div>
+  <div class="incp-podentry-stats-item"></div>
+  <div class="incp-podentry-stats-item"></div>
 </div>
 
 <script type="text/html" id="inops-node-optools-stats">

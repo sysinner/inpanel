@@ -34,7 +34,6 @@
   </div>
 </div>
 
-<div class="incp-div-h-title">Spec</div>
 <div class="incp-div-label-block-frame-inline">
   <div class="incp-div-label-block incp-div-light">
     <div class="name">OS</div>
@@ -45,29 +44,22 @@
     <div class="value">{[=it.spec.platform.kernel]}</div>
   </div>
   <div class="incp-div-label-block incp-div-light">
-    <div class="name">CPU</div>
-    <div class="value"td>{[=it.spec.capacity.cpu]} m</div>
+    <div class="name">Allocated CPU</div>
+    <div class="value">
+      {[=it.operate.cpu_used]} / {[=it.spec.capacity.cpu]} m
+    </div>
   </div>
   <div class="incp-div-label-block incp-div-light">
-    <div class="name">Memory</div>
-    <div class="value"td>{[=inCp.UtilResSizeFormat(it.spec.capacity.mem)]}</div>
+    <div class="name">Allocated Memory</div>
+    <div class="value">
+      {[=inCp.UtilResSizeFormat(it.operate.mem_used)]} / {[=inCp.UtilResSizeFormat(it.spec.capacity.mem)]}
+    </div>
   </div>
 </div>
 
-<div class="incp-div-h-title" style="padding-top:10px">Network</div>
-<div class="incp-div-label-block-frame-inline">
-  <div class="incp-div-label-block incp-div-light">
-    <div class="name">Peer</div>
-    <div class="value">{[=it.spec.peer_lan_addr]}</div>
-  </div>
-  <div class="incp-div-label-block incp-div-light">
-    <div class="name">WAN</div>
-    <div class="value">{[=it.spec.peer_wan_addr]}</div>
-  </div>
-</div>
 
 <div class="incp-div-h-title" style="padding-top:10px">Volumes</div>
-{[~it.spec.capacity.vols :v]}
+{[~it.status.volumes :v]}
 <div class="incp-div-label-block-frame-inline">
   <div class="incp-div-label-block incp-div-light">
     <div class="name-strong incp-font-fixspace">{[=v.name]}</div>
@@ -83,4 +75,16 @@
 </div>
 {[~]}
 
+
+<div class="incp-div-h-title" style="padding-top:10px">Network</div>
+<div class="incp-div-label-block-frame-inline">
+  <div class="incp-div-label-block incp-div-light">
+    <div class="name">LAN Peer</div>
+    <div class="value">{[=it.spec.peer_lan_addr]}</div>
+  </div>
+  <div class="incp-div-label-block incp-div-light">
+    <div class="name">WAN Address</div>
+    <div class="value">{[=it.spec.peer_wan_addr]}</div>
+  </div>
+</div>
 </script>

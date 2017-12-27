@@ -23,7 +23,7 @@ inOps.Boot = function() {
     });
 
     seajs.use([
-        "~/twbs/3.3/css/bootstrap.css",
+        "~/twbs/4.0/css/bootstrap.css",
         "~/cp/js/jquery.js",
         "~/cp/js/main.js" + inOps.debug_uri(),
         "~/cp/css/main.css" + inOps.debug_uri(),
@@ -43,7 +43,7 @@ inOps.Boot = function() {
 
         seajs.use([
             "~/lessui/css/lessui.css",
-            "~/twbs/3.3/js/bootstrap.js",
+            "~/twbs/4.0/js/bootstrap.js",
             "~/lessui/js/lessui.js",
             "~/purecss/css/pure.css",
             "~/cp/css/main.css" + inOps.debug_uri(),

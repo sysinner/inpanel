@@ -38,7 +38,7 @@
 
 <div class="l4i-form-group">
   <label class="">Labels</label>
-  <button class="btn btn-default btn-xs" onclick="inOpsPod.SpecPlanSetLabelAppend()">
+  <button class="btn btn-default btn-sm" onclick="inOpsPod.SpecPlanSetLabelAppend()">
     <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add new Label
   </button>
   <div class="">
@@ -73,7 +73,7 @@
 
 <div class="l4i-form-group">
   <label class="">Annotations</label>
-  <button class="btn btn-default btn-xs" onclick="inOpsPod.SpecPlanSetAnnotationAppend()">
+  <button class="btn btn-default btn-sm" onclick="inOpsPod.SpecPlanSetAnnotationAppend()">
     <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add new Annotation
   </button>
   <div class="">

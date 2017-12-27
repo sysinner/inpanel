@@ -24,7 +24,6 @@
   <th>Kernel</th>
   <th>Ports</th>
   <th>Action</th>
-  <th>Updated</th>
   <th></th>
 </tr>
 </thead>
@@ -49,7 +48,6 @@
     </button>
   </td>  
   <td>{[=v._action_display]}</td>
-  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="pure-button button-xsmall" onclick="inOpsHost.Node(null, '{[=v.meta.id]}', 'stats')">
       <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Graphs

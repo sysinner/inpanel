@@ -1,3 +1,15 @@
+<style type="text/css">
+.incp-div-label-block .progress {
+  margin-bottom: 0;
+}
+.incp-div-label-block .sub-name {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 12px;
+}
+</style>
+
 <div id="inops-host-node-overview"></div>
 
 <script type="text/html" id="inops-host-node-overview-info-tpl">
@@ -53,5 +65,22 @@
     <div class="value">{[=it.spec.peer_wan_addr]}</div>
   </div>
 </div>
+
+<div class="incp-div-h-title" style="padding-top:10px">Volumes</div>
+{[~it.spec.capacity.vols :v]}
+<div class="incp-div-label-block-frame-inline">
+  <div class="incp-div-label-block incp-div-light">
+    <div class="name-strong incp-font-fixspace">{[=v.name]}</div>
+    <div class="sub-name">{[=inCp.UtilResSizeFormat(v.used, 2)]} / {[=inCp.UtilResSizeFormat(v.total, 2)]}</div>
+    <div class="value">
+      <div class="progress">
+        <div class="progress-bar" style="width: {[=v._percent]}%;">
+          {[=v._percent]}%
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{[~]}
 
 </script>

@@ -531,6 +531,19 @@ inOpsHost.NodeOverview = function() {
             if (!node.meta.name) {
                 node.meta.name = node.meta.id;
             }
+            if (!node.spec.capacity.vols) {
+                node.spec.capacity.vols = [];
+            }
+            for (var i in node.spec.capacity.vols) {
+                if (!node.spec.capacity.vols[i].total) {
+                    node.spec.capacity.vols[i].total = 1;
+                }
+                if (!node.spec.capacity.vols[i].used) {
+                    node.spec.capacity.vols[i].used = 1;
+                }
+                node.spec.capacity.vols[i]._percent = parseInt((100 * node.spec.capacity.vols[i].used) / node.spec.capacity.vols[i].total);
+            }
+
 
             inCp.OpToolsClean();
             $("#work-content").html(tpl);

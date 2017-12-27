@@ -448,7 +448,7 @@ body {
 }
 
 .incp-div-h-title {
-   padding: 20px 0 10px 0;
+   padding: 10px 0 5px 0;
    font-size : 18px;
 }
 
@@ -666,6 +666,7 @@ button {
   display: flex;
   flex-wrap: nowrap;
   width: 100%;
+  margin-bottom: 10px;
 }
 
 .incp-div-label-block-frame-inline>div:last-child {
@@ -680,6 +681,10 @@ button {
 .incp-div-label-block > .name {
   font-size: 12px;
   color: #868e96;
+}
+.incp-div-label-block > .name-strong {
+  font-size: 16px;
+  font-weight: bold;
 }
 .incp-div-label-block > .value {
   padding-top: 5px;

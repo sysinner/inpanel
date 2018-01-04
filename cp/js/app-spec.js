@@ -11,6 +11,7 @@ var inCpAppSpec = {
         service_ports: [],
         depends: [],
         roles: [],
+        exp_res: {},
     },
     executorDef: {
         name: "",
@@ -650,7 +651,7 @@ inCpAppSpec.setPackageInfo = function(opt) {
 }
 
 inCpAppSpec.SetPackageRemove = function(name) {
-    if (name.length < 4) {
+    if (name.length < 1) {
         return;
     }
 

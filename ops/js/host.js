@@ -688,20 +688,20 @@ inOpsHost.NodeStats = function(time_past) {
     } else {
         inOpsHost.hchart_def.options.height = "220px";
     }
-    if (stats_query.tp > (3 * 86400)) {
-        stats_query.tc = 86400;
-        tfmt = "m-d";
-    } else if (stats_query.tp > 86400) {
+    if (stats_query.tp > (10 * 86400)) {
+        stats_query.tc = 6 * 3600;
+        tfmt = "m-d H";
+    } else if (stats_query.tp > (3 * 86400)) {
         stats_query.tc = 3 * 3600;
-        tfmt = "d H:i";
+        tfmt = "m-d H";
     } else if (stats_query.tp > 86400) {
         stats_query.tc = 3600;
-        tfmt = "m-d";
+        tfmt = "m-d H";
     } else if (stats_query.tp >= (3 * 3600)) {
-        stats_query.tc = 3600;
+        stats_query.tc = 1800;
         tfmt = "H:i";
     } else if (stats_query.tp >= (3 * 600)) {
-        stats_query.tc = 300;
+        stats_query.tc = 120;
         tfmt = "H:i";
     } else {
         stats_query.tc = 60;

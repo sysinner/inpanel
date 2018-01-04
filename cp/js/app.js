@@ -34,7 +34,7 @@ inCpApp.Index = function() {
     var divstr = "<div id='incp-module-navbar'>\
   <ul id='incp-app-navbar' class='incp-module-nav'>\
     <li><a class='l4i-nav-item' href='#app/inst/list'>App Instances</a></li>\
-    <li><a class='l4i-nav-item' href='#app/spec/list'>App Store</a></li>\
+    <li><a class='l4i-nav-item' href='#app/spec/list'>AppSpec Store</a></li>\
   </ul>\
   <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
 </div>\
@@ -630,7 +630,7 @@ inCpApp.InstDeployCommit = function(app_id, auto_start) {
 
 
 inCpApp.InstNew = function(spec_id) {
-    if (!spec_id || spec_id.length < 8) {
+    if (!spec_id || spec_id.length < 4) {
         return alert("AppSpec error, Please try again later (EC:incp-appset)");
     }
 

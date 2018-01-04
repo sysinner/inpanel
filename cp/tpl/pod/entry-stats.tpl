@@ -32,8 +32,8 @@
   </a>
 </li>
 <li>
-  <a href="#" value="2592000" onclick="inCpPod.EntryStatsButton(this)" class="l4i-nav-item">
-    30 Days
+  <a href="#" value="864000" onclick="inCpPod.EntryStatsButton(this)" class="l4i-nav-item">
+    10 Days
   </a>
 </li>
 </script>

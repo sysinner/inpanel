@@ -31,6 +31,6 @@
 </script>
 
 <div class="incp-footer">
-  <span class="copy">&copy;2017&nbsp;</span>
+  <span class="copy">&copy;2018&nbsp;</span>
   <span class="url-info"><a href="http://www.sysinner.com" target="_blank">Sysinner PaaS Engine</a></span>
 </div>

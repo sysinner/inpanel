@@ -19,8 +19,8 @@
 <tr>
   <td class="inops-font-mono">{[=v.meta.id]}</td>
   <td>{[=v.meta.name]}</td>
-  <td>{[=v.status]}</td>
   <td>{[=v._zones.join(", ")]}</td>
+  <td>{[=v.status]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="pure-button button-xsmall" 

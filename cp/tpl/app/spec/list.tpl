@@ -38,7 +38,7 @@
   <td align="right">
     {[if (inCp.UserSession.username == "sysadmin") {]}
     <button class="pure-button button-xsmall" onclick="inCpAppSpec.Download('{[=v.meta.id]}')">
-      <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Download
+      Download
     </button>
     {[}]}
     <button class="pure-button button-xsmall" onclick="inCpApp.InstNew('{[=v.meta.id]}')">

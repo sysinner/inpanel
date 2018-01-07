@@ -49,17 +49,19 @@
     <td>{[=v.operate.replicas.length]}</td>
     <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
     <td>
-	  <span class="label label-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionRunning)) {]}success{[} else {]}default{[}]}">
+      <span class="label label-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionRunning)) {]}success{[} else {]}default{[}]}">
       {[=inCp.OpActionStatusTitle(v.operate.action)]}
-	  </span>
+      </span>
     </td>
     <td align="right">
+      {[if (!inCp.OpActionAllow(v.operate.action, inCp.OpActionDestroy)) {]}
       <button class="pure-button button-xsmall" onclick="inCpPod.EntryIndex('{[=v.meta.id]}', 'stats')">
         <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Graphs
-	  </button>
+      </button>
       <button class="pure-button button-xsmall" onclick="inCpPod.SetInfo('{[=v.meta.id]}')">
         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setup
-	  </button>
+      </button>
+      {[}]}
     </td>
   </tr>
 {[~]}

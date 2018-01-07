@@ -253,6 +253,9 @@ inCpAppSpec.Info = function(id, spec) {
                 tplsrc: tpl,
                 data: rsj,
                 buttons: [{
+                    onclick: "inCpAppSpec.Download(\"" + rsj.meta.id + "\")",
+                    title: "Download",
+                }, {
                     onclick: "l4iModal.Close()",
                     title: "Close",
                 }],

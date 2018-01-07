@@ -41,12 +41,14 @@
     </span>
   </td>
   <td align="right">
+    {[if (!inCp.OpActionAllow(v.operate.action, inCp.OpActionDestroy)) {]}
     <button class="pure-button button-xsmall pure-button-primary" onclick="inCpApp.InstDeploy('{[=v.meta.id]}')">
       <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Deploy 
     </button>
     <button class="pure-button button-xsmall" onclick="inCpApp.InstSet('{[=v.meta.id]}')">
       <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setup
     </button>
+    {[}]}
   </td>
 </tr>
 {[~]}

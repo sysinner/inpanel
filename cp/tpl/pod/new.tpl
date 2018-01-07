@@ -46,6 +46,9 @@
   <div id="incp-podnew-plans" class="incp-form-box-selector"></div>
 </div>
 <div id="incp-podnew-resource-selector"></div>
+<div class="l4i-form-group">
+  <div id="incp-podnew-charge-estimate-value" class="font-size:30px"></div>
+</div>
 </script>
 
 <script type="text/html" id="incp-podnew-plans-tpl">

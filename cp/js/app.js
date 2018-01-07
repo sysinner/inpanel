@@ -695,7 +695,7 @@ inCpApp.InstNewPodSelect = function() {
 
     l4iModal.Open({
         id: "incp-appnew-oppod",
-        title: "Select a Pod to Bound",
+        title: "Bind App to Pod", // Select a Pod to Bound",
         width: 800,
         height: 500,
         tpluri: inCp.TplPath("pod/inst-selector"),

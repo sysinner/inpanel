@@ -284,11 +284,29 @@ inCpPod.New = function(options) {
             }
             inCpPod.new_options = options;
             if (options.open_modal) {
+                var bw = $(window).width(),
+                    bh = $(window).height();
+                if (bw < 800) {
+                    bw = 800;
+                } else if (bw > 1200) {
+                    bw = 1200;
+                } else {
+                    bw -= 100;
+                }
+                if (bh < 700) {
+                    bh = 700;
+                } else if (bh > 1000) {
+                    bh = 1000;
+                } else {
+                    bh -= 100;
+                }
+
                 l4iModal.Open({
+                    id: "pod-new",
                     tplsrc: tpl,
                     title: "Create new Pod Instance",
-                    width: 900,
-                    height: 600,
+                    width: bw,
+                    height: bh,
                     callback: function() {
                         l4iTemplate.Render({
                             dstid: "incp-podnew-form",
@@ -614,18 +632,21 @@ inCpPod.NewCommit = function() {
             }
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
-
             window.setTimeout(function() {
-                l4iModal.Close();
-                if (inCpPod.new_options.callback) {
-                    inCpPod.new_options.callback(null);
-                } else if (!inCpPod.new_options.open_modal) {
-                    if (rsj.pod && rsj.pod.length > 8) {
-                        inCpPod.EntryIndex(rsj.pod);
-                    } else {
-                        inCpPod.List(null, {
-                            destroy_enable: true
-                        });
+                if (inCpPod.new_options.app_new_callback) {
+                    inCpPod.new_options.app_new_callback(null, rsj.pod);
+                } else {
+                    l4iModal.Close();
+                    if (inCpPod.new_options.callback) {
+                        inCpPod.new_options.callback(null);
+                    } else if (!inCpPod.new_options.open_modal) {
+                        if (rsj.pod && rsj.pod.length > 8) {
+                            inCpPod.EntryIndex(rsj.pod);
+                        } else {
+                            inCpPod.List(null, {
+                                destroy_enable: true
+                            });
+                        }
                     }
                 }
             }, 1000);

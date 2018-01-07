@@ -87,7 +87,7 @@ inCpPod.List = function(tplid, options) {
         inCpPod.zone_active = inCp.Zones.items[0].meta.id;
         uri += "zone_id=" + inCpPod.zone_active;
     }
-    uri += "&fields=meta/id|name,operate/action|replicas,spec/ref/id|name,spec/zone|cell";
+    uri += "&fields=meta/id|name,operate/action|replicas,spec/ref/id|name,spec/zone|cell,apps/meta/name";
     if (options.destroy_enable) {
         uri += "&destroy_enable=1";
     }
@@ -748,12 +748,103 @@ inCpPod.SetInfoCommit = function() {
             action: parseInt(form.find("input[name=operate_action]:checked").val()),
         },
     };
+    var pod_id = set.meta.id;
+
+    if (inCp.OpActionAllow(set.operate.action, inCp.OpActionDestroy)) {
+        return l4iModal.Close(function() {
+            inCpPod.EntryDel(pod_id);
+        });
+    }
 
     $(alert_id).hide();
 
     inCp.ApiCmd("pod/set-info", {
         method: "POST",
         data: JSON.stringify(set),
+        callback: function(err, rsj) {
+
+            if (err || !rsj) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            if (rsj.error) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+            }
+
+            if (!rsj.kind || rsj.kind != "PodInstance") {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+
+            window.setTimeout(function() {
+                l4iModal.Close();
+                var el = document.getElementById("incp-podls");
+                if (el) {
+                    inCpPod.List(null, {
+                        destroy_enable: true
+                    });
+                }
+            }, 500);
+        }
+    });
+}
+
+
+inCpPod.EntryDel = function(pod_id) {
+    if (!pod_id && inCpPod.entry_active_id) {
+        pod_id = inCpPod.entry_active_id;
+    }
+    if (!pod_id) {
+        return alert("No Pod Found");
+    }
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "pod", function(tpl, pod) {
+
+            if (!pod.apps) {
+                pod.apps = [];
+            }
+
+            l4iModal.Open({
+                title: "Pod Destroy",
+                tplsrc: tpl,
+                width: 800,
+                height: 300,
+                data: pod,
+                buttons: [{
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                }, {
+                    onclick: "inCpPod.EntryDelCommit()",
+                    title: "Confirm to Destroy",
+                    style: "btn btn-danger",
+                }],
+            });
+        });
+
+        ep.fail(function(err) {
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
+        });
+
+        inCp.ApiCmd("pod/entry?id=" + pod_id, {
+            callback: ep.done("pod"),
+        });
+
+        inCp.TplFetch("pod/entry-del", {
+            callback: ep.done("tpl"),
+        });
+    });
+}
+
+inCpPod.EntryDelCommit = function() {
+    var alert_id = "#incp-podentry-del-alert";
+    var form = $("#incp-podentry-del");
+    var pod_id = form.find("input[name=meta_id]").val()
+
+    inCp.ApiCmd("pod/delete?pod_id=" + pod_id, {
+        method: "GET",
         callback: function(err, rsj) {
 
             if (err || !rsj) {

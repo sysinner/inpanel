@@ -79,7 +79,7 @@
 
 <script type="text/html" id="incp-podentry-overview-info-tpl">
 
-<div class="incp-div-h-title" style="padding-top:10px">Overview</div>
+<div class="incp-div-h-title" style="padding-top:10px">Information</div>
 <div class="incp-div-label-block-frame-inline">
   <div class="incp-div-label-block incp-div-light">
     <div class="name">Name</div>
@@ -156,15 +156,17 @@
       <table style="" class="incp-font-fixspace">
         {[~rep.ports :opv]}
         <tr>
-          <td>
+          <td style="padding-right:20px">
           {[if (opv.name == "http" || opv.name == "https") {]}
             <a href="{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}" target="_blank">{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}</a>
+          {[ } else if (opv.name == "ssh" && opv.box_port == 2022) {]}
+            ssh action@{[=opv.wan_addr]} -p {[=opv.host_port]}
           {[ } else {]}
             {[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}
           {[}]}
           </td>
           <td>
-            &nbsp;&raquo;&nbsp; pod:{[=opv.box_port]}
+            &raquo; pod:{[=opv.box_port]}
           </td>
         </tr>
         {[~]}

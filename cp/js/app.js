@@ -34,7 +34,7 @@ inCpApp.Index = function() {
     var divstr = "<div id='incp-module-navbar'>\
   <ul id='incp-app-navbar' class='incp-module-nav'>\
     <li><a class='l4i-nav-item' href='#app/inst/list'>App Instances</a></li>\
-    <li><a class='l4i-nav-item' href='#app/spec/list'>AppSpec Store</a></li>\
+    <li><a class='l4i-nav-item' href='#app/spec/list'>App Spec Center</a></li>\
   </ul>\
   <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
 </div>\

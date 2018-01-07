@@ -51,6 +51,10 @@ var inCpPod = {
     new_options: {},
     entry_active: null,
     entry_active_past: 3600,
+    entry_operate_access_def: {
+        ssh_on: false,
+        ssh_key: "",
+    },
     hchart_def: {
         "type": "line",
         "options": {
@@ -931,9 +935,10 @@ inCpPod.EntryIndex = function(pod_id, nav_target) {
     <li><a class='l4i-nav-item primary' href='#' onclick='inCpPod.Index()'>\
       <span class='glyphicon glyphicon-menu-left' aria-hidden='true'></span> Back\
     </a></li>\
-    <li><a class='l4i-nav-item' href='#pod/entry/overview'>Dashboard</a></li>\
+    <li><a class='l4i-nav-item' href='#pod/entry/overview'>Overview</a></li>\
     <li><a class='l4i-nav-item' href='#pod/entry/stats'>Graphs</a></li>\
-    <li><a class='' href='#pod/entry/setup' onclick='inCpPod.SetInfo()'>Setup</a></li>\
+    <li><a class='' href='#pod/entry/setup' onclick='inCpPod.EntryAccess()'>Access</a></li>\
+    <li><a class='' href='#pod/entry/setup' onclick='inCpPod.SetInfo()'>Settings</a></li>\
   </ul>\
   <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
 </div>\
@@ -1435,3 +1440,127 @@ inCpPod.EntryStats = function(time_past) {
     });
 }
 
+inCpPod.EntryAccess = function(pod_id) {
+    if (!pod_id && inCpPod.entry_active_id) {
+        pod_id = inCpPod.entry_active_id;
+    }
+    if (!pod_id) {
+        return alert("No Pod Found");
+    }
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "pod", function(tpl, pod) {
+
+            var actions = [];
+            if (!pod.operate.access) {
+                pod.operate.access = l4i.Clone(inCpPod.entry_operate_access_def);
+            }
+            if (!pod.operate.access.ssh_key) {
+                pod.operate.access.ssh_key = "";
+            }
+            l4iModal.Open({
+                title: "Remote Access",
+                tplsrc: tpl,
+                width: 900,
+                height: 500,
+                data: pod,
+                buttons: [{
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                }, {
+                    onclick: "inCpPod.EntryAccessSetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
+                }],
+            });
+        });
+
+        ep.fail(function(err) {
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
+        });
+
+        inCp.ApiCmd("pod/entry?id=" + pod_id, {
+            callback: ep.done("pod"),
+        });
+
+        inCp.TplFetch("pod/entry-access", {
+            callback: ep.done("tpl"),
+        });
+    });
+}
+
+inCpPod.EntryAccessSshRefresh = function() {
+
+    var form = $("#incp-podentry-access");
+    if (!form) {
+        return;
+    }
+
+    var ssh_on = parseInt(form.find("input[name=operate_access_ssh_on]:checked").val());
+    if (ssh_on == 1) {
+        $("#operate_access_ssh_enable").css({
+            "display": "block"
+        });
+    } else {
+        $("#operate_access_ssh_enable").css({
+            "display": "none"
+        });
+    }
+}
+
+inCpPod.EntryAccessSetCommit = function() {
+    var alert_id = "#incp-podentry-access-alert";
+    var form = $("#incp-podentry-access");
+
+    var ssh_on = form.find("input[name=operate_access_ssh_on]:checked").val();
+    if (ssh_on == "1") {
+        ssh_on = true;
+    } else {
+        ssh_on = false;
+    }
+    var set = {
+        meta: {
+            id: form.find("input[name=meta_id]").val(),
+        },
+        operate: {
+            access: {
+                ssh_on: ssh_on,
+                ssh_key: form.find("textarea[name=operate_access_ssh_key]").val(),
+            },
+        },
+    };
+
+    $(alert_id).hide();
+
+    inCp.ApiCmd("pod/access-set", {
+        method: "POST",
+        data: JSON.stringify(set),
+        callback: function(err, rsj) {
+
+            if (err || !rsj) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            if (rsj.error) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+            }
+
+            if (!rsj.kind || rsj.kind != "PodInstance") {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+
+            window.setTimeout(function() {
+                l4iModal.Close();
+                var el = document.getElementById("incp-podls");
+                if (el) {
+                    inCpPod.List(null, {
+                        destroy_enable: true
+                    });
+                }
+            }, 500);
+        }
+    });
+}

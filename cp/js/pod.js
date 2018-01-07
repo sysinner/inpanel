@@ -654,7 +654,8 @@ inCpPod.NewCommit = function() {
     });
 }
 
-inCpPod.Info = function(pod_id) {
+inCpPod.Info = function(pod_id, options) {
+    options = options || {};
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "pod", function(tpl, pod) {
@@ -672,6 +673,15 @@ inCpPod.Info = function(pod_id) {
                     }
                 }
             }
+            var btns = [{
+                onclick: "l4iModal.Close()",
+                title: "Close",
+            }];
+            if (options.buttons) {
+                for (var i in options.buttons) {
+                    btns.push(options.buttons[i]);
+                }
+            }
 
             l4iModal.Open({
                 title: "Pod Instance Info",
@@ -679,10 +689,7 @@ inCpPod.Info = function(pod_id) {
                 width: 900,
                 height: 600,
                 data: pod,
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }],
+                buttons: btns,
             });
         });
 
@@ -1041,6 +1048,7 @@ inCpPod.EntryIndex = function(pod_id, nav_target) {
     if (pod_id) {
         inCpPod.entry_active_id = pod_id;
     }
+    l4i.UrlEventActive("pod/index");
 
     $("#comp-content").html("<div id='incp-module-navbar'>\
   <ul id='incp-module-navbar-menus' class='incp-module-nav'>\

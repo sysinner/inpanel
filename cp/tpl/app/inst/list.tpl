@@ -27,7 +27,7 @@
     <a href="#spec.detail" onclick="inCpAppSpec.Info('{[=v.spec.meta.id]}')">{[=v.spec.meta.id]}/v{[=v.spec.meta.version]}</a>
   </td>
   <td>
-    <a href="#pod.detail" onclick="inCpPod.Info('{[=v.operate.pod_id]}')" class="incp-font-fixspace">{[=v.operate.pod_id]}</a>
+    <a href="#pod.detail" onclick="inCpApp.InstPodInfo('{[=v.operate.pod_id]}')" class="incp-font-fixspace">{[=v.operate.pod_id]}</a>
   </td>
   <td>
    {[if (v.operate.options.length > 0) {]}

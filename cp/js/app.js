@@ -915,3 +915,18 @@ inCpApp.InstSetCommit = function() {
     });
 }
 
+inCpApp.InstPodInfo = function(pod_id) {
+    inCpPod.Info(pod_id, {
+        buttons: [{
+            title: "Detail",
+            onclick: "inCpApp.InstPodEntryIndex(\"" + pod_id + "\")",
+            style: "btn-success",
+        }],
+    });
+}
+
+inCpApp.InstPodEntryIndex = function(pod_id) {
+    l4iModal.Close();
+    inCpPod.EntryIndex(pod_id);
+}
+

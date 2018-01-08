@@ -26,23 +26,30 @@ var inOpsPod = {
         },
     ],
     planset_active: null,
+    list_nav_menus: [{
+        name: "Pod Instances",
+        uri: "pod/list",
+    }, {
+        name: "Spec Plans",
+        uri: "pod-spec/plan-list",
+    }],
 }
 
 inOpsPod.Index = function() {
-    var divstr = "<div id='incp-module-navbar'>\
-  <ul id='inops-pod-navbar' class='incp-module-nav'>\
-    <li><a class='l4i-nav-item' href='#pod-spec/plan-list'>Spec Plans</a></li>\
-  </ul>\
-  <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
-</div>\
-<div id='work-content'></div>";
+    inCp.ModuleNavbarMenu("ops/pod/list", inOpsPod.list_nav_menus);
 
-    $("#comp-content").html(divstr);
+    l4i.UrlEventRegister("pod/list", inOpsPod.List, "incp-module-navbar-menus");
+    l4i.UrlEventRegister("pod-spec/plan-list", inOpsPod.SpecPlanList, "incp-module-navbar-menus");
 
+    l4i.UrlEventHandler("pod/list", true);
+}
 
-    l4i.UrlEventRegister("pod-spec/plan-list", inOpsPod.SpecPlanList, "inops-pod-navbar");
-
-    l4i.UrlEventHandler("pod-spec/plan-list", true);
+inOpsPod.List = function() {
+    inCpPod.List(null, {
+        ops_mode: true,
+        entry_back: inOpsPod.Index,
+    });
+// inCp.ModuleNavbarMenu("ops/pod/list", inOpsPod.list_nav_menus);
 }
 
 inOpsPod.SpecPlanList = function() {
@@ -58,7 +65,7 @@ inOpsPod.SpecPlanList = function() {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
-            inCp.OpToolsRefresh("#inops-podspec-planls-optools");
+            // inCp.OpToolsRefresh("#inops-podspec-planls-optools");
 
             if (!data || data.error || !data.kind || data.kind != "PodSpecPlanList") {
 

@@ -1,18 +1,3 @@
-<div id="incp-module-navbar">
-  <ul id="incp-module-navbar-menus" class="incp-module-nav">
-    <li><a class='l4i-nav-item active' href='#pod/instance'>Pod Instance</a></li>
-    <!--<li>
-      <form id="z28k7l" action="#" class="form-inlines">
-        <input id="query_text" type="text"
-          class="form-control incp-query-input" 
-          placeholder="Press Enter to Search" 
-          value="">
-      </form>
-    </li>-->
-  </ul>
-  <ul id="incp-module-navbar-optools" class="incp-module-nav incp-nav-right"></ul>
-</div>
-
 <div id="incp-podls-alert"></div>
 
 <div id="incp-podls" class="incp-div-light"></div>
@@ -23,6 +8,9 @@
     <tr>
       <th>Instance ID</th>
       <th>Name</th>
+      {[? it._options.ops_mode]}
+      <th>User</th>
+      {[?]}
       <th>Spec</th>
       <th>Apps</th>
       {[if (!it._zone_active) {]}
@@ -41,6 +29,9 @@
       <a class="" href="#info/{[=v.meta.id]}" onclick="inCpPod.EntryIndex('{[=v.meta.id]}')">{[=v.meta.id]}</a>
     </td>
     <td>{[=v.meta.name]}</td>
+    {[? it._options.ops_mode]}
+    <td>{[=v.meta.user]}</td>
+    {[?]}
     <td>{[=v.spec.ref.name]}</td>
     <td>{[=v.apps.length]}</td>
     {[if (!it._zone_active) {]}

@@ -32,7 +32,7 @@ var inCpApp = {
 
 inCpApp.Index = function() {
     var divstr = "<div id='incp-module-navbar'>\
-  <ul id='incp-app-navbar' class='incp-module-nav'>\
+  <ul id='incp-module-navbar-menus' class='incp-module-nav'>\
     <li><a class='l4i-nav-item' href='#app/inst/list'>App Instances</a></li>\
     <li><a class='l4i-nav-item' href='#app/spec/list'>App Spec Center</a></li>\
   </ul>\
@@ -43,8 +43,9 @@ inCpApp.Index = function() {
 
     $("#comp-content").html(divstr);
 
-    l4i.UrlEventRegister("app/inst/list", inCpApp.InstListRefresh, "incp-app-navbar");
-    l4i.UrlEventRegister("app/spec/list", inCpAppSpec.ListRefresh, "incp-app-navbar");
+    l4i.UrlEventClean("incp-module-navbar-menus");
+    l4i.UrlEventRegister("app/inst/list", inCpApp.InstListRefresh, "incp-module-navbar-menus");
+    l4i.UrlEventRegister("app/spec/list", inCpAppSpec.ListRefresh, "incp-module-navbar-menus");
 
     l4i.UrlEventHandler("app/inst/list", true);
 }

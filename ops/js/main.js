@@ -43,12 +43,12 @@ inOps.Boot = function() {
 
         seajs.use([
             "~/lessui/css/lessui.css",
-            "~/twbs/4.0/js/bootstrap.js",
+            // "~/twbs/4.0/js/bootstrap.js",
             "~/lessui/js/lessui.js",
             "~/purecss/css/pure.css",
             "~/cp/css/main.css" + inOps.debug_uri(),
             "~/ops/css/main.css" + inOps.debug_uri(),
-            "~/cp/js/main.js" + inOps.debug_uri(),
+            "~/cp/js/pod.js" + inOps.debug_uri(),
             "~/ops/js/host.js" + inOps.debug_uri(),
             "~/ops/js/pod.js" + inOps.debug_uri(),
             "hchart/~/hchart.js" + inCp.debug_uri(),
@@ -64,12 +64,17 @@ inOps.load_index = function() {
 
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "session", function(tpl, session) {
+        var ep = EventProxy.create("tpl", "zones", "session", function(tpl, zones, session) {
 
             if (!session || session.username == "") {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
             inOps.UserSession = session;
+
+            if (!zones.items || zones.items.length == 0) {
+                zones.items = [];
+            }
+            inCp.Zones = zones;
 
             $("#body-content").html(tpl);
 
@@ -105,6 +110,10 @@ inOps.load_index = function() {
             } else {
                 alert("Network Exception, Please try again later (EC:zone-list)");
             }
+        });
+
+        inCp.ApiCmd("host/zone-list", {
+            callback: ep.done("zones"),
         });
 
         l4i.Ajax(inCp.base + "auth/session", {

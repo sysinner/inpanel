@@ -287,6 +287,50 @@ inCp.UtilResSizeFormat = function(size, tofix) {
     return size + " B";
 }
 
+inCp.ModuleNavbarMenu = function(name, items, active) {
+
+    if (!items || items.length < 1) {
+        // $("#incp-module-navbar").remove();
+        return;
+    }
+    items = l4i.Clone(items);
+
+    var elem = document.getElementById("incp-module-navbar-menus");
+    if (!elem) {
+        $("#comp-content").html("<div id='incp-module-navbar'>\
+  <ul id='incp-module-navbar-menus' class='incp-module-nav'></ul>\
+  <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
+</div>\
+<div id='work-content'></div>");
+        inCp.module_navbar_menu_active = null;
+    }
+
+    // if (inCp.module_navbar_menu_active && inCp.module_navbar_menu_active == name) {
+    //     return;
+    // }
+
+    // if (!active && items.length > 0) {
+    //     active = items[0].uri;
+    // }
+
+    var html = "";
+    for (var i in items) {
+        if (!items[i].style) {
+            items[i].style = "";
+        }
+        if (items[i].uri == active) {
+            items[i].style += " active";
+        }
+        if (items[i].onclick) {
+            items[i]._onclick = "onclick=\"" + items[i].onclick + "\"";
+        } else {
+            items[i]._onclick = "";
+        }
+        html += "<li><a class='l4i-nav-item " + items[i].style + "' href='#" + items[i].uri + "' " + items[i]._onclick + ">" + items[i].name + "</a></li>";
+    }
+    $("#incp-module-navbar-menus").html(html);
+    l4i.UrlEventClean("incp-module-navbar-menus");
+}
 
 inCp.OpToolsRefresh = function(div_target, cb) {
     if (!div_target) {
@@ -308,7 +352,7 @@ inCp.OpToolsRefresh = function(div_target, cb) {
     // $("#incp-module-navbar-optools").empty();
     if (typeof div_target == "string") {
 
-        var opt = $("#work-content").find(div_target);
+        var opt = $("#comp-content").find(div_target);
         // console.log(opt.html());
         if (opt) {
             // $("#incp-module-navbar-optools").html(opt.html());

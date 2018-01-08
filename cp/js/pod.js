@@ -69,11 +69,17 @@ var inCpPod = {
 }
 
 inCpPod.Index = function() {
-    $("#comp-content").html('<div id="work-content"></div>');
     inCpPod.List(null, {
         destroy_enable: true
     });
 }
+
+inCpPod.list_nav_menus = [{
+    name: "Pod Instances",
+    uri: "pod/instance",
+}];
+
+inCpPod.list_options = {};
 
 inCpPod.List = function(tplid, options) {
     if (!tplid || tplid.indexOf("/") >= 0) {
@@ -81,13 +87,17 @@ inCpPod.List = function(tplid, options) {
     }
     var alert_id = "#" + tplid + "-alert";
     var uri = "?";
-    options = options || {};
+    if (options) {
+        inCpPod.list_options = options;
+    } else {
+        options = inCpPod.list_options;
+    }
 
     if (inCp.Zones.items && inCp.Zones.items.length == 1) {
         inCpPod.zone_active = inCp.Zones.items[0].meta.id;
         uri += "zone_id=" + inCpPod.zone_active;
     }
-    uri += "&fields=meta/id|name,operate/action|replicas,spec/ref/id|name,spec/zone|cell,apps/meta/name";
+    uri += "&fields=meta/id|name|user,operate/action|replicas,spec/ref/id|name,spec/zone|cell,apps/meta/name";
     if (options.destroy_enable) {
         uri += "&destroy_enable=1";
     }
@@ -98,6 +108,10 @@ inCpPod.List = function(tplid, options) {
         uri += "&exp_app_filter_notin=" + options.exp_app_filter_notin;
     }
 
+    if (!options.ops_mode) {
+        inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus);
+    }
+
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
@@ -105,8 +119,13 @@ inCpPod.List = function(tplid, options) {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
+
             inCp.OpToolActive = null;
-            inCp.OpToolsRefresh("#" + tplid + "-optools");
+            if (options.ops_mode) {
+                inCp.OpToolsClean();
+            } else {
+                inCp.OpToolsRefresh("#" + tplid + "-optools");
+            }
 
             if (!data || data.error || !data.kind || data.kind != "PodList") {
 
@@ -150,6 +169,7 @@ inCpPod.List = function(tplid, options) {
                 return l4i.InnerAlert(alert_id, 'alert-info', "No Item Found Yet ...");
             }
             data._actions = inCp.OpActions;
+            data._options = options;
 
             l4iTemplate.Render({
                 dstid: tplid,
@@ -1043,6 +1063,35 @@ inCpPod.SetCommit = function() {
     });
 }
 
+inCpPod.entry_nav_menus = [{
+    name: "Back",
+    onclick: "inCpPod.EntryBack()",
+    uri: "",
+    style: "primary",
+}, {
+    name: "Overview",
+    uri: "pod/entry/overview",
+}, {
+    name: "Graphs",
+    uri: "pod/entry/stats",
+}, {
+    name: "Access",
+    uri: "pod/entry/setup",
+    onclick: "inCpPod.EntryAccess()",
+}, {
+    name: "Settings",
+    uri: "pod/entry/setup",
+    onclick: "inCpPod.SetInfo()",
+}];
+
+inCpPod.EntryBack = function() {
+    if (inCpPod.list_options.entry_back) {
+        inCpPod.list_options.entry_back();
+    } else {
+        inCpPod.List();
+    }
+}
+
 inCpPod.EntryIndex = function(pod_id, nav_target) {
 
     if (pod_id) {
@@ -1050,19 +1099,7 @@ inCpPod.EntryIndex = function(pod_id, nav_target) {
     }
     l4i.UrlEventActive("pod/index");
 
-    $("#comp-content").html("<div id='incp-module-navbar'>\
-  <ul id='incp-module-navbar-menus' class='incp-module-nav'>\
-    <li><a class='l4i-nav-item primary' href='#' onclick='inCpPod.Index()'>\
-      <span class='glyphicon glyphicon-menu-left' aria-hidden='true'></span> Back\
-    </a></li>\
-    <li><a class='l4i-nav-item' href='#pod/entry/overview'>Overview</a></li>\
-    <li><a class='l4i-nav-item' href='#pod/entry/stats'>Graphs</a></li>\
-    <li><a class='' href='#pod/entry/setup' onclick='inCpPod.EntryAccess()'>Access</a></li>\
-    <li><a class='' href='#pod/entry/setup' onclick='inCpPod.SetInfo()'>Settings</a></li>\
-  </ul>\
-  <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
-</div>\
-<div id='work-content'></div>");
+    inCp.ModuleNavbarMenu("cp/pod/entry", inCpPod.entry_nav_menus);
 
     l4i.UrlEventClean("incp-module-navbar-menus");
     l4i.UrlEventRegister("pod/entry/overview", inCpPod.EntryOverview, "incp-module-navbar-menus");

@@ -77,6 +77,10 @@ var inOpsHost = {
             "datasets": [],
         },
     },
+    list_nav_menus: [{
+        name: "Hosts",
+        uri: "node/list",
+    }],
 }
 
 inOpsHost.ActionTitle = function(action) {
@@ -93,11 +97,12 @@ inOpsHost.NavInit = function() {
 }
 
 inOpsHost.Index = function() {
+
+    inCp.ModuleNavbarMenu("ops/host/index", inOpsHost.list_nav_menus, "node/list");
+
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("zones", function(zones) {
-
-            $("#comp-content").html("<div id='work-content'></div>");
 
             if (!zones || !zones.items) {
                 return alert("Zone Not Found");
@@ -120,20 +125,19 @@ inOpsHost.Index = function() {
         inOpsHost.ZoneRefresh(ep.done("zones"));
     });
 
-    return;
-    inOps.TplFetch("host/index", {
-        callback: function(err, data) {
-            if (err) {
-                return;
-            }
-            $("#comp-content").html(data);
+    // inOps.TplFetch("host/index", {
+    //     callback: function(err, data) {
+    //         if (err) {
+    //             return;
+    //         }
+    //         $("#comp-content").html(data);
 
-            l4i.UrlEventRegister("host/node-list", inOpsHost.NodeList, "inops-host-nav-items");
-            l4i.UrlEventRegister("host/cell-list", inOpsHost.CellList, "inops-host-nav-items");
-            l4i.UrlEventRegister("host/zone-list", inOpsHost.ZoneList, "inops-host-nav-items");
-            l4i.UrlEventHandler("host/node-list");
-        }
-    });
+//         l4i.UrlEventRegister("host/node-list", inOpsHost.NodeList, "inops-host-nav-items");
+//         l4i.UrlEventRegister("host/cell-list", inOpsHost.CellList, "inops-host-nav-items");
+//         l4i.UrlEventRegister("host/zone-list", inOpsHost.ZoneList, "inops-host-nav-items");
+//         l4i.UrlEventHandler("host/node-list");
+//     }
+// });
 }
 
 inOpsHost.NodeList = function(zoneid, cellid) {
@@ -203,7 +207,7 @@ inOpsHost.NodeList = function(zoneid, cellid) {
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
             if (tpl) {
-                $("#comp-content").html('<div id="work-content">' + tpl + '</div>');
+                $("#work-content").html(tpl);
             }
             if (inOpsHost.single_node) {
                 $("#inops-host-nodes-navbar").css({
@@ -471,7 +475,22 @@ inOpsHost.NodeNewCommit = function() {
     });
 }
 
-
+inOpsHost.entry_nav_menus = [{
+    name: "Back",
+    onclick: "inOpsHost.NodeList()",
+    uri: "",
+    style: "primary",
+}, {
+    name: "Overview",
+    uri: "host/node/overview",
+}, {
+    name: "Graphs",
+    uri: "host/node/stats",
+}, {
+    name: "Settings",
+    uri: "host/node/setup",
+    onclick: "inOpsHost.NodeSetForm()",
+}];
 
 inOpsHost.Node = function(zone_id, host_id, nav_target) {
 
@@ -489,20 +508,8 @@ inOpsHost.Node = function(zone_id, host_id, nav_target) {
     inOpsHost.node_active_zone_id = zone_id;
     inOpsHost.node_active_id = host_id;
 
-    $("#comp-content").html("<div id='incp-module-navbar'>\
-  <ul id='incp-module-navbar-menus' class='incp-module-nav'>\
-    <li><a class='l4i-nav-item primary' href='#' onclick='inOpsHost.NodeList()'>\
-      <span class='glyphicon glyphicon-menu-left' aria-hidden='true'></span> Back\
-    </a></li>\
-    <li><a class='l4i-nav-item' href='#host/node/overview'>Overview</a></li>\
-    <li><a class='l4i-nav-item' href='#host/node/stats'>Graphs</a></li>\
-    <li><a class='' href='#host/node/setup' onclick='inOpsHost.NodeSetForm()'>Setup</a></li>\
-  </ul>\
-  <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
-</div>\
-<div id='work-content'></div>");
+    inCp.ModuleNavbarMenu("ops/host/entry", inOpsHost.entry_nav_menus);
 
-    l4i.UrlEventClean("incp-module-navbar-menus");
     l4i.UrlEventRegister("host/node/overview", inOpsHost.NodeOverview, "incp-module-navbar-menus");
     l4i.UrlEventRegister("host/node/stats", inOpsHost.NodeStats, "incp-module-navbar-menus");
 

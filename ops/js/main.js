@@ -24,10 +24,10 @@ inOps.Boot = function() {
 
     seajs.use([
         "~/twbs/4.0/css/bootstrap.css",
-        "~/cp/js/jquery.js",
+        "~/jquery/jquery.js",
         "~/cp/js/main.js" + inOps.debug_uri(),
-        "~/cp/css/main.css" + inOps.debug_uri(),
         "~/lessui/js/browser-detect.js",
+        "~/purecss/css/pure.css",
     ], function() {
 
         var browser = BrowserDetect.browser;
@@ -43,14 +43,14 @@ inOps.Boot = function() {
 
         seajs.use([
             "~/lessui/css/lessui.css",
-            // "~/twbs/4.0/js/bootstrap.js",
             "~/lessui/js/lessui.js",
-            "~/purecss/css/pure.css",
             "~/cp/css/main.css" + inOps.debug_uri(),
-            "~/ops/css/main.css" + inOps.debug_uri(),
             "~/cp/js/pod.js" + inOps.debug_uri(),
+            "~/cp/js/app.js" + inOps.debug_uri(),
+            "~/cp/js/app-spec.js" + inOps.debug_uri(),
             "~/ops/js/host.js" + inOps.debug_uri(),
             "~/ops/js/pod.js" + inOps.debug_uri(),
+            "~/ops/js/app.js" + inOps.debug_uri(),
             "hchart/~/hchart.js" + inCp.debug_uri(),
         ], inOps.load_index);
     });
@@ -101,6 +101,7 @@ inOps.load_index = function() {
 
             l4i.UrlEventRegister("host/index", inOpsHost.Index, "inops-topbar-nav-menus");
             l4i.UrlEventRegister("pod/index", inOpsPod.Index, "inops-topbar-nav-menus");
+            l4i.UrlEventRegister("app/index", inOpsApp.Index, "inops-topbar-nav-menus");
             l4i.UrlEventHandler("pod/index", true);
         });
 

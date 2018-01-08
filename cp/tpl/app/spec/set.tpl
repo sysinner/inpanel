@@ -13,9 +13,9 @@
 }
 </style>
 <script id="incp-app-specset-tpl" type="text/html">
-<div class="panel panel-default">
-  <div class="panel-heading">{[=it.actionTitle]}</div>
-  <div class="panel-body">
+<div class="panel panel-default card">
+  <div class="panel-heading card-header">{[=it.actionTitle]}</div>
+  <div class="panel-body card-body">
 
     {[if (it.spec.meta.id && it.spec.meta.id.length > 0) {]}
     <input type="hidden" name="meta_id" value="{[=it.spec.meta.id]}">

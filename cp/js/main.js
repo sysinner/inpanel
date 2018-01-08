@@ -73,7 +73,7 @@ inCp.Boot = function(login_first) {
 
     seajs.use([
         "~/twbs/3.3/css/bootstrap.css",
-        "~/cp/js/jquery.js",
+        "~/jquery/jquery.js",
         "~/lessui/js/browser-detect.js",
         "~/purecss/css/pure.css",
     ], function() {

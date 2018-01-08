@@ -19,6 +19,10 @@ body {
   display: block;
 }
 
+.hide {
+  display: none;
+}
+
 #body-content {
   background-color: #f5f5f5;
 }
@@ -80,6 +84,7 @@ body {
   float: right !important;
   margin-right: 2px;
 }
+
 .incp-nav-right>li:last-child {
   margin-right: 0;
 }
@@ -125,6 +130,7 @@ body {
   font-size: 16px;
   font-weight: bold;
 }
+
 
 
 
@@ -335,7 +341,8 @@ body {
   margin-bottom: 10px;
   display: block;
 }
-#comp-content > #incp-module-navbar {
+
+#comp-content>#incp-module-navbar {
   padding: 0 10px;
 }
 
@@ -448,8 +455,8 @@ body {
 }
 
 .incp-div-h-title {
-   padding: 10px 0 5px 0;
-   font-size : 18px;
+  padding: 10px 0 5px 0;
+  font-size: 18px;
 }
 
 .incp-div-light {
@@ -497,6 +504,7 @@ body {
 }
 
 
+
 /* ext::app */
 
 .incp-app-list-qry-input {
@@ -542,6 +550,11 @@ body {
 
 .incp-app-specset-gn-box .body td {
   padding: 3px;
+}
+
+.incp-app-specset-gn-box pre>code {
+  white-space: pre-wrap;
+  display: block;
 }
 
 #incp-appset-bound {
@@ -672,21 +685,25 @@ button {
 .incp-div-label-block-frame-inline>div:last-child {
   margin-right: 0;
 }
+
 .incp-div-label-block {
   padding: 10px;
   position: relative;
   flex: 1 0 160px;
   margin-right: 10px;
 }
-.incp-div-label-block > .name {
+
+.incp-div-label-block>.name {
   font-size: 12px;
   color: #868e96;
 }
-.incp-div-label-block > .name-strong {
+
+.incp-div-label-block>.name-strong {
   font-size: 16px;
   font-weight: bold;
 }
-.incp-div-label-block > .value {
+
+.incp-div-label-block>.value {
   padding-top: 5px;
   font-size: 20px;
   font-weight: bold;
@@ -707,11 +724,13 @@ button {
   display: flex;
   flex-wrap: wrap;
 }
+
 #incp-podentry-overview {
   position: relative;
   flex: 2 0 800px;
   margin: 0 10px 10px 10px;
 }
+
 #incp-podentry-sidebar {
   position: relative;
   flex: 4 1 800px;
@@ -759,4 +778,11 @@ button {
 
 .incp-footer .url-info {
   font-size: 1.1em;
+}
+
+
+/* fix twbs 3.0 to 4.0 */
+
+.panel-default.card {
+  margin-bottom: 10px;
 }

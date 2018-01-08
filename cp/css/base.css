@@ -19,6 +19,10 @@ body {
   display: block;
 }
 
+.hide {
+  display: none;
+}
+
 #body-content {
   background-color: #f5f5f5;
 }
@@ -33,6 +37,7 @@ body {
   justify-content: center;
   align-items: center;
 }
+
 .incp-well-box {
   position: absolute;
   width: 700px;
@@ -41,17 +46,20 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 .incp-well-panel {
   background-color: rgba(255, 255, 255, 1);
   font-size: 16px;
 }
-.incp-well-panel > .header {
+
+.incp-well-panel>.header {
   background-color: #333;
   color: #fff;
   padding: 5px;
   font-size: 20px;
 }
-.incp-well-panel > .body2c {
+
+.incp-well-panel>.body2c {
   border-top: 2px solid #333;
   padding: 40px 0;
   width: 100%;
@@ -60,44 +68,52 @@ body {
   align-items: center;
   justify-content: center;
 }
-.incp-well-panel > .body2c > .body2c1 {
+
+.incp-well-panel>.body2c>.body2c1 {
   width: 160px;
   float: left;
   text-align: center;
   flex: initial;
 }
-.incp-well-panel > .body2c > .body2c2 {
+
+.incp-well-panel>.body2c>.body2c2 {
   font-size: 180%;
   line-height: 150%;
   flex: 1;
   display: block;
 }
-.incp-well-panel > .status {
+
+.incp-well-panel>.status {
   margin: 0;
   padding: 20px;
   line-height: 150%;
   font-size: 120%;
 }
-.incp-well-panel > .status > div {
+
+.incp-well-panel>.status>div {
   clear: both;
   margin: 0 0 10px 0;
   padding: 0;
   line-height: 200%;
 }
-.incp-well-panel > .status > div:last-child {
+
+.incp-well-panel>.status>div:last-child {
   margin-bottom: 0;
 }
-.incp-well-panel > .status_dark {
+
+.incp-well-panel>.status_dark {
   background-color: #333;
   color: #fff;
   text-align: center;
   font-size: 140%;
 }
-.incp-well-panel > .info {
+
+.incp-well-panel>.info {
   background-color: #d9edf7;
   border-color: #bcdff1;
   color: #31708f;
 }
+
 .incp-well-panel .button {
   padding: 6px 20px;
   background-color: #fff;
@@ -106,27 +122,38 @@ body {
   line-height: 100%;
   text-decoration: none;
 }
-.incp-well-panel > .info .button {
+
+.incp-well-panel>.info .button {
   border: 1px solid #31708f;
   border-radius: 3px;
 }
+
 .incp-well-panel a {
   margin: 0;
   padding: 0;
   text-decoration: none;
 }
 
-.incp-well-box > .footer {
+.incp-well-box>.footer {
   clear: both;
   margin: 10px auto;
   text-align: center;
   color: #666;
   font-size: 14px;
 }
-.incp-well-box > .footer > .url-info {
+
+.incp-well-box>.footer>.url-info {
   font-size: 1.1em;
 }
-.incp-well-box > .footer a {
+
+.incp-well-box>.footer a {
   color: #666;
   font-weight: bold;
+}
+
+
+/* fix twbs 3.0 to 4.0 */
+
+.panel-default.card {
+  margin-bottom: 10px;
 }

@@ -4,9 +4,9 @@
 <div id="incp-appset" style="box-sizing: border-box;">loading</div>
 
 <script id="incp-appset-tpl" type="text/html">
-<div class="panel panel-default">
-  <div class="panel-heading">App Instance Settings</div>
-  <div class="panel-body">
+<div class="panel panel-default card">
+  <div class="panel-heading card-header">App Instance Settings</div>
+  <div class="panel-body card-body">
 
     <div class="l4i-form-group">
       <label>Name</label>

@@ -70,7 +70,7 @@ var inCpPod = {
 
 inCpPod.Index = function() {
     inCpPod.List(null, {
-        destroy_enable: true
+        // destroy_enable: true
     });
 }
 
@@ -109,7 +109,9 @@ inCpPod.List = function(tplid, options) {
     }
 
     if (!options.ops_mode) {
-        inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus);
+        inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus, "pod/instance");
+    } else {
+        uri += "&filter_meta_user=all";
     }
 
     seajs.use(["ep"], function(EventProxy) {

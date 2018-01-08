@@ -1,6 +1,6 @@
-<div class="panel panel-default">
-  <div class="panel-heading">Info</div>
-  <div class="panel-body">
+<div class="panel panel-default card">
+  <div class="panel-heading card-header">Info</div>
+  <div class="panel-body card-body">
     <table width="100%" class="incp-panel-table">
       <tr>
         <td width="220" class="lpt-title">ID</td>
@@ -23,9 +23,9 @@
 </div>
 
 
-<div class="panel panel-default">
-  <div class="panel-heading">Spec</div>
-  <div class="panel-body">
+<div class="panel panel-default card">
+  <div class="panel-heading card-header">Spec</div>
+  <div class="panel-body card-body">
     <table width="100%" class="incp-panel-table">
       <tr>
         <td width="220" class="lpt-title">ID</td>
@@ -84,9 +84,9 @@
 </div>
 
 
-<div class="panel panel-default">
-  <div class="panel-heading">Operating</div>
-  <div class="panel-body">
+<div class="panel panel-default card">
+  <div class="panel-heading card-header">Operating</div>
+  <div class="panel-body card-body">
     <table width="100%" class="incp-panel-table">
       <tr>
         <td width="220" class="lpt-title">Action</td>
@@ -133,9 +133,9 @@
 
 
 {[?it.apps]}
-<div class="panel panel-default">
-  <div class="panel-heading">Applications</div>
-  <div class="panel-body">
+<div class="panel panel-default card">
+  <div class="panel-heading card-header">Applications</div>
+  <div class="panel-body card-body">
     <table class="table table-hover">
       <thead>
         <tr>

@@ -1,3 +1,9 @@
+<style>
+.table-reset td {
+  padding: 3px 10px;
+  border: 0;
+}
+</style>
 <div id="incp-podentry-index">
   <div id="incp-podentry-overview"></div>
   <div id="incp-podentry-sidebar"></div>
@@ -138,7 +144,7 @@
 {[?it.operate.replicas]}
 <div class="incp-div-h-title">Replica Instances</div>
 <div class="incp-div-light">
-<table class="table table-hover" style="margin-bottom:0">
+<table class="table" style="margin-bottom:0">
   <thead>
     <tr>
       <th>Rep ID</th>
@@ -153,10 +159,10 @@
     <td>{[?rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}</td>
     <td>
       {[? rep.ports]}
-      <table style="" class="incp-font-fixspace">
+      <table class="incp-font-fixspace table-reset">
         {[~rep.ports :opv]}
         <tr>
-          <td style="padding-right:20px">
+          <td>
           {[if (opv.name == "http" || opv.name == "https") {]}
             <a href="{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}" target="_blank">{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}</a>
           {[ } else if (opv.name == "ssh" && opv.box_port == 2022) {]}

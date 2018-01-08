@@ -2,9 +2,9 @@
 <div id="incp-podnew-form" style="padding-left:4px;"></div>
 
 <script type="text/html" id="incp-podnew-inner">
-<div class="panel panel-default">
-  <div class="panel-heading">New Pod Instance</div>
-  <div class="panel-body">
+<div class="panel panel-default card">
+  <div class="panel-heading card-header">New Pod Instance</div>
+  <div class="panel-body card-body">
     <div class="l4i-form-group">
       <label class="">Name</label>
       <div class="">

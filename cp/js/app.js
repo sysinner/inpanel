@@ -28,6 +28,7 @@ var inCpApp = {
     },
     instSet: {},
     instDeployActive: null,
+    list_options: {},
 }
 
 inCpApp.Index = function() {
@@ -47,6 +48,7 @@ inCpApp.Index = function() {
     l4i.UrlEventRegister("app/inst/list", inCpApp.InstListRefresh, "incp-module-navbar-menus");
     l4i.UrlEventRegister("app/spec/list", inCpAppSpec.ListRefresh, "incp-module-navbar-menus");
 
+    inCpApp.list_options = {};
     l4i.UrlEventHandler("app/inst/list", true);
 }
 
@@ -54,14 +56,25 @@ inCpApp.InstLaunchNew = function() {
     l4i.UrlEventHandler("app/spec/list");
 }
 
-inCpApp.InstListRefresh = function() {
+inCpApp.InstListRefresh = function(options) {
     var uri = "?";
     if (document.getElementById("qry_text")) {
         uri += "qry_text=" + $("#qry_text").val();
     }
-    uri += "&fields=meta/id|name|updated,spec/meta/id|name|version,operate/action|pod_id,operate/options/name";
+    uri += "&fields=meta/id|name|user|updated,spec/meta/id|name|version,operate/action|pod_id,operate/options/name";
 
     var alert_id = "#incp-appls-alert";
+
+    if (options) {
+        inCpApp.list_options = options;
+    } else {
+        options = inCpApp.list_options;
+    }
+    if (!options.ops_mode) {
+        // inCp.ModuleNavbarMenu("cp/app/list", inCpApp.list_nav_menus, "app/list");
+    } else {
+        uri += "&filter_meta_user=all";
+    }
 
     seajs.use(["ep"], function(EventProxy) {
 
@@ -70,7 +83,11 @@ inCpApp.InstListRefresh = function() {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
-            inCp.OpToolsRefresh("#incp-appls-optools");
+            if (options.ops_mode) {
+                inCp.OpToolsClean();
+            } else {
+                inCp.OpToolsRefresh("#incp-appls-optools");
+            }
 
             if (!rsj || rsj.kind != "AppList"
                 || !rsj.items || rsj.items.length < 1) {
@@ -98,6 +115,7 @@ inCpApp.InstListRefresh = function() {
                 data: {
                     items: rsj.items,
                     _actions: inCp.OpActions,
+                    _options: options,
                 },
             });
         });
@@ -738,6 +756,8 @@ inCpApp.InstNewConfirm = function() {
     l4iModal.Open({
         id: "incp-appnew-confirm",
         title: "Confirm",
+        width: 800,
+        height: 500,
         tpluri: inCp.TplPath("app/inst/new.confirm.p5"),
         data: inCpApp.instSet,
         backEnable: true,

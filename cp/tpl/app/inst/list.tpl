@@ -1,28 +1,31 @@
 <div id="incp-appls-alert" class="alert hide"></div>
-
-<div class="incp-div-light">
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Spec</th>
-      <th>Pod</th>
-      <th>Options</th>
-      <th>Updated</th>
-      <th>Status</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="incp-appls"></tbody>
-</table>
-</div>
+<div id="incp-appls" class="incp-div-light"></div>
 
 <script id="incp-appls-tpl" type="text/html">
+<table class="table table-hover">
+<thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    {[? it._options.ops_mode]}
+    <th>User</th>
+    {[?]}
+    <th>Spec</th>
+    <th>Pod</th>
+    <th>Options</th>
+    <th>Updated</th>
+    <th>Status</th>
+    <th></th>
+  </tr>
+</thead>
+<tbody>
 {[~it.items :v]}
 <tr>
   <td class="incp-font-fixspace">{[=v.meta.id]}</td>
   <td>{[=v.meta.name]}</td>
+  {[? it._options.ops_mode]}
+  <td>{[=v.meta.user]}</td>
+  {[?]}
   <td class="incp-font-fixspace">
     <a href="#spec.detail" onclick="inCpAppSpec.Info('{[=v.spec.meta.id]}')">{[=v.spec.meta.id]}/v{[=v.spec.meta.version]}</a>
   </td>
@@ -52,6 +55,8 @@
   </td>
 </tr>
 {[~]}
+</tbody>
+</table>
 </script>
 
 <script type="text/javascript">

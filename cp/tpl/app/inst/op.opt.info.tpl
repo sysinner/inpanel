@@ -3,16 +3,16 @@
 <div id="incp-appinst-opopt-info">
 {[~it.operate.options :cv]}
 {[if (cv.items && cv.items.length > 0) {]}
-<div class="panel panel-default">
+<div class="panel panel-default card">
 
-  <div class="panel-heading">
+  <div class="panel-heading card-header">
     <strong>{[=cv.name]}</strong>
     {[if (cv.ref && cv.ref.app_id.length >= 12) {]}
     <p>Refer to App {[=cv.ref.app_id]}</p> 
     {[}]}
   </div>
 
-  <div class="panel-body">
+  <div class="panel-body card-body">
     <table width="100%" class="incp-panel-table">
       {[~cv.items :cvf]}
       <tr>

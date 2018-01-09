@@ -1,5 +1,5 @@
 var inCp = {
-    version: "",
+    version: "0.3",
     base: "/in/cp/",
     tplbase: "/in/cp/-/",
     api: "/in/v1/",
@@ -73,7 +73,7 @@ inCp.Boot = function(login_first) {
 
     seajs.use([
         "~/twbs/3.3/css/bootstrap.css",
-        "~/jquery/jquery.js",
+        "~/jquery/jquery.js" + inCp.debug_uri(),
         "~/lessui/js/browser-detect.js",
         "~/purecss/css/pure.css",
     ], function() {

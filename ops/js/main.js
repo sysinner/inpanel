@@ -1,4 +1,5 @@
 var inOps = {
+    version: "0.3",
     base: "/in/ops/",
     basetpl: "/in/ops/-/",
     api: "/in/ops/",
@@ -9,7 +10,7 @@ var inOps = {
 
 inOps.debug_uri = function() {
     if (!inOps.debug) {
-        return "";
+        return "?_=" + inOps.version;
     }
     return "?_=" + Math.random();
 }
@@ -24,7 +25,7 @@ inOps.Boot = function() {
 
     seajs.use([
         "~/twbs/4.0/css/bootstrap.css",
-        "~/jquery/jquery.js",
+        "~/jquery/jquery.js" + inOps.debug_uri(),
         "~/cp/js/main.js" + inOps.debug_uri(),
         "~/lessui/js/browser-detect.js",
         "~/purecss/css/pure.css",

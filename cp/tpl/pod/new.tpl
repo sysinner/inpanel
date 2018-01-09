@@ -1,5 +1,10 @@
+<style>
+.less-modal-body-pagelet #incp-podnew-form {
+  padding-left: 4px;
+}
+</style>
 <div id="incp-podnew-alert"></div>
-<div id="incp-podnew-form" style="padding-left:4px;"></div>
+<div id="incp-podnew-form"></div>
 
 <script type="text/html" id="incp-podnew-inner">
 <div class="panel panel-default card">
@@ -81,11 +86,12 @@
   <label>Resources</label>
   <div class="incp-form-box-selector" id="incp-podnew-res-computes">
     {[~it.res_computes :v]}
-    <div class="incp-form-box-selector-item {[if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
+    <div class="incp-form-box-selector-item {[if (!inCpPod.NewOptionResFit(v)) {]}disable{[} else if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-res-compute-id-{[=v.ref_id]}"
       onclick="inCpPod.NewPlanResComputeChange('{[=v.ref_id]}')">
       <div>CPU: {[=v.cpu_limit]}m</div>
       <div>Memory: {[=inCp.UtilResSizeFormat(v.mem_limit)]}</div>
+	  <span class="disable_close">&times;</span>
     </div>
     {[~]}
   </div>

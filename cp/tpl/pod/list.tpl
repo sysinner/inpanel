@@ -70,7 +70,7 @@ $("#incp-podls").on("click", ".incp-pod-item", function() {
 
 <script type="text/html" id="incp-podls-optools">
 <li class="incp-btn incp-btn-primary">
-  <a href="#" onclick="inCpPod.New()">
+  <a href="#" onclick="inCpPod.New({})">
     New Pod Instance
   </a>
 </li>

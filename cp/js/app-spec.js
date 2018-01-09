@@ -928,12 +928,11 @@ inCpAppSpec.SetCommit = function() {
         inCpAppSpec.setActive.exp_res.cpu_min = parseInt(form.find("input[name=exp_res_cpu_min]").val());
         inCpAppSpec.setActive.exp_res.mem_min = parseInt(form.find("input[name=exp_res_mem_min]").val() * inCp.ByteMB);
         var vol_min = parseFloat(form.find("input[name=exp_res_vol_min]").val());
-        if (vol_min < 1.0) {
-            vol_min = vol_min * 1000.0;
+        if (vol_min >= 1.0) {
+            inCpAppSpec.setActive.exp_res.vol_min = parseInt(vol_min) * inCp.ByteGB;
         } else {
-            vol_min = vol_min * 1024.0;
+            inCpAppSpec.setActive.exp_res.vol_min = parseInt(vol_min * 10) * 100 * inCp.ByteMB;
         }
-        inCpAppSpec.setActive.exp_res.vol_min = parseInt(vol_min) * inCp.ByteMB;
 
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'alert-danger', err);

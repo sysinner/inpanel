@@ -4,8 +4,8 @@
     <div>
       <div class="btn btn-default" style="width:100%;font-weight:bold;" onclick="_incp_podls_selector_new()">
         <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
-	    Create new Pod Instance
-	  </div>
+        Create new Pod Instance
+      </div>
     </div>
   </div>
 
@@ -49,13 +49,11 @@
 <script type="text/javascript">
 function _incp_podls_selector_new()
 {
-	var opts = {
-      "open_modal": true,
+	if (inCpPod.list_options.new_options) {
+		inCpPod.New(inCpPod.list_options.new_options);
+	} else {
+		inCpPod.New({"open_modal": false});
 	}
-	if (l4iModal.CurOptions.fn_selector) {
-		opts.app_new_callback = l4iModal.CurOptions.fn_selector;
-	}
-	inCpPod.New(opts);
 }
 
 function _incp_podls_selector_pod(id)

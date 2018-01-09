@@ -702,6 +702,26 @@ inCpApp.InstNew = function(spec_id) {
     });
 }
 
+inCpApp.instNewPodSelectCallback = function(err, pod_id) {
+    inCp.ApiCmd("pod/entry?id=" + pod_id, {
+        callback: function(err, podjs) {
+
+            if (err) {
+                return alert(err);
+            }
+
+            if (!podjs || podjs.kind != "Pod") {
+                return alert("Pod Not Found");
+            }
+
+            inCpApp.instSet.operate.pod_id = podjs.meta.id;
+            inCpApp.instSet._operate_pod = podjs;
+
+            inCpApp.InstNewConfirm();
+        },
+    });
+}
+
 inCpApp.InstNewPodSelect = function() {
     var alert_id = "#incp-appnew-alert";
 
@@ -722,29 +742,19 @@ inCpApp.InstNewPodSelect = function() {
         callback: function() {
             inCpPod.List("incp-podls-selector", {
                 "operate_action": inCp.OpActionStart,
-                "exp_app_filter_notin": inCpApp.instSet.spec.meta.id,
-            });
-        },
-        fn_selector: function(err, rsp) {
-
-            inCp.ApiCmd("pod/entry?id=" + rsp, {
-                callback: function(err, podjs) {
-
-                    if (err) {
-                        return alert(err);
-                    }
-
-                    if (!podjs || podjs.kind != "Pod") {
-                        return alert("Pod Not Found");
-                    }
-
-                    inCpApp.instSet.operate.pod_id = podjs.meta.id;
-                    inCpApp.instSet._operate_pod = podjs;
-
-                    inCpApp.InstNewConfirm();
+                "exp_filter_app_notin": inCpApp.instSet.spec.meta.id,
+                "exp_filter_app_spec_id": inCpApp.instSet.spec.meta.id,
+                "new_options": {
+                    "open_modal": true,
+                    "app_cpu_min": inCpApp.instSet.spec.exp_res.cpu_min,
+                    "app_mem_min": inCpApp.instSet.spec.exp_res.mem_min,
+                    "app_vol_min": inCpApp.instSet.spec.exp_res.vol_min,
+                    "app_new_callback": inCpApp.instNewPodSelectCallback,
+                    "app_spec_id": inCpApp.instSet.spec.meta.id,
                 },
             });
         },
+        fn_selector: inCpApp.instNewPodSelectCallback,
         buttons: [{
             onclick: "l4iModal.Close()",
             title: "Close",

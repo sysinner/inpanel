@@ -134,6 +134,7 @@ body {
 
 
 
+
 /** user bar **/
 
 #incp-topbar-userbar>.iam-name {
@@ -327,13 +328,35 @@ body {
 }
 
 .incp-form-box-selector-item:hover {
-  outline: #BDC3C7 solid 3px;
+  outline: #5cb85c solid 3px;
 }
 
 .incp-form-box-selector-item.selected {
   outline: #5cb85c solid 3px;
 }
 
+.incp-form-box-selector-item.disable {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.incp-form-box-selector-item.disable:hover {
+  outline: #a94442 solid 3px;
+}
+
+.incp-form-box-selector-item>.disable_close {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  color: #a94442;
+  line-height: 100%;
+  display: none;
+}
+
+.incp-form-box-selector-item.disable>.disable_close {
+  display: block;
+}
 
 #incp-module-navbar {
   clear: both;
@@ -502,6 +525,7 @@ body {
   color: #fff !important;
   background-color: rgb(0, 120, 231);
 }
+
 
 
 
@@ -779,6 +803,7 @@ button {
 .incp-footer .url-info {
   font-size: 1.1em;
 }
+
 
 
 /* fix twbs 3.0 to 4.0 */

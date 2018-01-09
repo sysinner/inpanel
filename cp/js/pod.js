@@ -104,8 +104,11 @@ inCpPod.List = function(tplid, options) {
     if (options.operate_action) {
         uri += "&operate_action=" + options.operate_action;
     }
-    if (options.exp_app_filter_notin) {
-        uri += "&exp_app_filter_notin=" + options.exp_app_filter_notin;
+    if (options.exp_filter_app_notin) {
+        uri += "&exp_filter_app_notin=" + options.exp_filter_app_notin;
+    }
+    if (options.exp_filter_app_spec_id) {
+        uri += "&exp_filter_app_spec_id=" + options.exp_filter_app_spec_id;
     }
 
     if (!options.ops_mode) {
@@ -258,7 +261,11 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
 
 
 inCpPod.New = function(options) {
-    options = options || {};
+    if (options) {
+        inCpPod.new_options = options;
+    } else {
+        options = inCpPod.new_options;
+    }
     var alert_id = "#incp-podnew-alert";
 
     seajs.use(["ep"], function(EventProxy) {
@@ -287,7 +294,6 @@ inCpPod.New = function(options) {
             if (!pod._plan_selected) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "No SpecPodPlan Found");
             }
-
 
             inCpPod.plans = plans;
             inCpPod.plan_selected = pod._plan_selected;
@@ -336,6 +342,7 @@ inCpPod.New = function(options) {
                             data: {
                                 items: inCpPod.plans.items,
                                 _plan_selected: inCpPod.plan_selected,
+                                _options: options,
                             },
                             callback: fnfre,
                         });
@@ -361,6 +368,7 @@ inCpPod.New = function(options) {
                             data: {
                                 items: inCpPod.plans.items,
                                 _plan_selected: inCpPod.plan_selected,
+                                _options: options,
                             },
                             callback: fnfre,
                         });
@@ -388,6 +396,22 @@ inCpPod.New = function(options) {
     });
 }
 
+inCpPod.NewOptionResFit = function(v) {
+    if (inCpPod.new_options.app_cpu_min &&
+        inCpPod.new_options.app_cpu_min > 0 &&
+        v.cpu_limit < inCpPod.new_options.app_cpu_min) {
+        return false;
+    }
+
+    if (inCpPod.new_options.app_mem_min &&
+        inCpPod.new_options.app_mem_min > 0 &&
+        v.mem_limit < inCpPod.new_options.app_mem_min) {
+        return false;
+    }
+
+    return true;
+}
+
 inCpPod.NewPlanChange = function(plan_id) {
     if (inCpPod.plan_selected == plan_id) {
         return;
@@ -404,6 +428,22 @@ inCpPod.NewPlanChange = function(plan_id) {
 inCpPod.NewRefreshPlan = function() {
     var alert_id = "#incp-podnew-alert";
 
+    var vol_min = 0,
+        cpu_min = 0,
+        mem_min = 0;
+    if (inCpPod.new_options.app_vol_min &&
+        inCpPod.new_options.app_vol_min > 0) {
+        vol_min = inCpPod.new_options.app_vol_min;
+    }
+    if (inCpPod.new_options.app_cpu_min &&
+        inCpPod.new_options.app_cpu_min > 0) {
+        cpu_min = inCpPod.new_options.app_cpu_min;
+    }
+    if (inCpPod.new_options.app_mem_min &&
+        inCpPod.new_options.app_mem_min > 0) {
+        mem_min = inCpPod.new_options.app_mem_min;
+    }
+
     for (var i in inCpPod.plans.items) {
 
         if (inCpPod.plans.items[i].meta.id != inCpPod.plan_selected) {
@@ -416,6 +456,12 @@ inCpPod.NewRefreshPlan = function() {
         for (var i in inCpPod.plan.res_volumes) {
 
             var vol = inCpPod.plan.res_volumes[i];
+
+            if (vol_min > 0 && vol_min <= vol.limit) {
+                if (vol.default < vol_min) {
+                    vol.default = vol_min;
+                }
+            }
 
             if (vol.default < 1073741824) {
                 vol._valued = (vol.default / 1073741824).toFixed(1);
@@ -493,8 +539,19 @@ inCpPod.NewRefreshPlan = function() {
             inCpPod.plan.image_selected = inCpPod.plan.image_default;
         }
 
-        // //
-        if (!inCpPod.plan.res_compute_selected) {
+        //
+        inCpPod.plan.res_compute_selected = null;
+        if (cpu_min > 0 && mem_min > 0) {
+            for (var i in inCpPod.plan.res_computes) {
+                if (inCpPod.plan.res_computes[i].cpu_limit < cpu_min ||
+                    inCpPod.plan.res_computes[i].mem_limit < mem_min) {
+                    continue;
+                }
+                if (!inCpPod.plan.res_compute_selected) {
+                    inCpPod.plan.res_compute_selected = inCpPod.plan.res_computes[i].ref_id;
+                }
+            }
+        } else if (!inCpPod.plan.res_compute_selected) {
             inCpPod.plan.res_compute_selected = inCpPod.plan.res_compute_default;
         }
 
@@ -526,6 +583,17 @@ inCpPod.NewPlanResComputeChange = function(res_compute_id) {
     if (!inCpPod.plan || inCpPod.plan.res_compute_selected == res_compute_id) {
         return;
     }
+
+    for (var i in inCpPod.plan.res_computes) {
+        if (inCpPod.plan.res_computes[i].ref_id != res_compute_id) {
+            continue;
+        }
+        if (!inCpPod.NewOptionResFit(inCpPod.plan.res_computes[i])) {
+            return l4i.InnerAlert("#incp-podnew-alert", "alert-danger", "this Resource Spec can not fit the Application Resource Requirements, please try another Spec or change the Pod Plan");
+        }
+        break;
+    }
+
 
     $("#incp-podnew-res-computes").find(".incp-form-box-selector-item.selected").removeClass("selected");
     $("#incp-podnew-res-compute-id-" + res_compute_id).addClass("selected");
@@ -602,16 +670,31 @@ inCpPod.newAccountChargeRefresh = function() {
 
 inCpPod.NewCommit = function() {
     var alert_id = "#incp-podnew-alert",
+        url = "",
         vol_size = parseFloat($("#incp-podnew-resource-value").val());
     if (vol_size <= 0) {
-        return;
+        return l4i.InnerAlert(alert_id, "alert-danger", "System Storage Not Set");
     }
 
-    // GB
-    if (vol_size < 1.0) {
-        vol_size = vol_size * 1048576000;
+    if (!inCpPod.plan.res_compute_selected) {
+        return l4i.InnerAlert(alert_id, "alert-danger", "Resource Option Not Set");
+    }
+
+    if (vol_size >= 1.0) {
+        vol_size = parseInt(vol_size) * inCp.ByteGB;
     } else {
-        vol_size = vol_size * 1073741824;
+        vol_size = parseInt(vol_size * 10) * 100 * inCp.ByteMB;
+    }
+
+    if (inCpPod.new_options.app_vol_min &&
+        inCpPod.new_options.app_vol_min > 0) {
+        if (vol_size < inCpPod.new_options.app_vol_min) {
+            return l4i.InnerAlert(alert_id, "alert-danger", "this System Storage requires at least " + inCp.UtilResSizeFormat(inCpPod.new_options.app_vol_min) + " of space to fit the Application Resource Requirements");
+        }
+    }
+
+    if (inCpPod.new_options.app_spec_id) {
+        url = "?exp_filter_app_spec_id=" + inCpPod.new_options.app_spec_id;
     }
 
     var set = {
@@ -620,7 +703,7 @@ inCpPod.NewCommit = function() {
         zone: inCpPod.plan._zone_selected.split("/")[0],
         cell: inCpPod.plan._zone_selected.split("/")[1],
         res_volume: inCpPod.plan._res_volume.ref_id,
-        res_volume_size: parseInt(vol_size),
+        res_volume_size: vol_size,
         boxes: [{
             name: "main",
             image: inCpPod.plan.image_selected,
@@ -634,7 +717,7 @@ inCpPod.NewCommit = function() {
 
     $(alert_id).hide();
 
-    inCp.ApiCmd("pod/new", {
+    inCp.ApiCmd("pod/new" + url, {
         method: "POST",
         data: JSON.stringify(set),
         callback: function(err, rsj) {

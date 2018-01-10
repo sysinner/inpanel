@@ -17,7 +17,7 @@ var inCpAppSpec = {
         name: "",
         exec_start: "",
         exec_stop: "",
-        priority: 0,
+        priority: 8,
         plan: {
             on_boot: true,
         },
@@ -713,7 +713,7 @@ inCpAppSpec.SetExecutorSet = function(name) {
     l4iModal.Open({
         title: title,
         width: 960,
-        height: 700,
+        height: 750,
         tpluri: inCp.TplPath("app/spec/executor-set"),
         data: executor,
         callback: function(err) {

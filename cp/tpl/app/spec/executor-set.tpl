@@ -16,12 +16,12 @@
       <label>ExecStop</label>
       <textarea name="exec_stop" class="form-control" rows="3">{[=it.exec_stop]}</textarea>
     </div>
-<!--
+
     <div class="l4i-form-group">
-      <label>Priority (0 ~ 32)</label>
+      <label>Priority (0 ~ 15)</label>
       <p><input name="priority" class="form-control" value="{[=it.priority]}"></p>
     </div>
--->
+
 	<div class="l4i-form-group">
       <label>Plan</label>
       <p>

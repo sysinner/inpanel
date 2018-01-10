@@ -86,10 +86,10 @@
             <td><pre><code class="bash">{[=v.exec_stop.trim()]}</code></pre></td>
           </tr>
           {[}]}
-          <!-- <tr>
+          <tr>
             <td>Priority</td>
             <td>{[=v.priority]}</td>
-          </tr> -->
+          </tr>
           <tr>
             <td>Plan</td>
             <td>

@@ -14,9 +14,18 @@
     </div>
   
     <div class="l4i-form-group">
-      <label>Spec</label>
+      <label>Spec Version ({[=it.spec.meta.id]})</label>
       <div>
-        {[=it.spec.meta.id]}
+        {[? it._spec_vs]}
+        <select id="app_spec_version" class="form-control">
+          {[~it._spec_vs :v]}
+          <option value="{[=v.version]}" {[if (v.version == it.spec.meta.version) {]}selected="selected"{[}]}>{[=v.version]}</option>
+          {[~]}
+        </select>
+        {[??]}
+          <input type="hidden" id="app_spec_version" value="{[=it.spec.meta.version]}">
+          {[=it.spec.meta.version]}
+        {[?]}
       </div>
     </div>
   
@@ -63,6 +72,10 @@
 
     <button type="button" class="btn btn-primary" onclick="inCpApp.InstSetCommit()">
       Save
+    </button>
+
+    <button type="button" class="btn btn-primary" onclick="inCpApp.InstSetCommitAndDeploy()">
+      Save and Deploy
     </button>
 
     <button type="button" class="btn btn-default" onclick="inCpApp.InstListRefresh()" style="margin-left:10px">

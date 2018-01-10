@@ -307,10 +307,16 @@ inCpApp.instConfigurator = function(cb) {
         }
         inCpApp.instDeployActive.spec.depends[i]._setid = inCpApp.instDeployActive.spec.depends[i].id;
 
-        return inCp.ApiCmd("app-spec/entry?id=" + inCpApp.instDeployActive.spec.depends[i].id, {
+        var url = "app-spec/entry?id=" + inCpApp.instDeployActive.spec.depends[i].id;
+        url += "&version=" + inCpApp.instDeployActive.spec.depends[i].version;
+
+        return inCp.ApiCmd(url, {
             callback: function(err, data) {
                 if (err) {
                     return alert(err); // TODO
+                }
+                if (data.error) {
+                    return l4iAlert.Open("error", data.error.message);
                 }
                 if (data && data.meta.id == inCpApp.instDeployActive.spec.depends[i].id) {
                     return inCpApp.instConfiguratorEntry(data.configurator, data.meta.id);
@@ -818,7 +824,7 @@ inCpApp.InstNewCommit = function() {
 }
 
 
-inCpApp.InstSet = function(app_id) {
+inCpApp.InstSet = function(app_id, spec_id) {
     if (!app_id) {
         return alert("No AppID Found");
     }
@@ -827,14 +833,14 @@ inCpApp.InstSet = function(app_id) {
 
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "inst", "roles", function(tpl, inst, roles) {
+        var ep = EventProxy.create("tpl", "inst", "roles", "spec_vs", function(tpl, inst, roles, spec_vs) {
 
             if (!inst || inst.error || inst.kind != "App") {
-                return alert("App Not Found")
+                return l4iInner.Open("error", "App Not Found");
             }
 
             if (!roles || roles.error || roles.kind != "UserRoleList") {
-                return alert("RoleList Not Found")
+                return l4iInner.Open("error", "RoleList Not Found");
             }
 
             $("#work-content").html(tpl);
@@ -861,6 +867,25 @@ inCpApp.InstSet = function(app_id) {
             inCpApp.instSet = inst;
             inCpApp.instSet._op_actions = inCp.OpActions;
 
+
+
+            if (spec_vs && spec_vs.items && spec_vs.items.length > 0) {
+                var hit = false;
+                for (var i in spec_vs.items) {
+                    if (spec_vs.items[i].version == inst.spec.meta.version) {
+                        hit = true;
+                        break;
+                    }
+                }
+                if (!hit) {
+                    spec_vs.items.push({
+                        version: inst.spec.meta.version,
+                        created: inst.spec.meta.updated,
+                    });
+                }
+                inCpApp.instSet._spec_vs = spec_vs.items;
+            }
+
             l4iTemplate.Render({
                 dstid: "incp-appset",
                 tplid: "incp-appset-tpl",
@@ -882,6 +907,14 @@ inCpApp.InstSet = function(app_id) {
             callback: ep.done("roles"),
         });
 
+        if (spec_id) {
+            inCp.ApiCmd("app-spec/version-list?id=" + spec_id, {
+                callback: ep.done("spec_vs"),
+            });
+        } else {
+            ep.emit("spec_vs", null);
+        }
+
         // data
         inCp.ApiCmd("app/entry/?id=" + app_id, {
             callback: ep.done("inst"),
@@ -889,8 +922,9 @@ inCpApp.InstSet = function(app_id) {
     });
 }
 
+inCpApp.InstSetCommit = function(options) {
 
-inCpApp.InstSetCommit = function() {
+    options = options || {};
 
     var alert_id = "#incp-appset-alert";
     try {
@@ -910,6 +944,11 @@ inCpApp.InstSetCommit = function() {
                 inCpApp.instSet.operate.res_bound_roles.push(val);
             }
         });
+
+        var version = form.find("#app_spec_version").val();
+        if (version) {
+            inCpApp.instSet.spec.meta.version = version;
+        }
 
         inCpApp.instSet.operate.action = parseInt(form.find("input[name=op_action]:checked").val());
 
@@ -937,12 +976,22 @@ inCpApp.InstSetCommit = function() {
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successful operation");
 
-            inCpApp.instSet = {};
+
 
             window.setTimeout(function() {
                 inCpApp.InstListRefresh();
+                if (options.deploy) {
+                    inCpApp.InstDeploy(inCpApp.instSet.meta.id);
+                }
+                inCpApp.instSet = {};
             }, 1000);
         }
+    });
+}
+
+inCpApp.InstSetCommitAndDeploy = function() {
+    inCpApp.InstSetCommit({
+        deploy: true,
     });
 }
 

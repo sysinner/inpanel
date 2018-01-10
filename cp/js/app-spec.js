@@ -164,13 +164,13 @@ inCpAppSpec.listDataRefresh = function(tplid) {
     });
 }
 
-inCpAppSpec.Info = function(id, spec) {
+inCpAppSpec.Info = function(id, spec, version) {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", "roles", function(tpl, rsj, roles) {
 
             if (!rsj || rsj.error || rsj.kind != "AppSpec") {
-                return
+                return l4iAlert.Open("error", "AppSpec Not Found");
             }
 
             if (!rsj.depends) {
@@ -296,7 +296,12 @@ inCpAppSpec.Info = function(id, spec) {
             ep.emit("data", inCpAppSpec.InfoCache);
         } else if (id) {
 
-            inCp.ApiCmd("app-spec/entry?id=" + id, {
+            var url = "app-spec/entry?id=" + id;
+            if (version) {
+                url += "&version=" + version;
+            }
+
+            inCp.ApiCmd(url, {
                 callback: ep.done("data"),
             });
 

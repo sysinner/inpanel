@@ -1,6 +1,6 @@
 <div class="l4i-form-group">
-  <label>ID / Owner</label>
-  <p>{[=it.meta.id]} / {[=it.meta.user]}</p>
+  <label>ID / Version</label>
+  <p>{[=it.meta.id]} / v{[=it.meta.version]}</p>
 </div>
 
 {[? it.description]}

@@ -45,11 +45,11 @@
   </td>
   <td align="right">
     {[if (!inCp.OpActionAllow(v.operate.action, inCp.OpActionDestroy)) {]}
-    <button class="pure-button button-xsmall pure-button-primary" onclick="inCpApp.InstDeploy('{[=v.meta.id]}')">
-      <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Deploy 
+    <button class="pure-button button-xsmall" onclick="inCpApp.InstDeploy('{[=v.meta.id]}')">
+      <img src="/in/cp/~/open-iconic/svg/cloud-upload.svg"> Deploy 
     </button>
     <button class="pure-button button-xsmall" onclick="inCpApp.InstSet('{[=v.meta.id]}', '{[=v.spec.meta.id]}')">
-      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setup
+      <img src="/in/cp/~/open-iconic/svg/cog.svg"> Setup
     </button>
     {[}]}
   </td>

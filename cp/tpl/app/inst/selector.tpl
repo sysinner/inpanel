@@ -19,7 +19,7 @@
   <td>{[=v.meta.name]}</td>
   <td class="incp-font-fixspace">{[=v.operate.pod_id]}</td>
   <td align="right">
-    <buttona class="btn btn-default btn-xs" onclick="_incp_appls_selector_app('{[=v.meta.id]}')">Select</a>
+    <button class="btn btn-default btn-sm" onclick="_incp_appls_selector_app('{[=v.meta.id]}')">Select</button>
   </td>
 </tr>
 {[~]}

@@ -19,10 +19,6 @@ body {
   display: block;
 }
 
-.hide {
-  display: none;
-}
-
 #body-content {
   background-color: #f5f5f5;
 }
@@ -149,12 +145,4 @@ body {
 .incp-well-box>.footer a {
   color: #666;
   font-weight: bold;
-}
-
-
-
-/* fix twbs 3.0 to 4.0 */
-
-.panel-default.card {
-  margin-bottom: 10px;
 }

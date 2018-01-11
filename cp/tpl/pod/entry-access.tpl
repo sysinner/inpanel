@@ -6,10 +6,14 @@
     <div class="l4i-form-group">
       <label class="">SSH Access</label>
       <div class="">
-        <span class="incp-form-checkbox checkbox-inline">
-          <input type="radio" name="operate_access_ssh_on" value="1" onclick="inCpPod.EntryAccessSshRefresh()" {[ if (it.operate.access.ssh_on) { ]}checked="checked"{[ } ]}> Enable &nbsp;&nbsp;
-          <input type="radio" name="operate_access_ssh_on" value="0" onclick="inCpPod.EntryAccessSshRefresh()" {[ if (!it.operate.access.ssh_on) { ]}checked="checked"{[ } ]}> Disable
-        </span>
+        <div class="form-check form-check-inline">
+          <input type="radio" name="operate_access_ssh_on" value="1" onclick="inCpPod.EntryAccessSshRefresh()" {[ if (it.operate.access.ssh_on) { ]}checked="checked"{[ } ]} class="form-check-input">
+          <label class="form-check-label">Enable &nbsp;</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="radio" name="operate_access_ssh_on" value="0" onclick="inCpPod.EntryAccessSshRefresh()" {[ if (!it.operate.access.ssh_on) { ]}checked="checked"{[ } ]} class="form-check-input">
+          <label class="form-check-label">Disable &nbsp;</label>
+        </div>
       </div>
     </div>
 

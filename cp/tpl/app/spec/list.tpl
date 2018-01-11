@@ -42,16 +42,16 @@
     </button>
     {[}]}
     <button class="pure-button button-xsmall" onclick="inCpApp.InstNew('{[=v.meta.id]}')">
-      <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Launch
+      <img src="/in/cp/~/open-iconic/svg/cloud-upload.svg"> Launch
     </button>
     {[if (inCp.UserSession.username == "sysadmin") {]}
     <button class="pure-button button-xsmall" onclick="inCpAppSpec.SetRaw('{[=v.meta.id]}')">
-      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setting Raw
+      <img src="/in/cp/~/open-iconic/svg/cog.svg"> Setting Raw
     </button>
     {[}]}
     {[if (v.meta.user == inCp.UserSession.username) {]}
     <button class="pure-button button-xsmall" onclick="inCpAppSpec.Set('{[=v.meta.id]}')">
-      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setting
+      <img src="/in/cp/~/open-iconic/svg/cog.svg"> Setting
     </button>
     {[}]}
   </td>

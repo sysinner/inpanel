@@ -4,12 +4,12 @@
 }
 </style>
 <div id="incp-podnew-alert"></div>
-<div id="incp-podnew-form"></div>
+<div id="incp-podnew-form" class="incp-div-light"></div>
 
 <script type="text/html" id="incp-podnew-inner">
-<div class="panel panel-default card">
-  <div class="panel-heading card-header">New Pod Instance</div>
-  <div class="panel-body card-body">
+<div class="card">
+  <div class="card-header">New Pod Instance</div>
+  <div class="card-body">
     <div class="l4i-form-group">
       <label class="">Name</label>
       <div class="">
@@ -25,8 +25,8 @@
     <div id="incp-podnew-resource-selector"></div>
 
     <div class="l4i-form-group">
-	  <div id="incp-podnew-charge-estimate-value" class="font-size:30px"></div>
-	</div>
+      <div id="incp-podnew-charge-estimate-value" class="font-size:30px"></div>
+    </div>
 
     <button type="button" class="pure-button pure-button-primary" onclick="inCpPod.NewCommit()">
       Save
@@ -91,7 +91,7 @@
       onclick="inCpPod.NewPlanResComputeChange('{[=v.ref_id]}')">
       <div>CPU: {[=v.cpu_limit]}m</div>
       <div>Memory: {[=inCp.UtilResSizeFormat(v.mem_limit)]}</div>
-	  <span class="disable_close">&times;</span>
+    <span class="disable_close">&times;</span>
     </div>
     {[~]}
   </div>
@@ -118,10 +118,10 @@
 
     <div class="input-group" style="width:200px;">
       <input type="text" class="form-control" id="incp-podnew-resource-value" value="{[=it._res_volume._valued]}">
-      <span class="input-group-addon">GB</span>      
+      <div class="input-group-append"><div class="input-group-text">GB</div></div>
     </div>
 
-    <div class="form-control-static" style="margin-left: 10px;">
+    <div class="form-text text-muted">
       Range: {[=inCp.UtilResSizeFormat(it._res_volume.request)]} ~ {[=inCp.UtilResSizeFormat(it._res_volume.limit)]}
     </div>    
 

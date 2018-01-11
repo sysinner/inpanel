@@ -993,8 +993,8 @@ inCpAppSpec.SetRaw = function(id) {
 
             l4iModal.Open({
                 title: title,
-                width: 800,
-                height: 500,
+                width: 960,
+                height: 700,
                 tplsrc: tpl,
                 data: formset,
                 buttons: [{

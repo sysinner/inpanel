@@ -40,17 +40,17 @@
     <td>{[=v.operate.replicas.length]}</td>
     <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
     <td>
-      <span class="label label-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionRunning)) {]}success{[} else {]}default{[}]}">
+      <span class="badge badge-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionRunning)) {]}success{[} else {]}default{[}]}">
       {[=inCp.OpActionStatusTitle(v.operate.action)]}
       </span>
     </td>
     <td align="right">
       {[if (!inCp.OpActionAllow(v.operate.action, inCp.OpActionDestroy)) {]}
       <button class="pure-button button-xsmall" onclick="inCpPod.EntryIndex('{[=v.meta.id]}', 'stats')">
-        <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Graphs
+        <img src="/in/cp/~/open-iconic/svg/dashboard.svg"> Graphs
       </button>
       <button class="pure-button button-xsmall" onclick="inCpPod.SetInfo('{[=v.meta.id]}')">
-        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setup
+        <img src="/in/cp/~/open-iconic/svg/cog.svg"> Setup
       </button>
       {[}]}
     </td>

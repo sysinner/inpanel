@@ -2,10 +2,9 @@
   <div class="l4i-form-group">
     <label>Create new Pod to Bound</label>
     <div>
-      <div class="btn btn-default" style="width:100%;font-weight:bold;" onclick="_incp_podls_selector_new()">
-        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+      <button class="btn btn-outline-primary" style="width:100%;font-weight:bold;" onclick="_incp_podls_selector_new()">
         Create new Pod Instance
-      </div>
+      </button>
     </div>
   </div>
 
@@ -40,7 +39,7 @@
   <td>{[=v.spec.zone]}/{[=v.spec.cell]}</td>
   <td>{[=inCp.OpActionTitle(v.operate.action)]}</td>
   <td align="right">
-    <buttona class="btn btn-default btn-sm" onclick="_incp_podls_selector_pod('{[=v.meta.id]}')">Select</a>
+    <button class="btn btn-sm btn-outline-primary" onclick="_incp_podls_selector_pod('{[=v.meta.id]}')">Select</button>
   </td>
 </tr>
 {[~]}

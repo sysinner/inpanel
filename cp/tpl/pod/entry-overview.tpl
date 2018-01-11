@@ -1,6 +1,6 @@
 <style>
 .table-reset td {
-  padding: 3px 10px;
+  padding: 3px 10px !important;
   border: 0;
 }
 </style>
@@ -11,13 +11,13 @@
 
 <script type="text/html" id="incp-podentry-overview-oplog-tpl">
 {[?it.op_log]}
-<div class="incp-div-h-title" style="padding-top:10px">Pod Operation Log</div>
+<div class="incp-div-h-title">Pod Operation Log</div>
 <div class="incp-div-light">
-<table class="table table-hover" style="margin-bottom:0">
+<table class="table table-hover">
   <thead>
     <tr>
       <th>Name</th>
-      <th>Status</th>
+      <th></th>
       <th>Message</th>
       <th style="text-align:right"></th>
     </tr>
@@ -27,13 +27,13 @@
     <td>{[=log.name]}</td>
     <td>
     {[ if (log.status == "ok") { ]}
-    <span class="label label-success">OK</span>
+    <span class="badge badge-success">OK</span>
     {[ } else if (log.status == "error" || log.status == "fatal") { ]}
-    <span class="label label-danger">{[=log.status]}</span>
+    <span class="badge badge-danger">{[=log.status]}</span>
     {[ } else if (log.status == "warn") { ]}
-    <span class="label label-warning">{[=log.status]}</span>
+    <span class="badge badge-warning">{[=log.status]}</span>
     {[ } else { ]}
-    <span class="label label-info">{[=log.status]}</span>
+    <span class="badge badge-info">{[=log.status]}</span>
     {[ } ]}
     </td>
     <td>{[=log.message]}</td>
@@ -47,13 +47,13 @@
 
 {[? it.replicas]}
 {[~it.replicas :rep]}
-<div class="incp-div-h-title" style="padding-top:10px">Operation Queue</div>
+<div class="incp-div-h-title">Operation Queue</div>
 <div class="incp-div-light">
-<table class="table table-hover" style="margin-bottom:0">
+<table class="table table-hover">
   <thead>
     <tr>
       <th>Name</th>
-      <th>Status</th>
+      <th></th>
       <th>Message</th>
       <th style="text-align:right"></th>
     </tr>
@@ -63,13 +63,13 @@
     <td>{[=log.name]}</td>
     <td>
     {[ if (log.status == "ok") { ]}
-    <span class="label label-success">OK</span>
+    <span class="badge badge-success">OK</span>
     {[ } else if (log.status == "error" || log.status == "fatal") { ]}
-    <span class="label label-danger">{[=log.status]}</span>
+    <span class="badge badge-danger">{[=log.status]}</span>
     {[ } else if (log.status == "warn") { ]}
-    <span class="label label-warning">{[=log.status]}</span>
+    <span class="badge badge-warning">{[=log.status]}</span>
     {[ } else { ]}
-    <span class="label label-info">{[=log.status]}</span>
+    <span class="badge badge-info">{[=log.status]}</span>
     {[ } ]}
     </td>
     <td>{[=log.message]}</td>
@@ -85,7 +85,7 @@
 
 <script type="text/html" id="incp-podentry-overview-info-tpl">
 
-<div class="incp-div-h-title" style="padding-top:10px">Information</div>
+<div class="incp-div-h-title">Information</div>
 <div class="incp-div-label-block-frame-inline">
   <div class="incp-div-label-block incp-div-light">
     <div class="name">Name</div>
@@ -144,7 +144,7 @@
 {[?it.operate.replicas]}
 <div class="incp-div-h-title">Replica Instances</div>
 <div class="incp-div-light">
-<table class="table" style="margin-bottom:0">
+<table class="table">
   <thead>
     <tr>
       <th>Rep ID</th>
@@ -189,7 +189,7 @@
 {[?it.apps]}
 <div class="incp-div-h-title">Applications</div>
 <div class="incp-div-light">
-<table class="table table-hover" style="margin-bottom:0">
+<table class="table table-hover">
   <thead>
     <tr>
       <th>Name</th>

@@ -1,12 +1,12 @@
 
 <div id="incp-appset-alert" class="alert alert-danger" style="display:none"></div>
 
-<div id="incp-appset" style="box-sizing: border-box;">loading</div>
+<div id="incp-appset" class="incp-div-light">loading</div>
 
 <script id="incp-appset-tpl" type="text/html">
-<div class="panel panel-default card">
-  <div class="panel-heading card-header">App Instance Settings</div>
-  <div class="panel-body card-body">
+<div class="card">
+  <div class="card-header">App Instance Settings</div>
+  <div class="card-body">
 
     <div class="l4i-form-group">
       <label>Name</label>
@@ -74,7 +74,7 @@
       Save
     </button>
 
-    <button type="button" class="btn btn-primary" onclick="inCpApp.InstSetCommitAndDeploy()">
+    <button type="button" class="btn btn-primary" onclick="inCpApp.InstSetCommitAndDeploy()" style="margin-left:10px">
       Save and Deploy
     </button>
 

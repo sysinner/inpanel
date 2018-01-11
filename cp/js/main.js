@@ -72,7 +72,7 @@ inCp.Boot = function(login_first) {
     });
 
     seajs.use([
-        "~/twbs/3.3/css/bootstrap.css",
+        "~/twbs/4.0/css/bootstrap.css",
         "~/jquery/jquery.js" + inCp.debug_uri(),
         "~/lessui/js/browser-detect.js",
         "~/purecss/css/pure.css",
@@ -98,7 +98,7 @@ inCp.Boot = function(login_first) {
         }
 
         seajs.use([
-            "~/twbs/3.3/js/bootstrap.js",
+            // "~/twbs/4.0/js/bootstrap.js",
             "~/lessui/css/lessui.css",
             "~/lessui/js/lessui.js",
             "~/cp/css/main.css" + inCp.debug_uri(),

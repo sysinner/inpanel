@@ -1,24 +1,3 @@
-* {
-  margin: 0;
-  padding: 0;
-}
-
-html,
-body {
-  height: 100%;
-}
-
-body {
-  font-family: Helvetica, Arial, "Liberation Sans", sans-serif;
-  margin: 0 auto;
-  padding: 0;
-  font-size: 16px;
-  /*background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.03);*/
-  background-color: #f5f5f5;
-  min-width: 900px;
-  display: block;
-}
-
 .hide {
   display: none;
 }
@@ -135,6 +114,10 @@ body {
 
 
 
+
+
+
+
 /** user bar **/
 
 #incp-topbar-userbar>.iam-name {
@@ -205,14 +188,28 @@ body {
   margin-bottom: 0;
 }
 
-#comp-content {
-  clear: both;
-}
-
+#comp-content,
 #work-content {
   clear: both;
-  padding: 0 10px;
+  margin: 0;
+  padding: 0;
 }
+
+#work-content .alert {
+  padding: 10px;
+  margin: 0 0 10px 0;
+}
+
+#work-content>.alert {
+  margin: 0 10px 10px 10px;
+}
+
+#work-content table {
+  margin-bottom: 0;
+}
+
+#work-content table th,
+#work-content table td {}
 
 .incp-boxlet-grp {
   margin: 0 0 10px;
@@ -478,14 +475,15 @@ body {
 }
 
 .incp-div-h-title {
-  padding: 10px 0 5px 0;
-  font-size: 18px;
+  padding: 10px 10px 5px 10px;
+  font-size: 1.2em;
+  line-height: 100%;
 }
 
 .incp-div-light {
   clear: both;
   background-color: #fff;
-  margin: 0;
+  margin: 0 10px;
   padding: 0;
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.15);
 }
@@ -525,6 +523,10 @@ body {
   color: #fff !important;
   background-color: rgb(0, 120, 231);
 }
+
+
+
+
 
 
 
@@ -706,15 +708,10 @@ button {
   margin-bottom: 10px;
 }
 
-.incp-div-label-block-frame-inline>div:last-child {
-  margin-right: 0;
-}
-
 .incp-div-label-block {
   padding: 10px;
   position: relative;
   flex: 1 0 160px;
-  margin-right: 10px;
 }
 
 .incp-div-label-block>.name {
@@ -752,13 +749,13 @@ button {
 #incp-podentry-overview {
   position: relative;
   flex: 2 0 800px;
-  margin: 0 10px 10px 10px;
+  margin-bottom: 10px;
 }
 
 #incp-podentry-sidebar {
   position: relative;
   flex: 4 1 800px;
-  margin: 0 10px 20px 10px;
+  margin-bottom: 10px;
 }
 
 .incp-podentry-stats-box {
@@ -806,8 +803,8 @@ button {
 
 
 
-/* fix twbs 3.0 to 4.0 */
+/* reset */
 
-.panel-default.card {
+.card {
   margin-bottom: 10px;
 }

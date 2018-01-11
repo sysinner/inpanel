@@ -67,7 +67,7 @@
   <label class="">Validates</label>
  
   <button class="btn btn-default btn-xs" onclick="inCpAppSpec.CfgFieldSetValidatorNew()">
-    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add new Validator
+    <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Validator
   </button>
 
   <div>

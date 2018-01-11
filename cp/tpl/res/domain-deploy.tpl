@@ -27,9 +27,7 @@
         {[=it._app_id]}
       </div>
       <div style="flex-grow:3;order:2;text-align:right">
-        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true" 
-          style="flex-grow:1;order:3">
-        </span>
+        <span style="flex-grow:1;order:3"><img src="/in/cp/~/open-iconic/svg/chevron-right.svg"></span>
       </div>
     </a>
   </div>

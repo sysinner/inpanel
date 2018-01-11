@@ -347,7 +347,7 @@ inCpResDomain.BoundList = function(name) {
                 title: "Domain Bounds",
                 tplsrc: tpl,
                 width: 900,
-                height: 500,
+                height: 600,
                 buttons: [{
                     title: "Cancel",
                     onclick: "l4iModal.Close()",

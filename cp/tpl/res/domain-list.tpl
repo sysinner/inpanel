@@ -29,10 +29,10 @@
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="incp-btn incp-btn-xsmall" onclick="inCpResDomain.Deploy('{[=v._name]}')">
-      <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> Deploy 
+      <img src="/in/cp/~/open-iconic/svg/cloud-upload.svg"> Deploy 
     </button>
     <button class="incp-btn incp-btn-xsmall" onclick="inCpResDomain.Set('{[=v._name]}')">
-      <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setting
+      <img src="/in/cp/~/open-iconic/svg/cog.svg"> Setting
     </button>
   </td>
 </tr>

@@ -19,7 +19,7 @@
         {[? it._spec_vs]}
         <select id="app_spec_version" class="form-control">
           {[~it._spec_vs :v]}
-          <option value="{[=v.version]}" {[if (v.version == it.spec.meta.version) {]}selected="selected"{[}]}>{[=v.version]}</option>
+          <option value="{[=v.version]}" {[if (v.version == it.spec.meta.version) {]}selected="selected"{[}]}>v{[=v.version]} @ {[=l4i.MetaTimeParseFormat(v.created, "Y-m-d H:i:s")]}</option>
           {[~]}
         </select>
         {[??]}

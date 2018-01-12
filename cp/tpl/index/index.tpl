@@ -28,8 +28,8 @@
 <div id="incp-topbar-user-signed-modal" style="display:none;">
   <img class="iam-photo" src="{[=it.photo_url]}">
   <div class="iam-name">{[=it.display_name]}</div>
-  <a class="btn btn-default iam-btn" href="{[=it.iam_url]}" target="_blank">Account Center</a>
-  <a class="btn btn-default iam-btn" href="/in/cp/auth/sign-out">Sign out</a>
+  <a class="btn btn-outline-primary iam-btn" href="{[=it.iam_url]}" target="_blank">Account Center</a>
+  <a class="btn btn-outline-primary iam-btn" href="/in/cp/auth/sign-out">Sign out</a>
 </div>
 </script>
 

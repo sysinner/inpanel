@@ -8,7 +8,6 @@
       <th>Owner</th>
       <th>Depends</th>
       <th>Packages</th>
-      <th>Executors</th>
       <th>Config</th>
       <th>Updated</th>
       <th></th>
@@ -27,7 +26,6 @@
   <td>{[=v.meta.user]}</td>
   <td>{[=v.depends.length]}</td>
   <td>{[=v._ipm_num]}</td>
-  <td>{[=v._executor_num]}</td>
   <td>
     <button class="pure-button button-xsmall"
       onclick="inCpAppSpec.CfgSet('{[=v.meta.id]}')">

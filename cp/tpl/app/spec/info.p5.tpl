@@ -137,7 +137,7 @@
 <div class="l4i-form-group">
   <label>Allowed Roles</label>
   <div>
-    <span class="label label-default">{[=it._roles.join("</span>&nbsp;<span class='label label-default'>")]}</span>
+    <span class="badge badge-default">{[=it._roles.join("</span>&nbsp;<span class='badge badge-default'>")]}</span>
   </div>
 </div>
 {[}]}

@@ -2,7 +2,7 @@
   <div class="incp-topbar-collapse">
     <ul class="incp-nav" id="incp-topbar-siteinfo">
       <li><img class="incp-topbar-logo" src="/in/cp/~/cp/img/logo-g1s48.png" title="frontend_header_site_logo_url"></li>
-      <li class="incp-topbar-brand">SysInner Ops</li>
+      <li class="incp-topbar-brand">inPanel Ops</li>
     </ul>
     <ul class="incp-nav incp-topbar-nav" id="inops-topbar-nav-menus">
       <li><a class="l4i-nav-item" href="#host/index">Cluster</a></li>

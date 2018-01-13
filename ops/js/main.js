@@ -43,7 +43,7 @@ inOps.Boot = function() {
         }
 
         seajs.use([
-            "~/lessui/css/lessui.css" + inOps.debug_uri(),
+            "~/lessui/css/base.css" + inOps.debug_uri(),
             "~/lessui/js/lessui.js" + inOps.debug_uri(),
             "~/cp/css/main.css" + inOps.debug_uri(),
             "~/cp/js/pod.js" + inOps.debug_uri(),

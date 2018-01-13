@@ -13,8 +13,8 @@
     <th>Spec</th>
     <th>Pod</th>
     <th>Options</th>
-    <th>Updated</th>
     <th>Status</th>
+    <th>Updated</th>
     <th></th>
   </tr>
 </thead>
@@ -37,12 +37,12 @@
      <button class="incp-btn incp-btn-xsmall" onclick="inCpApp.OpOptInfo('{[=v.meta.id]}')" style="width:30px">{[=v.operate.options.length]}</button>
    {[}]}
   </td>
-  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td>
-    <span class="label label-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionStart)) {]}success{[} else {]}default{[}]}">
+    <span class="badge badge-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionStart)) {]}success{[} else {]}default{[}]}">
       {[=inCp.OpActionTitle(v.operate.action)]}
     </span>
   </td>
+  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     {[if (!inCp.OpActionAllow(v.operate.action, inCp.OpActionDestroy)) {]}
     <button class="pure-button button-xsmall" onclick="inCpApp.InstDeploy('{[=v.meta.id]}')">

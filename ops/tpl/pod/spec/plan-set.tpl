@@ -1,3 +1,10 @@
+<style>
+#inops-podspec-planset .btn-sm {
+  padding: 3px 10px;
+  font-size: 12px;
+  line-height: 100%;
+}
+</style>
 <div id="inops-podspec-planset-alert"></div>
 
 <div id="inops-podspec-planset" class="incp-div-light" style="padding:10px;margin-bottom:20px;">
@@ -39,7 +46,7 @@
 <div class="l4i-form-group">
   <label class="">Labels</label>
   <button class="btn btn-default btn-sm" onclick="inOpsPod.SpecPlanSetLabelAppend()">
-    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add new Label
+    <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Label
   </button>
   <div class="">
     <table class="table table-hover">
@@ -74,7 +81,7 @@
 <div class="l4i-form-group">
   <label class="">Annotations</label>
   <button class="btn btn-default btn-sm" onclick="inOpsPod.SpecPlanSetAnnotationAppend()">
-    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add new Annotation
+    <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Annotation
   </button>
   <div class="">
     <table class="table table-hover">

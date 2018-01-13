@@ -98,8 +98,7 @@ inCp.Boot = function(login_first) {
         }
 
         seajs.use([
-            // "~/twbs/4.0/js/bootstrap.js",
-            "~/lessui/css/lessui.css" + inCp.debug_uri(),
+            "~/lessui/css/base.css" + inCp.debug_uri(),
             "~/lessui/js/lessui.js" + inCp.debug_uri(),
             "~/cp/css/main.css" + inCp.debug_uri(),
             "~/cp/js/host.js" + inCp.debug_uri(),

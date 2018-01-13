@@ -65,7 +65,7 @@ inOpsPod.SpecPlanList = function() {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
-            // inCp.OpToolsRefresh("#inops-podspec-planls-optools");
+            inCp.OpToolsRefresh("#inops-podspec-planls-optools");
 
             if (!data || data.error || !data.kind || data.kind != "PodSpecPlanList") {
 

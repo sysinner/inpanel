@@ -1,7 +1,7 @@
 
-<div class="alert alert-danger">**THIS IS A DEVELOPMENT PREVIEW - DO NOT USE IT IN PRODUCTION!**</div>
+<div class="alert alert-danger">THIS IS A DEVELOPMENT PREVIEW - DO NOT USE IT IN PRODUCTION!</div>
 
-<h2>SysInner SOHO edition</h2>
+<h2>SysInner inSoho edition (alpha)</h2>
 
 <br>
 <p>SysInner for SOHO (Small Office and Home Office) 

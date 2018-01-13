@@ -70,7 +70,7 @@ var inCpPod = {
 
 inCpPod.Index = function() {
     inCpPod.List(null, {
-        // destroy_enable: true
+        // destroy_enable: true,
     });
 }
 
@@ -180,9 +180,6 @@ inCpPod.List = function(tplid, options) {
                 dstid: tplid,
                 tplid: tplid + "-tpl",
                 data: data,
-                callback: function(err) {
-                    //
-                },
             });
         });
 
@@ -244,8 +241,7 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                l4i.InnerAlert(alert_id, 'alert-danger', msg);
-                return;
+                return l4i.InnerAlert(alert_id, 'alert-danger', msg);
             }
 
             if (op_action == 2) {
@@ -748,9 +744,7 @@ inCpPod.NewCommit = function() {
                         if (rsj.pod && rsj.pod.length > 8) {
                             inCpPod.EntryIndex(rsj.pod);
                         } else {
-                            inCpPod.List(null, {
-                                destroy_enable: true
-                            });
+                            inCpPod.List(null, null);
                         }
                     }
                 }
@@ -914,9 +908,7 @@ inCpPod.SetInfoCommit = function() {
                 l4iModal.Close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
-                    inCpPod.List(null, {
-                        destroy_enable: true
-                    });
+                    inCpPod.List(null, null);
                 }
             }, 500);
         }
@@ -998,9 +990,7 @@ inCpPod.EntryDelCommit = function() {
                 l4iModal.Close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
-                    inCpPod.List(null, {
-                        destroy_enable: true
-                    });
+                    inCpPod.List(null, null);
                 }
             }, 500);
         }
@@ -1140,9 +1130,7 @@ inCpPod.SetCommit = function() {
 
             window.setTimeout(function() {
                 l4iModal.Close();
-                inCpPod.List(null, {
-                    destroy_enable: true
-                });
+                inCpPod.List(null, null);
             }, 500);
         }
     });

@@ -6,46 +6,7 @@
 <div id="incp-podnew-alert"></div>
 <div id="incp-podnew-form"></div>
 
-<script type="text/html" id="incp-podnew-inner">
-<div class="card incp-div-light">
-  <div class="card-header">New Pod Instance</div>
-  <div class="card-body">
-    <div class="l4i-form-group">
-      <label class="">Name</label>
-      <div class="">
-        <input type="text" class="form-control" id="incp-podnew-meta-name" value="">
-      </div>
-    </div>
-
-    <div class="l4i-form-group">
-      <label class="">Plan</label>
-      <div id="incp-podnew-plans" class="incp-form-box-selector"></div>
-    </div>
-
-    <div id="incp-podnew-resource-selector"></div>
-
-    <div class="l4i-form-group">
-      <div id="incp-podnew-charge-estimate-value" class="font-size:30px"></div>
-    </div>
-
-    <button type="button" class="pure-button pure-button-primary" onclick="inCpPod.NewCommit()">
-      Save
-    </button>
-
-    <button type="button" class="pure-button" onclick="inCpPod.List()" style="margin-left:10px">
-      Cancel
-    </button>
-  </div>
-</div>
-</script>
-
 <script type="text/html" id="incp-podnew-modal">
-<div class="l4i-form-group">
-  <label class="">Name</label>
-  <div class="">
-    <input type="text" class="form-control" id="incp-podnew-meta-name" value="">
-  </div>
-</div>
 <div class="l4i-form-group">
   <label class="">Plan</label>
   <div id="incp-podnew-plans" class="incp-form-box-selector"></div>

@@ -113,7 +113,7 @@
 
 
 <div class="incp-div-h-title">Spec</div>
-<div class="incp-div-label-block-frame-inline">
+<div class="incp-div-label-block-frame-inline" id="incp-specview-box">
   <div class="incp-div-label-block incp-div-light">
     <div class="name">Name</div>
     <div class="value">{[=it.spec.ref.name]}</div>

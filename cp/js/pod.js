@@ -308,29 +308,13 @@ inCpPod.New = function(options) {
             }
             inCpPod.new_options = options;
             if (options.open_modal) {
-                var bw = $(window).width(),
-                    bh = $(window).height();
-                if (bw < 800) {
-                    bw = 800;
-                } else if (bw > 1200) {
-                    bw = 1200;
-                } else {
-                    bw -= 100;
-                }
-                if (bh < 700) {
-                    bh = 700;
-                } else if (bh > 1000) {
-                    bh = 1000;
-                } else {
-                    bh -= 100;
-                }
 
                 l4iModal.Open({
                     id: "pod-new",
                     tplsrc: tpl,
                     title: "Create new Pod Instance",
-                    width: bw,
-                    height: bh,
+                    width: "max",
+                    height: "max",
                     callback: function() {
                         l4iTemplate.Render({
                             dstid: "incp-podnew-form",
@@ -806,6 +790,8 @@ inCpPod.Info = function(pod_id, options) {
     });
 }
 
+
+
 inCpPod.SetInfo = function(pod_id) {
     if (!pod_id && inCpPod.entry_active_id) {
         pod_id = inCpPod.entry_active_id;
@@ -827,14 +813,35 @@ inCpPod.SetInfo = function(pod_id) {
                 });
             }
 
+            pod.spec._cpu_limit = 0;
+            pod.spec._mem_limit = 0;
+            pod.spec._vol_limit = 0;
+            for (var i in pod.spec.boxes) {
+                pod.spec._cpu_limit += pod.spec.boxes[i].resources.cpu_limit;
+                pod.spec._mem_limit += pod.spec.boxes[i].resources.mem_limit;
+            }
+            for (var i in pod.spec.volumes) {
+                if (pod.spec.volumes[i].name == "system") {
+                    pod.spec._vol_limit = pod.spec.volumes[i].size_limit;
+                    break;
+                }
+            }
+
+            var spec_summary = "ID: " + pod.spec.ref.id;
+            spec_summary += ", CPU: " + pod.spec._cpu_limit + "m";
+            spec_summary += ", RAM: " + inCp.UtilResSizeFormat(pod.spec._mem_limit);
+            spec_summary += ", Storage: " + inCp.UtilResSizeFormat(pod.spec._vol_limit);
+
+
             l4iModal.Open({
                 title: "Pod Instance Info",
                 tplsrc: tpl,
                 width: 800,
-                height: 400,
+                height: 450,
                 data: {
                     pod: pod,
                     _op_actions: actions,
+                    _spec_summary: spec_summary,
                 },
                 buttons: [{
                     onclick: "l4iModal.Close()",
@@ -1794,3 +1801,215 @@ inCpPod.EntryAccessSetCommit = function() {
         }
     });
 }
+
+inCpPod.specSetActive = null;
+inCpPod.SpecSet = function(pod_id) {
+
+    if (!pod_id) {
+        return;
+    }
+
+    var alert_id = "#incp-podnew-alert";
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "pod", "zones", "plans", function(tpl, pod, zones, plans) {
+
+            if (!pod || !pod.kind || pod.kind != "Pod" || !pod.spec.boxes || pod.spec.boxes.length < 1) {
+                return l4iAlert.Open("error", "No Pod Found");
+            }
+
+            if (!zones || !zones.kind || zones.kind != "HostZoneList") {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+            inCpPod.syszones = zones;
+
+            if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            var spec_res_id = pod.spec.boxes[0].resources.ref.id,
+                spec_vol_id = null,
+                spec_vol_size = null,
+                spec_image_id = pod.spec.boxes[0].image.ref.id;
+            for (var i in pod.spec.volumes) {
+                if (pod.spec.volumes[i].name == "system") {
+                    spec_vol_id = pod.spec.volumes[i].ref.id;
+                    spec_vol_size = pod.spec.volumes[i].size_limit;
+                    break;
+                }
+            }
+            if (!spec_vol_id) {
+                return l4iAlert.Open("error", "Invalid Pod Spec");
+            }
+
+            var _plans = [];
+            for (var i in plans.items) {
+
+                for (var j in plans.items[i].zones) {
+                    if (pod.spec.ref.id == plans.items[i].meta.id) {
+                        plans.items[i].res_compute_default = spec_res_id;
+                        plans.items[i].image_default = spec_image_id;
+                        plans.items[i].res_volume_default = spec_vol_id;
+                        for (var k in plans.items[i].res_volumes) {
+                            if (plans.items[i].res_volumes[k].ref_id == spec_vol_id) {
+                                plans.items[i].res_volumes[k].default = spec_vol_size;
+                                break;
+                            }
+                        }
+                    }
+                    if (pod.spec.zone == plans.items[i].zones[j].name &&
+                        plans.items[i].zones[j].cells &&
+                        plans.items[i].zones[j].cells.indexOf(pod.spec.cell) > -1) {
+                        plans.items[i].zones = [{
+                            name: pod.spec.zone,
+                            cells: [pod.spec.cell],
+                        }];
+                        _plans.push(plans.items[i]);
+                        break;
+                    }
+                }
+            }
+            if (_plans.length < 1) {
+                return l4iAlert.Open("error", "no available spec found");
+            }
+            plans.items = _plans;
+
+            pod._plans = plans;
+            pod._plan_selected = pod.spec.ref.id;
+
+
+            inCpPod.specSetActive = pod;
+
+            inCpPod.plans = plans;
+            inCpPod.plan_selected = pod._plan_selected;
+
+            var fnfre = function() {
+                l4iTemplate.Render({
+                    dstid: "incp-podnew-plans",
+                    tplid: "incp-podnew-plans-tpl",
+                    data: {
+                        items: inCpPod.plans.items,
+                        _plan_selected: inCpPod.plan_selected,
+                    },
+                });
+                inCpPod.NewRefreshPlan();
+            }
+
+            l4iModal.Open({
+                id: "podset-planset",
+                tplsrc: tpl,
+                title: "Setting Pod Spec",
+                width: "max",
+                height: "max",
+                callback: function() {
+                    l4iTemplate.Render({
+                        dstid: "incp-podnew-form",
+                        tplid: "incp-podnew-modal",
+                        data: {
+                            items: inCpPod.plans.items,
+                            _plan_selected: inCpPod.plan_selected,
+                        },
+                        callback: fnfre,
+                    });
+                },
+                buttons: [{
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                }, {
+                    onclick: "inCpPod.SpecSetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
+                }],
+            });
+        });
+
+        ep.fail(function(err) {
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
+        });
+
+        // template
+        inCp.TplFetch("pod/plan-set", {
+            callback: ep.done("tpl"),
+        });
+
+        inCp.ApiCmd("pod/entry?id=" + pod_id, {
+            callback: ep.done("pod"),
+        });
+
+        inCp.ApiCmd("pod-spec/plan-list", {
+            callback: ep.done("plans"),
+        });
+
+        inCp.ApiCmd("host/zone-list?fields=cells", {
+            callback: ep.done("zones"),
+        })
+    });
+}
+
+inCpPod.SpecSetCommit = function() {
+    var alert_id = "#incp-podnew-alert",
+        url = "",
+        vol_size = parseFloat($("#incp-podnew-resource-value").val());
+    if (vol_size <= 0) {
+        return l4i.InnerAlert(alert_id, "alert-danger", "System Storage Not Set");
+    }
+
+    if (!inCpPod.plan.res_compute_selected) {
+        return l4i.InnerAlert(alert_id, "alert-danger", "Resource Option Not Set");
+    }
+
+    if (vol_size >= 1.0) {
+        vol_size = parseInt(vol_size) * inCp.ByteGB;
+    } else {
+        vol_size = parseInt(vol_size * 10) * 100 * inCp.ByteMB;
+    }
+
+    var set = {
+        pod: inCpPod.specSetActive.meta.id,
+        name: inCpPod.specSetActive.meta.id,
+        plan: inCpPod.plan_selected,
+        zone: inCpPod.specSetActive.spec.zone,
+        cell: inCpPod.specSetActive.spec.cell,
+        res_volume: inCpPod.plan._res_volume.ref_id,
+        res_volume_size: vol_size,
+        boxes: [{
+            name: "main",
+            image: inCpPod.plan.image_selected,
+            res_compute: inCpPod.plan.res_compute_selected,
+        }],
+    };
+
+    $(alert_id).hide();
+
+    inCp.ApiCmd("pod/spec-set" + url, {
+        method: "POST",
+        data: JSON.stringify(set),
+        callback: function(err, rsj) {
+            l4iModal.ScrollTop();
+            if (err || !rsj) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            if (rsj.error) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+            }
+
+            if (!rsj.kind || rsj.kind != "PodInstance") {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            window.setTimeout(function() {
+                l4iModal.Close();
+                if (rsj.pod && rsj.pod.length > 8) {
+                    inCpPod.EntryIndex(rsj.pod);
+                } else {
+                    inCpPod.List(null, null);
+                }
+            }, 1000);
+        }
+    });
+}
+
+

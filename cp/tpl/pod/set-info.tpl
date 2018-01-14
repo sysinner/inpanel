@@ -12,6 +12,16 @@
     </div>
 
     <div class="l4i-form-group">
+      <label class="">Spec</label>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control " value="{[=it._spec_summary]}" readonly>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" onclick="inCpPod.SpecSet('{[=it.pod.meta.id]}')">Change Spec</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="l4i-form-group">
       <label class="">Operate</label>
       <div class="">
       {[~it._op_actions :v]}
@@ -24,25 +34,3 @@
 </div>
 </div>
 
-
-<script id="incp-pod-spec-info-tpl" type="text/html">
-  <table class="table table-condensed">
-    {[?it.labels]}
-    <tr>
-      <td><strong>Labels</strong></td>
-      <td>
-        <table width="100%">
-        <tbody>
-          {[~it.labels :v]}
-          <tr>
-            <td>{[=v.key]}</td>
-            <td>{[=v.val]}</td>
-          </tr>
-          {[~]}
-        </tbody>
-        </table>
-      </td>
-    </tr>
-    {[?]}
-  </table>
-</script>

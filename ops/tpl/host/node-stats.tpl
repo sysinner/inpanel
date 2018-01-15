@@ -12,12 +12,12 @@
 <script type="text/html" id="inops-node-optools-stats">
 <li>the Last</li>
 <li>
-  <a href="#" value="3600" onclick="inOpsHost.NodeStatsButton(this)" class="l4i-nav-item hover">
+  <a href="#" value="3600" onclick="inOpsHost.NodeStatsButton(this)" class="l4i-nav-item">
     Hour
   </a>
 </li>
 <li>
-  <a href="#" value="86400" onclick="inOpsHost.NodeStatsButton(this)" class="l4i-nav-item">
+  <a href="#" value="86400" onclick="inOpsHost.NodeStatsButton(this)" class="l4i-nav-item hover">
     24 Hours
   </a>
 </li>

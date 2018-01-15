@@ -1176,7 +1176,7 @@ inCpAppSpec.CfgSet = function(spec_id) {
                 id: "incp-appspec-cfg-fieldlist-modal",
                 title: "Configurator",
                 tplsrc: tpl,
-                width: 900,
+                width: 960,
                 height: 600,
                 buttons: btns,
                 callback: function() {

@@ -23,6 +23,9 @@
       <div class="">
         <textarea name="operate_access_ssh_key" rows="6" class="form-control">{[=it.operate.access.ssh_key]}</textarea>
       </div>
+	  <div class="alert alert-secondary" style="margin-top:10px">
+	    Getting your SSH Public Key: <strong>cat ~/.ssh/id_rsa.pub</strong>,<br/> or if the id_rsa.pub file does not exist, you may create a new one (Linux,Unix,MacOS): <strong>ssh-keygen -t rsa</strong>.
+	  </div>
     </div>
     </div>
 

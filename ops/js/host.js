@@ -624,7 +624,7 @@ inOpsHost.NodeStats = function(time_past) {
     if (time_past) {
         inOpsHost.node_active_past = parseInt(time_past);
         if (!inOpsHost.node_active_past) {
-            inOpsHost.node_active_past = 3600;
+            inOpsHost.node_active_past = 86400;
         }
     }
     if (inOpsHost.node_active_past < 600) {
@@ -683,7 +683,7 @@ inOpsHost.NodeStats = function(time_past) {
         ],
     };
 
-    var wlimit = 610;
+    var wlimit = 700;
     var tfmt = "";
     var ww = $(window).width();
     var hh = $(window).height();

@@ -38,7 +38,7 @@
       <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Graphs
     </button>
     <button class="pure-button button-xsmall"
-      onclick="inOpsHost.NodeSetForm(null, null, '{[=v.meta.id]}')">
+      onclick="inOpsHost.NodeSet(null, null, '{[=v.meta.id]}')">
       <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Setup
     </button>
   </td>
@@ -47,4 +47,9 @@
 </script>
 
 <script id="inops-host-nodels-optools" type="text/html">
+<li class="incp-btn incp-btn-primary">
+  <a href="#" onclick="inOpsHost.NodeNew()">
+    New Node
+  </a>
+</li>
 </script>

@@ -2,16 +2,7 @@
  
   <div id="inops-host-cellset-alert"></div>
 
-  <div class="l4i-form-group">
-    <label>Zone</label>
-    <div class="">
-    {[~it._zones.items :v]}
-      <span class="ids-form-checkbox">
-        <input type="radio" name="zone_id" value="{[=v.meta.id]}" {[ if (v.meta.id == it.zone_id) { ]}checked="checked"{[ } ]}> {[=v.meta.id]}
-      </span>
-    {[~]}
-    </div>
-  </div>
+  <input type="hidden" name="zone_id" value="{[=it.zone_id]}">
 
   {[ if (it.meta.id) { ]}
     <input type="hidden" name="id" value="{[=it.meta.id]}">
@@ -20,7 +11,7 @@
     <label class="">Cell ID</label>
     <div>
       <input type="text" name="id" class="form-control" 
-	    placeholder="Enter the Cell ID" value="{[=it.meta.id]}">
+	    placeholder="Enter the Cell ID" value="">
     </div>
   </div>
   {[ } ]}
@@ -31,11 +22,11 @@
   </div>
 
   <div class="l4i-form-group">
-    <label>Status</label>
+    <label>Action</label>
     <div class="">
-    {[~it._statusls :v]}
+    {[~it._actions :v]}
       <span class="ids-form-checkbox">
-        <input type="radio" name="phase" value="{[=v.status]}" {[ if (v.status == it.phase) { ]}checked="checked"{[ } ]}> {[=v.title]}
+        <input type="radio" name="phase" value="{[=v.action]}" {[ if (v.action == it.phase) { ]}checked="checked"{[ } ]}> {[=v.title]}
       </span>
     {[~]}
     </div>

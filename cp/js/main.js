@@ -209,6 +209,7 @@ inCp.AlertUserLogin = function() {
         buttons: [{
             title: "SIGN IN",
             href: inCp.base + "auth/login",
+            style: "btn-outline-secondary",
         }],
     });
 }
@@ -329,6 +330,22 @@ inCp.ModuleNavbarMenu = function(name, items, active) {
     }
     $("#incp-module-navbar-menus").html(html);
     l4i.UrlEventClean("incp-module-navbar-menus");
+}
+
+inCp.ModuleNavbarMenuRefresh = function(div_target, cb) {
+    if (!div_target) {
+        return;
+    }
+
+    var elem = document.getElementById(div_target);
+    if (!elem) {
+        return;
+    }
+    $("#incp-module-navbar-menus").html(elem.innerHTML);
+
+    if (cb && typeof cb === "function") {
+        cb(null);
+    }
 }
 
 inCp.OpToolsRefresh = function(div_target, cb) {
@@ -489,8 +506,8 @@ inCp.About = function() {
             l4iModal.Open({
                 title: "System Info",
                 tplsrc: tpl,
-                width: 800,
-                height: 400,
+                width: 900,
+                height: 500,
                 buttons: [{
                     onclick: "l4iModal.Close()",
                     title: "Close",
@@ -502,7 +519,7 @@ inCp.About = function() {
             alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
-        inCp.TplFetch("index/about", {
+        l4i.Ajax("/in/~/about.tpl", {
             callback: ep.done("tpl"),
         });
     });

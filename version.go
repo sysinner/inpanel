@@ -5,5 +5,8 @@ const (
 )
 
 var (
-	VersionHash = Version
+	VersionHash    = Version
+	OpsClusterZone = false
+	OpsClusterCell = false
+	OpsClusterHost = false
 )

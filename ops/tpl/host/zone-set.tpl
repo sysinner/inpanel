@@ -1,3 +1,17 @@
+<style>
+#inops-host-zone-form .btn-sm {
+  padding: 3px 10px;
+  font-size: 12px;
+  line-height: 100%;
+}
+#inops-host-zone-form table th {
+  padding: 4px 0;
+}
+#inops-host-zone-form table td {
+  padding: 4px 0;
+}
+</style>
+
 <div id="inops-host-zone-form">
 
   <div id="inops-host-zoneset-alert"></div>
@@ -22,11 +36,11 @@
   </div>
 
   <div class="l4i-form-group">
-    <label>Status</label>
+    <label>Action</label>
     <div>
-      {[~it.statusls :v]}
+      {[~it._actions :v]}
         <span class="ids-form-checkbox">
-          <input type="radio" name="phase" value="{[=v.status]}" {[ if (v.status == it.phase) { ]}checked="checked"{[ } ]}> {[=v.title]}
+          <input type="radio" name="phase" value="{[=v.action]}" {[ if (v.action == it.phase) { ]}checked="checked"{[ } ]}> {[=v.title]}
         </span>
       {[~]}
     </div>
@@ -35,9 +49,9 @@
   <div class="l4i-form-group">
     <label>
       WAN Addresss
-      <button type="button" class="btn btn-default btn-xs" 
+      <button type="button" class="btn btn-default btn-sm" 
         onclick="inOpsHost.ZoneWanAddressAppend()">
-        Append new Address
+        <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Address
       </button>
     </label>
     <div>
@@ -51,8 +65,12 @@
         <tbody id="inops-host-zoneset-wanaddrs">
           {[~it.wan_addrs :vaddr]}
           <tr class="inops-host-zoneset-wanaddr-item">
-            <td><input name="wan_addr" type="text" value="{[=vaddr]}" class="input-sm"/></td>
-            <td><a href="#" onclick="inOpsHost.ZoneWanAddressDel(this)">Delete</a></td>
+            <td><input name="wan_addr" type="text" value="{[=vaddr]}" class="form-control form-control-sm"/></td>
+            <td align="right">
+              <button class="pure-button button-small" onclick="inOpsHost.ZoneWanAddressDel(this)">
+                Delete
+              </button>
+			</td>
           </tr>
           {[~]}
         </tbody>
@@ -63,9 +81,9 @@
   <div class="l4i-form-group">
     <label>
       <span>LAN Addresss</span>
-      <button type="button" class="btn btn-default btn-xs" 
+      <button type="button" class="btn btn-default btn-sm" 
         onclick="inOpsHost.ZoneLanAddressAppend()">
-        Append new Address
+        <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Address
       </button>
     </label>
     <div>
@@ -79,8 +97,12 @@
         <tbody id="inops-host-zoneset-lanaddrs">
           {[~it.lan_addrs :vaddr]}
           <tr class="inops-host-zoneset-lanaddr-item">
-            <td><input name="lan_addr" type="text" value="{[=vaddr]}" class="input-sm"/></td>
-            <td><a href="#" onclick="inOpsHost.ZoneLanAddressDel(this)">Delete</a></td>
+            <td><input name="lan_addr" type="text" value="{[=vaddr]}" class="form-control form-control-sm"/></td>
+            <td align="right">
+              <button class="pure-button button-small " onclick="inOpsHost.ZoneLanAddressDel(this)">
+                Delete
+              </button>
+			</td>
           </tr>
           {[~]}
         </tbody>
@@ -92,14 +114,14 @@
 
 <script id="inops-host-zoneset-wanaddr-tpl" type="text/html">
 <tr class="inops-host-zoneset-wanaddr-item">
-  <td><input name="wan_addr" type="text" value="" class="input-sm"/></td>
-  <td><a href="#" onclick="inOpsHost.ZoneWanAddressDel(this)">Delete</a></td>
+  <td><input name="wan_addr" type="text" value="" class="form-control form-control-sm"/></td>
+  <td align="right"><button class="pure-button button-small " onclick="inOpsHost.ZoneWanAddressDel(this)">Delete</button></td>
 </tr>
 </script>
 
 <script id="inops-host-zoneset-lanaddr-tpl" type="text/html">
 <tr class="inops-host-zoneset-lanaddr-item">
-  <td><input name="lan_addr" type="text" value="" class="input-sm"/></td>
-  <td><a href="#" onclick="inOpsHost.ZoneLanAddressDel(this)">Delete</a></td>
+  <td><input name="lan_addr" type="text" value="" class="form-control form-control-sm"/></td>
+  <td align="right"><button class="pure-button button-small " onclick="inOpsHost.ZoneLanAddressDel(this)">Delete</button></td>
 </tr>
 </script>

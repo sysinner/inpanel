@@ -1,57 +1,49 @@
-<table width="100%"><tr>
-  <td width="160" id="inops-host-cells-zones" valign="top" style="padding-right:20px;"></td>
-  <td valign="top">
-    <table class="table table-hover">
-      <thead><tr>
-        <th>Cell</th>
-        <th>Status</th>
-        <th>Description</th>
-        <th>Created</th>
-        <th>Updated</th>
-        <th></th>
-      </tr></thead>
-      <tbody id="inops-host-cells"></tbody>
-    </table>
+<div id="inops-cluster-cells-alert"></div>
 
-    <button type="button" 
-      class="pure-button pure-button-primary button-small" 
-      onclick="inOpsHost.CellSetForm()">
-      New Cell
-    </button>
-  </td>
-</tr></table>
-
-<script id="inops-host-cells-zones-tpl" type="text/html">
-<h3>Zones</h3>
-{[ if (it.items && it.items.length > 0) { ]}
-<ul class="inops-nav inops-nav-pills inops-nav-stacked">
-{[~it.items :v]}
-<li class="{[ if (v.meta.id == it._zoneid) { ]}active-default arrow-right{[ } ]}">
-  <a onclick="inOpsHost.CellList('{[=v.meta.id]}')" href="#zone-select">
-    {[=v.meta.id]}
-  </a>
-</li>
-{[~]}
-</ul>
-{[ } else { ]}
-<div>No Zones Found</div>
-{[ } ]}
-</script>
+<div class="incp-div-light">
+<table class="table table-hover">
+  <thead><tr>
+    <th>Cell</th>
+    <th>Description</th>
+    <th>Nodes</th>
+    <th>Action</th>
+    <th>Updated</th>
+    <th></th>
+  </tr></thead>
+  <tbody id="inops-host-cells"></tbody>
+</table>
+</div>
 
 <script id="inops-host-cells-tpl" type="text/html">
 {[~it.items :v]}
 <tr>
-  <td class="inops-font-mono">{[=v.meta.id]}</td>
-  <td>{[=v._status_display]}</td>
+  <td class="inops-font-mono">
+    <a href="#node-list" onclick="inOpsHost.NodeList('{[=v.zone_id]}', '{[=v.meta.id]}')">{[=v.meta.id]}</a>
+  </td>  
   <td>{[=v.description]}</td>
-  <td>{[=l4i.MetaTimeParseFormat(v.meta.created, "Y-m-d")]}</td>
+  
+  <td>
+    <button class="pure-button button-xsmall" 
+	    onclick="inOpsHost.NodeList('{[=v.zone_id]}', '{[=v.meta.id]}')" href="#cell-set">
+	    List
+	  </button>
+  </td>
+  <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
-    <a class="btn btn-default btn-xs" 
-	  onclick="inOpsHost.CellSetForm('{[=v.zone_id]}', '{[=v.meta.id]}')" href="#cell-set">
-	  Setting
-	</a>
+    <button class="pure-button button-xsmall" 
+	    onclick="inOpsHost.CellSet('{[=v.zone_id]}', '{[=v.meta.id]}')" href="#cell-set">
+	    Setting
+	  </button>
   </td>
 </tr>
 {[~]}
+</script>
+
+<script type="text/html" id="inops-cluster-cells-optools">
+<li class="incp-btn incp-btn-primary">
+  <a href="#" onclick="inOpsHost.CellSet()">
+    New Cell
+  </a>
+</li>
 </script>

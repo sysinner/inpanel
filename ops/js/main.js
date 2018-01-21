@@ -1,5 +1,6 @@
 var inOps = {
     version: "0.3",
+    dist: "",
     base: "/in/ops/",
     basetpl: "/in/ops/-/",
     api: "/in/ops/",
@@ -49,6 +50,7 @@ inOps.Boot = function() {
             "~/cp/js/pod.js" + inOps.debug_uri(),
             "~/cp/js/app.js" + inOps.debug_uri(),
             "~/cp/js/app-spec.js" + inOps.debug_uri(),
+            "~/ops/css/base.css" + inOps.debug_uri(),
             "~/ops/js/host.js" + inOps.debug_uri(),
             "~/ops/js/pod.js" + inOps.debug_uri(),
             "~/ops/js/app.js" + inOps.debug_uri(),
@@ -103,7 +105,7 @@ inOps.load_index = function() {
             l4i.UrlEventRegister("host/index", inOpsHost.Index, "inops-topbar-nav-menus");
             l4i.UrlEventRegister("pod/index", inOpsPod.Index, "inops-topbar-nav-menus");
             l4i.UrlEventRegister("app/index", inOpsApp.Index, "inops-topbar-nav-menus");
-            l4i.UrlEventHandler("pod/index", true);
+            l4i.UrlEventHandler("host/index", true);
         });
 
         ep.fail(function(err) {

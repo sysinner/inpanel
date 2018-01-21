@@ -55,14 +55,13 @@ var inOpsHost = {
             id: "",
             name: ""
         },
-        zoneid: "",
-        status: 1,
+        zone_id: "",
+        phase: 1,
         desc: "",
     },
     zones: null,
     cells: null,
     nodes: null,
-    single_node: false,
     nav_zone: null,
     nav_cell: null,
     nav_node: null,
@@ -98,109 +97,110 @@ inOpsHost.NavInit = function() {
 
 inOpsHost.Index = function() {
 
-    inCp.ModuleNavbarMenu("ops/host/index", inOpsHost.list_nav_menus, "node/list");
-
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("zones", function(zones) {
+        var ep = EventProxy.create("zones", "tpl", function(zones, tpl) {
 
             if (!zones || !zones.items) {
-                return alert("Zone Not Found");
+                return l4iAlert.Open("error", "Zone Not Found");
             }
+            $("#comp-content").html(tpl);
+            // inCp.ModuleNavbarMenuRefresh("inops-host-nav-tpl");
 
-            if (zones.items[0].meta.id == "local") {
-                inOpsHost.single_node = true;
-                $("#inops-host-nav-menus").css({
-                    "display": "none"
-                });
-                inOpsHost.NodeList("local", "general");
-            }
+            inOpsHost.ZoneIndex();
         });
 
         ep.fail(function(err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
+        inOps.TplFetch("host/index", {
+            callback: ep.done("tpl"),
+        });
+
         // zones
         inOpsHost.ZoneRefresh(ep.done("zones"));
     });
-
-    // inOps.TplFetch("host/index", {
-    //     callback: function(err, data) {
-    //         if (err) {
-    //             return;
-    //         }
-    //         $("#comp-content").html(data);
-
-//         l4i.UrlEventRegister("host/node-list", inOpsHost.NodeList, "inops-host-nav-items");
-//         l4i.UrlEventRegister("host/cell-list", inOpsHost.CellList, "inops-host-nav-items");
-//         l4i.UrlEventRegister("host/zone-list", inOpsHost.ZoneList, "inops-host-nav-items");
-//         l4i.UrlEventHandler("host/node-list");
-//     }
-// });
 }
 
+inOpsHost.zone_active_fix = function(zoneid) {
+    if (!inOpsHost.zones) {
+        return false;
+    }
+
+    if (zoneid) {
+        if (!inOpsHost.zone_active ||
+            (inOpsHost.zone_active && inOpsHost.zone_active.meta.id != zoneid)) {
+            for (var i in inOpsHost.zones.items) {
+                if (zoneid == inOpsHost.zones.items[i].meta.id) {
+                    inOpsHost.zone_active = l4i.Clone(inOpsHost.zones.items[i]);
+                    break;
+                }
+            }
+        }
+    }
+    if (!inOpsHost.zone_active) {
+        return false;
+    }
+    return true;
+}
+
+inOpsHost.cell_active_fix = function(zoneid, cellid) {
+
+    if (!inOpsHost.zone_active_fix(zoneid)) {
+        return false;
+    }
+
+    if (cellid) {
+        if (!inOpsHost.cell_active ||
+            (inOpsHost.cell_active && inOpsHost.cell_active.meta.id != cellid)) {
+            for (var i in inOpsHost.zone_active.cells) {
+                if (cellid == inOpsHost.zone_active.cells[i].meta.id) {
+                    inOpsHost.cell_active = l4i.Clone(inOpsHost.zone_active.cells[i]);
+                    break;
+                }
+            }
+        }
+    }
+    if (!inOpsHost.cell_active) {
+        return false;
+    }
+    if (inOpsHost.cell_active.zone_id != inOpsHost.zone_active.meta.id) {
+        inOpsHost.cell_active = null;
+        return false;
+    }
+
+    return true;
+}
+
+
 inOpsHost.NodeList = function(zoneid, cellid) {
+
+    if (!inOpsHost.cell_active_fix(zoneid, cellid)) {
+        return;
+    }
+
+    l4iStorage.Set("inops_cluster_cell_id", inOpsHost.cell_active.meta.id);
 
     var uri = "";
     if (document.getElementById("inops_hostls_qry")) {
         uri = "qry_text=" + $("#inops_hostls_qry").val();
     }
 
-    if (!zoneid) {
-        zoneid = l4iSession.Get("inops_host_zoneid");
-        if (!zoneid) {
-            zoneid = l4iStorage.Get("inops_host_zoneid");
-        }
+    inCp.ModuleNavbarMenuRefresh("inops-host-nav-tpl");
+    if (inOps.nav_cluster_zone) {
+        $("#inops-cluster-nav-zone").css({
+            "display": "block"
+        });
+        $("#inops-cluster-nav-zone-value").text("Zone: " + inOpsHost.zone_active.meta.id);
     }
 
-    if (!cellid) {
-        cellid = l4iSession.Get("inops_host_cellid");
-        if (!cellid) {
-            cellid = l4iStorage.Get("inops_host_cellid");
-        }
+    if (inOps.nav_cluster_cell) {
+        $("#inops-cluster-nav-cell").css({
+            "display": "block"
+        });
+        $("#inops-cluster-nav-cell-value").text("Cell: " + inOpsHost.cell_active.meta.id);
     }
-
-    //
-    var zone_active = null;
-    for (var i in inOpsHost.zones.items) {
-        if (!zoneid) {
-            zoneid = inOpsHost.zones.items[i].meta.id;
-        }
-        if (zoneid == inOpsHost.zones.items[i].meta.id) {
-            zone_active = inOpsHost.zones.items[i];
-            break;
-        }
-    }
-    if (!zone_active) {
-        if (inOpsHost.zones.items.length < 1) {
-            return; // TODO
-        }
-        zone_active = inOpsHost.zones.items[0];
-    }
-
-    //
-    var cell_active = null;
-    for (var j in zone_active.cells) {
-        if (!cellid) {
-            cellid = zone_active.cells[j].meta.id;
-        }
-        if (cellid == zone_active.cells[j].meta.id) {
-            cell_active = zone_active.cells[j];
-            break;
-        }
-    }
-    if (!cell_active) {
-        if (zone_active.cells.length < 1) {
-            return; // TODO
-        }
-        cell_active = zone_active.cells[0];
-    }
-
-    l4iSession.Set("inops_host_zoneid", zone_active.meta.id);
-    l4iStorage.Set("inops_host_zoneid", zone_active.meta.id);
-    l4iSession.Set("inops_host_cellid", cell_active.meta.id);
-    l4iStorage.Set("inops_host_cellid", cell_active.meta.id);
 
     seajs.use(["ep"], function(EventProxy) {
 
@@ -209,13 +209,15 @@ inOpsHost.NodeList = function(zoneid, cellid) {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
-            if (inOpsHost.single_node) {
-                $("#inops-host-nodes-navbar").css({
-                    "display": "none"
-                });
+            $("#inops-cluster-nav-host").css({
+                "display": "block"
+            });
+
+            if (inOps.nav_cluster_host) {
+                inCp.OpToolsRefresh("#inops-host-nodels-optools");
+            } else {
+                inCp.OpToolsClean();
             }
-            // inCp.OpToolsClean();
-            inCp.OpToolsRefresh("#inops-host-nodels-optools");
 
             l4iTemplate.Render({
                 dstid: "inops-host-nodes",
@@ -232,7 +234,7 @@ inOpsHost.NodeList = function(zoneid, cellid) {
             callback: ep.done("tpl"),
         });
 
-        inOpsHost.node_list_refresh(zone_active.meta.id, cell_active.meta.id, ep.done("data"));
+        inOpsHost.node_list_refresh(inOpsHost.zone_active.meta.id, inOpsHost.cell_active.meta.id, ep.done("data"));
     });
 }
 
@@ -262,13 +264,13 @@ inOpsHost.NodeOpPortUsedInfo = function(z, c, node_id) {
     }
 }
 
-inOpsHost.NodeSetForm = function(zoneid, cellid, nodeid) {
+inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
     if (!zoneid) {
-        zoneid = l4iSession.Get("inops_host_zoneid");
+        zoneid = l4iStorage.Get("inops_cluster_zone_id");
     }
 
     if (!cellid) {
-        cellid = l4iSession.Get("inops_host_cellid");
+        cellid = l4iStorage.Get("inops_cluster_cell_id");
     }
 
     if (!nodeid) {
@@ -385,20 +387,17 @@ inOpsHost.NodeSetCommit = function() {
                 }
             }, 500);
         },
-        error: function(xhr, textStatus, error) {
-            l4i.InnerAlert(alert_id, 'alert-danger', textStatus + ' ' + xhr.responseText);
-        }
     });
 }
 
 
-inOpsHost.NodeNewForm = function(zoneid, cellid) {
+inOpsHost.NodeNew = function(zoneid, cellid) {
     if (!zoneid) {
-        zoneid = l4iSession.Get("inops_host_zoneid");
+        zoneid = l4iStorage.Get("inops_cluster_zone_id");
     }
 
     if (!cellid) {
-        cellid = l4iSession.Get("inops_host_cellid");
+        cellid = l4iStorage.Get("inops_cluster_cell_id");
     }
 
     inOps.TplFetch("host/node-new", {
@@ -407,13 +406,17 @@ inOpsHost.NodeNewForm = function(zoneid, cellid) {
             l4iModal.Open({
                 title: "New Node",
                 tplsrc: tpl,
+                width: 900,
+                height: 500,
                 data: {
-                    zoneid: zoneid,
-                    cellid: cellid,
+                    operate: {
+                        zone_id: zoneid,
+                        cell_id: cellid,
+                        action: 1,
+                    },
                     _phase: "Running",
-                    _statusls: inOpsHost.node_statusls,
+                    _actions: inOpsHost.actions,
                 },
-                height: 400,
                 buttons: [{
                     onclick: "l4iModal.Close()",
                     title: "Close",
@@ -432,25 +435,20 @@ inOpsHost.NodeNewCommit = function() {
         alert_id = "#inops-host-nodenew-alert";
 
     var req = {
-        meta: {
-            name: form.find("input[name=name]").val(),
-        },
-        operate: {
-            action: parseInt(form.find("input[name=operate_action]").val()),
-            zone_id: form.find("input[name=operate_zone_id]").val(),
-            cell_id: form.find("input[name=operate_cell_id]").val(),
-        },
-        spec: {
-            peer_lan_addr: form.find("input[name=peer_lan_addr]").val(),
-        },
+        name: form.find("input[name=name]").val(),
+        action: parseInt(form.find("input[name=operate_action]").val()),
+        zone_id: form.find("input[name=operate_zone_id]").val(),
+        cell_id: form.find("input[name=operate_cell_id]").val(),
+        peer_lan_addr: form.find("input[name=peer_lan_addr]").val(),
+        secret_key: form.find("input[name=secret_key]").val(),
     };
 
     inOps.ApiSysCmd("host/node-new", {
         method: "POST",
         data: JSON.stringify(req),
-        success: function(rsj) {
+        callback: function(err, rsj) {
 
-            if (!rsj) {
+            if (err || !rsj) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
             }
 
@@ -469,9 +467,6 @@ inOpsHost.NodeNewCommit = function() {
                 inOpsHost.NodeList();
             }, 500);
         },
-        error: function(xhr, textStatus, error) {
-            l4i.InnerAlert(alert_id, 'alert-danger', textStatus + ' ' + xhr.responseText);
-        },
     });
 }
 
@@ -489,16 +484,13 @@ inOpsHost.entry_nav_menus = [{
 }, {
     name: "Settings",
     uri: "host/node/setup",
-    onclick: "inOpsHost.NodeSetForm()",
+    onclick: "inOpsHost.NodeSet()",
 }];
 
 inOpsHost.Node = function(zone_id, host_id, nav_target) {
 
     if (!zone_id) {
-        zone_id = l4iSession.Get("inops_host_zoneid");
-        if (!zone_id) {
-            zone_id = l4iStorage.Get("inops_host_zoneid");
-        }
+        zone_id = l4iStorage.Get("inops_cluster_zone_id");
     }
 
     if (!host_id) {
@@ -561,6 +553,10 @@ inOpsHost.NodeOverview = function() {
                     node.status.volumes[i].used = 1;
                 }
                 node.status.volumes[i]._percent = parseInt((100 * node.status.volumes[i].used) / node.status.volumes[i].total);
+            }
+
+            if (!node.spec.peer_wan_addr) {
+                node.spec.peer_wan_addr = "not set";
             }
 
 
@@ -634,7 +630,7 @@ inOpsHost.NodeStats = function(time_past) {
         inOpsHost.node_active_past = 30 * 86400;
     }
 
-    var zoneid = l4iSession.Get("inops_host_zoneid");
+    var zoneid = l4iStorage.Get("inops_cluster_zone_id");
 
 
     var stats_url = "id=" + inOpsHost.node_active_id;
@@ -948,8 +944,8 @@ inOpsHost.NodeStats = function(time_past) {
 
 
 
-inOpsHost.ZoneRefresh = function(cb) {
-    if (inOpsHost.zones) {
+inOpsHost.ZoneRefresh = function(cb, force) {
+    if (inOpsHost.zones && !force) {
         return cb(null, inOpsHost.zones);
     }
 
@@ -972,55 +968,25 @@ inOpsHost.ZoneRefresh = function(cb) {
                 return cb("Network Connection Exception", null);
             }
 
+            for (var i in zones.items) {
+                if (!zones.items[i].summary) {
+                    zones.items[i].summary = "";
+                }
+                if (!zones.items[i].cells) {
+                    zones.items[i].cells = [];
+                }
+                for (var j in zones.items[i].cells) {
+                    if (!zones.items[i].cells[j].description) {
+                        zones.items[i].cells[j].description = "";
+                    }
+                }
+                if (inOpsHost.zone_active && inOpsHost.zone_active.meta.id == zones.items[i].meta.id) {
+                    inOpsHost.zone_active = l4i.Clone(zones.items[i]);
+                }
+            }
+
             inOpsHost.zones = zones;
             cb(null, inOpsHost.zones);
-        },
-    });
-}
-
-inOpsHost.CellRefresh = function(zoneid, cb) {
-    if (!zoneid || zoneid.indexOf("/") >= 0) {
-        return;
-    }
-
-    inOps.ApiSysCmd("host/cell-list?zoneid=" + zoneid, {
-        callback: function(err, cells) {
-
-            if (err) {
-                return cb(err, null);
-            }
-
-            if (!cells) {
-                return cb("Network Connection Exception", null);
-            }
-
-            if (cells.error) {
-                return cb(cells.error.message, null);
-            }
-
-            if (!cells.kind || cells.kind != "HostCellList") {
-                return cb("Network Connection Exception", null);
-            }
-
-            var cellid = l4iSession.Get("inops_host_cellid");
-            if (!cellid) {
-                cellid = l4iStorage.Get("inops_host_cellid");
-            }
-
-            if (!cellid) {
-
-                for (var i in cells.items) {
-                    cellid = cells.items[i].meta.id;
-                    break
-                }
-
-                l4iSession.Set("inops_host_cellid", cellid);
-                l4iStorage.Set("inops_host_cellid", cellid);
-            }
-
-            cells._cellid = cellid;
-
-            cb(null, cells);
         },
     });
 }
@@ -1113,82 +1079,116 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
     });
 }
 
-inOpsHost.CellList = function(zoneid) {
-    if (zoneid && zoneid.indexOf("/") >= 0) {
-        zoneid = null;
+inOpsHost.CellIndex = function() {
+    if (!inOpsHost.zone_active) {
+        return;
+    }
+    if (inOps.nav_cluster_cell) {
+        $("#inops-cluster-nav-cell").css({
+            "display": "block"
+        });
     }
 
-    if (zoneid) {
-        l4iSession.Set("inops_host_zoneid", zoneid);
+    l4iStorage.Set("inops_cluster_zone_id", inOpsHost.zone_active.meta.id);
+    var cell_active_id = l4iStorage.Get("inops_cluster_cell_id");
+    inOpsHost.cell_active = null;
+
+    if (!inOps.nav_cluster_cell && !cell_active_id && inOps.zone_active.cells.length > 0) {
+        inOpsHost.cell_active = l4i.Clone(inOpsHost.zone_active.cells[0]);
+        cell_active_id = inOpsHost.cell_active.meta.id;
+        l4iStorage.Set("inops_cluster_cell_id", cell_active_id);
     }
 
-    inOps.TplFetch("host/cell-list", {
-        callback: function(err, tpl) {
-
-            if (err) {
-                return alert(err);
+    if (cell_active_id && (!inOpsHost.cell_active || inOpsHost.cell_active.meta.id != cell_active_id)) {
+        for (var i in inOpsHost.zone_active.cells) {
+            if (cell_active_id == inOpsHost.zone_active.cells[i].meta.id) {
+                inOpsHost.cell_active = l4i.Clone(inOpsHost.zone_active.cells[i]);
+                break;
             }
+        }
+    }
+
+    if (cell_active_id && inOpsHost.cell_active &&
+        cell_active_id == inOpsHost.cell_active.meta.id) {
+        if (inOps.nav_cluster_cell) {
+            $("#inops-cluster-nav-cell-value").text("Cell: " + inOpsHost.cell_active.meta.id);
+        }
+        return inOpsHost.NodeList();
+    }
+
+    inOpsHost.CellList();
+}
+
+inOpsHost.CellList = function(zoneid) {
+    if (!inOpsHost.zone_active_fix(zoneid)) {
+        return;
+    }
+
+    l4iStorage.Del("inops_cluster_cell_id");
+
+    $("#inops-cluster-nav-host").css({
+        "display": "none"
+    });
+    if (inOps.nav_cluster_zone) {
+        $("#inops-cluster-nav-zone").css({
+            "display": "block"
+        });
+        $("#inops-cluster-nav-zone-value").text("Zone: " + inOpsHost.zone_active.meta.id);
+    }
+
+    if (inOps.nav_cluster_cell) {
+        $("#inops-cluster-nav-cell").css({
+            "display": "block"
+        });
+        $("#inops-cluster-nav-cell-value").text("Cells");
+    }
+
+    l4iStorage.Set("inops_cluster_zone_id", inOpsHost.zone_active.meta.id);
+    inOpsHost.cell_active = null;
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", function(tpl) {
 
             if (tpl) {
                 $("#work-content").html(tpl);
             }
+            if (inOps.nav_cluster_cell) {
+                inCp.OpToolsRefresh("#inops-cluster-cells-optools");
+            } else {
+                inCp.OpToolsClean();
+            }
 
-            inOpsHost.ZoneRefresh(function(err, zones) {
 
-                if (err) {
-                    return alert(err);
-                }
-
-                l4iTemplate.Render({
-                    dstid: "inops-host-cells-zones",
-                    tplid: "inops-host-cells-zones-tpl",
-                    data: zones,
-                });
-
-                inOpsHost.CellRefresh(zones._zoneid, function(err, cells) {
-
-                    if (err) {
-                        return alert(err);
-                    }
-
-                    for (var i in cells.items) {
-
-                        cells.items[i]._status_display = "Unknown";
-
-                        for (var j in inOpsHost.statusls) {
-
-                            if (inOpsHost.statusls[j].status == cells.items[i].phase) {
-                                cells.items[i]._status_display = inOpsHost.statusls[j].title;
-                                break
-                            }
-                        }
-
-                        if (!cells.items[i].description) {
-                            cells.items[i].description = "";
-                        }
-                    }
-
-                    l4iTemplate.Render({
-                        dstid: "inops-host-cells",
-                        tplid: "inops-host-cells-tpl",
-                        data: cells,
-                    });
-                });
+            l4iTemplate.Render({
+                dstid: "inops-host-cells",
+                tplid: "inops-host-cells-tpl",
+                data: {
+                    zone: inOpsHost.zone_active,
+                    items: inOpsHost.zone_active.cells,
+                },
             });
-        },
+
+        });
+
+        ep.fail(function(err) {
+            alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
+        });
+
+        inOps.TplFetch("host/cell-list", {
+            callback: ep.done("tpl"),
+        });
     });
 }
 
-
-inOpsHost.CellSetForm = function(zoneid, cellid) {
+inOpsHost.CellSet = function(zoneid, cellid) {
+    if (!inOpsHost.zone_active) {
+        return;
+    }
+    zoneid = inOpsHost.zone_active.meta.id;
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "cell", "zones", function(tpl, cell, zones) {
-
-            if (!zones || !zones.items) {
-                alert("Zone Not Found");
-                return;
-            }
+        var ep = EventProxy.create("tpl", "cell", function(tpl, cell) {
 
             if (!cell) {
                 cell = l4i.Clone(inOpsHost.cell_def);
@@ -1198,19 +1198,12 @@ inOpsHost.CellSetForm = function(zoneid, cellid) {
                 cell = l4i.Clone(inOpsHost.cell_def);
             }
 
-            if (!cell.zoneid && zoneid) {
-                cell.zoneid = zoneid;
-            }
+            cell.zone_id = zoneid;
 
-            cell._zones = zones;
-            cell._statusls = inOpsHost.statusls;
+            cell._actions = inOpsHost.actions;
 
             if (!cell.description) {
                 cell.description = "";
-            }
-
-            if (!cell.zone) {
-                cell.zone = l4i.Clone(inOpsHost.zone_def);
             }
 
             l4iModal.Open({
@@ -1246,11 +1239,6 @@ inOpsHost.CellSetForm = function(zoneid, cellid) {
                 callback: ep.done("cell"),
             });
         }
-
-        // zones
-        inOps.ApiSysCmd("host/zone-list", {
-            callback: ep.done("zones"),
-        });
     });
 }
 
@@ -1262,7 +1250,7 @@ inOpsHost.CellSetCommit = function() {
         meta: {
             id: form.find("input[name=id]").val(),
         },
-        zone_id: form.find("input[name=zone_id]:checked").val(),
+        zone_id: form.find("input[name=zone_id]").val(),
         phase: parseInt(form.find("input[name=phase]:checked").val()),
         description: form.find("input[name=description]").val(),
     };
@@ -1270,7 +1258,11 @@ inOpsHost.CellSetCommit = function() {
     inOps.ApiSysCmd("host/cell-set", {
         method: "POST",
         data: JSON.stringify(req),
-        success: function(cell) {
+        callback: function(err, cell) {
+
+            if (err || !cell) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed");
+            }
 
             if (!cell) {
                 return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
@@ -1286,75 +1278,162 @@ inOpsHost.CellSetCommit = function() {
 
             l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function() {
-                l4iModal.Close();
-                inOpsHost.CellList();
-            }, 500);
+            inOpsHost.ZoneRefresh(function() {
+                window.setTimeout(function() {
+                    l4iModal.Close();
+                    inOpsHost.CellList();
+                }, 500);
+            }, true);
         },
-        error: function(xhr, textStatus, error) {
-            l4i.InnerAlert(alert_id, 'alert-danger', textStatus + ' ' + xhr.responseText);
-        }
     });
+}
+
+inOpsHost.ZoneIndex = function() {
+    if (!inOpsHost.zones) {
+        return;
+    }
+    inCp.ModuleNavbarMenuRefresh("inops-host-nav-tpl");
+    if (inOps.nav_cluster_zone) {
+        $("#inops-cluster-nav-zone").css({
+            "display": "block"
+        });
+    }
+
+    var zone_active_id = l4iStorage.Get("inops_cluster_zone_id");
+
+    if (!inOps.nav_cluster_zone && !zone_active_id && inOpsHost.zones.items.length > 0) {
+        zone_active_id = inOpsHost.zones.items[0].meta.id;
+        inOpsHost.zone_active = l4i.Clone(inOpsHost.zones.items[0]);
+        l4iStorage.Set("inops_cluster_zone_id", zone_active_id);
+    }
+
+    if (zone_active_id && (!inOpsHost.zone_active || inOpsHost.zone_active.meta.id != zone_active_id)) {
+        for (var i in inOpsHost.zones.items) {
+            if (zone_active_id == inOpsHost.zones.items[i].meta.id) {
+                inOpsHost.zone_active = l4i.Clone(inOpsHost.zones.items[i]);
+                break;
+            }
+        }
+    }
+
+    if (zone_active_id && inOpsHost.zone_active &&
+        zone_active_id == inOpsHost.zone_active.meta.id) {
+        if (inOps.nav_cluster_zone) {
+            $("#inops-cluster-nav-zone-value").text("Zone: " + inOpsHost.zone_active.meta.id);
+        }
+        return inOpsHost.CellIndex();
+    }
+
+    inOpsHost.ZoneList();
 }
 
 
 inOpsHost.ZoneList = function() {
-    var alert_id = "#inops-host-zones-alert";
+    if (!inOpsHost.zones) {
+        return;
+    }
+
+    l4iStorage.Del("inops_cluster_zone_id");
+    inOpsHost.zone_active = null;
+
+    $("#inops-cluster-nav-host").css({
+        "display": "none"
+    });
+    $("#inops-cluster-nav-cell").css({
+        "display": "none"
+    });
+    if (inOps.nav_cluster_zone) {
+        $("#inops-cluster-nav-zone").css({
+            "display": "block"
+        });
+        $("#inops-cluster-nav-zone-value").text("Zones");
+    }
+
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
+        var ep = EventProxy.create("tpl", function(tpl) {
 
             if (tpl) {
                 $("#work-content").html(tpl);
             }
-
-            if (!rsj || !rsj.kind || rsj.kind != "HostZoneList") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Item Not Found");
-            }
-
-            if (!rsj.items) {
-                rsj.items = [];
-            }
-
-            for (var i in rsj.items) {
-
-                rsj.items[i]._status_display = "Unknown";
-
-                for (var j in inOpsHost.statusls) {
-
-                    if (inOpsHost.statusls[j].status == rsj.items[i].phase) {
-                        rsj.items[i]._status_display = inOpsHost.statusls[j].title;
-                        break
-                    }
-                }
-
-                if (!rsj.items[i].cells) {
-                    rsj.items[i].cells = [];
-                }
+            if (inOps.nav_cluster_zone) {
+                inCp.OpToolsRefresh("#inops-cluster-zones-optools");
+            } else {
+                inCp.OpToolsClean();
             }
 
             l4iTemplate.Render({
                 dstid: "inops-host-zones",
                 tplid: "inops-host-zones-tpl",
-                data: rsj,
+                data: inOpsHost.zones,
             });
         });
 
         ep.fail(function(err) {
-            alert("ListRefresh error, Please try again later (EC:001)");
+            alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
         inOps.TplFetch("host/zone-list", {
             callback: ep.done("tpl"),
         });
-
-        inOps.ApiSysCmd("host/zone-list", {
-            callback: ep.done("data"),
-        });
     });
+
+    // var alert_id = "#inops-host-zones-alert";
+    // seajs.use(["ep"], function(EventProxy) {
+
+    //     var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
+
+    //         if (tpl) {
+    //             $("#work-content").html(tpl);
+    //         }
+
+    //         if (!rsj || !rsj.kind || rsj.kind != "HostZoneList") {
+    //             return l4i.InnerAlert(alert_id, 'alert-danger', "Item Not Found");
+    //         }
+
+    //         if (!rsj.items) {
+    //             rsj.items = [];
+    //         }
+
+    //         for (var i in rsj.items) {
+
+    //             rsj.items[i]._status_display = "Unknown";
+
+    //             for (var j in inOpsHost.statusls) {
+
+    //                 if (inOpsHost.statusls[j].status == rsj.items[i].phase) {
+    //                     rsj.items[i]._status_display = inOpsHost.statusls[j].title;
+    //                     break
+    //                 }
+    //             }
+
+    //             if (!rsj.items[i].cells) {
+    //                 rsj.items[i].cells = [];
+    //             }
+    //         }
+
+    //         l4iTemplate.Render({
+    //             dstid: "inops-host-zones",
+    //             tplid: "inops-host-zones-tpl",
+    //             data: rsj,
+    //         });
+    //     });
+
+    //     ep.fail(function(err) {
+    //         alert("ListRefresh error, Please try again later (EC:001)");
+    //     });
+
+    //     inOps.TplFetch("host/zone-list", {
+    //         callback: ep.done("tpl"),
+    //     });
+
+//     inOps.ApiSysCmd("host/zone-list", {
+//         callback: ep.done("data"),
+//     });
+// });
 }
 
-inOpsHost.ZoneSetForm = function(zoneid) {
+inOpsHost.ZoneSet = function(zoneid) {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
@@ -1384,13 +1463,13 @@ inOpsHost.ZoneSetForm = function(zoneid) {
                 rsj.summary = "";
             }
 
-            rsj.statusls = inOpsHost.statusls;
+            rsj._actions = inOpsHost.actions;
 
             l4iModal.Open({
                 title: title,
                 tplsrc: tpl,
                 data: rsj,
-                width: 800,
+                width: 950,
                 height: 600,
                 buttons: [{
                     onclick: "l4iModal.Close()",
@@ -1400,7 +1479,7 @@ inOpsHost.ZoneSetForm = function(zoneid) {
                     title: "Save",
                     style: "btn btn-primary",
                 }],
-                success: function() {
+                callback: function() {
                     // console.log(rsj.lan_addrs.length);
                     if (rsj.lan_addrs.length < 1) {
                         inOpsHost.ZoneLanAddressAppend();
@@ -1454,7 +1533,8 @@ inOpsHost.ZoneLanAddressDel = function(field) {
 }
 
 inOpsHost.ZoneSetCommit = function() {
-    var form = $("#inops-host-zone-form");
+    var form = $("#inops-host-zone-form"),
+        alertid = "#inops-host-zoneset-alert";
 
     var req = {
         meta: {
@@ -1501,30 +1581,28 @@ inOpsHost.ZoneSetCommit = function() {
     inOps.ApiSysCmd("host/zone-set", {
         method: "POST",
         data: JSON.stringify(req),
-        success: function(rsj) {
+        callback: function(err, rsj) {
 
-            if (!rsj) {
-                return l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', "Network Connection Exception");
+            if (err || !rsj) {
+                return l4i.InnerAlert(alertid, 'alert-danger', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alertid, 'alert-danger', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "HostZone") {
-                return l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alertid, 'alert-danger', "Network Connection Exception");
             }
 
-            l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alertid, 'alert-success', "Successfully Updated");
 
-            window.setTimeout(function() {
-                l4iModal.Close();
-                inOpsHost.ZoneList();
-                inOpsHost.zones = null;
-            }, 500);
+            inOpsHost.ZoneRefresh(function() {
+                window.setTimeout(function() {
+                    l4iModal.Close();
+                    inOpsHost.ZoneList();
+                }, 500);
+            }, true);
         },
-        error: function(xhr, textStatus, error) {
-            l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', textStatus + ' ' + xhr.responseText);
-        }
     });
 }

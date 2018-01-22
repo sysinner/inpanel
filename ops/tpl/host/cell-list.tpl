@@ -24,17 +24,17 @@
   
   <td>
     <button class="pure-button button-xsmall" 
-	    onclick="inOpsHost.NodeList('{[=v.zone_id]}', '{[=v.meta.id]}')" href="#cell-set">
-	    List
-	  </button>
+      onclick="inOpsHost.NodeList('{[=v.zone_id]}', '{[=v.meta.id]}')" href="#cell-set">
+      {[=v.node_num]}
+    </button>
   </td>
   <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="pure-button button-xsmall" 
-	    onclick="inOpsHost.CellSet('{[=v.zone_id]}', '{[=v.meta.id]}')" href="#cell-set">
-	    Setting
-	  </button>
+      onclick="inOpsHost.CellSet('{[=v.zone_id]}', '{[=v.meta.id]}')" href="#cell-set">
+      Setting
+    </button>
   </td>
 </tr>
 {[~]}

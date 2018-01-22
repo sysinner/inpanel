@@ -558,7 +558,12 @@ inOpsHost.NodeOverview = function() {
             if (!node.spec.peer_wan_addr) {
                 node.spec.peer_wan_addr = "not set";
             }
-
+            if (!node.spec.exp_docker_version) {
+                node.spec.exp_docker_version = "disable";
+            }
+            if (!node.spec.exp_rkt_version) {
+                node.spec.exp_rkt_version = "disable";
+            }
 
             inCp.OpToolsClean();
             $("#work-content").html(tpl);

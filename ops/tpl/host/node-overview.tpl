@@ -33,7 +33,6 @@
     <div class="value">{[=l4i.UnixTimeFormat(it.status.uptime, "Y-m-d H:i:s")]}</div>
   </div>
 </div>
-
 <div class="incp-div-label-block-frame-inline">
   <div class="incp-div-label-block incp-div-light">
     <div class="name">OS</div>
@@ -54,6 +53,19 @@
     <div class="value">
       {[=inCp.UtilResSizeFormat(it.operate.mem_used)]} / {[=inCp.UtilResSizeFormat(it.spec.capacity.mem)]}
     </div>
+  </div>
+</div>
+
+
+<div class="incp-div-h-title" style="padding-top:10px">Container Driver</div>
+<div class="incp-div-label-block-frame-inline">
+  <div class="incp-div-label-block incp-div-light">
+    <div class="name">Docker</div>
+    <div class="value">{[=it.spec.exp_docker_version]}</div>
+  </div>
+  <div class="incp-div-label-block incp-div-light">
+    <div class="name">CoreOS rkt</div>
+    <div class="value">{[=it.spec.exp_rkt_version]}</div>
   </div>
 </div>
 

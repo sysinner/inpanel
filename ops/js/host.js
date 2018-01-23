@@ -391,6 +391,103 @@ inOpsHost.NodeSetCommit = function() {
 }
 
 
+inOpsHost.NodeSecretKeySet = function(zoneid, cellid, nodeid) {
+    if (!zoneid) {
+        zoneid = l4iStorage.Get("inops_cluster_zone_id");
+    }
+
+    if (!cellid) {
+        cellid = l4iStorage.Get("inops_cluster_cell_id");
+    }
+
+    if (!nodeid) {
+        nodeid = inOpsHost.node_active_id;
+        if (!nodeid) {
+            return;
+        }
+    }
+
+    var alert_id = "#inops-host-node-secretkey-set-alert";
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", function(tpl) {
+
+            l4iModal.Open({
+                title: "Reset Secret Key",
+                tplsrc: tpl,
+                data: {
+                    zone_id: zoneid,
+                    node_id: nodeid,
+                },
+                width: 700,
+                height: 300,
+                buttons: [{
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                }, {
+                    onclick: "inOpsHost.NodeSecretKeySetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
+                }]
+            });
+        });
+
+        ep.fail(function(err) {
+            alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
+        });
+
+        inOps.TplFetch("host/node-secretkey-set", {
+            callback: ep.done("tpl"),
+        });
+    });
+}
+
+inOpsHost.NodeSecretKeySetCommit = function() {
+    var form = $("#inops-host-node-secretkey-form"),
+        alert_id = "#inops-host-node-secretkey-set-alert";
+
+    var req = {
+        zone_id: form.find("input[name=zone_id]").val(),
+        node_id: form.find("input[name=node_id]").val(),
+        secret_key: form.find("input[name=secret_key]").val(),
+    };
+
+    inOps.ApiSysCmd("host/node-secret-key-set", {
+        method: "POST",
+        data: JSON.stringify(req),
+        callback: function(err, rsj) {
+
+            if (err) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', err);
+            }
+
+            if (!rsj) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            if (rsj.error) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+            }
+
+            if (!rsj.kind || rsj.kind != "HostNode") {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+            }
+
+            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+
+            window.setTimeout(function() {
+                l4iModal.Close();
+                var el = document.getElementById("inops-host-nodes");
+                if (el) {
+                    inOpsHost.NodeList();
+                }
+            }, 500);
+        },
+    });
+}
+
+
 inOpsHost.NodeNew = function(zoneid, cellid) {
     if (!zoneid) {
         zoneid = l4iStorage.Get("inops_cluster_zone_id");
@@ -485,6 +582,10 @@ inOpsHost.entry_nav_menus = [{
     name: "Settings",
     uri: "host/node/setup",
     onclick: "inOpsHost.NodeSet()",
+}, {
+    name: "ReSet SecretKey",
+    uri: "host/node/setretkey",
+    onclick: "inOpsHost.NodeSecretKeySet()",
 }];
 
 inOpsHost.Node = function(zone_id, host_id, nav_target) {

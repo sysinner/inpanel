@@ -1086,7 +1086,7 @@ inOpsHost.ZoneRefresh = function(cb, force) {
                         zones.items[i].cells[j].description = "";
                     }
                     if (!zones.items[i].cells[j].node_num) {
-                        zones.items[i].cells[j].num_num = 0;
+                        zones.items[i].cells[j].node_num = 0;
                     }
                 }
                 if (inOpsHost.zone_active && inOpsHost.zone_active.meta.id == zones.items[i].meta.id) {

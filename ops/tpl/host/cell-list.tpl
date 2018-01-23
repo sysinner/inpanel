@@ -17,7 +17,7 @@
 <script id="inops-host-cells-tpl" type="text/html">
 {[~it.items :v]}
 <tr>
-  <td class="inops-font-mono">
+  <td class="incp-font-fixspace">
     <a href="#node-list" onclick="inOpsHost.NodeList('{[=v.zone_id]}', '{[=v.meta.id]}')">{[=v.meta.id]}</a>
   </td>  
   <td>{[=v.description]}</td>

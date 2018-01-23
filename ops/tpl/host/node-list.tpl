@@ -19,7 +19,7 @@
 <script id="inops-host-nodes-tpl" type="text/html">
 {[~it.items :v]}
 <tr>
-  <td class="inops-font-mono">
+  <td class="incp-font-fixspace">
     <a href="#node-{[=v.meta.id]}" onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">{[=v.meta.id]}</a>
   </td>
   <td>{[=v.spec.peer_lan_addr]}</td>

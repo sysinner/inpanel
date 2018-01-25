@@ -1202,7 +1202,7 @@ inOpsHost.CellIndex = function() {
     var cell_active_id = l4iStorage.Get("inops_cluster_cell_id");
     inOpsHost.cell_active = null;
 
-    if (!inOps.nav_cluster_cell && !cell_active_id && inOps.zone_active.cells.length > 0) {
+    if (!inOps.nav_cluster_cell && !cell_active_id && inOpsHost.zone_active.cells.length > 0) {
         inOpsHost.cell_active = l4i.Clone(inOpsHost.zone_active.cells[0]);
         cell_active_id = inOpsHost.cell_active.meta.id;
         l4iStorage.Set("inops_cluster_cell_id", cell_active_id);

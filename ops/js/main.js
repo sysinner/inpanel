@@ -62,6 +62,7 @@ inOps.Boot = function() {
 
 inOps.load_index = function() {
     l4i.debug = inOps.debug;
+    l4i.app_version = inOps.version;
 
     hooto_chart.basepath = inOps.base + "/hchart/~/";
 

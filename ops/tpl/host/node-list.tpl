@@ -3,6 +3,7 @@
 <thead>
 <tr>
   <th>ID</th>
+  <th>Name</th>
   <th>Peer</th>
   <th>WAN</th>
   <th>CPU / RAM</th>
@@ -22,6 +23,7 @@
   <td class="incp-font-fixspace">
     <a href="#node-{[=v.meta.id]}" onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">{[=v.meta.id]}</a>
   </td>
+  <td>{[=v.meta.name]}</td>
   <td>{[=v.spec.peer_lan_addr]}</td>
   <td>{[=v.spec.peer_wan_addr]}</td>
   <td>{[=v.spec.capacity.cpu/1e3]} / {[=inCp.UtilResSizeFormat(v.spec.capacity.mem)]}</td>

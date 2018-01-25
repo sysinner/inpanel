@@ -8,7 +8,7 @@
 
   <div class="l4i-form-group">
     <label>Name</label>
-    <input type="text" name="name" class="form-control" placeholder="Enter the Host Name" value="{[=it.meta.name]}">
+    <input type="text" name="name" class="form-control" placeholder="Enter the Node Name" value="{[=it.meta.name]}">
   </div>
 
   <div class="l4i-form-group">

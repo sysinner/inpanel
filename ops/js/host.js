@@ -1130,6 +1130,10 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
                     }
                 }
 
+                if (!nodes.items[i].meta.name) {
+                    nodes.items[i].meta.name = "";
+                }
+
                 if (!nodes.items[i].status) {
                     nodes.items[i].status = {};
 
@@ -1158,7 +1162,7 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
                 if (!nodes.items[i].spec.platform.kernel) {
                     nodes.items[i].spec.platform.kernel = "";
                 }
-                nodes.items[i].spec.platform.kernel = nodes.items[i].spec.platform.kernel.replace(/.el7.x86_64$/g, '')
+                nodes.items[i].spec.platform.kernel = nodes.items[i].spec.platform.kernel.replace(/.el\d.x86_64$/g, '')
                 if (!nodes.items[i].spec.platform.arch) {
                     nodes.items[i].spec.platform.arch = "";
                 }

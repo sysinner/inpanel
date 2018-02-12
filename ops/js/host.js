@@ -1576,6 +1576,10 @@ inOpsHost.ZoneSet = function(zoneid) {
                 rsj.summary = "";
             }
 
+            if (!rsj.wan_api) {
+                rsj.wan_api = "";
+            }
+
             rsj._actions = inOpsHost.actions;
 
             l4iModal.Open({
@@ -1583,7 +1587,7 @@ inOpsHost.ZoneSet = function(zoneid) {
                 tplsrc: tpl,
                 data: rsj,
                 width: 950,
-                height: 600,
+                height: 650,
                 buttons: [{
                     onclick: "l4iModal.Close()",
                     title: "Close",
@@ -1657,6 +1661,7 @@ inOpsHost.ZoneSetCommit = function() {
         summary: form.find("input[name=summary]").val(),
         wan_addrs: [],
         lan_addrs: [],
+        wan_api: form.find("input[name=wan_api]").val(),
     };
 
     try {

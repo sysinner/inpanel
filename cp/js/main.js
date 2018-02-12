@@ -5,6 +5,7 @@ var inCp = {
     api: "/in/v1/",
     debug: true,
     Zones: null,
+    zone_id: null,
     OpToolActive: null,
     UserSession: null,
     OpActions: [
@@ -219,6 +220,15 @@ inCp.ApiCmd = function(url, options) {
     if (options.callback) {
         appcb = options.callback;
     }
+    if (options.api_zone_id && inCp.zone_id && options.api_zone_id != inCp.zone_id) {
+        for (var i in inCp.Zones.items) {
+            if (inCp.Zones.items[i].meta.id == options.api_zone_id &&
+                inCp.Zones.items[i].wan_api && inCp.Zones.items[i].wan_api.length > 10) {
+                url = "/zonebound/" + options.api_zone_id + "/" + url;
+                break;
+            }
+        }
+    }
     options.callback = function(err, data) {
         if (err == "Unauthorized") {
             return inCp.AlertUserLogin();
@@ -227,6 +237,7 @@ inCp.ApiCmd = function(url, options) {
             appcb(err, data);
         }
     }
+    url = url.replace(/^\/|\s+$/g, '');
 
     l4i.Ajax(inCp.api + url, options);
 }

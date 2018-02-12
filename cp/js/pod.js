@@ -175,6 +175,7 @@ inCpPod.List = function(tplid, options) {
             }
             data._actions = inCp.OpActions;
             data._options = options;
+            inCpPod.list = data.items;
 
             l4iTemplate.Render({
                 dstid: tplid,
@@ -1198,6 +1199,14 @@ inCpPod.EntryIndex = function(pod_id, nav_target) {
 
 inCpPod.EntryOverview = function() {
 
+    var pod_zone_id = null;
+    for (var i in inCpPod.list) {
+        if (inCpPod.list[i].meta.id == inCpPod.entry_active_id) {
+            pod_zone_id = inCpPod.list[i].spec.zone;
+            break;
+        }
+    }
+
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "pod", "pstatus", function(tpl, pod, pstatus) {
@@ -1251,6 +1260,7 @@ inCpPod.EntryOverview = function() {
         });
 
         inCp.ApiCmd("pod/status?id=" + inCpPod.entry_active_id, {
+            api_zone_id: pod_zone_id,
             callback: ep.done("pstatus"),
         });
 
@@ -1265,8 +1275,8 @@ inCpPod.entryAutoRefresh = function() {
     if (!el || !inCpPod.entry_active_id) {
         return;
     }
-
     inCp.ApiCmd("pod/status?id=" + inCpPod.entry_active_id, {
+        api_zone_id: inCpPod.entry_active.spec.zone,
         callback: function(err, data) {
 
             if (err || !data || data.error || !data.kind) {
@@ -1378,6 +1388,17 @@ inCpPod.EntryStats = function(time_past) {
     }
     if (inCpPod.entry_active_past > (30 * 86400)) {
         inCpPod.entry_active_past = 30 * 86400;
+    }
+    var pod_zone_id = null;
+    if (inCpPod.entry_active && inCpPod.entry_active.spec.zone) {
+        pod_zone_id = inCpPod.entry_active.spec.zone;
+    } else {
+        for (var i in inCpPod.list) {
+            if (inCpPod.list[i].meta.id == inCpPod.entry_active_id) {
+                pod_zone_id = inCpPod.list[i].spec.zone;
+                break;
+            }
+        }
     }
 
     var stats_url = "id=" + inCpPod.entry_active_id;
@@ -1668,6 +1689,7 @@ inCpPod.EntryStats = function(time_past) {
         });
 
         inCp.ApiCmd("pod-stats/feed?" + stats_url, {
+            api_zone_id: pod_zone_id,
             callback: ep.done("stats"),
         });
 

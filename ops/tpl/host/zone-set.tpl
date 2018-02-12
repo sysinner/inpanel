@@ -48,7 +48,7 @@
 
   <div class="l4i-form-group">
     <label>
-      WAN Addresss
+      <span>WAN Addresss</span>
       <button type="button" class="btn btn-default btn-sm" 
         onclick="inOpsHost.ZoneWanAddressAppend()">
         <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Address
@@ -70,7 +70,7 @@
               <button class="pure-button button-small" onclick="inOpsHost.ZoneWanAddressDel(this)">
                 Delete
               </button>
-			</td>
+            </td>
           </tr>
           {[~]}
         </tbody>
@@ -102,11 +102,18 @@
               <button class="pure-button button-small " onclick="inOpsHost.ZoneLanAddressDel(this)">
                 Delete
               </button>
-			</td>
+            </td>
           </tr>
           {[~]}
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="l4i-form-group">
+    <label class="">API</label>
+    <div>
+      <input type="text" name="wan_api" class="form-control" placeholder="Enter the Zone API" value="{[=it.wan_api]}">
     </div>
   </div>
 

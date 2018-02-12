@@ -9,4 +9,5 @@ var (
 	OpsClusterZone = false
 	OpsClusterCell = false
 	OpsClusterHost = false
+	ZoneId         = ""
 )

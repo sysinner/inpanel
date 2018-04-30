@@ -220,7 +220,7 @@ inCp.ApiCmd = function(url, options) {
     if (options.callback) {
         appcb = options.callback;
     }
-    if (options.api_zone_id && inCp.zone_id && options.api_zone_id != inCp.zone_id) {
+    if (inCp.Zones && options.api_zone_id && inCp.zone_id && options.api_zone_id != inCp.zone_id) {
         for (var i in inCp.Zones.items) {
             if (inCp.Zones.items[i].meta.id == options.api_zone_id &&
                 inCp.Zones.items[i].wan_api && inCp.Zones.items[i].wan_api.length > 10) {

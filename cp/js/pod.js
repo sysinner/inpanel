@@ -1256,6 +1256,7 @@ inCpPod.EntryOverview = function() {
         });
 
         inCp.ApiCmd("pod/entry?id=" + inCpPod.entry_active_id, {
+            api_zone_id: pod_zone_id,
             callback: ep.done("pod"),
         });
 

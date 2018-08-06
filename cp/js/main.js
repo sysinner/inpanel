@@ -73,7 +73,7 @@ inCp.Boot = function(login_first) {
     });
 
     seajs.use([
-        "~/twbs/4.0/css/bootstrap.css",
+        "~/twbs/4/css/bootstrap.css",
         "~/jquery/jquery.js" + inCp.debug_uri(),
         "~/lessui/js/browser-detect.js",
         "~/purecss/css/pure.css",

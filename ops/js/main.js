@@ -25,7 +25,7 @@ inOps.Boot = function() {
     });
 
     seajs.use([
-        "~/twbs/4.0/css/bootstrap.css",
+        "~/twbs/4/css/bootstrap.css",
         "~/jquery/jquery.js" + inOps.debug_uri(),
         "~/cp/js/main.js" + inOps.debug_uri(),
         "~/lessui/js/browser-detect.js",

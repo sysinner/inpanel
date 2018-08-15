@@ -64,8 +64,8 @@
     <div class="value">{[=it.spec.exp_docker_version]}</div>
   </div>
   <div class="incp-div-label-block incp-div-light">
-    <div class="name">CoreOS rkt</div>
-    <div class="value">{[=it.spec.exp_rkt_version]}</div>
+    <div class="name">Pouch Container</div>
+    <div class="value">{[=it.spec.exp_pouch_version]}</div>
   </div>
 </div>
 

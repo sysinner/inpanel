@@ -662,8 +662,8 @@ inOpsHost.NodeOverview = function() {
             if (!node.spec.exp_docker_version) {
                 node.spec.exp_docker_version = "disable";
             }
-            if (!node.spec.exp_rkt_version) {
-                node.spec.exp_rkt_version = "disable";
+            if (!node.spec.exp_pouch_version) {
+                node.spec.exp_pouch_version = "disable";
             }
 
             inCp.OpToolsClean();

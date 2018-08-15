@@ -6,7 +6,7 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th>Instance ID</th>
+      <th>ID</th>
       <th>Name</th>
       {[? it._options.ops_mode]}
       <th>User</th>
@@ -16,7 +16,6 @@
       {[if (!it._zone_active) {]}
       <th>Cluster</th>
       {[}]}
-      <th>Replicas</th>   
       <th>Updated</th>
       <th>Status</th>
       <th></th>
@@ -37,7 +36,6 @@
     {[if (!it._zone_active) {]}
     <td>{[=v.spec.zone]} / {[=v.spec.cell]}</td>
     {[}]}
-    <td>{[=v.operate.replicas.length]}</td>
     <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
     <td>
       <span class="badge badge-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionRunning)) {]}success{[} else {]}default{[}]}">

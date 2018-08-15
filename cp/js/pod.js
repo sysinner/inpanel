@@ -1226,6 +1226,7 @@ inCpPod.EntryOverview = function() {
             }
             pod.spec._cpu_limit = 0;
             pod.spec._mem_limit = 0;
+            pod.spec._box_image_driver = pod.spec.boxes[0].image.driver;
             for (var i in pod.spec.boxes) {
                 pod.spec._cpu_limit += pod.spec.boxes[i].resources.cpu_limit;
                 pod.spec._mem_limit += pod.spec.boxes[i].resources.mem_limit;

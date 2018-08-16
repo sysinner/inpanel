@@ -722,9 +722,9 @@ inCpAppSpec.SetExecutorSet = function(name) {
         tpluri: inCp.TplPath("app/spec/executor-set"),
         data: executor,
         callback: function(err) {
-            $(alert_id).css({
-                "display": "block"
-            }).text("No Template Found");
+            // $(alert_id).css({
+            //     "display": "block"
+            // }).text("No Template Found");
         },
         buttons: [{
             onclick: "l4iModal.Close()",

@@ -584,12 +584,13 @@ inCpPod.NewPlanResComputeChange = function(res_compute_id) {
 }
 
 inCpPod.NewPlanImageChange = function(image_id) {
+    var image_id_enc = l4iString.CryptoMd5(image_id);
     if (!inCpPod.plan || inCpPod.plan.image_selected == image_id) {
         return;
     }
 
     $("#incp-podnew-images").find(".incp-form-box-selector-item.selected").removeClass("selected");
-    $("#incp-podnew-image-id-" + image_id).addClass("selected");
+    $("#incp-podnew-image-id-" + image_id_enc).addClass("selected");
 
     inCpPod.plan.image_selected = image_id;
 }

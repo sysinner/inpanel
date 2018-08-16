@@ -359,16 +359,17 @@ inOpsPod.SpecPlanSetBoxImageChange = function(image_id) {
     if (!inOpsPod.planset_active || !inOpsPod.planset_active._images) {
         return;
     }
+    var image_id_enc = l4iString.CryptoMd5(image_id);
     for (var i in inOpsPod.planset_active._images.items) {
         if (image_id != inOpsPod.planset_active._images.items[i].meta.id) {
             continue;
         }
         if (inOpsPod.planset_active._images.items[i]._selected) {
             inOpsPod.planset_active._images.items[i]._selected = false;
-            $("#inops-podspec-planset-box-image-id-" + image_id).removeClass("selected");
+            $("#inops-podspec-planset-box-image-id-" + image_id_enc).removeClass("selected");
         } else {
             inOpsPod.planset_active._images.items[i]._selected = true;
-            $("#inops-podspec-planset-box-image-id-" + image_id).addClass("selected");
+            $("#inops-podspec-planset-box-image-id-" + image_id_enc).addClass("selected");
         }
         break;
     }

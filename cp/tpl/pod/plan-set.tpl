@@ -64,7 +64,7 @@
   <div class="incp-form-box-selector" id="incp-podnew-images">
     {[~it.images :v]}
     <div class="incp-form-box-selector-item {[if (v.ref_id == it.image_selected) { ]}selected{[ } ]}" 
-      id="incp-podnew-image-id-{[=v.ref_id]}"
+      id="incp-podnew-image-id-{[=l4iString.CryptoMd5(v.ref_id)]}"
       onclick="inCpPod.NewPlanImageChange('{[=v.ref_id]}')">
       <div>{[=v.ref_id]}</div>
       <div>{[=v.driver]} / {[=v.os_dist]}</div>

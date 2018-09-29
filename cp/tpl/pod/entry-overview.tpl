@@ -1,6 +1,6 @@
 <style>
 .table-reset td {
-  padding: 3px 10px !important;
+  padding: 3px 10px 3px 0 !important;
   border: 0;
 }
 </style>
@@ -151,17 +151,17 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Rep ID</th>
-      <th>Host</th>
+      <th>#</th>
       <th>Service Ports</th>
+      <th>Disk Usage</th>
       <th style="text-align:right">Uptime</th>
     </tr>
   </thead>
   {[~it.operate.replicas :rep]}
   <tr>
     <td>{[=rep.id]}</td>
-    <td>{[?rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}</td>
     <td>
+      {[? rep.node]}{[??]}<div>Scheduling</div>{[?]}
       {[? rep.ports]}
       <table class="incp-font-fixspace table-reset">
         {[~rep.ports :opv]}
@@ -183,7 +183,8 @@
       </table>
     {[?]}
     </td>
-    <td id="incp-podentry-box-uptime-value-{[=rep.id]}" align="right">00:00:00</td>
+    <td id="incp-podentry-box-volume-status-value-{[=rep.id]}"></td>
+    <td id="incp-podentry-box-uptime-value-{[=rep.id]}" align="right"></td>
   </tr>
   {[~]}
 </table>

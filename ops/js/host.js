@@ -219,6 +219,14 @@ inOpsHost.NodeList = function(zoneid, cellid) {
                 inCp.OpToolsClean();
             }
 
+            var tn = Date.now() / 1000;
+
+            for (var i in data.items) {
+                if (data.items[i].status && tn - data.items[i].status.updated > 3600) {
+                    data.items[i]._status = "Offline";
+                }
+            }
+
             l4iTemplate.Render({
                 dstid: "inops-host-nodes",
                 tplid: "inops-host-nodes-tpl",

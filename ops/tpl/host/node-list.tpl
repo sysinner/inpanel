@@ -34,7 +34,7 @@
       {[=v.operate.port_used.length]}
     </button>
   </td>  
-  <td>{[=v._action_display]}</td>
+  <td>{[=v._action_display]}{[if (v._status) {]}/{[=v._status]}{[}]}</td>
   <td align="right">
     <button class="pure-button button-xsmall" onclick="inOpsHost.Node(null, '{[=v.meta.id]}', 'stats')">
       <span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span> Graphs

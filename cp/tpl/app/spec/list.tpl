@@ -4,12 +4,11 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th>ID</th>
+      <th>Spec</th>
       <th>Owner</th>
       <th>Depends</th>
       <th>Packages</th>
       <th>Config</th>
-      <th>Updated</th>
       <th></th>
     </tr>
   </thead>
@@ -32,7 +31,6 @@
       {[=v.configurator.fields.length]}
     </button>
   </td>
-  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     {[if (inCp.UserSession.username == "sysadmin") {]}
     <button class="pure-button button-xsmall" onclick="inCpAppSpec.Download('{[=v.meta.id]}')">

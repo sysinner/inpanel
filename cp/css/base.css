@@ -46,6 +46,7 @@ body {
 .incp-well-panel {
   background-color: rgba(255, 255, 255, 1);
   font-size: 16px;
+  color: #212529;
 }
 
 .incp-well-panel>.header {
@@ -105,9 +106,8 @@ body {
 }
 
 .incp-well-panel>.info {
-  background-color: #d9edf7;
-  border-color: #bcdff1;
-  color: #31708f;
+  background-color: #cce5ff;
+  color: #007bff;
 }
 
 .incp-well-panel .button {
@@ -120,13 +120,12 @@ body {
 }
 
 .incp-well-panel>.info .button {
-  border: 1px solid #31708f;
+  border: 1px solid #007bff;
   border-radius: 3px;
 }
 
 .incp-well-panel a {
   margin: 0;
-  padding: 0;
   text-decoration: none;
 }
 
@@ -134,15 +133,21 @@ body {
   clear: both;
   margin: 10px auto;
   text-align: center;
-  color: #666;
-  font-size: 14px;
+  color: #343a40;
+  font-size: 1.0em;
 }
 
-.incp-well-box>.footer>.url-info {
-  font-size: 1.1em;
-}
 
 .incp-well-box>.footer a {
-  color: #666;
-  font-weight: bold;
+  color: #343a40;
+}
+
+.incp-ctn-hover:hover {
+  cursor: pointer;
+}
+
+.incp-button-icon-12 {
+  width: 12px;
+  height: 12px;
+  margin-right: 4px;
 }

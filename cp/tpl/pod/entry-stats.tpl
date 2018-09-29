@@ -12,11 +12,6 @@
 <script type="text/html" id="incp-podentry-optools-stats">
 <li>the Last</li>
 <li>
-  <a href="#" value="600" onclick="inCpPod.EntryStatsButton(this)" class="l4i-nav-item">
-    10 Minutes
-  </a>
-</li>
-<li>
   <a href="#" value="3600" onclick="inCpPod.EntryStatsButton(this)" class="l4i-nav-item hover">
     Hour
   </a>

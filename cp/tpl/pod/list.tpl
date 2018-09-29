@@ -6,17 +6,15 @@
 <table class="table table-hover">
   <thead>
     <tr>
-      <th>ID</th>
-      <th>Name</th>
+      <th>Instances</th>
+      {[if (!it._zone_active) {]}
+      <th>Location</th>
+      {[}]}
       {[? it._options.ops_mode]}
       <th>User</th>
       {[?]}
       <th>Spec</th>
-      <th>Apps</th>
-      {[if (!it._zone_active) {]}
-      <th>Cluster</th>
-      {[}]}
-      <th>Updated</th>
+      <th>Apps</th>      
       <th>Status</th>
       <th></th>
     </tr>
@@ -24,31 +22,30 @@
   <tbody>
 {[~it.items :v]}
   <tr>
-    <td class="incp-font-fixspace">
-      <a class="" href="#info/{[=v.meta.id]}" onclick="inCpPod.EntryIndex('{[=v.meta.id]}')">{[=v.meta.id]}</a>
+    <td class="align-middle incp-font-fixspace incp-ctn-hover" onclick="inCpPod.EntryIndex('{[=v.meta.id]}')">
+      <span><strong>{[=v.meta.name]}</strong></span>
+      <div>{[=v.meta.id]}</div>
     </td>
-    <td>{[=v.meta.name]}</td>
-    {[? it._options.ops_mode]}
-    <td>{[=v.meta.user]}</td>
-    {[?]}
-    <td>{[=v.spec.ref.name]}</td>
-    <td>{[=v.apps.length]}</td>
     {[if (!it._zone_active) {]}
-    <td>{[=v.spec.zone]} / {[=v.spec.cell]}</td>
+    <td class="align-middle">{[=v.spec.zone]} / {[=v.spec.cell]}</td>
     {[}]}
-    <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
-    <td>
+    {[? it._options.ops_mode]}
+    <td class="align-middle">{[=v.meta.user]}</td>
+    {[?]}
+    <td class="align-middle">{[=v.spec.ref.name]}</td>
+    <td class="align-middle">{[=v.apps.length]}</td>
+    <td class="align-middle">
       <span class="badge badge-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionRunning)) {]}success{[} else {]}default{[}]}">
       {[=inCp.OpActionStatusTitle(v.operate.action)]}
       </span>
     </td>
-    <td align="right">
+    <td  class="align-middle" align="right">
       {[if (!inCp.OpActionAllow(v.operate.action, inCp.OpActionDestroy)) {]}
-      <button class="pure-button button-xsmall" onclick="inCpPod.EntryIndex('{[=v.meta.id]}', 'stats')">
-        <img src="/in/cp/~/open-iconic/svg/dashboard.svg"> Graphs
+      <button class="pure-button " onclick="inCpPod.EntryIndex('{[=v.meta.id]}', 'stats')">
+        <img src="/in/cp/~/open-iconic/svg/dashboard.svg" class="incp-button-icon-12"> Graphs
       </button>
-      <button class="pure-button button-xsmall" onclick="inCpPod.SetInfo('{[=v.meta.id]}')">
-        <img src="/in/cp/~/open-iconic/svg/cog.svg"> Setup
+      <button class="pure-button " onclick="inCpPod.SetInfo('{[=v.meta.id]}')">
+        <img src="/in/cp/~/open-iconic/svg/cog.svg" class="incp-button-icon-12"> Setup
       </button>
       {[}]}
     </td>

@@ -1342,8 +1342,20 @@ inCpPod.entryAutoRefresh = function() {
                         }
                     }
                 }
-            }
 
+                for (var k in data.replicas[j].volumes) {
+                    if (data.replicas[j].volumes[k].mount_path == "/home/action") {
+                        if (!data.replicas[j].volumes[k].used) {
+                            data.replicas[j].volumes[k].used = 0;
+                        }
+                        data.replicas[j]._volume_system_used = inCp.UtilResSizeFormat(data.replicas[j].volumes[k].used);
+                        var elrep = document.getElementById("incp-podentry-box-volume-status-value-" + i);
+                        if (elrep) {
+                            elrep.innerHTML = data.replicas[j]._volume_system_used;
+                        }
+                    }
+                }
+            }
 
             l4iTemplate.Render({
                 dstid: "incp-podentry-sidebar",

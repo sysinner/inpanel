@@ -28,7 +28,7 @@
 </script>
 
 <script type="text/html" id="incp-podnew-resource-selector-tpl">
-
+<!-- TODO
 <div class="l4i-form-group">
   <label>Zone / Cluster</label>
   <div class="incp-form-box-selector" id="incp-podnew-zones">
@@ -42,6 +42,7 @@
     {[~]}
   </div>
 </div>
+-->
 
 <div class="l4i-form-group">
   <label>Resources</label>
@@ -58,7 +59,7 @@
   </div>
 </div>
 
-
+<!-- TODO
 <div class="l4i-form-group">
   <label>Image</label>
   <div class="incp-form-box-selector" id="incp-podnew-images">
@@ -72,6 +73,7 @@
     {[~]}
   </div>
 </div>
+-->
 
 <div class="l4i-form-group">
   <label>System Storage</label>

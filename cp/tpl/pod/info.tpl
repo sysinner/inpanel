@@ -52,32 +52,30 @@
       </tr>
       {[ } ]}
 
-      {[ if (it.spec.boxes && it.spec.boxes.length > 0) { ]}
-      {[~it.spec.boxes :box]}
+      {[ if (it.spec.box) { ]}
       <tr>
-        <td class="lpt-title">Box ({[=box.name]})</td>
+        <td class="lpt-title">Box ({[=it.spec.box.name]})</td>
         <td>
           <table width="100%"><tbody>
             <tr>
               <td width="40%">Image</td>
-              <td>{[=box.image.driver]} / {[=box.image.ref.name]}</td>
+              <td>{[=it.spec.box.image.driver]} / {[=it.spec.box.image.ref.name]}</td>
             </tr>
             <tr>
               <td>OS / Arch</td>
-              <td>{[=box.image.os_dist]} / {[=box.image.arch]}</td>
+              <td>{[=it.spec.box.image.os_dist]} / {[=it.spec.box.image.arch]}</td>
             </tr>
             <tr>
               <td>CPU</td>
-              <td>{[=box.resources.cpu_limit]} m</td>
+              <td>{[=it.spec.box.resources.cpu_limit]} m</td>
             </tr>
             <tr>
               <td>Memory</td>
-              <td>{[=inCp.UtilResSizeFormat(box.resources.mem_limit)]}</td>
+              <td>{[=inCp.UtilResSizeFormat(it.spec.box.resources.mem_limit)]}</td>
             </tr>
           </tbody></table>
         </td>
       </tr>
-      {[~]}
       {[ } ]}
     </table>
   </div>

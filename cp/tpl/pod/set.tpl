@@ -64,14 +64,14 @@
       </td>
     </tr>
     {[?]}
-    {[~it.boxes :box]}
+
     <tr>
       <td><strong>Box Name</strong></td>
-      <td>{[=box.meta.name]}</td>
+      <td>{[=it.box.meta.name]}</td>
     </tr>
     <tr>
       <td><strong>Box Image</strong></td>
-      <td>{[=box.image.meta.name]}</td>
+      <td>{[=it.box.image.meta.name]}</td>
     </tr>
     <tr>
       <td><strong>Quota</strong></td>
@@ -86,15 +86,15 @@
         </thead>
         <tbody>
           <tr>
-            <td>{[=box.resource.cpu_num]}</td>
-            <td>{[=box.resource.mem_size]}</td>
-            <td>{[=box.resource.stor_size]}</td>
+            <td>{[=it.box.resource.cpu_num]}</td>
+            <td>{[=it.box.resource.mem_size]}</td>
+            <td>{[=it.box.resource.stor_size]}</td>
           </tr>
         </tbody>
         </table>
       </td>
     </tr>
-    {[?box.ports]}
+    {[?it.box.ports]}
     <tr>
       <td><strong>Network Ports</strong></td>
       <td>
@@ -106,7 +106,7 @@
           </tr>
         </thead>
         <tbody>
-          {[~box.ports :v2]}
+          {[~it.box.ports :v2]}
           <tr>
             <td>{[=v2.boxPort]}</td>
             <td>Auto</td>
@@ -117,6 +117,6 @@
       </td>
     </tr>
     {[?]}
-    {[~]}
+
   </table>
 </script>

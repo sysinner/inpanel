@@ -58,7 +58,7 @@ var inCpSpec = {
         },
         phase: "Active",
         volumes: [],
-        boxes: [],
+        box: {},
     },
     _boxImages: null,
     _boxQuotas: null,
@@ -441,11 +441,9 @@ inCpSpec.PodSetForm = function(podid) {
                                 inCpSpec.PodSetLabelAppend();
                             }
 
-                            if (rsj.boxes && rsj.boxes.length > 0) {
+                            if (rsj.box) {
 
-                                for (var i in rsj.boxes) {
-                                    inCpSpec.PodSetBoxAppend(rsj.boxes[i]);
-                                }
+                                inCpSpec.PodSetBoxAppend(rsj.box);
 
                             } else {
                                 inCpSpec.PodSetBoxAppend();
@@ -511,7 +509,7 @@ inCpSpec.PodSetBoxAppend = function(box) {
 
     l4iTemplate.Render({
         append: true,
-        dstid: "mix-spec-podset-boxes",
+        dstid: "mix-spec-podset-box",
         tplid: "mix-spec-podset-box-tpl",
         data: box,
         success: function() {
@@ -549,7 +547,7 @@ inCpSpec.PodSetCommit = function() {
         },
         phase: form.find("input[name=phase]:checked").val(),
         labels: [],
-        boxes: [],
+        box: {},
     };
 
     if (!inCpSpec.keyreg.test(req.meta.name)) {
@@ -617,7 +615,7 @@ inCpSpec.PodSetCommit = function() {
                 });
             });
 
-            req.boxes.push(box);
+            req.box = box; // boxes
         });
 
     } catch (err) {

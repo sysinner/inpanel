@@ -22,9 +22,7 @@ var inCpApp = {
         meta: {
             id: null,
         },
-        spec: {
-            boxes: [],
-        },
+        spec: {},
     },
     instSet: {},
     instDeployActive: null,

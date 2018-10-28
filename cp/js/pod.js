@@ -160,6 +160,12 @@ inCpPod.List = function(tplid, options) {
                         if (!data.items[i].operate.replicas[j].ports[k].host_port) {
                             data.items[i].operate.replicas[j].ports[k].host_port = 0;
                         }
+                        if (!data.items[i].operate.replicas[j].ports[k].lan_addr) {
+                            data.items[i].operate.replicas[j].ports[k].lan_addr = "127.0.0.1";
+                        }
+                        if (!data.items[i].operate.replicas[j].ports[k].wan_addr) {
+                            data.items[i].operate.replicas[j].ports[k].wan_addr = data.items[i].operate.replicas[j].ports[k].lan_addr;
+                        }
                     }
                 }
                 data.items[i].operate._action = inCp.OpActionTitle(data.items[i].operate.action);

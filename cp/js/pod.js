@@ -762,6 +762,12 @@ inCpPod.Info = function(pod_id, options) {
                     if (!pod.operate.replicas[i].ports[j].host_port) {
                         pod.operate.replicas[i].ports[j].host_port = 0;
                     }
+                    if (!pod.operate.replicas[i].ports[j].lan_addr) {
+                        pod.operate.replicas[i].ports[j].lan_addr = "127.0.0.1";
+                    }
+                    if (!pod.operate.replicas[i].ports[j].wan_addr) {
+                        pod.operate.replicas[i].ports[j].wan_addr = pod.operate.replicas[i].ports[j].lan_addr;
+                    }
                 }
             }
             var btns = [{
@@ -1228,6 +1234,12 @@ inCpPod.EntryOverview = function() {
                 for (var j in pod.operate.replicas[i].ports) {
                     if (!pod.operate.replicas[i].ports[j].host_port) {
                         pod.operate.replicas[i].ports[j].host_port = 0;
+                    }
+                    if (!pod.operate.replicas[i].ports[j].lan_addr) {
+                        pod.operate.replicas[i].ports[j].lan_addr = "127.0.0.1";
+                    }
+                    if (!pod.operate.replicas[i].ports[j].wan_addr) {
+                        pod.operate.replicas[i].ports[j].wan_addr = pod.operate.replicas[i].ports[j].lan_addr;
                     }
                 }
             }

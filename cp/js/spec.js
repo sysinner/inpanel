@@ -79,7 +79,7 @@ inCpSpec.ImageList = function() {
             }
 
             if (data === undefined || data.kind != "BoxImageList") {
-                return l4i.InnerAlert("#mix-spec-image-alert", 'alert-danger', "Item Not Found");
+                return l4i.InnerAlert("#mix-spec-image-alert", 'error', "Item Not Found");
             }
 
             if (!data.items) {
@@ -163,6 +163,7 @@ inCpSpec.ImageSetForm = function(imageid) {
 }
 
 inCpSpec.ImageSetCommit = function() {
+    var alert_id = "#mix-spec-imageset-alert";
     var form = $("#mix-spec-image-form");
 
     var req = {
@@ -184,18 +185,18 @@ inCpSpec.ImageSetCommit = function() {
         success: function(rsj) {
 
             if (!rsj) {
-                return l4i.InnerAlert("#mix-spec-imageset-alert", 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert("#mix-spec-imageset-alert", 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "BoxImage") {
-                return l4i.InnerAlert("#mix-spec-imageset-alert", 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert("#mix-spec-imageset-alert", 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -203,7 +204,7 @@ inCpSpec.ImageSetCommit = function() {
             }, 500);
         },
         error: function(xhr, textStatus, error) {
-            l4i.InnerAlert("#mix-spec-imageset-alert", 'alert-danger', textStatus + ' ' + xhr.responseText);
+            l4i.InnerAlert(alert_id, 'error', textStatus + ' ' + xhr.responseText);
         }
     });
 }
@@ -220,7 +221,7 @@ inCpSpec.QuotaList = function() {
             }
 
             if (data === undefined || data.kind != "BoxQuotaList") {
-                return l4i.InnerAlert("#mix-spec-quotas-alert", 'alert-danger', "Item Not Found");
+                return l4i.InnerAlert("#mix-spec-quotas-alert", 'error', "Item Not Found");
             }
 
             if (!data.items) {
@@ -305,6 +306,7 @@ inCpSpec.QuotaSetForm = function(quotaid) {
 }
 
 inCpSpec.QuotaSetCommit = function() {
+    var alert_id = "#mix-spec-quotaset-alert";
     var form = $("#mix-spec-quota-form");
 
     var req = {
@@ -324,18 +326,18 @@ inCpSpec.QuotaSetCommit = function() {
         success: function(rsj) {
 
             if (!rsj) {
-                return l4i.InnerAlert("#mix-spec-quotaset-alert", 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert("#mix-spec-quotaset-alert", 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "BoxQuota") {
-                return l4i.InnerAlert("#mix-spec-quotaset-alert", 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert("#mix-spec-quotaset-alert", 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -343,7 +345,7 @@ inCpSpec.QuotaSetCommit = function() {
             }, 500);
         },
         error: function(xhr, textStatus, error) {
-            l4i.InnerAlert("#mix-spec-quotaset-alert", 'alert-danger', textStatus + ' ' + xhr.responseText);
+            l4i.InnerAlert(alert_id, 'error', textStatus + ' ' + xhr.responseText);
         }
     });
 }
@@ -359,7 +361,7 @@ inCpSpec.PodList = function() {
             }
 
             if (data === undefined || data.kind != "PodSpecList") {
-                return l4i.InnerAlert("#mix-spec-pods-alert", 'alert-danger', "Item Not Found");
+                return l4i.InnerAlert("#mix-spec-pods-alert", 'error', "Item Not Found");
             }
 
             if (!data.items) {
@@ -538,6 +540,7 @@ inCpSpec.PodSetBoxPortDel = function(field) {
 }
 
 inCpSpec.PodSetCommit = function() {
+    var alert_id = "#mix-spec-podset-alert";
     var form = $("#mix-spec-podset");
 
     var req = {
@@ -551,7 +554,7 @@ inCpSpec.PodSetCommit = function() {
     };
 
     if (!inCpSpec.keyreg.test(req.meta.name)) {
-        return l4i.InnerAlert("#mix-spec-podset-alert", 'alert-danger', "Invalid Pod Name");
+        return l4i.InnerAlert(alert_id, 'error', "Invalid Pod Name");
     }
 
     try {
@@ -619,12 +622,12 @@ inCpSpec.PodSetCommit = function() {
         });
 
     } catch (err) {
-        return l4i.InnerAlert("#mix-spec-podset-alert", 'alert-danger', err);
+        return l4i.InnerAlert(alert_id, 'error', err);
     }
 
     // console.log(req);
 
-    $("#mix-spec-podset-alert").hide();
+    $(alert_id).hide();
 
     inCp.ApiCmd("spec/pod-set", {
         method: "POST",
@@ -632,18 +635,18 @@ inCpSpec.PodSetCommit = function() {
         success: function(rsj) {
 
             if (!rsj) {
-                return l4i.InnerAlert("#mix-spec-podset-alert", 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert("#mix-spec-podset-alert", 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodSpec") {
-                return l4i.InnerAlert("#mix-spec-podset-alert", 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert("#mix-spec-podset-alert", 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -651,7 +654,7 @@ inCpSpec.PodSetCommit = function() {
             }, 500);
         },
         error: function(xhr, textStatus, error) {
-            l4i.InnerAlert("#mix-spec-podset-alert", 'alert-danger', textStatus + ' ' + xhr.responseText);
+            l4i.InnerAlert(alert_id, 'error', textStatus + ' ' + xhr.responseText);
         }
     });
 }

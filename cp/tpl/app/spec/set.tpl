@@ -2,199 +2,235 @@
 
 <div id="incp-app-specset" class="incp-div-light" style="box-sizing: border-box;">loading</div>
 <style>
-._table_right_space td {
-  padding-left: 0 !important;
-  padding-right: 20px !important;
-}
-._table_right_space td > label {
-  font-weight: normal;
-}
-._table_right_space .input-group {
-  width: 260px;
-}
 #incp-app-specset .btn-sm {
   padding: 3px 10px;
   font-size: 12px;
+  line-height: 120%;
+}
+#incp-app-specset button.icon-x20 {
+  padding: 0px;
   line-height: 100%;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  font-size: 16px;
+  text-align: center;
+}
+#incp-app-specset th {
+  font-weight: normal;
+}
+#incp-app-specset .card-body {
+  padding: 0 10px;
 }
 </style>
 <script id="incp-app-specset-tpl" type="text/html">
 <div class="card">
-  <div class="card-header">{[=it.actionTitle]}</div>
-  <div class="card-body">
+<div class="card-header">{[=it.actionTitle]}</div>
+<div class="card-body">
 
-    {[if (it.spec.meta.id && it.spec.meta.id.length > 0) {]}
-    <input type="hidden" name="meta_id" value="{[=it.spec.meta.id]}">
-    {[} else {]}
-    <div class="l4i-form-group">
-      <label>ID</label>
-      <p><input name="meta_id" class="form-control form-control-sm" value="{[=it.spec.meta.id]}"></p>
-    </div>
-    {[}]}
+<table class="incp-formtable">
+<tbody>
 
-    <div class="l4i-form-group">
-      <label>Name</label>
-      <p><input name="meta_name" class="form-control form-control-sm" value="{[=it.spec.meta.name]}"></p>
-    </div>
+<tr>
+  <td width="220px">Name</td>
+  <td width="30px"></td>
+  <td>
+    <input name="meta_name" class="form-control form-control-sm" value="{[=it.spec.meta.name]}">
+  </td>
+</tr>
 
-    <div class="l4i-form-group">
-      <label>Description</label>
-      <p><input name="description" class="form-control form-control-sm" value="{[=it.spec.description]}"></p>
-    </div>
+{[if (it.spec.meta.id && it.spec.meta.id.length > 0) {]}
+<input type="hidden" name="meta_id" value="{[=it.spec.meta.id]}">
+{[} else {]}
+<tr>
+  <td>ID</td>
+  <td></td>
+  <td><input name="meta_id" class="form-control form-control-sm" value="{[=it.spec.meta.id]}"></td>
+</div>
+{[}]}
 
-    <!-- <div class="l4i-form-group">
-      <label>Bound Spec Plans (draft)</label>
-      <p><input name="draft_bound_plans" class="form-control form-control-sm" value="{[=it.spec.draft_bound_plans]}"></p>
-    </div> -->
+<tr>
+  <td>Description</td>
+  <td></td>
+  <td><input name="description" class="form-control form-control-sm" value="{[=it.spec.description]}"></td>
+</div>
 
-    <div class="l4i-form-group">
-      <label>Depends</label>
+<!-- <tr>
+  <td>Bound Spec Plans (draft)</td>
+  <td><input name="draft_bound_plans" class="form-control form-control-sm" value="{[=it.spec.draft_bound_plans]}"></td>
+</div> -->
 
-      <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetDependSelect()">
-        <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add Depends on the AppSpec
-      </button>
-
-      <div id="incp-app-specset-depls-msg">no depend yet ...</div>
-      <div id="incp-app-specset-depls"></div>
-    </div>
-
-
-    <div class="l4i-form-group">
-      <label>Packages</label>
-
-      <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetPackageSelect()">
-        <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add Standard Package
-      </button>
-      <button class="btn btn-default btn-sm hidden">
-        <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add Git Repository
-      </button>
-
-      <div id="incp-app-specset-ipmls-msg">no packages yet ...</div>
-      <div id="incp-app-specset-ipmls"></div>
-    </div>
+<tr>
+  <td>
+    Dependent AppSpec
+  </td>
+  <td>
+    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetDependSelect()">+</button>
+  </td>
+  <td>
+    <div id="incp-app-specset-depls-msg" class="badge badge-secondary">no dependent AppSpec yet ...</div>
+    <div id="incp-app-specset-depls"></div>
+  </td>
+</tr>
 
 
-    <div class="l4i-form-group">
-      <label>Executors</label>
-
-      <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetExecutorSet()">
-        <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Create new  Executor
-      </button>
-
-      <p id="incp-app-specset-executorls-msg">no executor yet ...</p>
-      <div id="incp-app-specset-executorls"></div>
-    </div>
-
-    <div class="l4i-form-group">
-
-      <label>Service Ports</label>
-
-      <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetServicePortAppend()">
-        <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Port
-      </button>
-
-      <div>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Name (http,https, ...)</th>
-              <th>Box Port</th>
-              {[? it.spec._host_port_enable]}
-              <th>Host Port</th>
-              {[?]}
-              <th></th>
-            <tr>
-          </thead>
-          <tbody id="incp-app-specset-serviceports">
-            {[~it.spec.service_ports :vp]}
-            <tr class="incp-app-specset-serviceport-item">
-              <td>
-                <input name="sp_name" type="text" value="{[=vp.name]}" class="form-control form-control-sm " style="width:200px">
-              </td>
-              <td>
-                <input name="sp_box_port" type="text" value="{[=vp.box_port]}" class="form-control form-control-sm " style="width:200px">
-              </td>
-              {[? it.spec._host_port_enable]}
-              <td>
-                <input name="sp_host_port" type="text" value="{[=vp.host_port]}" class="form-control form-control-sm " style="width:200px">
-              </td>
-              {[?]}
-              <td align="right">
-                <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetServicePortDel(this)">
-                  Delete
-                </button>
-              </td>
-            </tr>
-            {[~]}
-          </tbody>
-        </table>
-      </div>
-    </div>
+<tr>
+  <td>
+    Dependent Packages
+  </td>
+  <td>
+    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetPackageSelect()">+</button>
+  </td>
+  <td>
+    <div id="incp-app-specset-ipmls-msg" class="badge badge-secondary">no package yet ...</div>
+    <div id="incp-app-specset-ipmls"></div>
+  </td>
+</tr>
 
 
-    <div class="l4i-form-group">
-      <label>Allowed Roles</label>
-      <div>
-        <span style="margin-right:10px">
-          <input type="checkbox" name="" value="0" checked="checked" disabled> Owner
-        </span>
-        {[~it.spec._roles.items :v]}
-        <span style="margin-right:10px">
-          {[if (v._checked) {]}
-          <input type="checkbox" name="roles" value="{[=v.id]}" checked="checked"> {[=v.name]}
-          {[} else {]}
-          <input type="checkbox" name="roles" value="{[=v.id]}"> {[=v.name]}
-          {[}]}
-        </span>
-        {[~]}
-      </div>
-    </div>
+<tr>
+  <td>
+    Dependent Git Repo
+  </td>
+  <td>
+    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetVcsSet()">+</button>
+  </td>
+  <td>
+    <div id="incp-app-specset-vcsls-msg" class="badge badge-secondary">no git repo yet ...</div>
+    <div id="incp-app-specset-vcsls"></div>
+  </td>
+</tr>
 
-    <div class="l4i-form-group">
-      <label>Resource Requirements</label>
-      <div>
-        <table class="_table_right_space">
+
+<tr>
+  <td>
+    Script Executors
+  </td>
+  <td>
+    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetExecutorSet()">+</button>
+  </td>
+  <td>
+    <div id="incp-app-specset-executorls-msg" class="badge badge-secondary">no executor yet ...</div>
+    <div id="incp-app-specset-executorls"></div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    Service Ports
+  </td>
+  <td>
+    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetServicePortAppend()">+</button>
+  </td>
+  <td>
+    <table>
+      <thead>
         <tr>
+          <th>Name (http,https, ...)</th>
+          <th>Pod Port (1025 ~ 65535)</th>
+          {[? it.spec._host_port_enable]}
+          <th>Host Port (1 ~ 65535)</th>
+          {[?]}
+          <th></th>
+        <tr>
+      </thead>
+      <tbody id="incp-app-specset-serviceports">
+        {[~it.spec.service_ports :vp]}
+        <tr class="incp-app-specset-serviceport-item">
           <td>
-            <label>CPU units (minimum)</label>
-            <div class="input-group input-group-sm">
-              <input type="text" class="form-control form-control-sm" name="exp_res_cpu_min" value="{[=it.spec.exp_res.cpu_min]}">
-              <div class="input-group-append"><div class="input-group-text">m</div></div>
-            </div>
+            <input name="sp_name" type="text" value="{[=vp.name]}" class="form-control form-control-sm " style="width:200px">
           </td>
           <td>
-            <label>Memory Size (minimum)</label>
-            <div class="input-group input-group-sm">
-              <input type="text" class="form-control form-control-sm" name="exp_res_mem_min" value="{[=it.spec.exp_res._mem_min]}">
-              <div class="input-group-append"><div class="input-group-text">MB</div></div>
-            </div>
+            <input name="sp_box_port" type="text" value="{[=vp.box_port]}" class="form-control form-control-sm " style="width:200px">
           </td>
+          {[? it.spec._host_port_enable]}
           <td>
-            <label>System Volume Size (minimum)</label>
-            <div class="input-group input-group-sm">
-              <input type="text" class="form-control form-control-sm" name="exp_res_vol_min" value="{[=it.spec.exp_res._vol_min]}">
-              <div class="input-group-append"><div class="input-group-text">GB</div></div>
-            </div>
+            <input name="sp_host_port" type="text" value="{[=vp.host_port]}" class="form-control form-control-sm " style="width:200px">
+          </td>
+          {[?]}
+          <td align="right">
+            <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetServicePortDel(this)">&times</button>
           </td>
         </tr>
-        </table>
-      </div>
-    </div>
+        {[~]}
+      </tbody>
+    </table>
+  </td>
+</tr>
 
+
+<tr>
+  <td>Allowed Roles</td>
+  <td></td>
+  <td>
+    <span style="margin-right:10px">
+      <input type="checkbox" name="" value="0" checked="checked" disabled> Owner
+    </span>
+    {[~it.spec._roles.items :v]}
+    <span style="margin-right:10px">
+      {[if (v._checked) {]}
+      <input type="checkbox" name="roles" value="{[=v.id]}" checked="checked"> {[=v.name]}
+      {[} else {]}
+      <input type="checkbox" name="roles" value="{[=v.id]}"> {[=v.name]}
+      {[}]}
+    </span>
+    {[~]}
+  </td>
+</tr>
+
+<tr>
+  <td>Minimum Requirements</td>
+  <td></td>
+  <td>
+    <table class="_table_right_space">
+    <tr>
+      <td>
+        <label>CPU units (1000m = 1 core)</label>
+        <div class="input-group input-group-sm">
+          <input type="text" class="form-control form-control-sm" name="exp_res_cpu_min" value="{[=it.spec.exp_res.cpu_min]}">
+          <div class="input-group-append"><div class="input-group-text">m</div></div>
+        </div>
+      </td>
+      <td>
+        <label>Memory Size</label>
+        <div class="input-group input-group-sm">
+          <input type="text" class="form-control form-control-sm" name="exp_res_mem_min" value="{[=it.spec.exp_res._mem_min]}">
+          <div class="input-group-append"><div class="input-group-text">MB</div></div>
+        </div>
+      </td>
+      <td>
+        <label>System Volume Size</label>
+        <div class="input-group input-group-sm">
+          <input type="text" class="form-control form-control-sm" name="exp_res_vol_min" value="{[=it.spec.exp_res._vol_min]}">
+          <div class="input-group-append"><div class="input-group-text">GB</div></div>
+        </div>
+      </td>
+    </tr>
+    </table>
+  </td>
+</tr>
+
+<tr>
+  <td></td>
+  <td></td>
+  <td>
     <button class="btn btn-primary" onclick="inCpAppSpec.SetCommit()">
       Save
     </button>
-
     <button class="btn btn-default" onclick="inCpAppSpec.ListRefresh()" style="margin-left:10px">
       Cancel
     </button>
-  </div>
-</div>
+  </td>
+</tbody>
+</table>
+
 </script>
 
 
 <script id="incp-app-specset-depls-tpl" type="text/html">
-<table class="table table-hover">
+{[? it.items && it.items.length > 0]}
+<table>
   <thead><tr>
     <th>Spec ID</th>
     <th>Name</th>
@@ -202,52 +238,76 @@
     <th></th>
   </tr></thead>
   <tbody>
-  {[~it :v]}
+  {[~it.items :v]}
   <tr id="incp-app-specset-depls-id{[=v.id]}">
     <td>{[=v.id]}</td>
     <td>{[=v.name]}</td>
     <td>{[=v.version]}</td>
     <td align="right">
-      <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetDependRemove('{[=v.id]}')">
-        Delete
-      </button>
+      <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetDependRemove('{[=v.id]}')">&times</button>
     </td>
   </tr>
   {[~]}
   </tbody>
 </table>
+{[?]}
 </script>
 
 
 <script id="incp-app-specset-ipmls-tpl" type="text/html">
-<table class="table table-hover">
+{[? it.items && it.items.length > 0]}
+<table>
   <thead><tr>
     <th>Name</th>
     <th>Version</th>
     <th>Release</th>
-    <th>Dist</th>
-    <th>Arch</th>
+    <th>Dist/Arch</th>
     <th>Volume</th>
     <th></th>
   </tr></thead>
   <tbody>
-  {[~it :v]}
+  {[~it.items :v]}
   <tr id="incp-app-specset-ipmls-name{[=v.name]}">
     <td>{[=v.name]}</td>
     <td>{[=v.version]}</td>
     <td>{[=v.release]}</td>
-    <td>{[=v.dist]}</td>
-    <td>{[=v.arch]}</td>
+    <td>{[=v.dist]} / {[=v.arch]}</td>
     <td>/usr/sysinner/{[=v.name]}/{[=v.version]}</td>
     <td align="right">
-      <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetPackageRemove('{[=v.name]}')">
-        Delete
-      </button>
+      <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetPackageRemove('{[=v.name]}')">&times;</button>
     </td>
   </tr>
   {[~]}
   </tbody>
 </table>
+{[?]}
+</script>
+
+
+<script id="incp-app-specset-vcsls-tpl" type="text/html">
+{[? it.items && it.items.length > 0]}
+<table>
+  <thead><tr>
+    <th>Repo URL</th>
+    <th>Branch</th>
+    <th>Clone Directory</th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+  {[~it.items :v]}
+  <tr>
+    <td>{[=v.url]}</td>
+    <td>{[=v.branch]}</td>
+    <td>/home/action/{[=v.dir]}</td>
+    <td align="right">
+      <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetVcsSet('{[=v.dir]}')">Setting</button>
+      <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetVcsRemove('{[=v.dir]}')">&times;</button>
+    </td>
+  </tr>
+  {[~]}
+  </tbody>
+</table>
+{[?]}
 </script>
 
 <script id="incp-app-specset-executorls-tpl" type="text/html">
@@ -259,9 +319,7 @@
       <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetExecutorSet('{[=v.name]}')">
         Setting
       </button>
-      <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetExecutorRemove('{[=v.name]}')">
-        Delete
-      </button>
+      <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetExecutorRemove('{[=v.name]}')">&times</button>
     </span>
   </div>
   <div class="body">
@@ -297,20 +355,18 @@
 <script id="incp-app-specset-serviceport-tpl" type="text/html">
 <tr class="incp-app-specset-serviceport-item">
   <td>
-    <input name="sp_name" type="text" value="" class="form-control form-control-sm " placeholder="Port Name" style="width:200px">
+    <input name="sp_name" type="text" value="" class="form-control form-control-sm " style="width:200px">
   </td>
   <td>
-    <input name="sp_box_port" type="text" value="" class="form-control form-control-sm " placeholder="Box Port Number 1 ~ 65535" style="width:200px">
+    <input name="sp_box_port" type="text" value="" class="form-control form-control-sm " style="width:200px">
   </td>
   {[? it._host_port_enable]}
   <td>
-    <input name="sp_host_port" type="text" value="" class="form-control form-control-sm " placeholder="Host Port Number 1 ~ 1024" style="width:200px">
+    <input name="sp_host_port" type="text" value="" class="form-control form-control-sm " style="width:200px">
   </td>
   {[?]}
   <td align="right">
-    <button class="btn btn-default btn-sm" onclick="inCpAppSpec.SetServicePortDel(this)">
-      Delete
-    </button>
+    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetServicePortDel(this)">&times</button>
   </td>
 </tr>
 </script>

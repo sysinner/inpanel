@@ -123,6 +123,14 @@
     <div class="value">{[=it.spec._box_image_driver]}</div>
   </div>
   <div class="incp-div-label-block incp-div-light">
+    <div class="name">CPU</div>
+    <div class="value"td>{[=it.spec._cpu_limit]} m</div>
+  </div>
+  <div class="incp-div-label-block incp-div-light">
+    <div class="name">Memory</div>
+    <div class="value"td>{[=inCp.UtilResSizeFormat(it.spec._mem_limit)]}</div>
+  </div>
+  <div class="incp-div-label-block incp-div-light">
     <div class="name">System Volume</div>
     <div class="value">
     {[? it.spec.volumes]}
@@ -133,14 +141,6 @@
     {[~]}
     {[?]}
     </div>
-  </div>
-  <div class="incp-div-label-block incp-div-light">
-    <div class="name">CPU</div>
-    <div class="value"td>{[=it.spec._cpu_limit]} m</div>
-  </div>
-  <div class="incp-div-label-block incp-div-light">
-    <div class="name">Memory</div>
-    <div class="value"td>{[=inCp.UtilResSizeFormat(it.spec._mem_limit)]}</div>
   </div>
 </div>
 

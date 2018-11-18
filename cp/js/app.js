@@ -173,7 +173,7 @@ inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
         callback: function(err, rsj) {
 
             if (err) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed: " + err);
+                return l4i.InnerAlert(alert_id, 'error', "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -181,7 +181,7 @@ inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                l4i.InnerAlert(alert_id, 'alert-danger', msg);
+                l4i.InnerAlert(alert_id, 'error', msg);
                 return;
             }
 
@@ -191,7 +191,7 @@ inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
                 $(obj).removeClass("button-success");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successful updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successful updated");
         }
     });
 }
@@ -450,7 +450,7 @@ inCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs) {
             }
 
             if (!data.items || data.items.length < 1) {
-                return l4i.InnerAlert(alert_id, "alert-danger", "No Fit (" + cfg_defs + ") AppInstance Found");
+                return l4i.InnerAlert(alert_id, "error", "No Fit (" + cfg_defs + ") AppInstance Found");
             }
 
             l4iModal.Open({
@@ -536,7 +536,7 @@ inCpApp.instConfigCommit = function() {
         }
 
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'alert-danger', err);
+        return l4i.InnerAlert(alert_id, 'error', err);
     }
 
     var req = {
@@ -556,18 +556,18 @@ inCpApp.instConfigCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppInstConfig") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4i.InnerAlert(alert_id, "");
@@ -591,7 +591,7 @@ inCpApp.InstDeploy = function(id, auto_start) {
         callback: function(err, rsj) {
 
             if (err) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed: " + err);
+                return l4i.InnerAlert(alert_id, 'error', "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -599,7 +599,7 @@ inCpApp.InstDeploy = function(id, auto_start) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'alert-danger', msg);
+                return l4i.InnerAlert(alert_id, 'error', msg);
             }
 
             inCpApp.instDeployActive = rsj;
@@ -628,7 +628,7 @@ inCpApp.InstDeployCommit = function(app_id, auto_start) {
         callback: function(err, rsj) {
 
             if (err) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed: " + err);
+                return l4i.InnerAlert(alert_id, 'error', "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -636,11 +636,11 @@ inCpApp.InstDeployCommit = function(app_id, auto_start) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                l4i.InnerAlert(alert_id, 'alert-danger', msg);
+                l4i.InnerAlert(alert_id, 'error', msg);
                 return;
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successful deployed");
+            l4i.InnerAlert(alert_id, 'ok', "Successful deployed");
             inCpApp.instDeployActive = null;
             l4iModal.Close();
 
@@ -670,8 +670,8 @@ inCpApp.InstNew = function(spec_id) {
 
             l4iModal.Open({
                 title: "Launch App Instance",
-                width: 800,
-                height: 500,
+                width: 900,
+                height: 400,
                 tplsrc: tpl,
                 data: inCpApp.instSet,
                 callback: function(err, data) {},
@@ -731,7 +731,7 @@ inCpApp.InstNewPodSelect = function() {
 
     var name = $("#incp-appnew-form").find("input[name='name']").val();
     if (!name) {
-        return l4i.InnerAlert(alert_id, "alert-danger", "Spec Name Not Found")
+        return l4i.InnerAlert(alert_id, "error", "Spec Name Not Found")
     }
 
     inCpApp.instSet.meta.name = name;
@@ -739,7 +739,7 @@ inCpApp.InstNewPodSelect = function() {
     l4iModal.Open({
         id: "incp-appnew-oppod",
         title: "Bind App to Pod", // Select a Pod to Bound",
-        width: 800,
+        width: 900,
         height: 500,
         tpluri: inCp.TplPath("pod/inst-selector"),
         backEnable: true,
@@ -770,7 +770,7 @@ inCpApp.InstNewConfirm = function() {
     l4iModal.Open({
         id: "incp-appnew-confirm",
         title: "Confirm",
-        width: 800,
+        width: 900,
         height: 500,
         tpluri: inCp.TplPath("app/inst/new.confirm.p5"),
         data: inCpApp.instSet,
@@ -802,10 +802,10 @@ inCpApp.InstNewCommit = function() {
                 } else if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alertid, 'alert-danger', msg);
+                return l4i.InnerAlert(alertid, 'error', msg);
             }
 
-            l4i.InnerAlert(alertid, 'alert-success', "Successful operation");
+            l4i.InnerAlert(alertid, 'ok', "Successful operation");
 
             inCpApp.instSet = {};
             l4i.UrlEventHandler("app/inst/list");
@@ -951,7 +951,7 @@ inCpApp.InstSetCommit = function(options) {
         inCpApp.instSet.operate.action = parseInt(form.find("input[name=op_action]:checked").val());
 
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'alert-danger', err);
+        return l4i.InnerAlert(alert_id, 'error', err);
     }
 
     inCp.ApiCmd("app/set", {
@@ -961,7 +961,7 @@ inCpApp.InstSetCommit = function(options) {
         callback: function(err, rsj) {
 
             if (err) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', err);
+                return l4i.InnerAlert(alert_id, 'error', err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -969,10 +969,10 @@ inCpApp.InstSetCommit = function(options) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'alert-danger', msg);
+                return l4i.InnerAlert(alert_id, 'error', msg);
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successful operation");
+            l4i.InnerAlert(alert_id, 'ok', "Successful operation");
 
 
 

@@ -8,26 +8,37 @@
 
 <script type="text/html" id="incp-podnew-inner">
 <div class="card incp-div-light">
-  <div class="card-header">New Pod Instance</div>
-  <div class="card-body">
-    <div class="l4i-form-group">
-      <label class="">Name</label>
-      <div class="">
-        <input type="text" class="form-control" id="incp-podnew-meta-name" value="">
-      </div>
-    </div>
+<div class="card-header">New Pod Instance</div>
+<div class="card-body">
 
-    <div class="l4i-form-group">
-      <label class="">Plan</label>
-      <div id="incp-podnew-plans" class="incp-form-box-selector"></div>
-    </div>
+<table class="incp-formtable">
+<tbody>
 
-    <div id="incp-podnew-resource-selector"></div>
+<tr>
+  <td width="180px">Name</td>
+  <td>
+    <input type="text" class="form-control" id="incp-podnew-meta-name" value="">
+  </td>
+</tr>
 
-    <div class="l4i-form-group">
-      <div id="incp-podnew-charge-estimate-value" class="font-size:30px"></div>
-    </div>
+<tr id="incp-podnew-plan-row">
+  <td>Plan</td>
+  <td id="incp-podnew-plans" class="incp-form-box-selector" style="padding-bottom: 0">
+  </td>
+</tr>
 
+
+<tr>
+  <td></td>
+  <td>
+    <div id="incp-podnew-charge-estimate-value" class="font-size:30px"></div>
+  </td>
+</tr>
+
+
+<tr>
+  <td></td>
+  <td>
     <button type="button" class="pure-button pure-button-primary" onclick="inCpPod.NewCommit()">
       Save
     </button>
@@ -35,42 +46,59 @@
     <button type="button" class="pure-button" onclick="inCpPod.List()" style="margin-left:10px">
       Cancel
     </button>
-  </div>
+  </td>
+</tr>
+
+</tbody>
+</table>
+
+</div>
 </div>
 </script>
 
 <script type="text/html" id="incp-podnew-modal">
-<div class="l4i-form-group">
-  <label class="">Name</label>
-  <div class="">
+<table class="incp-formtable">
+<tbody>
+
+<tr>
+  <td width="180px">Name</td>
+  <td>
     <input type="text" class="form-control" id="incp-podnew-meta-name" value="">
-  </div>
-</div>
-<div class="l4i-form-group">
-  <label class="">Plan</label>
-  <div id="incp-podnew-plans" class="incp-form-box-selector"></div>
-</div>
-<div id="incp-podnew-resource-selector"></div>
-<div class="l4i-form-group">
-  <div id="incp-podnew-charge-estimate-value" class="font-size:30px"></div>
-</div>
+  </td>
+</tr>
+
+<tr id="incp-podnew-plan-row">
+  <td>Plan</td>
+  <td id="incp-podnew-plans" class="incp-form-box-selector" style="padding-bottom: 0">
+  </td>
+</tr>
+
+<tr>
+  <td></td>
+  <td>
+    <div id="incp-podnew-charge-estimate-value" class="font-size:30px"></div>
+  </td>
+</tr>
+
+</tbody>
+</table>
 </script>
 
 <script type="text/html" id="incp-podnew-plans-tpl">
 {[~it.items :v]}
-<div class="incp-form-box-selector-item {[if (v.meta.id == it._plan_selected) { ]}selected{[ } ]}" 
+<span class="incp-form-box-selector-item {[if (v.meta.id == it._plan_selected) { ]}selected{[ } ]}" 
   id="incp-podnew-plan-id-{[=v.meta.id]}"
   onclick="inCpPod.NewPlanChange('{[=v.meta.id]}')">
-  <div>{[=v.meta.name]}</div>
-</div>
+  <span>{[=v.meta.name]}</span>
+</span>
 {[~]}
 </script>
 
 <script type="text/html" id="incp-podnew-resource-selector-tpl">
 
-<div class="l4i-form-group">
-  <label>Zone / Cluster</label>
-  <div class="incp-form-box-selector" id="incp-podnew-zones">
+<tr class="incp-podnew-resource-selector-row">
+  <td>Zone / Cluster</td>
+  <td class="incp-form-box-selector" id="incp-podnew-zones" style="padding-bottom:0">
     {[~it._zones :v]}
     <div class="incp-form-box-selector-item {[if (v.name == it._zone_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-zone-id-{[=v.id]}"
@@ -79,12 +107,12 @@
       <div>{[=v.cell_title]}</div>
     </div>
     {[~]}
-  </div>
-</div>
+  </td>
+</tr>
 
-<div class="l4i-form-group">
-  <label>Resources</label>
-  <div class="incp-form-box-selector" id="incp-podnew-res-computes">
+<tr class="incp-podnew-resource-selector-row">
+  <td>Resources</td>
+  <td class="incp-form-box-selector" id="incp-podnew-res-computes" style="padding-bottom:0">
     {[~it.res_computes :v]}
     <div class="incp-form-box-selector-item {[if (!inCpPod.NewOptionResFit(v)) {]}disable{[} else if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-res-compute-id-{[=v.ref_id]}"
@@ -94,13 +122,12 @@
     <span class="disable_close">&times;</span>
     </div>
     {[~]}
-  </div>
-</div>
+  </td>
+</tr>
 
-
-<div class="l4i-form-group">
-  <label>Image</label>
-  <div class="incp-form-box-selector" id="incp-podnew-images">
+<tr class="incp-podnew-resource-selector-row">
+  <td>Image</td>
+  <td class="incp-form-box-selector" id="incp-podnew-images" style="padding-bottom:0">
     {[~it.images :v]}
     <div class="incp-form-box-selector-item {[if (v.ref_id == it.image_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-image-id-{[=l4iString.CryptoMd5(v.ref_id)]}"
@@ -109,23 +136,22 @@
       <div>{[=v.driver]} / {[=v.os_dist]}</div>
     </div>
     {[~]}
-  </div>
-</div>
+  </td>
+</tr>
 
-<div class="l4i-form-group">
-  <label>System Storage</label>
+<tr class="incp-podnew-resource-selector-row">
+  <td>System Storage</td>
+  <td>
   <div class="incp-form-box-selector form-inline" id="incp-podnew-res-volumes">
-
-    <div class="input-group" style="width:200px;">
+    <div class="input-group" style="width:300px;">
       <input type="text" class="form-control" id="incp-podnew-resource-value" value="{[=it._res_volume._valued]}">
       <div class="input-group-append"><div class="input-group-text">GB</div></div>
     </div>
-
     <div class="form-text text-muted">
       Range: {[=inCp.UtilResSizeFormat(it._res_volume.request)]} ~ {[=inCp.UtilResSizeFormat(it._res_volume.limit)]}
     </div>    
-
   </div>
-</div>
+  </td>
+</tr>
 
 </script>

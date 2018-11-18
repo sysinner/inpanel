@@ -1,21 +1,23 @@
-<div class="l4i-form-group">
-  <label>ID / Version</label>
-  <p>{[=it.meta.id]} / v{[=it.meta.version]}</p>
-</div>
+<table class="incp-formtable">
+<tbody>
+<tr>
+  <td width="200px">ID</td>
+  <td>{[=it.meta.id]}</td>
+</tr>
+
 
 {[? it.description]}
-<div class="l4i-form-group">
-  <label>Description</label>
-  <p>{[=it.description]}</p>
-</div>
+<tr>
+  <td>Description</td>
+  <td>{[=it.description]}</td>
+</tr>
 {[?]}
 
 {[if (it.depends.length > 0) {]}
-<div class="l4i-form-group">
-  <label>Depends</label>
-
-  <div id="incp-app-specset-depls">
-    <table class="table table-hover">
+<tr>
+  <td>Dependent AppSpec</td>
+  <td id="incp-app-specset-depls">
+    <table>
       <thead><tr>
         <th>ID</th>
         <th>Name</th>
@@ -31,20 +33,18 @@
       {[~]}
       </tbody>
     </table>
-  </div>
-</div>
+  </td>
+</tr>
 {[}]}
 
 {[if (it.packages.length > 0) {]}
-<div class="l4i-form-group">
-  <label>Packages</label>
-
-  <div id="incp-app-specset-ipmls">
-    <table class="table table-hover">
+<tr>
+  <td>Dependent Packages</td>
+  <td id="incp-app-specset-ipmls">
+    <table>
       <thead><tr>
         <th>Name</th>
         <th>Version</th>
-        <th>Release</th>
         <th>Dist / Arch</th>
         <th>Volume</th>
       </tr></thead>
@@ -53,22 +53,46 @@
       <tr id="incp-app-specset-ipmls-name{[=v.name]}">
         <td>{[=v.name]}</td>
         <td>{[=v.version]}</td>
-        <td>{[=v.release]}</td>
         <td>{[=v.dist]} / {[=v.arch]}</td>
         <td>/usr/sysinner/{[=v.name]}/{[=v.version]}</td>
       </tr>
       {[~]}
       </tbody>
     </table>
-  </div>
-</div>
+  </td>
+</tr>
+{[}]}
+
+{[if (it.vcs_repos.length > 0) {]}
+<tr>
+  <td>Dependent Git Repos</td>
+  <td id="incp-app-specset-vcsls">
+    <table>
+      <thead><tr>
+        <th>URL</th>
+        <th>Branch</th>
+        <th>Directory</th>
+        <th>Update Plan</th>
+      </tr></thead>
+      <tbody>
+      {[~it.vcs_repos :v]}
+      <tr>
+        <td>{[=v.url]}</td>
+        <td>{[=v.branch]}</td>
+        <td>/home/action/{[=v.dir]}</td>
+        <td>{[=v.plan]}</td>
+      </tr>
+      {[~]}
+      </tbody>
+    </table>
+  </td>
+</tr>
 {[}]}
 
 {[if (it.executors.length > 0) {]}
-<div class="l4i-form-group">
-  <label>Executors</label>
-
-  <div id="incp-app-specset-executorls">
+<tr>
+  <td>Script Executors</td>
+  <td id="incp-app-specset-executorls">
     {[~it.executors :v]}
     <div class="incp-app-specset-gn-box">
       <div class="head">
@@ -104,16 +128,15 @@
       </div>
     </div>
     {[~]}
-  </div>
-</div>
+  </td>
+</tr>
 {[}]}
 
 {[if (it.service_ports.length > 0) {]}
-<div class="l4i-form-group">
-  <label>Service Ports</label>
-
-  <div>
-    <table class="table table-hover">
+<tr>
+  <td>Service Ports</td>
+  <td>
+    <table>
       <thead>
         <tr>
           <th>Name (http,https, ...)</th>
@@ -129,44 +152,41 @@
         {[~]}
       </tbody>
     </table>
-  </div>
-</div>
+  </td>
+</tr>
 {[}]}
 
 {[if (it._roles.length > 0) {]}
-<div class="l4i-form-group">
-  <label>Allowed Roles</label>
-  <div>
-    <span class="badge badge-default">{[=it._roles.join("</span>&nbsp;<span class='badge badge-default'>")]}</span>
-  </div>
-</div>
+<tr>
+  <td>Allowed Roles</td>
+  <td>
+    {[~it._roles :v]}
+    <span class="badge badge-primary">{[=v]}</span>
+    {[~]}
+  </td>
+</tr>
 {[}]}
 
-<div class="l4i-form-group">
-  <label>Resource Requirements</label>
-
-  <div>
-    <table width="100%" class="_table_right_space">
-    <tr>
-      <td>
-        <div>CPU units (minimum)</div>
-        <div class="input-group">
-          {[=it.exp_res.cpu_min]} m
-        </div>
-      </td>
-      <td>
-        <div>Memory Size (minimum)</div>
-        <div class="input-group">
-          {[=inCp.UtilResSizeFormat(it.exp_res.mem_min)]}
-        </div>
-      </td>
-      <td>
-        <div>System Volume Size (minimum)</div>
-        <div class="input-group">
-          {[=inCp.UtilResSizeFormat(it.exp_res.vol_min, 1)]}
-        </div>
-      </td>
-    </tr>
+<tr>
+  <td>Minimum Requirements</td>
+  <td>
+    <table>
+      <thead><tr>
+        <th width="33%">CPU units (1000m = 1 core)</th>
+        <th width="33%">Memory Size</th>
+        <th>System Volume Size</th>
+      </tr></thead>
+      <tbody>
+      <tr id="incp-app-specset-depls-id{[=v.id]}">
+        <td>{[=it.exp_res.cpu_min]} m</td>
+        <td>{[=inCp.UtilResSizeFormat(it.exp_res.mem_min)]}</td>
+        <td>{[=inCp.UtilResSizeFormat(it.exp_res.vol_min, 1)]}</td>
+      </tr>
+      </tbody>
     </table>
-  </div>
-</div>
+  </td>
+</tr>
+
+</tbody>
+</table>
+

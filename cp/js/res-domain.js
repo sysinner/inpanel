@@ -55,10 +55,10 @@ inCpResDomain.List = function() {
             if (data.error || !data.kind || data.kind != "ResourceList") {
 
                 if (data.error) {
-                    return l4i.InnerAlert(alert_id, 'alert-danger', data.error.message);
+                    return l4i.InnerAlert(alert_id, 'error', data.error.message);
                 }
 
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Items Not Found");
+                return l4i.InnerAlert(alert_id, 'error', "Items Not Found");
             }
 
             if (!data.items) {
@@ -151,18 +151,18 @@ inCpResDomain.NewCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "Resource") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -186,10 +186,10 @@ inCpResDomain.Set = function(name) {
             if (!data || data.error || !data.kind || data.kind != "Resource") {
 
                 if (data.error) {
-                    return l4i.InnerAlert(alert_id, 'alert-danger', data.error.message);
+                    return l4i.InnerAlert(alert_id, 'error', data.error.message);
                 }
 
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Item Not Found");
+                return l4i.InnerAlert(alert_id, 'error', "Item Not Found");
             }
 
             if (!data.action) {
@@ -254,18 +254,18 @@ inCpResDomain.SetCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "Resource") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -287,11 +287,11 @@ inCpResDomain.BoundList = function(name) {
 
                 if (data.error) {
                     return alert(data.error.message);
-                // return l4i.InnerAlert(alert_id, 'alert-danger', data.error.message);
+                // return l4i.InnerAlert(alert_id, 'error', data.error.message);
                 }
 
                 return alert("Resource Not Found");
-            // return l4i.InnerAlert(alert_id, 'alert-danger', "Item Not Found");
+            // return l4i.InnerAlert(alert_id, 'error', "Item Not Found");
             }
 
             if (!data.action) {
@@ -561,7 +561,7 @@ inCpResDomain.BoundSetCommit = function() {
         });
 
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'alert-danger', err);
+        return l4i.InnerAlert(alert_id, 'error', err);
     }
 
     inCp.ApiCmd("resource/domain-bound", {
@@ -570,19 +570,19 @@ inCpResDomain.BoundSetCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "Resource") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             inCpResDomain.inst_active = null;
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -721,7 +721,7 @@ inCpResDomain.DeployCommit = function() {
             l4iModal.Close();
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed");
+                return l4i.InnerAlert(alert_id, 'error', "Failed");
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -729,10 +729,10 @@ inCpResDomain.DeployCommit = function() {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'alert-danger', msg);
+                return l4i.InnerAlert(alert_id, 'error', msg);
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successful operation");
+            l4i.InnerAlert(alert_id, 'ok', "Successful operation");
 
             window.setTimeout(function() {
                 inCpResDomain.inst_active = null;

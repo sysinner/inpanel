@@ -448,6 +448,60 @@ inCp.CodeRender = function() {
     });
 }
 
+inCp.codeEditorInstances = {};
+
+inCp.CodeEditor = function(id, lang, lines) {
+
+    var elem = document.getElementById(id);
+    if (!elem) {
+        return;
+    }
+
+    var modes = [
+        "~/cm/5/addon/runmode/runmode.js",
+        "~/cm/5/addon/selection/active-line.js",
+        "~/cm/5/mode/clike/clike.js",
+    ];
+
+
+    switch (lang) {
+        case "shell":
+            modes.push("~/cm/5/mode/" + lang + "/" + lang + ".js");
+            break;
+
+        default:
+            return;
+    }
+
+    seajs.use([
+        "~/cm/5/lib/codemirror.css",
+        "~/cm/5/lib/codemirror.js",
+        "~/cm/5/theme/monokai.css",
+    ], function() {
+
+        seajs.use(modes, function() {
+
+            inCp.codeEditorInstances[id] = CodeMirror.fromTextArea(elem, {
+                mode: lang,
+                lineNumbers: true,
+                theme: "monokai",
+                lineWrapping: true,
+                styleActiveLine: true,
+            });
+            var lh = inCp.codeEditorInstances[id].defaultTextHeight();
+            inCp.codeEditorInstances[id].setSize("100%", lines * lh);
+        });
+    });
+}
+
+inCp.CodeEditorValue = function(id) {
+    var editor = inCp.codeEditorInstances[id];
+    if (!editor) {
+        return null;
+    }
+    return editor.getValue();
+}
+
 inCp.ArrayStringHas = function(ar, v) {
     if (!ar || !v) {
         return false;

@@ -54,6 +54,7 @@ var inCpPod = {
     entry_operate_access_def: {
         ssh_on: false,
         ssh_key: "",
+        ssh_pwd: "",
     },
     hchart_def: {
         "type": "line",
@@ -135,10 +136,10 @@ inCpPod.List = function(tplid, options) {
             if (!data || data.error || !data.kind || data.kind != "PodList") {
 
                 if (data.error) {
-                    return l4i.InnerAlert(alert_id, 'alert-danger', data.error.message);
+                    return l4i.InnerAlert(alert_id, 'error', data.error.message);
                 }
 
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Items Not Found");
+                return l4i.InnerAlert(alert_id, 'error', "Items Not Found");
             }
 
             if (!data.items) {
@@ -240,7 +241,7 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
         callback: function(err, rsj) {
 
             if (err) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed: " + err);
+                return l4i.InnerAlert(alert_id, 'error', "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "PodInstance") {
@@ -248,7 +249,7 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'alert-danger', msg);
+                return l4i.InnerAlert(alert_id, 'error', msg);
             }
 
             if (op_action == 2) {
@@ -257,7 +258,7 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
                 $(obj).removeClass("button-success");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successful updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successful updated");
         }
     });
 }
@@ -276,12 +277,12 @@ inCpPod.New = function(options) {
         var ep = EventProxy.create("tpl", "zones", "plans", function(tpl, zones, plans) {
 
             if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
             inCpPod.syszones = zones;
 
             if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             var pod = l4i.Clone(inCpPod.def);
@@ -295,7 +296,7 @@ inCpPod.New = function(options) {
             }
 
             if (!pod._plan_selected) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "No SpecPodPlan Found");
+                return l4i.InnerAlert(alert_id, 'error', "No SpecPodPlan Found");
             }
 
             inCpPod.plans = plans;
@@ -462,7 +463,7 @@ inCpPod.NewRefreshPlan = function() {
         }
 
         if (!inCpPod.plan._res_volume) {
-            return l4i.InnerAlert(alert_id, 'alert-danger', "No SpecPodPlan/Volume Found");
+            return l4i.InnerAlert(alert_id, 'error', "No SpecPodPlan/Volume Found");
         }
 
         //
@@ -518,7 +519,7 @@ inCpPod.NewRefreshPlan = function() {
 
         //
         if (!inCpPod.plan._zone_selected) {
-            return l4i.InnerAlert(alert_id, 'alert-danger', "No SpecZone Found");
+            return l4i.InnerAlert(alert_id, 'error', "No SpecZone Found");
         }
 
         //
@@ -542,10 +543,13 @@ inCpPod.NewRefreshPlan = function() {
             inCpPod.plan.res_compute_selected = inCpPod.plan.res_compute_default;
         }
 
+        $(".incp-podnew-resource-selector-row").remove();
+
         l4iTemplate.Render({
-            dstid: "incp-podnew-resource-selector",
+            dstid: "incp-podnew-plan-row",
             tplid: "incp-podnew-resource-selector-tpl",
             data: inCpPod.plan,
+            afterAppend: true,
             callback: inCpPod.newAccountChargeRefresh,
         });
 
@@ -576,7 +580,7 @@ inCpPod.NewPlanResComputeChange = function(res_compute_id) {
             continue;
         }
         if (!inCpPod.NewOptionResFit(inCpPod.plan.res_computes[i])) {
-            return l4i.InnerAlert("#incp-podnew-alert", "alert-danger", "this Resource Spec can not fit the Application Resource Requirements, please try another Spec or change the Pod Plan");
+            return l4i.InnerAlert("#incp-podnew-alert", "error", "this Resource Spec can not fit the Application Resource Requirements, please try another Spec or change the Pod Plan");
         }
         break;
     }
@@ -661,11 +665,11 @@ inCpPod.NewCommit = function() {
         url = "",
         vol_size = parseFloat($("#incp-podnew-resource-value").val());
     if (vol_size <= 0) {
-        return l4i.InnerAlert(alert_id, "alert-danger", "System Storage Not Set");
+        return l4i.InnerAlert(alert_id, "error", "System Storage Not Set");
     }
 
     if (!inCpPod.plan.res_compute_selected) {
-        return l4i.InnerAlert(alert_id, "alert-danger", "Resource Option Not Set");
+        return l4i.InnerAlert(alert_id, "error", "Resource Option Not Set");
     }
 
     if (vol_size >= 1.0) {
@@ -677,7 +681,7 @@ inCpPod.NewCommit = function() {
     if (inCpPod.new_options.app_vol_min &&
         inCpPod.new_options.app_vol_min > 0) {
         if (vol_size < inCpPod.new_options.app_vol_min) {
-            return l4i.InnerAlert(alert_id, "alert-danger", "this System Storage requires at least " + inCp.UtilResSizeFormat(inCpPod.new_options.app_vol_min) + " of space to fit the Application Resource Requirements");
+            return l4i.InnerAlert(alert_id, "error", "this System Storage requires at least " + inCp.UtilResSizeFormat(inCpPod.new_options.app_vol_min) + " of space to fit the Application Resource Requirements");
         }
     }
 
@@ -700,7 +704,7 @@ inCpPod.NewCommit = function() {
     };
 
     if (!set.name || set.name == "") {
-        return l4i.InnerAlert(alert_id, 'alert-danger', "Name Not Found");
+        return l4i.InnerAlert(alert_id, 'error', "Name Not Found");
     }
 
     $(alert_id).hide();
@@ -713,18 +717,18 @@ inCpPod.NewCommit = function() {
                 l4iModal.ScrollTop();
             }
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
             window.setTimeout(function() {
                 if (inCpPod.new_options.app_new_callback) {
                     inCpPod.new_options.app_new_callback(null, rsj.pod);
@@ -912,18 +916,18 @@ inCpPod.SetInfoCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -994,18 +998,18 @@ inCpPod.EntryDelCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -1026,15 +1030,15 @@ inCpPod.Set = function(pod_id) {
         var ep = EventProxy.create("tpl", "zones", "specs", "pod", function(tpl, zones, specs, pod) {
 
             if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (!specs || !specs.kind || specs.kind != "PodSpecList") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (!pod.kind || pod.kind != "Pod") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Pod Not Found");
+                return l4i.InnerAlert(alert_id, 'error', "Pod Not Found");
             }
 
             pod._zones = zones;
@@ -1136,18 +1140,18 @@ inCpPod.SetCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "Pod") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -1169,7 +1173,7 @@ inCpPod.entry_nav_menus = [{
     name: "Graphs",
     uri: "pod/entry/stats",
 }, {
-    name: "Access",
+    name: "Remote Access",
     uri: "pod/entry/setup",
     onclick: "inCpPod.EntryAccess()",
 }, {
@@ -1751,6 +1755,11 @@ inCpPod.EntryAccess = function(pod_id) {
             if (!pod.operate.access.ssh_key) {
                 pod.operate.access.ssh_key = "";
             }
+            if (!pod.operate.access.ssh_pwd) {
+                pod.operate.access.ssh_pwd = "";
+            } else if (pod.operate.access.ssh_pwd.length > 0) {
+                pod.operate.access.ssh_pwd = "********";
+            }
             l4iModal.Open({
                 title: "Remote Access",
                 tplsrc: tpl,
@@ -1783,6 +1792,7 @@ inCpPod.EntryAccess = function(pod_id) {
 }
 
 inCpPod.EntryAccessSshRefresh = function() {
+    return;
 
     var form = $("#incp-podentry-access");
     if (!form) {
@@ -1819,9 +1829,11 @@ inCpPod.EntryAccessSetCommit = function() {
             access: {
                 ssh_on: ssh_on,
                 ssh_key: form.find("textarea[name=operate_access_ssh_key]").val(),
+                ssh_pwd: form.find("input[name=operate_access_ssh_pwd]").val(),
             },
         },
     };
+    // console.log(set);
 
     $(alert_id).hide();
 
@@ -1831,18 +1843,18 @@ inCpPod.EntryAccessSetCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -1875,12 +1887,12 @@ inCpPod.SpecSet = function(pod_id) {
             }
 
             if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
             inCpPod.syszones = zones;
 
             if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             var spec_res_id = pod.spec.box.resources.ref.id,
@@ -1955,7 +1967,8 @@ inCpPod.SpecSet = function(pod_id) {
                 id: "podset-planset",
                 tplsrc: tpl,
                 title: "Setting Pod Spec",
-                width: "max",
+                width: 1100,
+                min_width: 900,
                 height: "max",
                 callback: function() {
                     l4iTemplate.Render({
@@ -2007,11 +2020,11 @@ inCpPod.SpecSetCommit = function() {
         url = "",
         vol_size = parseFloat($("#incp-podnew-resource-value").val());
     if (vol_size <= 0) {
-        return l4i.InnerAlert(alert_id, "alert-danger", "System Storage Not Set");
+        return l4i.InnerAlert(alert_id, "error", "System Storage Not Set");
     }
 
     if (!inCpPod.plan.res_compute_selected) {
-        return l4i.InnerAlert(alert_id, "alert-danger", "Resource Option Not Set");
+        return l4i.InnerAlert(alert_id, "error", "Resource Option Not Set");
     }
 
     if (vol_size >= 1.0) {
@@ -2043,18 +2056,18 @@ inCpPod.SpecSetCommit = function() {
         callback: function(err, rsj) {
             l4iModal.ScrollTop();
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
             window.setTimeout(function() {
                 l4iModal.Close();
                 if (rsj.pod && rsj.pod.length > 8) {

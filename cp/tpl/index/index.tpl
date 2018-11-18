@@ -5,8 +5,8 @@
       <li class="incp-topbar-brand">inPanel</li>
     </ul>
     <ul class="incp-nav incp-topbar-nav" id="incp-topbar-nav-menus">
-      <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>
       <li><a class="l4i-nav-item" href="#app/index">Applications</a></li>
+      <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>
       <li><a class="l4i-nav-item" href="#ips/index">Packages</a></li>
       <li><a class="l4i-nav-item" href="#res/index">Resources</a></li>
     </ul>

@@ -44,7 +44,9 @@
       {[}]}
       </div>
       <div style="flex-grow:3;order:2;text-align:right">
-        <span style="flex-grow:1;order:3"><img src="/in/cp/~/open-iconic/svg/chevron-right.svg"></span>
+        <span style="flex-grow:1;order:3">
+          <span class="fa fa-chevron-right"></span>
+        </span>
       </div>
     </a>
   </div>

@@ -1,7 +1,7 @@
 <div id="inops-host-zones-alert"></div>
 
 <div class="incp-div-light">
-<table class="table table-hover">
+<table class="table table-hover valign-middle">
   <thead><tr>
     <th>Zone</th>
   	<th>Description</th>
@@ -34,16 +34,16 @@
     {[~]}
   </td>
   <td>
-    <button class="pure-button button-xsmall" 
-      onclick="inOpsHost.CellList('{[=v.meta.id]}')" href="#cell-list">
-    {[=v.cells.length]}
+    <button class="btn btn-sm"
+      onclick="inOpsHost.CellList('{[=v.meta.id]}')">
+      {[=v.cells.length]}
     </button>
   </td>
   <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
-    <button class="pure-button button-xsmall" 
-      onclick="inOpsHost.ZoneSet('{[=v.meta.id]}')" href="#zone-set">
+    <button class="btn btn-sm"
+      onclick="inOpsHost.ZoneSet('{[=v.meta.id]}')">
       Setting
     </button>
   </td>

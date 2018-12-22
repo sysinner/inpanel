@@ -14,10 +14,10 @@
   <div id="inops-podspec-planset-image"></div>
   <div id="inops-podspec-planset-resvolume"></div>
   <div>
-    <button type="button" class="pure-button pure-button-primary" onclick="inOpsPod.SpecPlanSetCommit()">
+    <button type="button" class="btn btn-primary" onclick="inOpsPod.SpecPlanSetCommit()">
       Save
     </button>
-    <button type="button" class="pure-button" onclick="inOpsPod.SpecPlanList()" style="margin-left:10px">
+    <button type="button" class="btn" onclick="inOpsPod.SpecPlanList()" style="margin-left:10px">
       Cancel
     </button>
   </div>
@@ -46,7 +46,7 @@
 <div class="l4i-form-group">
   <label class="">Labels</label>
   <button class="btn btn-default btn-sm" onclick="inOpsPod.SpecPlanSetLabelAppend()">
-    <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Label
+    <span class="fa fa-plus"></span> &nbsp; Add new Label
   </button>
   <div class="">
     <table class="table table-hover">
@@ -67,7 +67,7 @@
             <input name="label_value" type="text" value="{[=vl.value]}" class="form-control input-sm">
           </td>
           <td align="right">
-            <button class="pure-button button-xsmall" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
+            <button class="btn btn-sm" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
               Delete
             </button>
           </td>
@@ -81,7 +81,7 @@
 <div class="l4i-form-group">
   <label class="">Annotations</label>
   <button class="btn btn-default btn-sm" onclick="inOpsPod.SpecPlanSetAnnotationAppend()">
-    <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Annotation
+    <span class="fa fa-plus"></span> &nbsp; Add new Annotation
   </button>
   <div class="">
     <table class="table table-hover">
@@ -102,7 +102,7 @@
             <input name="annotation_value" type="text" value="{[=vl.value]}" class="form-control input-sm">
           </td>
           <td align="right">
-            <button class="pure-button button-xsmall" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
+            <button class="btn btn-sm" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
               Delete
             </button>
           </td>
@@ -143,7 +143,7 @@
     <input name="label_value" type="text" value="" class="form-control input-sm" placeholder="Value">
   </td>
   <td align="right">
-    <button class="pure-button button-xsmall" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
+    <button class="btn btn-sm" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
       Delete
     </button>
   </td>
@@ -159,7 +159,7 @@
     <input name="annotation_value" type="text" value="" class="form-control input-sm" placeholder="Value">
   </td>
   <td align="right">
-    <button class="pure-button button-xsmall" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
+    <button class="btn btn-sm" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
       Delete
     </button>
   </td>
@@ -187,14 +187,14 @@
 
 <script type="text/html" id="inops-podspec-planset-rescompute-tpl">
 <div class="l4i-form-group">
-  <label>CPU and Memory</label>
+  <label>CPU cores and Memory</label>
   <div class="incp-form-box-selector">
     {[~it.items :v]}
-    <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
+    <div class="incp-font-fixspace incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
       id="inops-podspec-planset-res-compute-id-{[=v.meta.id]}"
       onclick="inOpsPod.SpecPlanSetResComputeChange('{[=v.meta.id]}')">
-      <div>CPU: {[=v.cpu_limit]}m</div>
-      <div>Memory: {[=inCp.UtilResSizeFormat(v.mem_limit)]}</div>
+      <div>CPU {[=(v.cpu_limit/10).toFixed(1)]}</div>
+      <div>RAM {[=inCp.UtilResSizeFormat(v.mem_limit * inCp.ByteMB)]}</div>
     </div>
     {[~]}
   </div>
@@ -226,8 +226,8 @@
     <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
       id="inops-podspec-planset-res-volume-id-{[=v.meta.id]}"
       onclick="inOpsPod.SpecPlanSetResVolumeChange('{[=v.meta.id]}')">
-      <div>Default: {[=inCp.UtilResSizeFormat(v.default)]}</div>
-      <div>Range: {[=inCp.UtilResSizeFormat(v.request)]} ~ {[=inCp.UtilResSizeFormat(v.limit)]}</div>
+      <div>Default: {[=v.default]} GB</div>
+      <div>Range: {[=v.request]} ~ {[=v.limit]} GB</div>
     </div>
     {[~]}
   </div>

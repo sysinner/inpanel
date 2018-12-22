@@ -25,15 +25,15 @@
   <td>
     <table>
       <thead><tr>
-        <th width="33%">CPU units (1000m = 1 core)</th>
-        <th width="33%">Memory Size</th>
-        <th>System Volume Size</th>
+        <th width="33%">CPU</th>
+        <th width="33%">Memory</th>
+        <th>System Volume</th>
       </tr></thead>
       <tbody>
       <tr>
-        <td>{[=it.spec.exp_res.cpu_min]} m</td>
-        <td>{[=inCp.UtilResSizeFormat(it.spec.exp_res.mem_min)]}</td>
-        <td>{[=inCp.UtilResSizeFormat(it.spec.exp_res.vol_min, 1)]}</td>
+        <td>{[=it.spec.exp_res._cpu_min]} cores</td>
+        <td>{[=it.spec.exp_res.mem_min]} MB</td>
+        <td>{[=it.spec.exp_res.vol_min]} GB</td>
       </tr>
       </tbody>
     </table>

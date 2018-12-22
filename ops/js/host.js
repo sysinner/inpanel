@@ -225,6 +225,9 @@ inOpsHost.NodeList = function(zoneid, cellid) {
                 if (data.items[i].status && tn - data.items[i].status.updated > 3600) {
                     data.items[i]._status = "Offline";
                 }
+                if (!data.items[i].meta.name || data.items[i].meta.name.length < 1) {
+                    data.items[i].meta.name = "localhost";
+                }
             }
 
             l4iTemplate.Render({
@@ -509,7 +512,7 @@ inOpsHost.NodeNew = function(zoneid, cellid) {
         callback: function(err, tpl) {
 
             l4iModal.Open({
-                title: "New Node",
+                title: "New Host",
                 tplsrc: tpl,
                 width: 900,
                 height: 500,
@@ -587,10 +590,10 @@ inOpsHost.entry_nav_menus = [{
     name: "Graphs",
     uri: "host/node/stats",
 }, {
-    name: "Settings",
-    uri: "host/node/setup",
-    onclick: "inOpsHost.NodeSet()",
-}, {
+    //    name: "Settings",
+    //    uri: "host/node/setup",
+    //    onclick: "inOpsHost.NodeSet()",
+    // }, {
     name: "ReSet SecretKey",
     uri: "host/node/setretkey",
     onclick: "inOpsHost.NodeSecretKeySet()",
@@ -662,6 +665,10 @@ inOpsHost.NodeOverview = function() {
                     node.status.volumes[i].used = 1;
                 }
                 node.status.volumes[i]._percent = parseInt((100 * node.status.volumes[i].used) / node.status.volumes[i].total);
+            }
+
+            if (node.status.uptime) {
+                node.status._uptime = parseInt((new Date()) / 1e3) - node.status.uptime;
             }
 
             if (!node.spec.peer_wan_addr) {
@@ -840,6 +847,7 @@ inOpsHost.NodeStats = function(time_past) {
 
             var max = 0;
             var tc_title = stats.cycle + " seconds";
+            var tc_ns = stats.cycle * 1000000000;
             if (stats.cycle >= 86400 && stats.cycle % 86400 == 0) {
                 tc_title = (stats.cycle / 86400) + " Day";
                 if (stats.cycle > 86400) {
@@ -859,19 +867,22 @@ inOpsHost.NodeStats = function(time_past) {
 
             //
             var stats_cpu = l4i.Clone(inOpsHost.hchart_def);
-            max = inOpsHost.nodeStatsFeedMaxValue(stats, "cpu/user");
-            if (max > 1000000000) {
-                stats_cpu.options.title = l4i.T("CPU (Seconds / %s)", tc_title);
-                stats_cpu._fix = 1000000000;
-            } else if (max > 1000000) {
-                stats_cpu.options.title = l4i.T("CPU (Millisecond / %s)", tc_title);
-                stats_cpu._fix = 1000000;
-            } else if (max > 1000) {
-                stats_cpu.options.title = l4i.T("CPU (Microsecond / %s)", tc_title);
-                stats_cpu._fix = 1000;
-            } else {
-                stats_cpu.options.title = l4i.T("CPU (Nanosecond / %s)", tc_title);
-            }
+            stats_cpu.options.title = l4i.T("CPU Usage (Percentage / %s)", tc_title);
+            /**
+                max = inOpsHost.nodeStatsFeedMaxValue(stats, "cpu/user");
+                if (max > 1000000000) {
+                    stats_cpu.options.title = l4i.T("CPU (Seconds / %s)", tc_title);
+                    stats_cpu._fix = 1000000000;
+                } else if (max > 1000000) {
+                    stats_cpu.options.title = l4i.T("CPU (Millisecond / %s)", tc_title);
+                    stats_cpu._fix = 1000000;
+                } else if (max > 1000) {
+                    stats_cpu.options.title = l4i.T("CPU (Microsecond / %s)", tc_title);
+                    stats_cpu._fix = 1000;
+                } else {
+                    stats_cpu.options.title = l4i.T("CPU (Nanosecond / %s)", tc_title);
+                }
+            */
 
 
             //
@@ -921,9 +932,12 @@ inOpsHost.NodeStats = function(time_past) {
                 switch (v.name) {
                     case "cpu/sys":
                     case "cpu/user":
-                        if (stats_cpu._fix && stats_cpu._fix > 1) {
-                            fix = stats_cpu._fix;
-                        }
+                        /**
+                                        if (stats_cpu._fix && stats_cpu._fix > 1) {
+                                            fix = stats_cpu._fix;
+                                        }
+                        */
+                        fix = tc_ns / 100;
                         break;
 
                     case "ram/us":
@@ -1030,11 +1044,39 @@ inOpsHost.NodeStats = function(time_past) {
                 }
             }
 
-            hooto_chart.RenderElement(stats_cpu, "inops-node-stats-cpu");
-            hooto_chart.RenderElement(stats_ram, "inops-node-stats-ram");
-            hooto_chart.RenderElement(stats_net, "inops-node-stats-net");
-            hooto_chart.RenderElement(stats_fss, "inops-node-stats-fss");
-            hooto_chart.RenderElement(stats_fsn, "inops-node-stats-fsn");
+            var statses = [{
+                data: stats_cpu,
+                target: "cpu",
+            }, {
+                data: stats_ram,
+                target: "ram",
+            }, {
+                data: stats_net,
+                target: "net",
+            }, {
+                data: stats_fss,
+                target: "fss",
+            }, {
+                data: stats_fsn,
+                target: "fsn",
+            }];
+
+
+            l4iTemplate.Render({
+                dstid: "inops-node-stats-list",
+                tplid: "inops-node-stats-item-tpl",
+                data: {
+                    items: statses,
+                },
+                callback: function() {
+
+                    for (var i in statses) {
+                        statses[i].data.options.title = "";
+                        hooto_chart.RenderElement(statses[i].data, "inops-node-stats-" + statses[i].target);
+                    }
+                },
+            });
+
         });
 
         ep.fail(function(err) {
@@ -1154,7 +1196,7 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
                 }
 
                 if (!nodes.items[i].spec.peer_wan_addr) {
-                    nodes.items[i].spec.peer_wan_addr = "-";
+                    nodes.items[i].spec.peer_wan_addr = "";
                 }
                 if (!nodes.items[i].spec.http_port) {
                     nodes.items[i].spec.http_port = "";
@@ -1170,7 +1212,8 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
                 if (!nodes.items[i].spec.platform.kernel) {
                     nodes.items[i].spec.platform.kernel = "";
                 }
-                nodes.items[i].spec.platform.kernel = nodes.items[i].spec.platform.kernel.replace(/.el\d.x86_64$/g, '')
+                // nodes.items[i].spec.platform.kernel = nodes.items[i].spec.platform.kernel.replace(/.el\d(.*?).x86_64$/g, '')
+                nodes.items[i].spec.platform.kernel = nodes.items[i].spec.platform.kernel.replace(/.x86_64$/g, '')
                 if (!nodes.items[i].spec.platform.arch) {
                     nodes.items[i].spec.platform.arch = "";
                 }

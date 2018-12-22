@@ -3,7 +3,7 @@
 <div id="incp-podls" class="incp-div-light"></div>
 
 <script type="text/html" id="incp-podls-tpl">
-<table class="table table-hover">
+<table class="table table-hover valign-middle">
   <thead>
     <tr>
       <th>Instances</th>
@@ -15,42 +15,50 @@
       {[?]}
       <th>Spec</th>
       <th>Apps</th>      
-      <th>Status</th>
+      <th>Action</th>
       <th></th>
+      <th width="30px"></th>
     </tr>
   </thead>
   <tbody>
-{[~it.items :v]}
-  <tr>
-    <td class="align-middle incp-font-fixspace incp-ctn-hover" onclick="inCpPod.EntryIndex('{[=v.meta.id]}')">
+  {[~it.items :v]}
+  <tr onclick="inCpPod.EntryIndex('{[=v.meta.id]}')">
+    <td class="incp-font-fixspace incp-ctn-hover">
       <span><strong>{[=v.meta.name]}</strong></span>
       <div>{[=v.meta.id]}</div>
     </td>
     {[if (!it._zone_active) {]}
-    <td class="align-middle">{[=v.spec.zone]} / {[=v.spec.cell]}</td>
+    <td class="incp-ctn-hover">{[=v.spec.zone]} / {[=v.spec.cell]}</td>
     {[}]}
     {[? it._options.ops_mode]}
-    <td class="align-middle">{[=v.meta.user]}</td>
+    <td class="incp-ctn-hover">{[=v.meta.user]}</td>
     {[?]}
-    <td class="align-middle">{[=v.spec.ref.name]}</td>
-    <td class="align-middle">{[=v.apps.length]}</td>
-    <td class="align-middle">
+    <td class="incp-ctn-hover">{[=v.spec.ref.name]}</td>
+    <td class="incp-ctn-hover">{[=v.apps.length]}</td>
+    <td class="incp-ctn-hover">
       <span class="badge badge-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionRunning)) {]}success{[} else {]}default{[}]}">
-      {[=inCp.OpActionStatusTitle(v.operate.action)]}
+      {[=inCp.OpActionTitle(v.operate.action)]}
       </span>
     </td>
-    <td  class="align-middle" align="right">
+    <td align="right">
+	  <!--
       {[if (!inCp.OpActionAllow(v.operate.action, inCp.OpActionDestroy)) {]}
-      <button class="pure-button " onclick="inCpPod.EntryIndex('{[=v.meta.id]}', 'stats')">
-        <img src="/in/cp/~/open-iconic/svg/dashboard.svg" class="incp-button-icon-12"> Graphs
+      <button class="btn btn-outline-primary" onclick="inCpPod.EntryIndex('{[=v.meta.id]}', 'stats')">
+        <span class="fa fa-chart-line"></span>
+        Graphs
       </button>
-      <button class="pure-button " onclick="inCpPod.SetInfo('{[=v.meta.id]}')">
-        <img src="/in/cp/~/open-iconic/svg/cog.svg" class="incp-button-icon-12"> Setup
+      <button class="btn btn-outline-primary" onclick="inCpPod.SetInfo('{[=v.meta.id]}')">
+        <span class="fa fa-cog"></span>
+        Setup
       </button>
       {[}]}
+	  -->
+    </td>
+    <td align="right">
+      <span class="fa fa-chevron-right"></span>
     </td>
   </tr>
-{[~]}
+  {[~]}
 </tbody>
 </table>
 </script>
@@ -66,7 +74,8 @@ $("#incp-podls").on("click", ".incp-pod-item", function() {
 <script type="text/html" id="incp-podls-optools">
 <li class="incp-btn incp-btn-primary">
   <a href="#" onclick="inCpPod.New({})">
-    New Pod Instance
+    <span class="fa fa-plus-circle"></span>&nbsp; 
+    <span>Create new Pod Instance</span>
   </a>
 </li>
 </script>

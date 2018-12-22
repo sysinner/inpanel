@@ -33,7 +33,7 @@ inCpApp.Index = function() {
     var divstr = "<div id='incp-module-navbar'>\
   <ul id='incp-module-navbar-menus' class='incp-module-nav'>\
     <li><a class='l4i-nav-item' href='#app/inst/list'>App Instances</a></li>\
-    <li><a class='l4i-nav-item' href='#app/spec/list'>App Spec Center</a></li>\
+    <li><a class='l4i-nav-item' href='#app/spec/list'>AppSpec Center</a></li>\
   </ul>\
   <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
 </div>\
@@ -150,7 +150,7 @@ inCpApp.InstListRefresh = function(options) {
     });
 }
 
-
+/*
 inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
     if (!app_id) {
         return;
@@ -195,6 +195,7 @@ inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
         }
     });
 }
+*/
 
 
 inCpApp.OpOptInfo = function(app_id) {
@@ -665,11 +666,13 @@ inCpApp.InstNew = function(spec_id) {
                 return alert("AppSpec error, Please try again later (EC:incp-appset)");
             }
 
-            inCpApp.instSet = l4i.Clone(inCpApp.instDef);;
+            inCpApp.instSet = l4i.Clone(inCpApp.instDef);
+
+            spec.exp_res._cpu_min = (spec.exp_res.cpu_min / 10).toFixed(1);
             inCpApp.instSet.spec = spec;
 
             l4iModal.Open({
-                title: "Launch App Instance",
+                title: "Create new App Instance",
                 width: 900,
                 height: 400,
                 tplsrc: tpl,
@@ -750,7 +753,7 @@ inCpApp.InstNewPodSelect = function() {
                 "exp_filter_app_spec_id": inCpApp.instSet.spec.meta.id,
                 "new_options": {
                     "open_modal": true,
-                    "app_cpu_min": inCpApp.instSet.spec.exp_res.cpu_min,
+                    "app_cpu_min": (inCpApp.instSet.spec.exp_res.cpu_min / 10).toFixed(1),
                     "app_mem_min": inCpApp.instSet.spec.exp_res.mem_min,
                     "app_vol_min": inCpApp.instSet.spec.exp_res.vol_min,
                     "app_new_callback": inCpApp.instNewPodSelectCallback,

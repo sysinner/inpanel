@@ -1,13 +1,20 @@
-<div class="incp-podentry-stats-box">
-  <div id="inops-node-stats-net" class="incp-podentry-stats-item incp-div-light"></div>
-  <div id="inops-node-stats-cpu" class="incp-podentry-stats-item incp-div-light"></div>
-  <div id="inops-node-stats-ram" class="incp-podentry-stats-item incp-div-light"></div>
-  <div id="inops-node-stats-fss" class="incp-podentry-stats-item incp-div-light"></div>
-  <div id="inops-node-stats-fsn" class="incp-podentry-stats-item incp-div-light"></div>
-  <div class="incp-podentry-stats-item"></div>
-  <div class="incp-podentry-stats-item"></div>
-  <div class="incp-podentry-stats-item"></div>
+<div>
+  <div id="inops-node-stats-list"></div>
 </div>
+
+
+<script type="text/html" id="inops-node-stats-item-tpl">
+{[~it.items :v]}
+<div class="incp-card-frame-row">
+<div class="incp-card-frame">
+<div class="incp-div-light">
+  <div class="incp-card-title">{[=v.data.options.title]}</div>
+  <div id="inops-node-stats-{[=v.target]}" class="incp-card-body">loading ...</div>
+</div>
+</div>
+</div>
+{[~]}
+</script>
 
 <script type="text/html" id="inops-node-optools-stats">
 <li>the Last</li>

@@ -1,7 +1,7 @@
 <div id="incp-app-specls-alert" class="alert"></div>
 
 <div class="incp-div-light">
-<table class="table table-hover">
+<table class="table table-hover valign-middle">
   <thead>
     <tr>
       <th>Spec</th>
@@ -26,30 +26,28 @@
   <td>{[=v.depends.length]}</td>
   <td>{[=v._ipm_num]}</td>
   <td>
-    <button class="pure-button button-xsmall"
+    <button class="btn btn-sm"
       onclick="inCpAppSpec.CfgSet('{[=v.meta.id]}')">
       {[=v.configurator.fields.length]}
     </button>
   </td>
   <td align="right">
     {[if (inCp.UserSession.username == "sysadmin") {]}
-    <button class="pure-button button-xsmall" onclick="inCpAppSpec.Download('{[=v.meta.id]}')">
-      Download
-    </button>
-    {[}]}
-    <button class="pure-button button-xsmall" onclick="inCpApp.InstNew('{[=v.meta.id]}')">
-      <img src="/in/cp/~/open-iconic/svg/cloud-upload.svg"> Launch
-    </button>
-    {[if (inCp.UserSession.username == "sysadmin") {]}
-    <button class="pure-button button-xsmall" onclick="inCpAppSpec.SetRaw('{[=v.meta.id]}')">
-      <img src="/in/cp/~/open-iconic/svg/cog.svg"> Setting Raw
+    <button class="btn btn-sm btn-outline-primary" onclick="inCpAppSpec.SetRaw('{[=v.meta.id]}')">
+      <span class="fa fa-edit"></span>
+      Modify RAW
     </button>
     {[}]}
     {[if (v.meta.user == inCp.UserSession.username) {]}
-    <button class="pure-button button-xsmall" onclick="inCpAppSpec.Set('{[=v.meta.id]}')">
-      <img src="/in/cp/~/open-iconic/svg/cog.svg"> Setting
+    <button class="btn btn-sm btn-outline-primary" onclick="inCpAppSpec.Set('{[=v.meta.id]}')">
+      <span class="fa fa-edit"></span>
+      Modify
     </button>
     {[}]}
+    <button class="btn btn-sm btn-outline-primary" onclick="inCpApp.InstNew('{[=v.meta.id]}')">
+      <span class="fa fa-cloud-upload-alt"></span>
+      New Instance
+    </button>
   </td>
 </tr>
 {[~]}
@@ -74,12 +72,12 @@ $("#incp-app-specls-qry").submit(function(event) {
 </li>-->
 <li class="incp-btn incp-btn-primary">
   <a href="#" onclick="inCpAppSpec.Set()">
-     New Spec
+     New AppSpec
   </a>
 </li>
 <li class="incp-btn incp-btn-primary">
   <a href="#" onclick="inCpAppSpec.SetRaw()">
-     New Spec by Raw
+     New AppSpec by JSON RAW
   </a>
 </li>
 </script>

@@ -39,11 +39,11 @@
 <tr>
   <td></td>
   <td>
-    <button type="button" class="pure-button pure-button-primary" onclick="inCpPod.NewCommit()">
+    <button type="button" class="btn btn-primary" onclick="inCpPod.NewCommit()">
       Save
     </button>
 
-    <button type="button" class="pure-button" onclick="inCpPod.List()" style="margin-left:10px">
+    <button type="button" class="btn" onclick="inCpPod.List()" style="margin-left:10px">
       Cancel
     </button>
   </td>
@@ -114,11 +114,11 @@
   <td>Resources</td>
   <td class="incp-form-box-selector" id="incp-podnew-res-computes" style="padding-bottom:0">
     {[~it.res_computes :v]}
-    <div class="incp-form-box-selector-item {[if (!inCpPod.NewOptionResFit(v)) {]}disable{[} else if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
+    <div class="incp-font-fixspace incp-form-box-selector-item {[if (!inCpPod.NewOptionResFit(v)) {]}disable{[} else if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-res-compute-id-{[=v.ref_id]}"
       onclick="inCpPod.NewPlanResComputeChange('{[=v.ref_id]}')">
-      <div>CPU: {[=v.cpu_limit]}m</div>
-      <div>Memory: {[=inCp.UtilResSizeFormat(v.mem_limit)]}</div>
+      <div>CPU: {[=v._cpu_limit]}</div>
+      <div>RAM: {[=v._mem_limit]}</div>
     <span class="disable_close">&times;</span>
     </div>
     {[~]}
@@ -148,7 +148,7 @@
       <div class="input-group-append"><div class="input-group-text">GB</div></div>
     </div>
     <div class="form-text text-muted">
-      Range: {[=inCp.UtilResSizeFormat(it._res_volume.request)]} ~ {[=inCp.UtilResSizeFormat(it._res_volume.limit)]}
+      Range: {[=it._res_volume.request]} ~ {[=it._res_volume.limit]} GB
     </div>    
   </div>
   </td>

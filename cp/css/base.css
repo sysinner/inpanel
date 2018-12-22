@@ -15,7 +15,7 @@ body {
   font-size: 16px;
   /*background: none repeat scroll 0% 0% rgba(0, 0, 0, 0.03);*/
   background-color: #f5f5f5;
-  min-width: 1100px;
+  _min-width: 1100px;
   display: block;
 }
 
@@ -146,6 +146,10 @@ body {
   cursor: pointer;
 }
 
+.incp-ctn-unclick {
+  pointer-events: none;
+}
+
 .incp-button-icon-12 {
   width: 12px;
   height: 12px;
@@ -155,6 +159,15 @@ body {
 .incp-formtable,
 .incp-formtable table {
   width: 100%;
+}
+
+.incp-formtable-row-line,
+.incp-formtable-tr-line {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.incp-formtable-tr-line:last-child {
+  border-bottom: 0 !important;
 }
 
 .incp-formtable>tbody>tr {
@@ -182,10 +195,26 @@ body {
   font-weight: bold;
 }
 
-.incp-formtable table td {
-  padding: 2px 10px 2px 0;
+.incp-formtable table td,
+.incp-formtable table th {
+  padding: 2px 30px 2px 0;
 }
 
-.incp-formtable table td:last-child {
-  padding-right: 0;
+.incp-formtable table td:last-child,
+.incp-formtable table th:last-child {
+  padding-right: 0 !important;
+}
+
+.incp-formtable-space-x0050 td,
+.incp-formtable-space-x0050 th {
+  padding: 0.50rem 1.00rem 0.50rem 0 !important;
+}
+
+.incp-formtable-space-x0100 td,
+.incp-formtable-space-x0100 th {
+  padding: 1.00rem 2.00rem 1.00rem 0 !important;
+}
+
+.incp-formtable .input-group {
+  margin-bottom: 0 !important;
 }

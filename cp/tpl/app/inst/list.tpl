@@ -2,14 +2,14 @@
 <div id="incp-appls" class="incp-div-light"></div>
 
 <script id="incp-appls-tpl" type="text/html">
-<table class="table table-hover">
+<table class="table table-hover valign-middle">
 <thead>
   <tr>
     <th>Instances</th>
     {[? it._options.ops_mode]}
     <th>User</th>
     {[?]}
-    <th>Spec</th>
+    <th>AppSpec</th>
     <th>Pod</th>
     <th>Options</th>
     <th>Status</th>
@@ -19,36 +19,38 @@
 <tbody>
 {[~it.items :v]}
 <tr>
-  <td class="align-middle incp-font-fixspace">
+  <td class="incp-font-fixspace">
     <span><strong>{[=v.meta.name]}</strong></span>
     <div>{[=v.meta.id]}</div>
   </td>
   {[? it._options.ops_mode]}
-  <td class="align-middle">{[=v.meta.user]}</td>
+  <td>{[=v.meta.user]}</td>
   {[?]}
-  <td class="align-middle incp-font-fixspace">
+  <td class="incp-font-fixspace">
     <a href="#spec.detail" onclick="inCpAppSpec.Info('{[=v.spec.meta.id]}', null, '{[=v.spec.meta.version]}')">{[=v.spec.meta.id]}/v{[=v.spec.meta.version]}</a>
   </td>
-  <td class="align-middle">
+  <td>
     <a href="#pod.detail" onclick="inCpApp.InstPodInfo('{[=v.operate.pod_id]}')" class="incp-font-fixspace">{[=v.operate.pod_id]}</a>
   </td>
-  <td class="align-middle">
+  <td>
    {[if (v.operate.options.length > 0) {]}
-     <button class="incp-btn incp-btn-xsmall" onclick="inCpApp.OpOptInfo('{[=v.meta.id]}')" style="width:30px">{[=v.operate.options.length]}</button>
+     <button class="btn btn-sm" onclick="inCpApp.OpOptInfo('{[=v.meta.id]}')" style="width:30px">{[=v.operate.options.length]}</button>
    {[}]}
   </td>
-  <td class="align-middle">
+  <td>
     <span class="badge badge-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionStart)) {]}success{[} else {]}default{[}]}">
       {[=inCp.OpActionTitle(v.operate.action)]}
     </span>
   </td>
-  <td class="align-middle" align="right">
+  <td align="right">
     {[if (!inCp.OpActionAllow(v.operate.action, inCp.OpActionDestroy)) {]}
-    <button class="pure-button" onclick="inCpApp.InstDeploy('{[=v.meta.id]}')">
-      <img src="/in/cp/~/open-iconic/svg/cloud-upload.svg" class="incp-button-icon-12"> Deploy 
+    <button class="btn btn-outline-primary" onclick="inCpApp.InstDeploy('{[=v.meta.id]}')">
+      <span class="fa fa-cloud-upload-alt"></span>
+      Deploy
     </button>
-    <button class="pure-button" onclick="inCpApp.InstSet('{[=v.meta.id]}', '{[=v.spec.meta.id]}')">
-      <img src="/in/cp/~/open-iconic/svg/cog.svg" class="incp-button-icon-12"> Setup
+    <button class="btn btn-outline-primary" onclick="inCpApp.InstSet('{[=v.meta.id]}', '{[=v.spec.meta.id]}')">
+      <span class="fa fa-cog"></span>
+      Setup
     </button>
     {[}]}
   </td>
@@ -78,7 +80,8 @@ $("#incp-appls-qry").submit(function(event) {
 </li>-->
 <li class="incp-btn incp-btn-primary">
   <a href="#" onclick="inCpApp.InstLaunchNew()">
-     Launch new Instance
+    <span class="fa fa-plus-circle"></span>&nbsp; 
+    <span>Create new App Instance</span>
   </a>
 </li>
 </script>

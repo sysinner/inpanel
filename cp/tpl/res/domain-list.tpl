@@ -1,6 +1,6 @@
 <div class="incp-div-light">
 <div id="incp-resdomain-list-alert" class="incp-hide"></div>
-<table class="table table-hover">
+<table class="table table-hover valign-middle">
   <thead>
     <tr>
       <th>Domain</th>
@@ -28,11 +28,13 @@
   <td>{[=v.action]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
-    <button class="incp-btn incp-btn-xsmall" onclick="inCpResDomain.Deploy('{[=v._name]}')">
-      <img src="/in/cp/~/open-iconic/svg/cloud-upload.svg"> Deploy 
+    <button class="btn btn-sm btn-outline-primary" onclick="inCpResDomain.Deploy('{[=v._name]}')">
+      <span class="fa fa-cloud-upload-alt"></span>
+      Deploy
     </button>
-    <button class="incp-btn incp-btn-xsmall" onclick="inCpResDomain.Set('{[=v._name]}')">
-      <img src="/in/cp/~/open-iconic/svg/cog.svg"> Setting
+    <button class="btn btn-sm btn-outline-primary" onclick="inCpResDomain.Set('{[=v._name]}')">
+      <span class="fa fa-cog"></span>
+      Setting
     </button>
   </td>
 </tr>

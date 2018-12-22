@@ -51,7 +51,7 @@
       <span>WAN Addresss</span>
       <button type="button" class="btn btn-default btn-sm" 
         onclick="inOpsHost.ZoneWanAddressAppend()">
-        <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Address
+        <span class="fa fa-plus"></span> &nbsp; Add new Address
       </button>
     </label>
     <div>
@@ -67,7 +67,7 @@
           <tr class="inops-host-zoneset-wanaddr-item">
             <td><input name="wan_addr" type="text" value="{[=vaddr]}" class="form-control form-control-sm"/></td>
             <td align="right">
-              <button class="pure-button button-small" onclick="inOpsHost.ZoneWanAddressDel(this)">
+              <button class="btn btn-sm" onclick="inOpsHost.ZoneWanAddressDel(this)">
                 Delete
               </button>
             </td>
@@ -83,7 +83,7 @@
       <span>LAN Addresss</span>
       <button type="button" class="btn btn-default btn-sm" 
         onclick="inOpsHost.ZoneLanAddressAppend()">
-        <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Address
+        <span class="fa fa-plus"></span> &nbsp; Add new Address
       </button>
     </label>
     <div>
@@ -99,7 +99,7 @@
           <tr class="inops-host-zoneset-lanaddr-item">
             <td><input name="lan_addr" type="text" value="{[=vaddr]}" class="form-control form-control-sm"/></td>
             <td align="right">
-              <button class="pure-button button-small " onclick="inOpsHost.ZoneLanAddressDel(this)">
+              <button class="btn btn-sm " onclick="inOpsHost.ZoneLanAddressDel(this)">
                 Delete
               </button>
             </td>
@@ -122,13 +122,13 @@
 <script id="inops-host-zoneset-wanaddr-tpl" type="text/html">
 <tr class="inops-host-zoneset-wanaddr-item">
   <td><input name="wan_addr" type="text" value="" class="form-control form-control-sm"/></td>
-  <td align="right"><button class="pure-button button-small " onclick="inOpsHost.ZoneWanAddressDel(this)">Delete</button></td>
+  <td align="right"><button class="btn btn-sm " onclick="inOpsHost.ZoneWanAddressDel(this)">Delete</button></td>
 </tr>
 </script>
 
 <script id="inops-host-zoneset-lanaddr-tpl" type="text/html">
 <tr class="inops-host-zoneset-lanaddr-item">
   <td><input name="lan_addr" type="text" value="" class="form-control form-control-sm"/></td>
-  <td align="right"><button class="pure-button button-small " onclick="inOpsHost.ZoneLanAddressDel(this)">Delete</button></td>
+  <td align="right"><button class="btn btn-sm " onclick="inOpsHost.ZoneLanAddressDel(this)">Delete</button></td>
 </tr>
 </script>

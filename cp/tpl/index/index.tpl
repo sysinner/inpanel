@@ -1,5 +1,5 @@
-<div id="incp-topbar">
-  <div class="incp-topbar-collapse">
+<div id="incp-topbar" class="incp-body-frame">
+  <div class="incp-topbar-collapse incp-body-container">
     <ul class="incp-nav" id="incp-topbar-siteinfo">
 	    <li><img class="incp-topbar-logo" src="/in/cp/~/cp/img/logo-g1s48.png" title="frontend_header_site_logo_url"></li>
       <li class="incp-topbar-brand">inPanel</li>
@@ -12,13 +12,14 @@
     </ul>
     <ul class="incp-nav incp-nav-right" id="incp-topbar-userbar"></ul>
     <ul class="incp-nav incp-nav-right">
-      <li><a class="l4i-nav-item" href="https://github.com/sysinner/insoho/issues" target="_blank">Bug Report</a></li>
-      <li><a class="l4i-nav-item" href="#about" onclick="inCp.About()">About</a></li>
       <li><a class="l4i-nav-item" href="/in/ops" id="incp-nav-ops-entry" style="display:none">Management</a></li>
     </ul>
   </div>
 </div>
-<div id="comp-content" class="">loading</div>
+
+<div class="incp-body-frame">
+  <div id="comp-content" class="incp-body-container">loading</div>
+</div>
 
 <script id="incp-topbar-user-signed-tpl" type="text/html">
 
@@ -34,6 +35,9 @@
 </script>
 
 <div class="incp-footer">
-  <span class="copy">&copy;2018&nbsp;</span>
-  <span class="url-info"><a href="http://www.sysinner.com" target="_blank">Sysinner PaaS Engine</a></span>
+  <div class="incp-items incp-fontsize-x0090" style="text-align:center">
+    <span class="incp-item"><span class="fa fa-award"></span> Powered by <a href="https://www.sysinner.com" target="_blank">Sysinner PaaS Engine</a></span>
+    <span class="incp-item"><span class="fa fa-bug"></span> <a href="https://github.com/sysinner/incore/issues" target="_blank">Bug Report</a></span>
+    <span class="incp-item"><span class="fa fa-info-circle"></span> <a class="l4i-nav-item" href="#about" onclick="inCp.About()">About</a></span>
+  </div>
 </div>

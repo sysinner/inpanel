@@ -14,7 +14,7 @@
   </tr>
 </table>
 
-<table class="table table-hover">
+<table class="table table-hover valign-middle">
   <thead>
     <tr>
       <th>ID</th>
@@ -33,7 +33,7 @@
   <td>{[=v.meta.user]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
-    <button class="btn btn-default btn-xs" onclick="incp_app_specls_selector_on('{[=v.meta.id]}')">Select</button>
+    <button class="btn btn-default btn-sm" onclick="incp_app_specls_selector_on('{[=v.meta.id]}')">Select</button>
   </td>
 </tr>
 {[~]}

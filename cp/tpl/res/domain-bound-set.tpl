@@ -66,7 +66,7 @@
   <label class="">Action</label>
   <div class="incp-resdomain-boundset-action">
     {[~it._actions :av]}
-    <label class="pure-radio">
+    <label class="form-check form-check-inline">
       <input type="radio" name="bound_action" value="{[=av.action]}" 
       {[if (av.action == it.action) {]}checked{[}]}> {[=av.title]}
     </label>

@@ -45,7 +45,6 @@
       <thead><tr>
         <th>Name</th>
         <th>Version</th>
-        <th>Dist / Arch</th>
         <th>Volume</th>
       </tr></thead>
       <tbody>
@@ -53,7 +52,6 @@
       <tr id="incp-app-specset-ipmls-name{[=v.name]}">
         <td>{[=v.name]}</td>
         <td>{[=v.version]}</td>
-        <td>{[=v.dist]} / {[=v.arch]}</td>
         <td>/usr/sysinner/{[=v.name]}/{[=v.version]}</td>
       </tr>
       {[~]}
@@ -69,10 +67,9 @@
   <td id="incp-app-specset-vcsls">
     <table>
       <thead><tr>
-        <th>URL</th>
+        <th>Repo URL</th>
         <th>Branch</th>
-        <th>Directory</th>
-        <th>Update Plan</th>
+        <th>Clone Directory</th>
       </tr></thead>
       <tbody>
       {[~it.vcs_repos :v]}
@@ -80,7 +77,6 @@
         <td>{[=v.url]}</td>
         <td>{[=v.branch]}</td>
         <td>/home/action/{[=v.dir]}</td>
-        <td>{[=v.plan]}</td>
       </tr>
       {[~]}
       </tbody>
@@ -134,13 +130,14 @@
 
 {[if (it.service_ports.length > 0) {]}
 <tr>
-  <td>Service Ports</td>
+  <td>Services</td>
   <td>
     <table>
       <thead>
         <tr>
-          <th>Name (http,https, ...)</th>
-          <th>Box Port</th>
+          <th width="33%">Name (http,https, ...)</th>
+          <th width="33%">Pod Port</th>
+          <th></th>
         <tr>
       </thead>
       <tbody>
@@ -148,6 +145,7 @@
         <tr>
           <td>{[=vp.name]}</td>
           <td>{[=vp.box_port]}</td>
+          <td></td>
         </tr>
         {[~]}
       </tbody>
@@ -172,20 +170,43 @@
   <td>
     <table>
       <thead><tr>
-        <th width="33%">CPU units (1000m = 1 core)</th>
-        <th width="33%">Memory Size</th>
-        <th>System Volume Size</th>
+        <th width="33%">CPU</th>
+        <th width="33%">Memory</th>
+        <th>System Volume</th>
       </tr></thead>
       <tbody>
       <tr id="incp-app-specset-depls-id{[=v.id]}">
-        <td>{[=it.exp_res.cpu_min]} m</td>
-        <td>{[=inCp.UtilResSizeFormat(it.exp_res.mem_min)]}</td>
-        <td>{[=inCp.UtilResSizeFormat(it.exp_res.vol_min, 1)]}</td>
+        <td>{[=it.exp_res._cpu_min]} cores</td>
+        <td>{[=it.exp_res.mem_min]} MB</td>
+        <td>{[=it.exp_res.vol_min]} GB</td>
       </tr>
       </tbody>
     </table>
   </td>
 </tr>
+
+{[? it._replica_enable]}
+<tr>
+  <td>Deploy Requirements</td>
+  <td>
+    <table>
+      <thead><tr>
+        <th width="33%">Number of Replicas</th>
+        <th width="33%">State</th>
+        <th></th>
+      </tr></thead>
+      <tbody>
+      <tr>
+        <td>Min/Max: {[=it.exp_deploy.rep_min]} / {[=it.exp_deploy.rep_max]}</td>
+        <td>{[=it.exp_deploy._sys_state]}</td>
+        <td></td>
+      </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>
+{[?]}
+
 
 </tbody>
 </table>

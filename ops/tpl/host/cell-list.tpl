@@ -1,11 +1,11 @@
 <div id="inops-cluster-cells-alert"></div>
 
 <div class="incp-div-light">
-<table class="table table-hover">
+<table class="table table-hover valign-middle">
   <thead><tr>
-    <th>Cell</th>
+    <th>ID</th>
     <th>Description</th>
-    <th>Nodes</th>
+    <th>Hosts</th>
     <th>Action</th>
     <th>Updated</th>
     <th></th>
@@ -23,16 +23,18 @@
   <td>{[=v.description]}</td>
   
   <td>
-    <button class="pure-button button-xsmall" 
-      onclick="inOpsHost.NodeList('{[=v.zone_id]}', '{[=v.meta.id]}')" href="#cell-set">
-      {[=v.node_num]}
+    <button class="btn btn-sm btn-outline-primary"
+      onclick="inOpsHost.NodeList('{[=v.zone_id]}', '{[=v.meta.id]}')">
+      <span class="fa fa-server"></span>
+      <span style="display:inline-block;width:30px">{[=v.node_num]}</span>
     </button>
   </td>
   <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
-    <button class="pure-button button-xsmall" 
-      onclick="inOpsHost.CellSet('{[=v.zone_id]}', '{[=v.meta.id]}')" href="#cell-set">
+    <button class="btn btn-sm btn-outline-primary"
+      onclick="inOpsHost.CellSet('{[=v.zone_id]}', '{[=v.meta.id]}')">
+      <span class="fa fa-cog"></span>
       Setting
     </button>
   </td>

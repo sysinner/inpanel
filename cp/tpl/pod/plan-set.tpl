@@ -58,11 +58,11 @@
   <td>Resources</td>
   <td class="incp-form-box-selector" id="incp-podnew-res-computes" style="padding-bottom:0">
     {[~it.res_computes :v]}
-    <div class="incp-form-box-selector-item {[if (!inCpPod.NewOptionResFit(v)) {]}disable{[} else if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
+    <div class="incp-font-fixspace incp-form-box-selector-item {[if (!inCpPod.NewOptionResFit(v)) {]}disable{[} else if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-res-compute-id-{[=v.ref_id]}"
       onclick="inCpPod.NewPlanResComputeChange('{[=v.ref_id]}')">
-      <div>CPU: {[=v.cpu_limit]}m</div>
-      <div>Memory: {[=inCp.UtilResSizeFormat(v.mem_limit)]}</div>
+      <div>CPU {[=(v.cpu_limit/10).toFixed(1)]} Cores</div>
+      <div>RAM {[=inCp.UtilResSizeFormat(v.mem_limit * inCp.ByteMB)]}</div>
     <span class="disable_close">&times;</span>
     </div>
     {[~]}
@@ -94,7 +94,7 @@
       <div class="input-group-append"><div class="input-group-text">GB</div></div>
     </div>
     <div class="form-text text-muted">
-      Range: {[=inCp.UtilResSizeFormat(it._res_volume.request)]} ~ {[=inCp.UtilResSizeFormat(it._res_volume.limit)]}
+      Range: {[=it._res_volume.request]} ~ {[=it._res_volume.limit]} GB
     </div>    
   </div>
   </td>

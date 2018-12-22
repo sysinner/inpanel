@@ -8,6 +8,10 @@ var inCp = {
     zone_id: null,
     OpToolActive: null,
     UserSession: null,
+    syscfg: {
+        zone_id: "local",
+        zone_master: {},
+    },
     OpActions: [
         {
             action: 1 << 1,
@@ -50,6 +54,7 @@ var inCp = {
     OpActionStopped: 1 << 4,
     OpActionDestroy: 1 << 5,
     OpActionDestroyed: 1 << 6,
+    OpActionMigrate: 1 << 7,
     OpActionPending: 1 << 11,
     OpActionWarning: 1 << 12,
     ByteMB: 1024 * 1024,
@@ -76,7 +81,7 @@ inCp.Boot = function(login_first) {
         "~/twbs/4/css/bootstrap.css",
         "~/jquery/jquery.js" + inCp.debug_uri(),
         "~/lessui/js/browser-detect.js",
-        "~/purecss/css/pure.css",
+        "~/fa/css/fa.css",
     ], function() {
 
         var browser = BrowserDetect.browser;
@@ -105,6 +110,7 @@ inCp.Boot = function(login_first) {
             "~/cp/js/host.js" + inCp.debug_uri(),
             "~/cp/js/spec.js" + inCp.debug_uri(),
             "~/cp/js/pod.js" + inCp.debug_uri(),
+            "~/cp/js/pod-rep.js" + inCp.debug_uri(),
             "~/cp/js/app.js" + inCp.debug_uri(),
             "~/cp/js/app-spec.js" + inCp.debug_uri(),
             "~/cp/js/res.js" + inCp.debug_uri(),
@@ -126,7 +132,7 @@ inCp.load_index = function() {
 
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "zones", "session", function(tpl, zones, session) {
+        var ep = EventProxy.create("tpl", "zones", "session", "syscfg", function(tpl, zones, session, syscfg) {
 
             if (!session || session.username == "") {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
@@ -138,6 +144,12 @@ inCp.load_index = function() {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
             inCp.Zones = zones;
+
+            //
+            inCp.syscfg.zone_id = syscfg.zone_id;
+            if (syscfg.zone_master) {
+                inCp.syscfg = syscfg;
+            }
 
             $("#body-content").html(tpl);
 
@@ -186,6 +198,10 @@ inCp.load_index = function() {
 
         inCp.ApiCmd("host/zone-list", {
             callback: ep.done("zones"),
+        });
+
+        inCp.ApiCmd("sys/cfg", {
+            callback: ep.done("syscfg"),
         });
 
         l4i.Ajax(inCp.base + "auth/session", {
@@ -337,7 +353,11 @@ inCp.ModuleNavbarMenu = function(name, items, active) {
         } else {
             items[i]._onclick = "";
         }
-        html += "<li><a class='l4i-nav-item " + items[i].style + "' href='#" + items[i].uri + "' " + items[i]._onclick + ">" + items[i].name + "</a></li>";
+        var icon = "";
+        if (items[i].icon_fa) {
+            icon = "<span class=\"fa fa-" + items[i].icon_fa + "\"></span> ";
+        }
+        html += "<li><a class='l4i-nav-item " + items[i].style + "' href='#" + items[i].uri + "' " + items[i]._onclick + ">" + icon + items[i].name + "</a></li>";
     }
     $("#incp-module-navbar-menus").html(html);
     l4i.UrlEventClean("incp-module-navbar-menus");
@@ -549,6 +569,7 @@ inCp.OpActionTitle = function(op_action) {
 }
 
 inCp.OpActionStatusTitle = function(action) {
+    var action = parseInt(action);
     for (var i in inCp.OpActionStatus) {
         if (inCp.OpActionAllow(action, inCp.OpActionStatus[i].action)) {
             return inCp.OpActionStatus[i].title;

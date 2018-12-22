@@ -12,6 +12,10 @@ var inCpAppSpec = {
         depends: [],
         roles: [],
         exp_res: {},
+        replica: {
+            min: 1,
+            max: 1,
+        },
     },
     executorDef: {
         name: "",
@@ -57,6 +61,15 @@ var inCpAppSpec = {
         auto_fill: "",
         validates: [],
     },
+    deploySysStates: [{
+        title: "Stateful",
+        value: 1,
+    }, {
+        title: "Stateless",
+        value: 2,
+    }],
+    deploySysStateful: 1,
+    deploySysStateless: 2,
     fieldNameRe: /^[a-z]{1}[0-9a-z_\/\-]{1,30}$/,
     iamAppRoles: null,
     vcsDef: {
@@ -247,6 +260,27 @@ inCpAppSpec.Info = function(id, spec, version) {
                 }
             }
 
+            if (!rsj.exp_deploy) {
+                rsj.exp_deploy = {};
+            }
+            if (!rsj.exp_deploy.rep_min) {
+                rsj.exp_deploy.rep_min = 1;
+                rsj.exp_deploy.rep_max = 1;
+            }
+            if (!rsj.exp_deploy.sys_state) {
+                rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
+            }
+            for (var i in inCpAppSpec.deploySysStates) {
+                if (inCpAppSpec.deploySysStates[i].value == rsj.exp_deploy.sys_state) {
+                    rsj.exp_deploy._sys_state = inCpAppSpec.deploySysStates[i].title;
+                    break;
+                }
+            }
+            if (!rsj.exp_deploy._sys_state) {
+                rsj.exp_deploy._sys_state = "";
+            }
+            rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
+
             rsj._roles = [];
             if (!rsj.roles) {
                 rsj.roles = [];
@@ -259,9 +293,10 @@ inCpAppSpec.Info = function(id, spec, version) {
                     }
                 }
             }
+            rsj._replica_enable = inCp.syscfg.zone_master.replica_enable;
 
             l4iModal.Open({
-                title: "Spec Information",
+                title: "AppSpec Information",
                 width: 1300,
                 width_min: 1000,
                 height: "max",
@@ -282,7 +317,7 @@ inCpAppSpec.Info = function(id, spec, version) {
 
         ep.fail(function(err) {
             // TODO
-            alert("SpecSet error, Please try again later (EC:incp-app-specset)");
+            alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
         });
 
         // template
@@ -402,23 +437,34 @@ inCpAppSpec.Set = function(id) {
             }
 
             if (!rsj.exp_res.cpu_min) {
-                rsj.exp_res.cpu_min = 100;
+                rsj.exp_res.cpu_min = 1;
             }
+            rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
 
             if (!rsj.exp_res.mem_min) {
-                rsj.exp_res.mem_min = 8 * inCp.ByteMB;
+                rsj.exp_res.mem_min = 32;
             }
-            rsj.exp_res._mem_min = parseInt(rsj.exp_res.mem_min / inCp.ByteMB);
 
             if (!rsj.exp_res.vol_min) {
-                rsj.exp_res.vol_min = 100 * inCp.ByteMB;
-            } else if (rsj.exp_res.vol_min % (100 * inCp.ByteMB) > 0) {
-                rsj.exp_res.vol_min += (rsj.exp_res.vol_min % (100 * inCp.ByteMB));
+                rsj.exp_res.vol_min = 1;
             }
-            if (rsj.exp_res.vol_min < inCp.ByteGB) {
-                rsj.exp_res._vol_min = (rsj.exp_res.vol_min / (1000 * inCp.ByteMB)).toFixed(1);
-            } else {
-                rsj.exp_res._vol_min = parseInt(rsj.exp_res.vol_min / inCp.ByteGB);
+
+            if (!rsj.exp_deploy) {
+                rsj.exp_deploy = {};
+            }
+            if (!rsj.exp_deploy.rep_min || rsj.exp_deploy.rep_min < 1) {
+                rsj.exp_deploy.rep_min = 1;
+            }
+            if (!rsj.exp_deploy.rep_max || rsj.exp_deploy.rep_max < 1) {
+                rsj.exp_deploy.rep_max = 1;
+            } else if (rsj.exp_deploy.rep_max > inCpPod.OpRepMax) {
+                rsj.exp_deploy.rep_max = inCpPod.OpRepMax;
+            }
+            if (rsj.exp_deploy.rep_min > rsj.exp_deploy.rep_max) {
+                rsj.exp_deploy.rep_min = rsj.exp_deploy.rep_max;
+            }
+            if (!rsj.exp_deploy.sys_state) {
+                rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateless;
             }
 
             inCpAppSpec.setActive = rsj;
@@ -427,8 +473,10 @@ inCpAppSpec.Set = function(id) {
                 dstid: "incp-app-specset",
                 tplid: "incp-app-specset-tpl",
                 data: {
-                    actionTitle: ((rsj.meta.id == "") ? "New Spec" : "Setting (" + rsj.meta.id + ")"),
+                    actionTitle: ((rsj.meta.id == "") ? "New AppSpec" : "Setting (" + rsj.meta.id + ")"),
                     spec: rsj,
+                    _replica_enable: inCp.syscfg.zone_master.replica_enable,
+                    _deploy_sys_states: inCpAppSpec.deploySysStates,
                 },
                 callback: function() {
                     inCpAppSpec.setDependRefresh();
@@ -445,7 +493,7 @@ inCpAppSpec.Set = function(id) {
 
         ep.fail(function(err) {
             // TODO
-            alert("SpecSet error, Please try again later (EC:incp-app-specset)");
+            alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
         });
 
         // template
@@ -555,7 +603,7 @@ inCpAppSpec.setDependEntry = function(opt) {
 }
 
 inCpAppSpec.SetDependRemove = function(id) {
-    if (id.length < 8) {
+    if (id.length < 1) {
         return;
     }
 
@@ -1171,25 +1219,48 @@ inCpAppSpec.SetCommit = function() {
 
         inCpAppSpec.setActive.roles = [];
         form.find("input[name=roles]:checked").each(function() {
-
             var val = parseInt($(this).val());
             if (val > 1) {
                 inCpAppSpec.setActive.roles.push(val);
             }
         });
 
-        inCpAppSpec.setActive.exp_res.cpu_min = parseInt(form.find("input[name=exp_res_cpu_min]").val());
-        inCpAppSpec.setActive.exp_res.mem_min = parseInt(form.find("input[name=exp_res_mem_min]").val() * inCp.ByteMB);
-        var vol_min = parseFloat(form.find("input[name=exp_res_vol_min]").val());
-        if (vol_min >= 1.0) {
-            inCpAppSpec.setActive.exp_res.vol_min = parseInt(vol_min) * inCp.ByteGB;
-        } else {
-            inCpAppSpec.setActive.exp_res.vol_min = parseInt(vol_min * 10) * 100 * inCp.ByteMB;
+        inCpAppSpec.setActive.exp_res.cpu_min = parseInt(parseFloat(form.find("input[name=exp_res_cpu_min]").val()) * 10);
+        inCpAppSpec.setActive.exp_res.mem_min = parseInt(form.find("input[name=exp_res_mem_min]").val());
+        inCpAppSpec.setActive.exp_res.vol_min = parseInt(form.find("input[name=exp_res_vol_min]").val());
+        if (inCpAppSpec.setActive.exp_res.vol_min < 1) {
+            inCpAppSpec.setActive.exp_res.vol_min = 1;
         }
+
+        //
+        var rep_min = parseInt(form.find("input[name=exp_deploy_rep_min]").val());
+        var rep_max = parseInt(form.find("input[name=exp_deploy_rep_max]").val());
+        if (rep_min < 1) {
+            rep_min = 1;
+        }
+        if (rep_max < 1) {
+            rep_max = 1;
+        } else if (rep_max > inCpPod.OpRepMax) {
+            rep_max = inCpPod.OpRepMax;
+        }
+        if (rep_min > rep_max) {
+            rep_min = rep_max;
+        }
+        inCpAppSpec.setActive.exp_deploy.rep_min = rep_min;
+        inCpAppSpec.setActive.exp_deploy.rep_max = rep_max;
+
+        var sys_state = parseInt(form.find("select[name=exp_deploy_sys_state]").val());
+        if (sys_state != inCpAppSpec.deploySysStateless &&
+            sys_state != inCpAppSpec.deploySysStateful) {
+            sys_state = inCpAppSpec.deploySysStateless;
+        }
+        inCpAppSpec.setActive.exp_deploy.sys_state = sys_state;
+
 
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'error', err);
     }
+    console.log(inCpAppSpec.setActive);
 
     inCp.ApiCmd("app-spec/set", {
         method: "POST",
@@ -1220,12 +1291,12 @@ inCpAppSpec.SetCommit = function() {
 }
 
 inCpAppSpec.SetRaw = function(id) {
-    var title = "New Spec",
+    var title = "New AppSpec",
         formset = {
             spec_text: ""
         };
     if (id) {
-        title = "Setting Spec (" + id + ")";
+        title = "Setting AppSpec (" + id + ")";
         formset.meta_id = id;
     } else {
         formset.meta_id = "";
@@ -1258,7 +1329,7 @@ inCpAppSpec.SetRaw = function(id) {
 
         ep.fail(function(err) {
             // TODO
-            alert("SpecSet error, Please try again later (EC:incp-app-specset)");
+            alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
         });
 
         // template
@@ -1425,7 +1496,7 @@ inCpAppSpec.CfgSet = function(spec_id) {
                 title: "Configurator",
                 tplsrc: tpl,
                 width: 960,
-                height: 600,
+                height: 700,
                 buttons: btns,
                 callback: function() {
                     inCpAppSpec.cfgFieldListRefresh();

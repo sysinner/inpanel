@@ -29,7 +29,7 @@ inOps.Boot = function() {
         "~/jquery/jquery.js" + inOps.debug_uri(),
         "~/cp/js/main.js" + inOps.debug_uri(),
         "~/lessui/js/browser-detect.js",
-        "~/purecss/css/pure.css",
+        "~/fa/css/fa.css",
     ], function() {
 
         var browser = BrowserDetect.browser;

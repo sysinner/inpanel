@@ -1,13 +1,19 @@
-<div class="incp-podentry-stats-box">
-  <div id="incp-podentry-stats-net" class="incp-podentry-stats-item incp-div-light"></div>
-  <div id="incp-podentry-stats-cpu" class="incp-podentry-stats-item incp-div-light"></div>
-  <div id="incp-podentry-stats-ram" class="incp-podentry-stats-item incp-div-light"></div>
-  <div id="incp-podentry-stats-fss" class="incp-podentry-stats-item incp-div-light"></div>
-  <div id="incp-podentry-stats-fsn" class="incp-podentry-stats-item incp-div-light"></div>
-  <div class="incp-podentry-stats-item"></div>
-  <div class="incp-podentry-stats-item"></div>
-  <div class="incp-podentry-stats-item"></div>
+<div id="incp-podentry-index">
+  <div id="incp-podentry-stats-list"></div>
 </div>
+
+<script type="text/html" id="incp-podentry-stats-item-tpl">
+{[~it.items :v]}
+<div class="incp-card-frame-row">
+<div class="incp-card-frame">
+<div class="incp-div-light">
+  <div class="incp-card-title">{[=v.data.options.title]}</div>
+  <div id="incp-podentry-stats-{[=v.target]}" class="incp-card-body">loading ...</div>
+</div>
+</div>
+</div>
+{[~]}
+</script>
 
 <script type="text/html" id="incp-podentry-optools-stats">
 <li>the Last</li>

@@ -14,7 +14,7 @@
     </div>
   
     <div class="l4i-form-group">
-      <label>Spec Version ({[=it.spec.meta.id]})</label>
+      <label>Spec ({[=it.spec.meta.id]})</label>
       <div>
         {[? it._spec_vs]}
         <select id="app_spec_version" class="form-control">
@@ -38,7 +38,7 @@
     </div>
 
     <div class="l4i-form-group">
-      <label>Allowed Roles to Bind Resources</label>
+      <label>Allowed Roles</label>
       <div>
         <span style="margin-right:10px">
           <input type="checkbox" name="" value="0" checked="checked" disabled> Owner

@@ -44,14 +44,14 @@ var inCpPod = {
     specs: null,
     plans: null,
     plan: null,
-    plan_selected: null,
+    planSelected: null,
     clusters: null,
-    cluster_selected: null,
-    zone_active: null,
-    new_options: {},
-    entry_active: null,
-    entry_active_past: 3600,
-    entry_operate_access_def: {
+    clusterSelected: null,
+    zoneActive: null,
+    itemNewOptions: {},
+    itemActive: null,
+    itemActivePast: 3600,
+    itemOperateAccessDef: {
         ssh_on: false,
         ssh_key: "",
         ssh_pwd: "",
@@ -67,6 +67,17 @@ var inCpPod = {
             "datasets": [],
         },
     },
+    opSysStates: [{
+        title: "Stateful",
+        value: 1,
+    }, {
+        title: "Stateless",
+        value: 2,
+    }],
+    opSysStateful: 1,
+    opSysStateless: 2,
+    OpRepMin: 1,
+    OpRepMax: 32,
 }
 
 inCpPod.Index = function() {
@@ -78,6 +89,7 @@ inCpPod.Index = function() {
 inCpPod.list_nav_menus = [{
     name: "Pod Instances",
     uri: "pod/instance",
+    icon_fa: "cubes",
 }];
 
 inCpPod.list_options = {};
@@ -95,8 +107,8 @@ inCpPod.List = function(tplid, options) {
     }
 
     if (inCp.Zones.items && inCp.Zones.items.length == 1) {
-        inCpPod.zone_active = inCp.Zones.items[0].meta.id;
-        uri += "zone_id=" + inCpPod.zone_active;
+        inCpPod.zoneActive = inCp.Zones.items[0].meta.id;
+        uri += "zone_id=" + inCpPod.zoneActive;
     }
     uri += "&fields=meta/id|name|user,operate/action|replicas,spec/ref/id|name,spec/zone|cell,apps/meta/name";
     if (options.destroy_enable) {
@@ -154,6 +166,9 @@ inCpPod.List = function(tplid, options) {
                     data.items[i].operate.replicas = [];
                 }
                 for (var j in data.items[i].operate.replicas) {
+                    if (!data.items[i].operate.replicas[j].rep_id) {
+                        data.items[i].operate.replicas[j].rep_id = 0;
+                    }
                     if (!data.items[i].operate.replicas[j].ports) {
                         data.items[i].operate.replicas[j].ports = [];
                     }
@@ -172,8 +187,8 @@ inCpPod.List = function(tplid, options) {
                 data.items[i].operate._action = inCp.OpActionTitle(data.items[i].operate.action);
             }
 
-            if (inCpPod.zone_active) {
-                data._zone_active = inCpPod.zone_active;
+            if (inCpPod.zoneActive) {
+                data._zoneActive = inCpPod.zoneActive;
             }
 
             // $("#incp-podls-alert").hide();
@@ -218,7 +233,7 @@ inCpPod.List = function(tplid, options) {
     });
 }
 
-
+/*
 inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
     if (!pod_id) {
         return;
@@ -262,13 +277,14 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
         }
     });
 }
+*/
 
 
 inCpPod.New = function(options) {
     if (options) {
-        inCpPod.new_options = options;
+        inCpPod.itemNewOptions = options;
     } else {
-        options = inCpPod.new_options;
+        options = inCpPod.itemNewOptions;
     }
     var alert_id = "#incp-podnew-alert";
 
@@ -286,6 +302,16 @@ inCpPod.New = function(options) {
             }
 
             var pod = l4i.Clone(inCpPod.def);
+            for (var i in plans.items) {
+                for (var j in plans.items[i].res_computes) {
+                    plans.items[i].res_computes[j]._cpu_limit = (plans.items[i].res_computes[j].cpu_limit / 10).toFixed(1);
+                    if (plans.items[i].res_computes[j].mem_limit >= 1024) {
+                        plans.items[i].res_computes[j]._mem_limit = (plans.items[i].res_computes[j].mem_limit / 1024) + " GB";
+                    } else {
+                        plans.items[i].res_computes[j]._mem_limit = plans.items[i].res_computes[j].mem_limit + " MB";
+                    }
+                }
+            }
 
             pod._plans = plans;
             pod._plan_selected = null;
@@ -300,7 +326,7 @@ inCpPod.New = function(options) {
             }
 
             inCpPod.plans = plans;
-            inCpPod.plan_selected = pod._plan_selected;
+            inCpPod.planSelected = pod._plan_selected;
             // inCpPod.zones = zones;
 
             var fnfre = function() {
@@ -309,12 +335,12 @@ inCpPod.New = function(options) {
                     tplid: "incp-podnew-plans-tpl",
                     data: {
                         items: inCpPod.plans.items,
-                        _plan_selected: inCpPod.plan_selected,
+                        _plan_selected: inCpPod.planSelected,
                     },
                 });
                 inCpPod.NewRefreshPlan();
             }
-            inCpPod.new_options = options;
+            inCpPod.itemNewOptions = options;
             if (options.open_modal) {
 
                 l4iModal.Open({
@@ -329,7 +355,7 @@ inCpPod.New = function(options) {
                             tplid: "incp-podnew-modal",
                             data: {
                                 items: inCpPod.plans.items,
-                                _plan_selected: inCpPod.plan_selected,
+                                _plan_selected: inCpPod.planSelected,
                                 _options: options,
                             },
                             callback: fnfre,
@@ -355,7 +381,7 @@ inCpPod.New = function(options) {
                             tplid: "incp-podnew-inner",
                             data: {
                                 items: inCpPod.plans.items,
-                                _plan_selected: inCpPod.plan_selected,
+                                _plan_selected: inCpPod.planSelected,
                                 _options: options,
                             },
                             callback: fnfre,
@@ -385,15 +411,15 @@ inCpPod.New = function(options) {
 }
 
 inCpPod.NewOptionResFit = function(v) {
-    if (inCpPod.new_options.app_cpu_min &&
-        inCpPod.new_options.app_cpu_min > 0 &&
-        v.cpu_limit < inCpPod.new_options.app_cpu_min) {
+    if (inCpPod.itemNewOptions.app_cpu_min &&
+        inCpPod.itemNewOptions.app_cpu_min > 0 &&
+        v.cpu_limit < inCpPod.itemNewOptions.app_cpu_min) {
         return false;
     }
 
-    if (inCpPod.new_options.app_mem_min &&
-        inCpPod.new_options.app_mem_min > 0 &&
-        v.mem_limit < inCpPod.new_options.app_mem_min) {
+    if (inCpPod.itemNewOptions.app_mem_min &&
+        inCpPod.itemNewOptions.app_mem_min > 0 &&
+        v.mem_limit < inCpPod.itemNewOptions.app_mem_min) {
         return false;
     }
 
@@ -401,11 +427,11 @@ inCpPod.NewOptionResFit = function(v) {
 }
 
 inCpPod.NewPlanChange = function(plan_id) {
-    if (inCpPod.plan_selected == plan_id) {
+    if (inCpPod.planSelected == plan_id) {
         return;
     }
 
-    inCpPod.plan_selected = plan_id;
+    inCpPod.planSelected = plan_id;
     inCpPod.NewRefreshPlan();
 
     $("#incp-podnew-plans").find(".incp-form-box-selector-item.selected").removeClass("selected");
@@ -419,22 +445,22 @@ inCpPod.NewRefreshPlan = function() {
     var vol_min = 0,
         cpu_min = 0,
         mem_min = 0;
-    if (inCpPod.new_options.app_vol_min &&
-        inCpPod.new_options.app_vol_min > 0) {
-        vol_min = inCpPod.new_options.app_vol_min;
+    if (inCpPod.itemNewOptions.app_vol_min &&
+        inCpPod.itemNewOptions.app_vol_min > 0) {
+        vol_min = inCpPod.itemNewOptions.app_vol_min;
     }
-    if (inCpPod.new_options.app_cpu_min &&
-        inCpPod.new_options.app_cpu_min > 0) {
-        cpu_min = inCpPod.new_options.app_cpu_min;
+    if (inCpPod.itemNewOptions.app_cpu_min &&
+        inCpPod.itemNewOptions.app_cpu_min > 0) {
+        cpu_min = inCpPod.itemNewOptions.app_cpu_min;
     }
-    if (inCpPod.new_options.app_mem_min &&
-        inCpPod.new_options.app_mem_min > 0) {
-        mem_min = inCpPod.new_options.app_mem_min;
+    if (inCpPod.itemNewOptions.app_mem_min &&
+        inCpPod.itemNewOptions.app_mem_min > 0) {
+        mem_min = inCpPod.itemNewOptions.app_mem_min;
     }
 
     for (var i in inCpPod.plans.items) {
 
-        if (inCpPod.plans.items[i].meta.id != inCpPod.plan_selected) {
+        if (inCpPod.plans.items[i].meta.id != inCpPod.planSelected) {
             continue;
         }
 
@@ -450,12 +476,7 @@ inCpPod.NewRefreshPlan = function() {
                     vol.default = vol_min;
                 }
             }
-
-            if (vol.default < 1073741824) {
-                vol._valued = (vol.default / 1073741824).toFixed(1);
-            } else {
-                vol._valued = (vol.default / 1073741824).toFixed(0);
-            }
+            vol._valued = vol.default;
 
             inCpPod.plan._res_volume = vol;
 
@@ -607,22 +628,19 @@ inCpPod.NewPlanImageChange = function(image_id) {
 
 inCpPod.newAccountChargeRefresh = function() {
     var alert_id = "#incp-podnew-alert",
-        vol_size = parseFloat($("#incp-podnew-resource-value").val());
-    if (vol_size <= 0) {
-        return;
-    }
+        vol_size = parseInt($("#incp-podnew-resource-value").val());
 
     // GB
-    if (vol_size < 1.0) {
-        vol_size = vol_size * 1048576000;
-    } else {
-        vol_size = vol_size * 1073741824;
+    if (vol_size < 1) {
+        vol_size = 1;
+    } else if (vol_size > 200) {
+        vol_size = 200;
     }
 
     var set = {
         kind: "SpecPodPlanSetup",
         name: "pod-estimate",
-        plan: inCpPod.plan_selected,
+        plan: inCpPod.planSelected,
         zone: inCpPod.plan._zone_selected.split("/")[0],
         cell: inCpPod.plan._zone_selected.split("/")[1],
         res_volume: inCpPod.plan._res_volume.ref_id,
@@ -663,35 +681,29 @@ inCpPod.newAccountChargeRefresh = function() {
 inCpPod.NewCommit = function() {
     var alert_id = "#incp-podnew-alert",
         url = "",
-        vol_size = parseFloat($("#incp-podnew-resource-value").val());
-    if (vol_size <= 0) {
-        return l4i.InnerAlert(alert_id, "error", "System Storage Not Set");
+        vol_size = parseInt($("#incp-podnew-resource-value").val());
+    if (vol_size <= 1) {
+        vol_size = 1;
     }
 
     if (!inCpPod.plan.res_compute_selected) {
         return l4i.InnerAlert(alert_id, "error", "Resource Option Not Set");
     }
 
-    if (vol_size >= 1.0) {
-        vol_size = parseInt(vol_size) * inCp.ByteGB;
-    } else {
-        vol_size = parseInt(vol_size * 10) * 100 * inCp.ByteMB;
-    }
-
-    if (inCpPod.new_options.app_vol_min &&
-        inCpPod.new_options.app_vol_min > 0) {
-        if (vol_size < inCpPod.new_options.app_vol_min) {
-            return l4i.InnerAlert(alert_id, "error", "this System Storage requires at least " + inCp.UtilResSizeFormat(inCpPod.new_options.app_vol_min) + " of space to fit the Application Resource Requirements");
+    if (inCpPod.itemNewOptions.app_vol_min &&
+        inCpPod.itemNewOptions.app_vol_min > 0) {
+        if (vol_size < inCpPod.itemNewOptions.app_vol_min) {
+            return l4i.InnerAlert(alert_id, "error", "this System Storage requires at least " + inCpPod.itemNewOptions.app_vol_min + " GB of space to fit the Application Resource Requirements");
         }
     }
 
-    if (inCpPod.new_options.app_spec_id) {
-        url = "?exp_filter_app_spec_id=" + inCpPod.new_options.app_spec_id;
+    if (inCpPod.itemNewOptions.app_spec_id) {
+        url = "?exp_filter_app_spec_id=" + inCpPod.itemNewOptions.app_spec_id;
     }
 
     var set = {
         name: $("#incp-podnew-meta-name").val(),
-        plan: inCpPod.plan_selected,
+        plan: inCpPod.planSelected,
         zone: inCpPod.plan._zone_selected.split("/")[0],
         cell: inCpPod.plan._zone_selected.split("/")[1],
         res_volume: inCpPod.plan._res_volume.ref_id,
@@ -713,7 +725,7 @@ inCpPod.NewCommit = function() {
         method: "POST",
         data: JSON.stringify(set),
         callback: function(err, rsj) {
-            if (inCpPod.new_options.open_modal) {
+            if (inCpPod.itemNewOptions.open_modal) {
                 l4iModal.ScrollTop();
             }
             if (err || !rsj) {
@@ -730,13 +742,13 @@ inCpPod.NewCommit = function() {
 
             l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
             window.setTimeout(function() {
-                if (inCpPod.new_options.app_new_callback) {
-                    inCpPod.new_options.app_new_callback(null, rsj.pod);
+                if (inCpPod.itemNewOptions.app_new_callback) {
+                    inCpPod.itemNewOptions.app_new_callback(null, rsj.pod);
                 } else {
                     l4iModal.Close();
-                    if (inCpPod.new_options.callback) {
-                        inCpPod.new_options.callback(null);
-                    } else if (!inCpPod.new_options.open_modal) {
+                    if (inCpPod.itemNewOptions.callback) {
+                        inCpPod.itemNewOptions.callback(null);
+                    } else if (!inCpPod.itemNewOptions.open_modal) {
                         if (rsj.pod && rsj.pod.length > 8) {
                             inCpPod.EntryIndex(rsj.pod);
                         } else {
@@ -761,6 +773,9 @@ inCpPod.Info = function(pod_id, options) {
             for (var i in pod.operate.replicas) {
                 if (!pod.operate.replicas[i].ports) {
                     pod.operate.replicas[i].ports = [];
+                }
+                if (!pod.operate.replicas[i].rep_id) {
+                    pod.operate.replicas[i].rep_id = 0;
                 }
                 for (var j in pod.operate.replicas[i].ports) {
                     if (!pod.operate.replicas[i].ports[j].host_port) {
@@ -811,8 +826,8 @@ inCpPod.Info = function(pod_id, options) {
 
 
 inCpPod.SetInfo = function(pod_id) {
-    if (!pod_id && inCpPod.entry_active_id) {
-        pod_id = inCpPod.entry_active_id;
+    if (!pod_id && inCpPod.itemActiveId) {
+        pod_id = inCpPod.itemActiveId;
     }
     if (!pod_id) {
         return alert("No Pod Found");
@@ -834,10 +849,10 @@ inCpPod.SetInfo = function(pod_id) {
             pod.spec._cpu_limit = 0;
             pod.spec._mem_limit = 0;
             pod.spec._vol_limit = 0;
-            // for (var i in pod.spec.boxes) {
             pod.spec._cpu_limit += pod.spec.box.resources.cpu_limit;
             pod.spec._mem_limit += pod.spec.box.resources.mem_limit;
-            // }
+
+
             for (var i in pod.spec.volumes) {
                 if (pod.spec.volumes[i].name == "system") {
                     pod.spec._vol_limit = pod.spec.volumes[i].size_limit;
@@ -845,21 +860,41 @@ inCpPod.SetInfo = function(pod_id) {
                 }
             }
 
+            if (!pod.operate.exp_sys_state) {
+                pod.operate.exp_sys_state = inCpPod.opSysStateful;
+            }
+
+            var rep_min = inCpPod.OpRepMin,
+                rep_max = inCpPod.OpRepMax;
+            for (var i in pod.apps) {
+                if (rep_min < pod.apps[i].spec.exp_deploy.rep_min) {
+                    rep_min = pod.apps[i].spec.exp_deploy.rep_min;
+                }
+                if (rep_max > pod.apps[i].spec.exp_deploy.rep_max) {
+                    rep_max = pod.apps[i].spec.exp_deploy.rep_max;
+                }
+            }
+
+            pod.spec._cpu_limit = (pod.spec.box.resources.cpu_limit / 10).toFixed(1);
+
             var spec_summary = "ID: " + pod.spec.ref.id;
-            spec_summary += ", CPU: " + pod.spec._cpu_limit + "m";
-            spec_summary += ", RAM: " + inCp.UtilResSizeFormat(pod.spec._mem_limit);
-            spec_summary += ", Storage: " + inCp.UtilResSizeFormat(pod.spec._vol_limit);
+            spec_summary += ", CPU: " + pod.spec._cpu_limit;
+            spec_summary += ", RAM: " + pod.spec._mem_limit + " MB";
+            spec_summary += ", Storage: " + pod.spec._vol_limit + " GB";
 
 
             l4iModal.Open({
-                title: "Pod Instance Info",
+                title: "Pod Instance Setup",
                 tplsrc: tpl,
-                width: 800,
-                height: 450,
+                width: 900,
+                height: 400,
                 data: {
                     pod: pod,
                     _op_actions: actions,
+                    _op_sys_states: l4i.Clone(inCpPod.opSysStates),
                     _spec_summary: spec_summary,
+                    _op_rep_min: rep_min,
+                    _op_rep_max: rep_max,
                 },
                 buttons: [{
                     onclick: "l4iModal.Close()",
@@ -898,6 +933,8 @@ inCpPod.SetInfoCommit = function() {
         },
         operate: {
             action: parseInt(form.find("input[name=operate_action]:checked").val()),
+            exp_sys_state: parseInt(form.find("select[name=operate_exp_sys_state]").val()),
+            replica_cap: parseInt(form.find("input[name=operate_replica_cap]").val()),
         },
     };
     var pod_id = set.meta.id;
@@ -927,7 +964,12 @@ inCpPod.SetInfoCommit = function() {
                 return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+            l4iModal.FootAlert('ok', "Successfully Updated");
+
+            if (set.operate.replica_cap > 0 &&
+                inCpPod.itemActive && inCpPod.itemActive.operate) {
+                inCpPod.itemActive.operate.replica_cap = set.operate.replica_cap;
+            }
 
             window.setTimeout(function() {
                 l4iModal.Close();
@@ -935,15 +977,15 @@ inCpPod.SetInfoCommit = function() {
                 if (el) {
                     inCpPod.List(null, null);
                 }
-            }, 500);
+            }, 2000);
         }
     });
 }
 
 
 inCpPod.EntryDel = function(pod_id) {
-    if (!pod_id && inCpPod.entry_active_id) {
-        pod_id = inCpPod.entry_active_id;
+    if (!pod_id && inCpPod.itemActiveId) {
+        pod_id = inCpPod.itemActiveId;
     }
     if (!pod_id) {
         return alert("No Pod Found");
@@ -1166,20 +1208,26 @@ inCpPod.entry_nav_menus = [{
     onclick: "inCpPod.EntryBack()",
     uri: "",
     style: "primary",
+    icon_fa: "chevron-circle-left",
 }, {
     name: "Overview",
     uri: "pod/entry/overview",
+    icon_fa: "tachometer-alt",
 }, {
     name: "Graphs",
     uri: "pod/entry/stats",
+    icon_fa: "chart-line",
 }, {
     name: "Remote Access",
     uri: "pod/entry/setup",
     onclick: "inCpPod.EntryAccess()",
+    icon_fa: "key",
+/**
 }, {
     name: "Settings",
     uri: "pod/entry/setup",
     onclick: "inCpPod.SetInfo()",
+*/
 }];
 
 inCpPod.EntryBack = function() {
@@ -1193,7 +1241,7 @@ inCpPod.EntryBack = function() {
 inCpPod.EntryIndex = function(pod_id, nav_target) {
 
     if (pod_id) {
-        inCpPod.entry_active_id = pod_id;
+        inCpPod.itemActiveId = pod_id;
     }
     l4i.UrlEventActive("pod/index");
 
@@ -1218,7 +1266,7 @@ inCpPod.EntryOverview = function() {
 
     var pod_zone_id = null;
     for (var i in inCpPod.list) {
-        if (inCpPod.list[i].meta.id == inCpPod.entry_active_id) {
+        if (inCpPod.list[i].meta.id == inCpPod.itemActiveId) {
             pod_zone_id = inCpPod.list[i].spec.zone;
             break;
         }
@@ -1226,7 +1274,7 @@ inCpPod.EntryOverview = function() {
 
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "pod", "pstatus", function(tpl, pod, pstatus) {
+        var ep = EventProxy.create("tpl", "pod", function(tpl, pod) {
 
             if (!pod.operate.replicas) {
                 pod.operate.replicas = [];
@@ -1234,6 +1282,9 @@ inCpPod.EntryOverview = function() {
             for (var i in pod.operate.replicas) {
                 if (!pod.operate.replicas[i].ports) {
                     pod.operate.replicas[i].ports = [];
+                }
+                if (!pod.operate.replicas[i].rep_id) {
+                    pod.operate.replicas[i].rep_id = 0;
                 }
                 for (var j in pod.operate.replicas[i].ports) {
                     if (!pod.operate.replicas[i].ports[j].host_port) {
@@ -1247,18 +1298,25 @@ inCpPod.EntryOverview = function() {
                     }
                 }
             }
-            pod.spec._cpu_limit = 0;
-            pod.spec._mem_limit = 0;
             pod.spec._box_image_driver = pod.spec.box.image.driver;
-            // for (var i in pod.spec.boxes) {
-            pod.spec._cpu_limit += pod.spec.box.resources.cpu_limit;
-            pod.spec._mem_limit += pod.spec.box.resources.mem_limit;
-            // }
+            pod.spec._cpu_limit = pod.spec.box.resources.cpu_limit;
+            pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
+
+            /**
+                if (!podStatus.replicas) {
+                    podStatus.replicas = [];
+                }
+                for (var i in podStatus.replicas) {
+                    if (!podStatus.replicas[i].rep_id) {
+                        podStatus.replicas[i].rep_id = 0;
+                    }
+                }
+            */
 
             inCp.OpToolsClean();
             $("#work-content").html(tpl);
 
-            inCpPod.entry_active = pod;
+            inCpPod.itemActive = pod;
 
             l4iTemplate.Render({
                 dstid: "incp-podentry-overview",
@@ -1266,28 +1324,32 @@ inCpPod.EntryOverview = function() {
                 data: pod,
             });
 
-            l4iTemplate.Render({
-                dstid: "incp-podentry-sidebar",
-                tplid: "incp-podentry-overview-oplog-tpl",
-                data: pstatus,
-            });
+            /**
+                l4iTemplate.Render({
+                    dstid: "incp-podentry-sidebar",
+                    tplid: "incp-podentry-overview-oplog-tpl",
+                    data: podStatus,
+                });
+            */
 
-            setTimeout(inCpPod.entryAutoRefresh, 5000);
+            setTimeout(inCpPod.entryAutoRefresh, 500);
         });
 
         ep.fail(function(err) {
             alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
-        inCp.ApiCmd("pod/entry?id=" + inCpPod.entry_active_id, {
+        inCp.ApiCmd("pod/entry?id=" + inCpPod.itemActiveId, {
             api_zone_id: pod_zone_id,
             callback: ep.done("pod"),
         });
 
-        inCp.ApiCmd("pod/status?id=" + inCpPod.entry_active_id, {
+        /**
+        inCp.ApiCmd("pod/status?id=" + inCpPod.itemActiveId, {
             api_zone_id: pod_zone_id,
-            callback: ep.done("pstatus"),
+            callback: ep.done("podStatus"),
         });
+        */
 
         inCp.TplFetch("pod/entry-overview", {
             callback: ep.done("tpl"),
@@ -1297,73 +1359,89 @@ inCpPod.EntryOverview = function() {
 
 inCpPod.entryAutoRefresh = function() {
     var el = document.getElementById("incp-podentry-status-value");
-    if (!el || !inCpPod.entry_active_id) {
+    if (!el || !inCpPod.itemActiveId) {
         return;
     }
-    inCp.ApiCmd("pod/status?id=" + inCpPod.entry_active_id, {
-        api_zone_id: inCpPod.entry_active.spec.zone,
+    inCp.ApiCmd("pod/status?id=" + inCpPod.itemActiveId, {
+        api_zone_id: inCpPod.itemActive.spec.zone,
         callback: function(err, data) {
 
             if (err || !data || data.error || !data.kind) {
+                setTimeout(inCpPod.entryAutoRefresh, 5000);
                 return;
             }
 
-            if (inCp.OpActionAllow(data.action, inCp.OpActionRunning)) {
-                el.innerHTML = '<span class="incp-font-ok">Running</span>';
-            } else {
-                el.innerHTML = inCp.OpActionStatusTitle(data.action);
+            if (!data.action_running) {
+                data.action_running = 0;
             }
+            el.innerHTML = data.action_running + ' / ' + inCpPod.itemActive.operate.replica_cap;
 
             if (!data.replicas) {
                 data.replicas = [];
             }
-            if (data.replicas.length > inCpPod.entry_active.operate.replicas.length) {
-                inCpPod.entry_active.operate.replicas = [];
+            if (data.replicas.length > inCpPod.itemActive.operate.replicas.length) {
+                inCpPod.itemActive.operate.replicas = [];
                 for (var i in data.replicas) {
-                    inCpPod.entry_active.operate.replicas.push({
-                        id: i,
-                        node: data.replicas[i].id,
+                    inCpPod.itemActive.operate.replicas.push({
+                        rep_id: i,
+                        node: data.replicas[i].node,
+                        action: data.replicas[i].action,
                         box: {},
                     });
                 }
                 l4iTemplate.Render({
                     dstid: "incp-podentry-overview",
                     tplid: "incp-podentry-overview-info-tpl",
-                    data: inCpPod.entry_active,
+                    data: inCpPod.itemActive,
                 });
             }
 
-            if (data.replicas.length != inCpPod.entry_active.operate.replicas.length) {
+            if (data.replicas.length != inCpPod.itemActive.operate.replicas.length) {
                 return inCpPod.EntryOverview();
             }
+
             for (var i in data.replicas) {
 
-                if (!inCp.OpActionAllow(data.action, inCp.OpActionRunning)) {
+                if (!data.replicas[i].rep_id) {
+                    data.replicas[i].rep_id = 0;
+                }
+                //
+                var elrep = document.getElementById("incp-podentry-box-action-status-value-" + i);
+                if (elrep) {
+                    elrep.innerHTML = inCp.OpActionStatusTitle(data.replicas[i].action);
+                }
+
+                if (inCp.syscfg.zone_master.replica_enable) {
+                    if (data.replicas[i].node && data.replicas[i].node.length > 10) {
+                        var elrep = document.getElementById("incp-podentry-rep-host-value-" + i);
+                        if (elrep) {
+                            elrep.innerHTML = data.replicas[i].node;
+                        }
+                    }
+                }
+
+                if (!inCp.OpActionAllow(data.replicas[i].action, inCp.OpActionRunning)) {
                     var elrep = document.getElementById("incp-podentry-box-uptime-value-" + i);
                     if (elrep) {
                         elrep.innerHTML = "00:00:00"
                     }
-                    continue;
-                }
 
-                // for (var j in data.replicas[i].boxes) {
-                if (data.replicas[i].box &&
-                    data.replicas[i].box.updated &&
-                    data.replicas[i].box.started) {
+                } else if (data.replicas[i].updated &&
+                    data.replicas[i].started) {
 
-                    if (data.replicas[i].box.ports &&
-                        data.replicas[i].box.ports.length != inCpPod.entry_active.operate.replicas[i].ports.length) {
+                    if (data.replicas[i].ports &&
+                        data.replicas[i].ports.length != inCpPod.itemActive.operate.replicas[i].ports.length) {
                         return inCpPod.EntryOverview();
                     }
+
                     var elrep = document.getElementById("incp-podentry-box-uptime-value-" + i);
                     if (elrep) {
-                        var sec = data.replicas[i].box.updated - data.replicas[i].box.started;
+                        var sec = data.replicas[i].updated - data.replicas[i].started;
                         if (sec > 0) {
                             elrep.innerHTML = inCp.TimeUptime(sec);
                         }
                     }
                 }
-                // }
 
                 for (var k in data.replicas[i].volumes) {
                     if (data.replicas[i].volumes[k].mount_path == "/home/action") {
@@ -1371,12 +1449,14 @@ inCpPod.entryAutoRefresh = function() {
                             data.replicas[i].volumes[k].used = 0;
                         }
                         data.replicas[i]._volume_system_used = inCp.UtilResSizeFormat(data.replicas[i].volumes[k].used);
+                        //
                         var elrep = document.getElementById("incp-podentry-box-volume-status-value-" + i);
                         if (elrep) {
                             elrep.innerHTML = data.replicas[i]._volume_system_used;
                         }
                     }
                 }
+
             }
 
             l4iTemplate.Render({
@@ -1415,33 +1495,34 @@ inCpPod.entryStatsFeedMaxValue = function(feed, names) {
 inCpPod.EntryStats = function(time_past) {
 
     if (time_past) {
-        inCpPod.entry_active_past = parseInt(time_past);
-        if (!inCpPod.entry_active_past) {
-            inCpPod.entry_active_past = 3600;
+        inCpPod.itemActivePast = parseInt(time_past);
+        if (!inCpPod.itemActivePast) {
+            inCpPod.itemActivePast = 3600;
         }
     }
-    if (inCpPod.entry_active_past < 600) {
-        inCpPod.entry_active_past = 600;
+    if (inCpPod.itemActivePast < 600) {
+        inCpPod.itemActivePast = 600;
     }
-    if (inCpPod.entry_active_past > (30 * 86400)) {
-        inCpPod.entry_active_past = 30 * 86400;
+    if (inCpPod.itemActivePast > (30 * 86400)) {
+        inCpPod.itemActivePast = 30 * 86400;
     }
     var pod_zone_id = null;
-    if (inCpPod.entry_active && inCpPod.entry_active.spec.zone) {
-        pod_zone_id = inCpPod.entry_active.spec.zone;
+    if (inCpPod.itemActive && inCpPod.itemActive.spec.zone) {
+        pod_zone_id = inCpPod.itemActive.spec.zone;
     } else {
         for (var i in inCpPod.list) {
-            if (inCpPod.list[i].meta.id == inCpPod.entry_active_id) {
+            if (inCpPod.list[i].meta.id == inCpPod.itemActiveId) {
                 pod_zone_id = inCpPod.list[i].spec.zone;
                 break;
             }
         }
     }
 
-    var stats_url = "id=" + inCpPod.entry_active_id;
+    var stats_url = "id=" + inCpPod.itemActiveId;
+    stats_url += "&rep_all=yes";
     var stats_query = {
         tc: 180,
-        tp: inCpPod.entry_active_past,
+        tp: inCpPod.itemActivePast,
         is: [
             {
                 n: "cpu/us",
@@ -1488,9 +1569,9 @@ inCpPod.EntryStats = function(time_past) {
         ww = wlimit;
     }
     if (hh < 800) {
-        inCpPod.hchart_def.options.height = "180px";
+        inCpPod.hchart_def.options.height = "150px";
     } else {
-        inCpPod.hchart_def.options.height = "220px";
+        inCpPod.hchart_def.options.height = "190px";
     }
     if (stats_query.tp > (10 * 86400)) {
         stats_query.tc = 6 * 3600;
@@ -1527,6 +1608,7 @@ inCpPod.EntryStats = function(time_past) {
 
             var max = 0;
             var tc_title = stats.cycle + " seconds";
+            var tc_ns = stats.cycle * 1000000000;
             if (stats.cycle >= 86400 && stats.cycle % 86400 == 0) {
                 tc_title = (stats.cycle / 86400) + " Day";
                 if (stats.cycle > 86400) {
@@ -1546,19 +1628,22 @@ inCpPod.EntryStats = function(time_past) {
 
             //
             var stats_cpu = l4i.Clone(inCpPod.hchart_def);
-            max = inCpPod.entryStatsFeedMaxValue(stats, "cpu/us");
-            if (max > 1000000000) {
-                stats_cpu.options.title = l4i.T("CPU (Seconds / %s)", tc_title);
-                stats_cpu._fix = 1000000000;
-            } else if (max > 1000000) {
-                stats_cpu.options.title = l4i.T("CPU (Millisecond / %s)", tc_title);
-                stats_cpu._fix = 1000000;
-            } else if (max > 1000) {
-                stats_cpu.options.title = l4i.T("CPU (Microsecond / %s)", tc_title);
-                stats_cpu._fix = 1000;
-            } else {
-                stats_cpu.options.title = l4i.T("CPU (Nanosecond / %s)", tc_title);
-            }
+            stats_cpu.options.title = l4i.T("CPU Usage (Percentage / %s)", tc_title);
+            /**
+                max = inCpPod.entryStatsFeedMaxValue(stats, "cpu/us");
+                if (max > 1000000000) {
+                    stats_cpu.options.title = l4i.T("CPU (Seconds / %s)", tc_title);
+                    stats_cpu._fix = 1000000000;
+                } else if (max > 1000000) {
+                    stats_cpu.options.title = l4i.T("CPU (Millisecond / %s)", tc_title);
+                    stats_cpu._fix = 1000000;
+                } else if (max > 1000) {
+                    stats_cpu.options.title = l4i.T("CPU (Microsecond / %s)", tc_title);
+                    stats_cpu._fix = 1000;
+                } else {
+                    stats_cpu.options.title = l4i.T("CPU (Nanosecond / %s)", tc_title);
+                }
+            */
 
 
             //
@@ -1581,7 +1666,7 @@ inCpPod.EntryStats = function(time_past) {
 
             //
             var stats_fsn = l4i.Clone(inCpPod.hchart_def);
-            stats_fsn.options.title = l4i.T("Storage IO / %s", tc_title);
+            stats_fsn.options.title = l4i.T("Storage IO (Number / %s)", tc_title);
 
             //
             var stats_fss = l4i.Clone(inCpPod.hchart_def);
@@ -1607,9 +1692,12 @@ inCpPod.EntryStats = function(time_past) {
                 var fix = 1;
                 switch (v.name) {
                     case "cpu/us":
-                        if (stats_cpu._fix && stats_cpu._fix > 1) {
-                            fix = stats_cpu._fix;
-                        }
+                        /**
+                                        if (stats_cpu._fix && stats_cpu._fix > 1) {
+                                            fix = stats_cpu._fix;
+                                        }
+                        */
+                        fix = tc_ns / 100;
                         break;
 
                     case "ram/us":
@@ -1710,18 +1798,46 @@ inCpPod.EntryStats = function(time_past) {
                 }
             }
 
-            hooto_chart.RenderElement(stats_cpu, "incp-podentry-stats-cpu");
-            hooto_chart.RenderElement(stats_ram, "incp-podentry-stats-ram");
-            hooto_chart.RenderElement(stats_net, "incp-podentry-stats-net");
-            hooto_chart.RenderElement(stats_fss, "incp-podentry-stats-fss");
-            hooto_chart.RenderElement(stats_fsn, "incp-podentry-stats-fsn");
+            var statses = [{
+                data: stats_cpu,
+                target: "cpu",
+            }, {
+                data: stats_ram,
+                target: "ram",
+            }, {
+                data: stats_net,
+                target: "net",
+            }, {
+                data: stats_fss,
+                target: "fss",
+            }, {
+                data: stats_fsn,
+                target: "fsn",
+            }];
+
+
+            l4iTemplate.Render({
+                dstid: "incp-podentry-stats-list",
+                tplid: "incp-podentry-stats-item-tpl",
+                data: {
+                    items: statses,
+                },
+                callback: function() {
+
+                    for (var i in statses) {
+                        statses[i].data.options.title = "";
+                        hooto_chart.RenderElement(statses[i].data, "incp-podentry-stats-" + statses[i].target);
+                    }
+                },
+            });
+
         });
 
         ep.fail(function(err) {
             alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
-        inCp.ApiCmd("pod/entry?id=" + inCpPod.entry_active_id, {
+        inCp.ApiCmd("pod/entry?id=" + inCpPod.itemActiveId, {
             callback: ep.done("pod"),
         });
 
@@ -1737,8 +1853,8 @@ inCpPod.EntryStats = function(time_past) {
 }
 
 inCpPod.EntryAccess = function(pod_id) {
-    if (!pod_id && inCpPod.entry_active_id) {
-        pod_id = inCpPod.entry_active_id;
+    if (!pod_id && inCpPod.itemActiveId) {
+        pod_id = inCpPod.itemActiveId;
     }
     if (!pod_id) {
         return alert("No Pod Found");
@@ -1750,7 +1866,7 @@ inCpPod.EntryAccess = function(pod_id) {
 
             var actions = [];
             if (!pod.operate.access) {
-                pod.operate.access = l4i.Clone(inCpPod.entry_operate_access_def);
+                pod.operate.access = l4i.Clone(inCpPod.itemOperateAccessDef);
             }
             if (!pod.operate.access.ssh_key) {
                 pod.operate.access.ssh_key = "";
@@ -1774,6 +1890,9 @@ inCpPod.EntryAccess = function(pod_id) {
                     title: "Save",
                     style: "btn btn-primary",
                 }],
+                callback: function() {
+                    inCpPod.EntryAccessSshRefresh();
+                },
             });
         });
 
@@ -1792,7 +1911,6 @@ inCpPod.EntryAccess = function(pod_id) {
 }
 
 inCpPod.EntryAccessSshRefresh = function() {
-    return;
 
     var form = $("#incp-podentry-access");
     if (!form) {
@@ -1802,7 +1920,7 @@ inCpPod.EntryAccessSshRefresh = function() {
     var ssh_on = parseInt(form.find("input[name=operate_access_ssh_on]:checked").val());
     if (ssh_on == 1) {
         $("#operate_access_ssh_enable").css({
-            "display": "block"
+            "display": "table-row"
         });
     } else {
         $("#operate_access_ssh_enable").css({
@@ -1871,6 +1989,10 @@ inCpPod.EntryAccessSetCommit = function() {
 
 inCpPod.specSetActive = null;
 inCpPod.SpecSet = function(pod_id) {
+
+    if (!pod_id && inCpPod.itemActiveId) {
+        pod_id = inCpPod.itemActiveId;
+    }
 
     if (!pod_id) {
         return;
@@ -1949,7 +2071,7 @@ inCpPod.SpecSet = function(pod_id) {
             inCpPod.specSetActive = pod;
 
             inCpPod.plans = plans;
-            inCpPod.plan_selected = pod._plan_selected;
+            inCpPod.planSelected = pod._plan_selected;
 
             var fnfre = function() {
                 l4iTemplate.Render({
@@ -1957,7 +2079,7 @@ inCpPod.SpecSet = function(pod_id) {
                     tplid: "incp-podnew-plans-tpl",
                     data: {
                         items: inCpPod.plans.items,
-                        _plan_selected: inCpPod.plan_selected,
+                        _plan_selected: inCpPod.planSelected,
                     },
                 });
                 inCpPod.NewRefreshPlan();
@@ -1976,7 +2098,7 @@ inCpPod.SpecSet = function(pod_id) {
                         tplid: "incp-podnew-modal",
                         data: {
                             items: inCpPod.plans.items,
-                            _plan_selected: inCpPod.plan_selected,
+                            _plan_selected: inCpPod.planSelected,
                         },
                         callback: fnfre,
                     });
@@ -2018,7 +2140,7 @@ inCpPod.SpecSet = function(pod_id) {
 inCpPod.SpecSetCommit = function() {
     var alert_id = "#incp-podnew-alert",
         url = "",
-        vol_size = parseFloat($("#incp-podnew-resource-value").val());
+        vol_size = parseInt($("#incp-podnew-resource-value").val());
     if (vol_size <= 0) {
         return l4i.InnerAlert(alert_id, "error", "System Storage Not Set");
     }
@@ -2027,16 +2149,16 @@ inCpPod.SpecSetCommit = function() {
         return l4i.InnerAlert(alert_id, "error", "Resource Option Not Set");
     }
 
-    if (vol_size >= 1.0) {
-        vol_size = parseInt(vol_size) * inCp.ByteGB;
-    } else {
-        vol_size = parseInt(vol_size * 10) * 100 * inCp.ByteMB;
+    if (vol_size < 1) {
+        vol_size = 1;
+    } else if (vol_size > 200) {
+        vol_size = 200;
     }
 
     var set = {
         pod: inCpPod.specSetActive.meta.id,
         name: inCpPod.specSetActive.meta.id,
-        plan: inCpPod.plan_selected,
+        plan: inCpPod.planSelected,
         zone: inCpPod.specSetActive.spec.zone,
         cell: inCpPod.specSetActive.spec.cell,
         res_volume: inCpPod.plan._res_volume.ref_id,
@@ -2079,5 +2201,3 @@ inCpPod.SpecSetCommit = function() {
         }
     });
 }
-
-

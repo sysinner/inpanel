@@ -1,7 +1,7 @@
 <div id="inops-podspec-planls-alert"></div>
 
 <div class="incp-div-light">
-<table class="table table-hover">
+<table class="table table-hover valign-middle">
   <thead><tr>
     <th>ID</th>
     <th>Plan</th>
@@ -23,10 +23,11 @@
   <td>{[=v.status]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
-    <button class="pure-button button-xsmall" 
-	  onclick="inOpsPod.SpecPlanSet('{[=v.meta.id]}')">
-        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings
-	</button>
+    <button class="btn btn-sm btn-outline-primary"
+      onclick="inOpsPod.SpecPlanSet('{[=v.meta.id]}')">
+      <span class="fa fa-cog"></span>
+      Settings
+    </button>
   </td>
 </tr>
 {[~]}

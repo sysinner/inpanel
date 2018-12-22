@@ -1,10 +1,29 @@
 <div id="incp-appspec-cfg-fieldset-alert"></div>
 
-<div id="incp-appspec-cfg-fieldset-form" class="pure-form pure-form-stacked pure-g">
+<div id="incp-appspec-cfg-fieldset-form" class="">
 </div>
+
 <style>
-.l4i-form-group {
-  padding: 0 20px 0 0;
+#incp-appspec-cfg-fieldset-form .btn-sm {
+  padding: 3px 10px;
+  font-size: 12px;
+  line-height: 120%;
+}
+#incp-appspec-cfg-fieldset-form button.icon-x20 {
+  padding: 0px;
+  line-height: 100%;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  font-size: 16px;
+  text-align: center;
+}
+#incp-appspec-cfg-fieldset-form th {
+  font-weight: normal;
+}
+#incp-appspec-cfg-fieldset-form .card-body {
+  padding: 0 10px;
 }
 </style>
 
@@ -12,66 +31,83 @@
 
 <input type="hidden" name="name_prev" value="{[=it.name]}">
 
-<div class="l4i-form-group pure-u-1-2">
-  <label class="">Name</label>
-  <div class="">
-    <input type="text" class="form-control" name="name" value="{[=it.name]}">
-  </div>
-</div>
+<table class="incp-formtable">
+<tbody>
 
-<div class="l4i-form-group pure-u-1-2">
-  <label class="">Type</label>
-  <div class="">
+<tr>
+  <td width="220px">Name</td>
+  <td width="30px"></td>
+  <td>
+    <input type="text" class="form-control" name="name" value="{[=it.name]}">
+  </td>
+</tr>
+
+<tr>
+  <td>Type</td>
+  <td></td>
+  <td>
     <select name="type" class="form-control">
     {[~it._cfgFieldTypes :v]}
       <option value="{[=v.type]}" {[if (it.type == v.type) {]} selected{[}]}>{[=v.title]}</option>
     {[~]}
     </select>
-  </div>
-</div>
+  </td>
+</tr>
 
-<div class="l4i-form-group pure-u-1-2">
-  <label class="">Title</label>
-  <div class="">
+<tr>
+  <td>Title</td>
+  <td></td>
+  <td>
     <input type="text" class="form-control" name="title" value="{[=it.title]}">
-  </div>
-</div>
+  </td>
+</tr>
 
 
-<div class="l4i-form-group pure-u-1-2">
-  <label class="">Prompt</label>
-  <div class="">
+
+<tr>
+  <td>Prompt</td>
+  <td></td>
+  <td>
     <input type="text" class="form-control" name="prompt" value="{[=it.prompt]}">
-  </div>
-</div>
+  </td>
+</tr>
 
-<div class="l4i-form-group pure-u-1-2">
-  <label class="">Deault Value</label>
-  <div class="">
+
+
+<tr>
+  <td>Default Value</td>
+  <td></td>
+  <td>
     <input type="text" class="form-control" name="default" value="{[=it.default]}">
-  </div>
-</div>
+  </td>
+</tr>
 
-<div class="l4i-form-group pure-u-1-2">
-  <label class="">Auto fill value</label>
-  <div class="">
+
+
+<tr>
+  <td>Auto fill value</td>
+  <td></td>
+  <td>
     <select name="auto_fill" class="form-control">
     {[~it._cfgFieldAutoFills :v]}
       <option value="{[=v.type]}" {[if (it.auto_fill == v.type) {]} selected{[}]}>{[=v.title]}</option>
     {[~]}
     </select>
-  </div>
-</div>
+  </td>
+</tr>
 
-<div class="l4i-form-group pure-u-1-1">
-  <label class="">Validates</label>
- 
-  <button class="btn btn-default btn-xs" onclick="inCpAppSpec.CfgFieldSetValidatorNew()">
-    <img src="/in/cp/~/open-iconic/svg/plus.svg"> &nbsp; Add new Validator
-  </button>
 
-  <div>
-    <table class="table table-hover">
+
+
+<tr>
+  <td>Validates</td>
+  <td>
+    <button class="btn btn-sm icon-x20" onclick="inCpAppSpec.CfgFieldSetValidatorNew()">
+      <span class="fa fa-plus"></span>
+    </button>
+  </td>
+  <td>
+    <table class="">
       <thead>
         <tr>
           <th>Regular Expression (RE2)</th>
@@ -89,15 +125,19 @@
             <input name="fv_value" type="text" value="{[=fvp.value]}" class="form-control input-sm" placeholder="Prompt Message">
           </td>
           <td align="right">
-            <button class="pure-button button-small" onclick="inCpAppSpec.CfgFieldSetValidatorDel(this)">
-              Delete
+            <button class="btn btn-sm x20" onclick="inCpAppSpec.CfgFieldSetValidatorDel(this)">
+              <span class="fa fa-times"></span>
             </button>
           </td>
         </tr>
         {[~]}
       </tbody>
-  </div>
-</div>
+    </table>
+  </td>
+</tr>
+
+</tbody>
+</table>
 
 </script>
 
@@ -109,9 +149,9 @@
   <td>
     <input name="fv_value" type="text" value="" class="form-control input-sm" placeholder="Prompt Message">
   </td>
-  <td align="right">
-    <button class="pure-button button-small" onclick="inCpAppSpec.CfgFieldSetValidatorDel(this)">
-      Delete
+  <td width="30px" align="right">
+    <button class="btn btn-sm icon-x20" onclick="inCpAppSpec.CfgFieldSetValidatorDel(this)">
+      <span class="fa fa-times"></span>
     </button>
   </td>
 </tr>

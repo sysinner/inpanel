@@ -20,8 +20,8 @@
   </td>
 </tr>
 
-<tr id="operate_access_ssh_enable">
-  <td>SSH Public Key</td>
+<tr id="operate_access_ssh_enable" style="display:none">
+  <td width="180px">SSH Public Key</td>
   <td>
     <textarea name="operate_access_ssh_key" rows="6" class="form-control">{[=it.operate.access.ssh_key]}</textarea>
     <div class="alert alert-secondary" style="margin:10px 0 0 0;">
@@ -42,6 +42,5 @@
 
 </tbody>
 </table>
-
 
 </div>

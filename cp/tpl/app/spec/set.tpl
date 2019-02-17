@@ -30,7 +30,7 @@
 <tbody>
 
 <tr>
-  <td width="220px">Name</td>
+  <td width="260px">Name</td>
   <td width="30px"></td>
   <td>
     <input name="meta_name" class="form-control form-control-sm" value="{[=it.spec.meta.name]}">
@@ -58,25 +58,10 @@
   <td><input name="draft_bound_plans" class="form-control form-control-sm" value="{[=it.spec.draft_bound_plans]}"></td>
 </div> -->
 
-<tr>
-  <td>
-    Dependent AppSpec
-  </td>
-  <td>
-    <button class="btn icon-x20" onclick="inCpAppSpec.SetDependSelect()">
-      <i class="fa fa-plus"></i>
-    </button>
-  </td>
-  <td>
-    <div id="incp-app-specset-depls-msg" class="badge badge-secondary">no dependent AppSpec yet ...</div>
-    <div id="incp-app-specset-depls"></div>
-  </td>
-</tr>
-
 
 <tr>
   <td>
-    Dependent Packages
+    Imported Package
   </td>
   <td>
     <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetPackageSelect()">
@@ -92,7 +77,7 @@
 
 <tr>
   <td>
-    Dependent Git Repo
+    Imported Git Repo
   </td>
   <td>
     <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetVcsSet()">
@@ -100,11 +85,40 @@
     </button>
   </td>
   <td>
-    <div id="incp-app-specset-vcsls-msg" class="badge badge-secondary">no git repo yet ...</div>
+    <div id="incp-app-specset-vcsls-msg" class="badge badge-secondary">no repo yet ...</div>
     <div id="incp-app-specset-vcsls"></div>
   </td>
 </tr>
 
+<tr>
+  <td>
+    Internally dependent AppSpec
+  </td>
+  <td>
+    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetDependSelect()">
+      <i class="fa fa-plus"></i>
+    </button>
+  </td>
+  <td>
+    <div id="incp-app-specset-depls-msg" class="badge badge-secondary">no AppSpec yet ...</div>
+    <div id="incp-app-specset-depls"></div>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    Remotely dependent AppSpec
+  </td>
+  <td>
+    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetDepRemoteSelect()">
+      <i class="fa fa-plus"></i>
+    </button>
+  </td>
+  <td>
+    <div id="incp-app-specset-depremotes-msg" class="badge badge-secondary">no AppSpec yet ...</div>
+    <div id="incp-app-specset-depremotes"></div>
+  </td>
+</tr>
 
 <tr>
   <td>
@@ -134,10 +148,10 @@
     <table>
       <thead>
         <tr>
-          <th width="33%">Name (http,https, ...)</th>
+          <th width="33%">Name (tcp,http, ...)</th>
           <th width="33%">Pod Port (1025 ~ 65535)</th>
           {[? it.spec._host_port_enable]}
-          <th>Host Port (1 ~ 65535)</th>
+          <th>Host Port (1 ~ 9999)</th>
           {[??]}
           <th></th>
           {[?]}
@@ -208,7 +222,7 @@
 
 {[? it._replica_enable]}
 <tr>
-  <td>Deploy Requirements</td>
+  <td>Deployment Requirements</td>
   <td></td>
   <td>
     <table>
@@ -288,7 +302,7 @@
 {[? it.items && it.items.length > 0]}
 <table>
   <thead><tr>
-    <th>Spec ID</th>
+    <th>ID</th>
     <th>Name</th>
     <th>Version</th>
     <th></th>
@@ -311,6 +325,35 @@
 {[?]}
 </script>
 
+
+<script id="incp-app-specset-depremotes-tpl" type="text/html">
+{[? it.items && it.items.length > 0]}
+<table>
+  <thead><tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Version</th>
+    <th>Configs</th>
+    <th></th>
+  </tr></thead>
+  <tbody>
+  {[~it.items :v]}
+  <tr id="incp-app-specset-depremote-id{[=v.id]}">
+    <td>{[=v.id]}</td>
+    <td>{[=v.name]}</td>
+    <td>{[=v.version]}</td>
+    <td>{[=v.configs.join(", ")]}</td>
+    <td align="right">
+      <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetDepRemoteRemove('{[=v.id]}')">
+        <i class="fa fa-times"></i>
+      </button>
+    </td>
+  </tr>
+  {[~]}
+  </tbody>
+</table>
+{[?]}
+</script>
 
 <script id="incp-app-specset-ipmls-tpl" type="text/html">
 {[? it.items && it.items.length > 0]}

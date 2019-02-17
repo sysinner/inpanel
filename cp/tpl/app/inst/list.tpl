@@ -34,7 +34,7 @@
   </td>
   <td>
    {[if (v.operate.options.length > 0) {]}
-     <button class="btn btn-sm" onclick="inCpApp.OpOptInfo('{[=v.meta.id]}')" style="width:30px">{[=v.operate.options.length]}</button>
+     <button class="btn btn-sm btn-default" onclick="inCpApp.OpOptInfo('{[=v.meta.id]}')" style="width:30px">{[=v.operate.options.length]}</button>
    {[}]}
   </td>
   <td>

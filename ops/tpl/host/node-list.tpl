@@ -34,7 +34,7 @@
     {[=v.spec.platform.kernel]}
   </td>  
   <td>
-    <button class="btn btn-sm"
+    <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsHost.NodeOpPortUsedInfo(null, null, '{[=v.meta.id]}')">
       {[=v.operate.port_used.length]}
     </button>

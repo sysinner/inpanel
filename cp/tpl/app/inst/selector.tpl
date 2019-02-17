@@ -1,11 +1,11 @@
 <div id="incp-appls-selector-alert" class="alert" style="display:none"></div>
 
-<table class="table table-hover">
+<table class="table table-hover valign-middle">
   <thead>
     <tr>
       <th>App ID</th>
       <th>Name</th>
-      <th>Pod</th>
+      <th>Pod ID</th>
       <th></th>
     </tr>
   </thead>

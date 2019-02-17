@@ -181,10 +181,10 @@
 <div class="incp-card-frame">
 <div class="incp-div-light">
   <div class="incp-card-title">Applications</div>
-  <div class="incp-card-body">
-    <table class="table table-hover">
+  <div class="incp-card-body incp-formtable">
+    <table class="valign-middle incp-formtable-space-x0050">
     <thead>
-      <tr>
+      <tr class="incp-formtable-row-line">
         <th>Name</th>
         <th>Spec</th>
         <th>Services</th>
@@ -193,12 +193,13 @@
     </thead>
     <tbody>
       {[~it.apps :v]}
-      <tr>
+      <tr class="incp-formtable-tr-line">
         <td>{[=v.meta.name]}</td>
         <td>
           <a href="#" onclick="inCpAppSpec.Info('{[=v.spec.meta.id]}', null, '{[=v.spec.meta.version]}')">
             {[=v.spec.meta.id]} / v{[=v.spec.meta.version]}
           </a>
+        </td>
         <td>{[if (v.spec.service_ports) { ]}{[=v.spec.service_ports.length]}{[ } ]}</td>
         <td align="right">{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
       </tr>
@@ -225,7 +226,7 @@
         {[if (inCp.syscfg.zone_master.replica_enable) {]}
         <th>Host</th>
         {[}]}
-        <th>Net</th>
+        <th>Service Port Mapping</th>
         <th>Vol</th>
         <th>Status</th>
         <th>Uptime</th>
@@ -243,9 +244,15 @@
       {[}]}
       <td>
         {[? rep.ports]}
-        <table class="incp-font-fixspace table-reset">
+        <table class="incp-font-fixspace table-reset" style="width:0%">
           {[~rep.ports :opv]}
           <tr>
+            <td>
+               {[=opv.box_port]}
+            </td>
+            <td width="10px">
+               &raquo;
+            </td>
             <td>
             {[if (opv.name == "http" || opv.name == "https") {]}
               <a href="{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}" target="_blank">{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}</a>
@@ -254,9 +261,6 @@
             {[ } else {]}
               {[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}
             {[}]}
-            </td>
-            <td>
-              &raquo; pod:{[=opv.box_port]}
             </td>
           </tr>
           {[~]}
@@ -267,7 +271,7 @@
       <td id="incp-podentry-box-action-status-value-{[=rep.rep_id]}"></td>
       <td id="incp-podentry-box-uptime-value-{[=rep.rep_id]}"></td>
       <td id="incp-podentry-repitem-setup-{[=rep.rep_id]}" align="right">
-        {[if (inCp.syscfg.zone_master.replica_enable) {]}
+        {[if (inCp.syscfg.zone_master.replica_enable && !inCp.OpActionAllow(it.operate.action, inCp.OpActionDestroy)) {]}
         <span class="incp-btn-hover" onclick="inCpPodRep.Set('{[=it.meta.id]}', {[=rep.rep_id]})">
           <i class="fa fa-cog"></i>
         </span>

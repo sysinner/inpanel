@@ -26,7 +26,7 @@
   <td>{[=v.depends.length]}</td>
   <td>{[=v._ipm_num]}</td>
   <td>
-    <button class="btn btn-sm"
+    <button class="btn btn-sm btn-outline-primary"
       onclick="inCpAppSpec.CfgSet('{[=v.meta.id]}')">
       {[=v.configurator.fields.length]}
     </button>

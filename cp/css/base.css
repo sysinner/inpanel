@@ -218,3 +218,7 @@ body {
 .incp-formtable .input-group {
   margin-bottom: 0 !important;
 }
+
+.btn-default {
+  background-color: buttonface !important; 
+}

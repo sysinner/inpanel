@@ -27,20 +27,22 @@
   </div>
 </div>
 {[}]}
+{[~]}
 
-{[if (v.type == 10 && v.default && v.default.length > 4) {]}
+{[if (it.dep_remotes && it.dep_remotes.length > 0) {]}
+{[~ it.dep_remotes :v]}
 <div class="l4i-form-group">
-  <label>{[=v.title]}</label>
+  <label>Remotely dependent to AppSpec : {[=v.name]}</label>
   <div>
-    <a href="#app/inst/cfg/bound/select" onclick="inCpApp.InstConfigWizardAppBound('{[=v.name]}','{[=v.default]}')"
+    <a href="#app/inst/cfg/bound/select" onclick="inCpApp.InstConfigWizardAppBound('{[=v.id]}')"
       class="incp-appinst-cfgfield-boundapp-item" 
       style="display:flex;flex-wrap: nowrap;justify-content:space-around;align-items:center">
-      <input id="incp-appinst-cfgfield-{[=v.name]}" name="fn_{[=v.name]}" type="hidden" value="{[=v._value]}">
-      <div id="incp-appinst-cfgfield-{[=v.name]}-dp" class="incp-font-fixspace" style="flex-grow:1;order:1">
-      {[if (!v._value || v._value.length < 12) {]}
-        Select a dependency AppInstance to Bound ({[=v.default]}) 
+      <input id="incp-appinst-cfgfield-{[=v.id]}" name="fn_{[=v.id]}" type="hidden" value="{[=v._app_id]}">
+      <div id="incp-appinst-cfgfield-{[=v.id]}-dp" class="incp-font-fixspace" style="flex-grow:1;order:1">
+      {[if (!v._app_id || v._app_id.length < 12) {]}
+        Select a running AppInstance to Bind ... 
       {[} else {]}
-        {[=v._value]}
+        {[=v._app_id]}
       {[}]}
       </div>
       <div style="flex-grow:3;order:2;text-align:right">
@@ -51,7 +53,7 @@
     </a>
   </div>
 </div>
+{[~]}
 {[}]}
 
-{[~]}
 </script>

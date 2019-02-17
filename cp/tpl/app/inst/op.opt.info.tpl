@@ -8,12 +8,12 @@
   <div class="card-header">
     <strong>{[=cv.name]}</strong>
     {[if (cv.ref && cv.ref.app_id.length >= 12) {]}
-    <p>Refer to App {[=cv.ref.app_id]}</p> 
+    <div>Remotely dependent to AppInstance {[=cv.ref.app_id]}</div> 
     {[}]}
   </div>
 
   <div class="card-body">
-    <table width="100%" class="incp-panel-table">
+    <table class="incp-formtable">
       {[~cv.items :cvf]}
       <tr>
         <td width="300" class="lpt-title">{[=cvf.name]}</td>
@@ -22,14 +22,22 @@
       {[~]}
     </table>
   </div>
-
-  {[if (cv.subs && cv.subs.length > 0) {]}
-  <div class="">
-    <strong>App of Subscribers</strong>
-    <p>{[=cv.subs.join(", ")]}</p>
-  </div>
-  {[}]}
 </div>
 {[}]}
+
+{[if (cv.subs && cv.subs.length > 0) {]}
+<div class="card">
+
+  <div class="card-header">
+    <strong>Dependent by remote applications</strong>
+  </div>
+
+  <div class="card-body">
+    {[=cv.subs.join(", ")]}
+  </div>
+</div>
+{[}]}
+
+
 {[~]}
 </div>

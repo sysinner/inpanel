@@ -251,8 +251,8 @@ inCpApp.OpOptInfo = function(app_id) {
 
             l4iModal.Open({
                 title: "App Options",
-                width: 900,
-                height: 600,
+                width: 1000,
+                height: 1000,
                 tplsrc: tpl,
                 data: rsj,
                 callback: function(err, data) {},
@@ -327,7 +327,7 @@ inCpApp.instConfigurator = function(cb) {
     if (inCpApp.instDeployActive.spec.configurator &&
         !inCpApp.instDeployActive.spec.configurator._setid) {
         inCpApp.instDeployActive.spec.configurator._setid = inCpApp.instDeployActive.spec.meta.id;
-        return inCpApp.instConfiguratorEntry(inCpApp.instDeployActive.spec.configurator);
+        return inCpApp.instConfiguratorEntry(inCpApp.instDeployActive.spec.configurator, inCpApp.instDeployActive.spec.meta.id);
     }
 
     for (var i in inCpApp.instDeployActive.spec.depends) {
@@ -405,6 +405,24 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
             configurator.fields[i]._value = value;
         }
 
+        var depRemotes = [];
+        console.log(spec_id);
+        console.log(inCpApp.instDeployActive.spec.meta.id);
+        if (spec_id == inCpApp.instDeployActive.spec.meta.id) {
+            depRemotes = inCpApp.instDeployActive.spec.dep_remotes;
+            for (var i in inCpApp.instDeployActive.operate.options) {
+                if (!inCpApp.instDeployActive.operate.options[i].ref) {
+                    continue;
+                }
+                for (var j in depRemotes) {
+                    if (depRemotes[j].id == inCpApp.instDeployActive.operate.options[i].ref.spec_id) {
+                        depRemotes[j]._app_id = inCpApp.instDeployActive.operate.options[i].ref.app_id;
+                        break;
+                    }
+                }
+            }
+        }
+
         l4iModal.Open({
             id: "incp-appinst-cfgwizard",
             title: "App Configuration Wizard : " + configurator.name,
@@ -419,6 +437,7 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
                     data: {
                         name: configurator.name,
                         fields: configurator.fields,
+                        dep_remotes: depRemotes,
                     }
                 });
             },
@@ -436,10 +455,8 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
     }
 }
 
-inCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs) {
-    if (!cfg_defs) {
-        return;
-    }
+inCpApp.InstConfigWizardAppBound = function(spec_id) {
+
     var alert_id = "#incp-appinst-cfg-wizard-alert";
 
     seajs.use(["ep"], function(EventProxy) {
@@ -451,7 +468,7 @@ inCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs) {
             }
 
             if (!data.items || data.items.length < 1) {
-                return l4i.InnerAlert(alert_id, "error", "No Fit (" + cfg_defs + ") AppInstance Found");
+                return l4i.InnerAlert(alert_id, "error", "No Fit AppSpec (" + spec_id + ") AppInstance Found");
             }
 
             l4iModal.Open({
@@ -465,8 +482,8 @@ inCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs) {
                     title: "Close",
                 }],
                 fn_selector: function(err, select_item) {
-                    $("#incp-appinst-cfgfield-" + cfg_name).val(select_item);
-                    $("#incp-appinst-cfgfield-" + cfg_name + "-dp").text(select_item);
+                    $("#incp-appinst-cfgfield-" + spec_id).val(select_item);
+                    $("#incp-appinst-cfgfield-" + spec_id + "-dp").text(select_item);
                     l4iModal.Prev();
                 },
                 callback: function(err, data) {
@@ -487,7 +504,7 @@ inCpApp.InstConfigWizardAppBound = function(cfg_name, cfg_defs) {
             callback: ep.done("tpl"),
         });
 
-        inCp.ApiCmd("app/list?operate_option=" + cfg_defs, {
+        inCp.ApiCmd("app/list?spec_id=" + spec_id, {
             callback: ep.done("data"),
         });
     });
@@ -510,6 +527,13 @@ inCpApp.instConfigCommit = function() {
         name: inCpApp.instConfiguratorEntryActive.name,
         items: [],
     }
+
+    var req = {
+        id: inCpApp.instDeployActive.meta.id,
+        option: option,
+        dep_remotes: [],
+    }
+
 
     try {
 
@@ -536,14 +560,26 @@ inCpApp.instConfigCommit = function() {
             }
         }
 
+        if (inCpApp.instConfiguratorEntryActive.spec_id == inCpApp.instDeployActive.spec.meta.id) {
+
+            for (var i in inCpApp.instDeployActive.spec.dep_remotes) {
+
+                var field = inCpApp.instDeployActive.spec.dep_remotes[i];
+                var value = form.find("input[name=fn_" + field.id + "]").val();
+
+                if (value) {
+                    req.dep_remotes.push({
+                        spec_id: field.id,
+                        app_id: value,
+                    });
+                }
+            }
+        }
+
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'error', err);
     }
 
-    var req = {
-        id: inCpApp.instDeployActive.meta.id,
-        option: option,
-    }
     // return console.log(req);
     if (inCpApp.instConfiguratorEntryActive.spec_id &&
         inCpApp.instConfiguratorEntryActive.spec_id.length > 8) {

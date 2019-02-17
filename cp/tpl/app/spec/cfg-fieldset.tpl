@@ -102,7 +102,7 @@
 <tr>
   <td>Validates</td>
   <td>
-    <button class="btn btn-sm icon-x20" onclick="inCpAppSpec.CfgFieldSetValidatorNew()">
+    <button class="btn btn-sm btn-default icon-x20" onclick="inCpAppSpec.CfgFieldSetValidatorNew()">
       <span class="fa fa-plus"></span>
     </button>
   </td>
@@ -125,7 +125,7 @@
             <input name="fv_value" type="text" value="{[=fvp.value]}" class="form-control input-sm" placeholder="Prompt Message">
           </td>
           <td align="right">
-            <button class="btn btn-sm x20" onclick="inCpAppSpec.CfgFieldSetValidatorDel(this)">
+            <button class="btn btn-sm btn-default x20" onclick="inCpAppSpec.CfgFieldSetValidatorDel(this)">
               <span class="fa fa-times"></span>
             </button>
           </td>
@@ -150,7 +150,7 @@
     <input name="fv_value" type="text" value="" class="form-control input-sm" placeholder="Prompt Message">
   </td>
   <td width="30px" align="right">
-    <button class="btn btn-sm icon-x20" onclick="inCpAppSpec.CfgFieldSetValidatorDel(this)">
+    <button class="btn btn-sm btn-default icon-x20" onclick="inCpAppSpec.CfgFieldSetValidatorDel(this)">
       <span class="fa fa-times"></span>
     </button>
   </td>

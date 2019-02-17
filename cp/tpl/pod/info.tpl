@@ -1,163 +1,163 @@
-<div class="card">
-  <div class="card-header">Info</div>
-  <div class="card-body">
-    <table width="100%" class="incp-panel-table">
-      <tr>
-        <td width="220" class="lpt-title">ID</td>
-        <td>{[=it.meta.id]}</td>
-      </tr>
-      <tr>
-        <td class="lpt-title">Name</td>
-        <td>{[=it.meta.name]}</td>
-      </tr>
-      <tr>
-        <td class="lpt-title">Created</td>
-        <td>{[=l4i.MetaTimeParseFormat(it.meta.created, "Y-m-d")]}</td>
-      </tr>
-      <tr>
-        <td class="lpt-title">Updated</td>
-        <td>{[=l4i.MetaTimeParseFormat(it.meta.updated, "Y-m-d H:i:s")]}</td>
-      </tr>
-    </table>
-  </div>
-</div>
+<style>
+.table-reset td {
+  padding: 3px 10px 3px 0 !important;
+  border: 0;
+}
+</style>
 
+<table class="incp-formtable">
+<tbody>
+<tr>
+  <td width="200px">Information</td>
+  <td>
+    <div class="incp-card-frame-inline">
+      <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
+        <div class="name">ID</div>
+        <div class="value">{[=it.meta.id]}</div>
+      </div>
+      <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
+        <div class="name">Name</div>
+        <div class="value">{[=it.meta.name]}</div>
+      </div>
+    </div>
+    <div class="incp-card-frame-inline">
+      <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
+        <div class="name">Location</div>
+        <div class="value">{[=it.spec.zone]} / {[=it.spec.cell]}</div>
+      </div>
+      <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
+        <div class="name">Created</div>
+        <div class="value">{[=l4i.MetaTimeParseFormat(it.meta.created, "Y-m-d")]}</div>
+      </div>
+    </div>
+  </td>
+</tr>
 
-<div class="card">
-  <div class="card-header">Spec</div>
-  <div class="card-body">
-    <table width="100%" class="incp-panel-table">
-      <tr>
-        <td width="220" class="lpt-title">ID</td>
-        <td>{[=it.spec.ref.id]}</td>
-      </tr>
-      <tr>
-        <td class="lpt-title">Name</td>
-        <td>{[=it.spec.ref.name]}</td>
-      </tr>
-
-      {[ if (it.spec.volumes && it.spec.volumes.length > 0) { ]}
-      <tr>
-        <td class="lpt-title">Volumes (Name / Size)</td>
-        <td>
-          <table width="100%"><tbody>
-            {[~it.spec.volumes :v]}
-            <tr>
-              <td width="40%">{[=v.name]}</td>
-              <td>{[=inCp.UtilResSizeFormat(v.size_limit)]}</td>
-            </tr>
-            {[~]}
-          </tbody></table>
-        </td>
-      </tr>
-      {[ } ]}
-
-      {[ if (it.spec.box) { ]}
-      <tr>
-        <td class="lpt-title">Box ({[=it.spec.box.name]})</td>
-        <td>
-          <table width="100%"><tbody>
-            <tr>
-              <td width="40%">Image</td>
-              <td>{[=it.spec.box.image.driver]} / {[=it.spec.box.image.ref.name]}</td>
-            </tr>
-            <tr>
-              <td>OS / Arch</td>
-              <td>{[=it.spec.box.image.os_dist]} / {[=it.spec.box.image.arch]}</td>
-            </tr>
-            <tr>
-              <td>CPU</td>
-              <td>{[=it.spec.box.resources.cpu_limit]} m</td>
-            </tr>
-            <tr>
-              <td>Memory</td>
-              <td>{[=inCp.UtilResSizeFormat(it.spec.box.resources.mem_limit)]}</td>
-            </tr>
-          </tbody></table>
-        </td>
-      </tr>
-      {[ } ]}
-    </table>
-  </div>
-</div>
-
-
-<div class="card">
-  <div class="card-header">Operating</div>
-  <div class="card-body">
-    <table width="100%" class="incp-panel-table">
-      <tr>
-        <td width="220" class="lpt-title">Action</td>
-        <td>{[=inCp.OpActionTitle(it.operate.action)]}</td>
-      </tr>
-      <tr>
-        <td class="lpt-title">Cluster (Zone / Cell)</td>
-        <td>{[=it.spec.zone]} / {[=it.spec.cell]}</td>
-      </tr>
-
-      {[if (it.operate.replicas && it.operate.replicas.length > 0) {]}
-      {[~it.operate.replicas :rep]}
-      <tr>
-        <td class="lpt-title">Replicas #{[=rep.id]}</td>
-        <td>
-          <table class="table table-condensed">
-            <tr>
-              <td>Host</td>
-              <td>{[?rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}</td>
-            </tr>
-            {[if (rep.ports && rep.ports.length > 0) {]}
-            <tr>
-              <td class="">Service Ports</td>
-              <td>
-                <table style="width:100%" class="incp-font-fixspace">
-                {[~rep.ports :opv]}
-                <tr>
-                  <td>{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}</td>
-                  <td>&nbsp;&raquo;&nbsp; pod:{[=opv.box_port]}</td>
-                </tr>
-                {[~]}
-                </table>
-              </td>
-            </tr>
-            {[}]}
-          </table>
-        </td>
-      </tr>
-      {[~]}
-      {[}]}
-    </table>
-  </div>
-</div>
-
+<tr>
+  <td>Spec</td>
+  <td>
+    <div class="incp-card-frame-inline">
+      <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
+        <div class="name">Name</div>
+        <div class="value">{[=it.spec.ref.name]}</div>
+      </div>
+      <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
+        <div class="name">Driver</div>
+        <div class="value">{[=it.spec._box_image_driver]}</div>
+      </div>
+    </div>
+    <div class="incp-card-frame-inline">
+      <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
+        <div class="name">CPU - RAM</div>
+        <div class="value">
+          {[=(it.spec._cpu_limit/10).toFixed(1)]} - {[=inCp.UtilResSizeFormat(it.spec._mem_limit * inCp.ByteMB)]}
+        </div>
+      </div>
+      <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
+        <div class="name">System Volume</div>
+        <div class="value">
+        {[? it.spec.volumes]}
+        {[~it.spec.volumes :v]}
+          {[if (v.name == "system") {]}
+            {[=inCp.UtilResSizeFormat(v.size_limit * inCp.ByteGB)]}
+          {[}]}
+        {[~]}
+        {[?]}
+        </div>
+      </div>
+    </div>
+  </td>
+</tr>
 
 {[?it.apps]}
-<div class="card">
-  <div class="card-header">Applications</div>
-  <div class="card-body">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Spec</th>
-          <th>Packages</th>
-          <th>Executors</th>
-          <th>Updated</th>
-        </tr>
-      </thead>
-      <tbody>
-        {[~it.apps :v]}
-        <tr>
-          <td>{[=v.meta.name]}</td>
-          <td>{[=v.spec.meta.id]}</td>
-          <td>{[if (v.spec.packages) { ]}{[=v.spec.packages.length]}{[ } ]}</td>
-          <td>{[if (v.spec.executors) { ]}{[=v.spec.executors.length]}{[ } ]}</td>
-          <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
-        </tr>
-        {[~]}
-      </tbody>
+<tr>
+  <td>Applications</td>
+  <td class="_incp-formtable">
+    <table class="valign-middle">
+    <thead>
+      <tr class="incp-formtable-row-line">
+        <th>Name</th>
+        <th>Spec</th>
+        <th>Services</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {[~it.apps :v]}
+      <tr class="incp-formtable-tr-line">
+        <td>{[=v.meta.name]}</td>
+        <td>
+            {[=v.spec.meta.id]} / v{[=v.spec.meta.version]}
+        </td>
+        <td>{[if (v.spec.service_ports) { ]}{[=v.spec.service_ports.length]}{[ } ]}</td>
+        <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+      </tr>
+      {[~]}
+    </tbody>
     </table>
-  </div>
-</div>
+  </td>
+</tr>
 {[?]}
 
+
+{[?it.operate.replicas]}
+<tr>
+  <td>Replicas</td>
+  <td>
+    <table class="valign-middle incp-formtable-space-x0050">
+    <thead>
+      <tr class="incp-formtable-row-line">
+        <th width="40px">ID</th>
+        {[if (inCp.syscfg.zone_master.replica_enable) {]}
+        <th>Host</th>
+        {[}]}
+        <th>Service Port Mapping</th>
+      </tr>
+    </thead>
+    <tbody>
+    {[~it.operate.replicas :rep]}
+    <tr class="incp-formtable-tr-line">
+      <td>{[=rep.rep_id]}</td>
+      {[if (inCp.syscfg.zone_master.replica_enable) {]}
+      <td id="incp-podentry-rep-host-value-{[=rep.rep_id]}" class="incp-font-fixspace">
+        {[? rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}
+      </td>
+      {[}]}
+      <td>
+        {[? rep.ports]}
+        <table class="incp-font-fixspace table-reset" style="width:0%">
+          {[~rep.ports :opv]}
+          <tr>
+            <td>
+               {[=opv.box_port]}
+            </td>
+            <td width="10px">
+               &raquo;
+            </td>
+            <td>
+            {[if (opv.name == "http" || opv.name == "https") {]}
+              <a href="{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}" target="_blank">{[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}</a>
+            {[ } else if (opv.name == "ssh" && opv.box_port == 2022) {]}
+              ssh action@{[=opv.wan_addr]} -p {[=opv.host_port]}
+            {[ } else {]}
+              {[=opv.name]}://{[=opv.wan_addr]}:{[=opv.host_port]}
+            {[}]}
+            </td>
+          </tr>
+          {[~]}
+        </table>
+      {[?]}
+      </td>
+    </tr>
+    {[~]}
+    </tbody>
+    </table>
+  </td>
+</tr>
+{[?]}
+
+
+</tbody>
+
+</table>
 

@@ -10,6 +10,7 @@ var inCpAppSpec = {
         executors: [],
         service_ports: [],
         depends: [],
+        dep_remotes: [],
         roles: [],
         exp_res: {},
         replica: {
@@ -35,9 +36,6 @@ var inCpAppSpec = {
     }, {
         type: 2,
         title: "Select",
-    }, {
-        type: 10,
-        title: "Bound Configurator",
     }],
     cfgFieldAutoFills: [{
         type: "",
@@ -82,6 +80,7 @@ var inCpAppSpec = {
         hook_exec_restart: "",
         hook_pod_restart: false,
     },
+    listActives: null,
 }
 
 //
@@ -103,7 +102,9 @@ inCpAppSpec.ListRefresh = function(tplid) {
     }
 }
 
-inCpAppSpec.listDataRefresh = function(tplid) {
+inCpAppSpec.listDataRefresh = function(tplid, options) {
+
+    options = options || {};
     var uri = "";
     var alert_id = "#" + tplid + "-alert";
 
@@ -111,7 +112,7 @@ inCpAppSpec.listDataRefresh = function(tplid) {
     if (el && el.value.length > 0) {
         uri = "qry_text=" + el.value;
     }
-    uri += "&fields=meta/id|name|user|version|updated,depends/name,packages/name,executors/name,configurator/name,configurator/fields/name";
+    uri += "&fields=meta/id|name|user|version|updated,depends/name,dep_remotes/name,packages/name,executors/name,configurator/name,configurator/fields/name";
 
     inCp.ApiCmd("app-spec/list?" + uri, {
         timeout: 3000,
@@ -129,6 +130,10 @@ inCpAppSpec.listDataRefresh = function(tplid) {
 
                 if (!rsj.items[i].depends) {
                     rsj.items[i].depends = [];
+                }
+
+                if (!rsj.items[i].dep_remotes) {
+                    rsj.items[i].dep_remotes = [];
                 }
 
                 if (rsj.items[i].packages) {
@@ -176,15 +181,85 @@ inCpAppSpec.listDataRefresh = function(tplid) {
                 }
             }
 
+            inCpAppSpec.listActives = rsj.items;
+
             l4iTemplate.Render({
                 dstid: tplid,
                 tplid: tplid + "-tpl",
                 data: {
                     items: rsj.items,
+                    options: options,
                 },
             });
         }
     });
+}
+
+inCpAppSpec.ListSelector = function(options) {
+
+    options = options || {};
+
+    if (!options.title) {
+        options.title = "Select a Depend AppSpec";
+    }
+
+    if (!options.width) {
+        options.width = 900;
+    }
+
+    if (!options.height) {
+        options.height = 600;
+    }
+
+    if (!options.fn_selector) {
+        options.fn_selector = function() {
+            l4iModal.Close();
+        };
+    }
+
+    var subOptions = {};
+    if (options.cfg_selector) {
+        subOptions.cfg_selector = true;
+    }
+
+
+    l4iModal.Open({
+        title: options.title,
+        width: options.width,
+        height: options.height,
+        tpluri: inCp.TplPath("app/spec/selector-v2"),
+        fn_selector: options.fn_selector,
+        callback: function() {
+            inCpAppSpec.listDataRefresh("incp-app-specls-selector", subOptions);
+        },
+        buttons: [{
+            onclick: "l4iModal.Close()",
+            title: "Close",
+        }],
+    });
+}
+
+inCpAppSpec.ListSelectorClick = function(id) {
+    if (l4iModal.CurOptions.fn_selector) {
+        var options = {
+            id: id,
+            configs: [],
+        }
+        var check = $("#appspec-cfg-main");
+        if (check && check.is(":checked")) {
+            options.configs.push(check.val());
+        }
+        l4iModal.CurOptions.fn_selector(null, options);
+    }
+}
+
+inCpAppSpec.ListSelectorQueryCommit = function() {
+    var options = {};
+    var v = $("#incp-app-specls-selector-option-cfg-selector").val();
+    if (v && v == "true") {
+        options.cfg_selector = true;
+    }
+    inCpAppSpec.listDataRefresh("incp-app-specls-selector", options);
 }
 
 inCpAppSpec.Info = function(id, spec, version) {
@@ -198,6 +273,10 @@ inCpAppSpec.Info = function(id, spec, version) {
 
             if (!rsj.depends) {
                 rsj.depends = [];
+            }
+
+            if (!rsj.dep_remotes) {
+                rsj.dep_remotes = [];
             }
 
             if (!rsj.packages) {
@@ -257,6 +336,15 @@ inCpAppSpec.Info = function(id, spec, version) {
             for (var i in rsj.depends) {
                 if (!rsj.depends[i].name) {
                     rsj.depends[i].name = "";
+                }
+            }
+
+            for (var i in rsj.dep_remotes) {
+                if (!rsj.dep_remotes[i].name) {
+                    rsj.dep_remotes[i].name = "";
+                }
+                if (!rsj.dep_remotes[i].configs) {
+                    rsj.dep_remotes[i].configs = [];
                 }
             }
 
@@ -423,6 +511,15 @@ inCpAppSpec.Set = function(id) {
                 }
             }
 
+            for (var i in rsj.dep_remotes) {
+                if (!rsj.dep_remotes[i].name) {
+                    rsj.dep_remotes[i].name = "";
+                }
+                if (!rsj.dep_remotes[i].configs) {
+                    rsj.dep_remotes[i].configs = [];
+                }
+            }
+
             rsj._roles = l4i.Clone(roles);
             if (!rsj.roles) {
                 rsj.roles = [];
@@ -480,6 +577,7 @@ inCpAppSpec.Set = function(id) {
                 },
                 callback: function() {
                     inCpAppSpec.setDependRefresh();
+                    inCpAppSpec.setDepRemoteRefresh();
                     inCpAppSpec.setPackageRefresh();
                     inCpAppSpec.setVcsRefresh();
                     inCpAppSpec.setExecutorRefresh();
@@ -528,21 +626,14 @@ inCpAppSpec.Set = function(id) {
 
 // TODO
 inCpAppSpec.SetDependSelect = function() {
-    l4iModal.Open({
-        title: "Select a Depend AppSpec",
+    inCpAppSpec.ListSelector({
+        title: "Select a Internally dependent AppSpec",
         width: 950,
         height: 600,
-        tpluri: inCp.TplPath("app/spec/selector"),
-        fn_selector: function(err, rsp) {
+        fn_selector: function(err, options) {
             l4iModal.Close();
-            inCpAppSpec.setDependEntry({
-                id: rsp
-            });
+            inCpAppSpec.setDependEntry(options);
         },
-        buttons: [{
-            onclick: "l4iModal.Close()",
-            title: "Close",
-        }],
     });
 }
 
@@ -637,6 +728,122 @@ inCpAppSpec.setDependRefresh = function() {
         tplid: "incp-app-specset-depls-tpl",
         data: {
             items: inCpAppSpec.setActive.depends,
+        },
+    });
+}
+
+inCpAppSpec.SetDepRemoteSelect = function() {
+    inCpAppSpec.ListSelector({
+        title: "Select a Remotely dependent AppSpec",
+        width: 1100,
+        height: 600,
+        cfg_selector: true,
+        fn_selector: function(err, options) {
+            l4iModal.Close();
+            inCpAppSpec.setDepRemoteEntry(options);
+        },
+    });
+}
+
+
+inCpAppSpec.setDepRemoteEntry = function(opt) {
+    if (!opt || !opt.id) {
+        return;
+    }
+    if (opt.id == inCpAppSpec.setActive.meta.id) {
+        return;
+    }
+
+    if (!opt.configs) {
+        opt.configs = [];
+    }
+
+    var alert_id = "#incp-app-specset-alert";
+
+    inCp.ApiCmd("app-spec/entry?id=" + opt.id, {
+        timeout: 10000,
+        callback: function(err, rsj) {
+
+            if (err) {
+                return l4i.InnerAlert(alert_id, 'error', err);
+            }
+
+            if (!rsj || rsj.kind != "AppSpec") {
+                var msg = "Bad Request";
+                if (rsj.error) {
+                    msg = rsj.error.message;
+                }
+                return l4i.InnerAlert(alert_id, 'error', msg);
+            }
+
+            if (!inCpAppSpec.setActive.dep_remotes) {
+                inCpAppSpec.setActive.dep_remotes = [];
+            }
+
+            for (var i in inCpAppSpec.setActive.dep_remotes) {
+
+                if (inCpAppSpec.setActive.dep_remotes[i].id == rsj.meta.id) {
+                    inCpAppSpec.setActive.dep_remotes[i] = {
+                        id: rsj.meta.id,
+                        name: rsj.meta.name,
+                        version: rsj.meta.version,
+                        configs: opt.configs,
+                    }
+                    rsj = null;
+                    break;
+                }
+            }
+
+            if (rsj) {
+                inCpAppSpec.setActive.dep_remotes.push({
+                    id: rsj.meta.id,
+                    name: rsj.meta.name,
+                    version: rsj.meta.version,
+                    configs: opt.configs,
+                });
+            }
+
+            inCpAppSpec.setDepRemoteRefresh();
+        }
+    });
+}
+
+inCpAppSpec.SetDepRemoteRemove = function(id) {
+    if (id.length < 1) {
+        return;
+    }
+
+    for (var i in inCpAppSpec.setActive.dep_remotes) {
+        if (inCpAppSpec.setActive.dep_remotes[i].id == id) {
+            inCpAppSpec.setActive.dep_remotes.splice(i, 1);
+            break
+        }
+    }
+
+    inCpAppSpec.setDepRemoteRefresh();
+}
+
+
+inCpAppSpec.setDepRemoteRefresh = function() {
+    if (!inCpAppSpec.setActive || !inCpAppSpec.setActive.dep_remotes) {
+        return;
+    }
+
+    var display = "none";
+    if (inCpAppSpec.setActive.dep_remotes.length > 0) {
+        //
+    } else {
+        display = "inline-block";
+    }
+    $("#incp-app-specset-depremotes-msg").css({
+        "display": display,
+    });
+
+    l4iTemplate.Render({
+        dstid: "incp-app-specset-depremotes",
+        tplid: "incp-app-specset-depremotes-tpl",
+        data: {
+            items: inCpAppSpec.setActive.dep_remotes,
         },
     });
 }
@@ -1495,7 +1702,7 @@ inCpAppSpec.CfgSet = function(spec_id) {
                 id: "incp-appspec-cfg-fieldlist-modal",
                 title: "Configurator",
                 tplsrc: tpl,
-                width: 960,
+                width: 1100,
                 height: 700,
                 buttons: btns,
                 callback: function() {

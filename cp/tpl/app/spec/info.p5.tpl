@@ -13,33 +13,10 @@
 </tr>
 {[?]}
 
-{[if (it.depends.length > 0) {]}
-<tr>
-  <td>Dependent AppSpec</td>
-  <td id="incp-app-specset-depls">
-    <table>
-      <thead><tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Version</th>
-      </tr></thead>
-      <tbody>
-      {[~it.depends :v]}
-      <tr id="incp-app-specset-depls-id{[=v.id]}">
-        <td>{[=v.id]}</td>
-        <td>{[=v.name]}</td>
-        <td>{[=v.version]}</td>
-      </tr>
-      {[~]}
-      </tbody>
-    </table>
-  </td>
-</tr>
-{[}]}
 
 {[if (it.packages.length > 0) {]}
 <tr>
-  <td>Dependent Packages</td>
+  <td>Imported Package</td>
   <td id="incp-app-specset-ipmls">
     <table>
       <thead><tr>
@@ -61,9 +38,10 @@
 </tr>
 {[}]}
 
+
 {[if (it.vcs_repos.length > 0) {]}
 <tr>
-  <td>Dependent Git Repos</td>
+  <td>Imported Git Repo</td>
   <td id="incp-app-specset-vcsls">
     <table>
       <thead><tr>
@@ -84,6 +62,59 @@
   </td>
 </tr>
 {[}]}
+
+
+{[if (it.depends.length > 0) {]}
+<tr>
+  <td>Internally dependent AppSpec</td>
+  <td id="incp-app-specset-depls">
+    <table>
+      <thead><tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Version</th>
+      </tr></thead>
+      <tbody>
+      {[~it.depends :v]}
+      <tr id="incp-app-specset-depls-id{[=v.id]}">
+        <td>{[=v.id]}</td>
+        <td>{[=v.name]}</td>
+        <td>{[=v.version]}</td>
+      </tr>
+      {[~]}
+      </tbody>
+    </table>
+  </td>
+</tr>
+{[}]}
+
+{[if (it.dep_remotes && it.dep_remotes.length > 0) {]}
+<tr>
+  <td>Remotely dependent AppSpec</td>
+  <td id="incp-app-specset-depremotes">
+    <table>
+      <thead><tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Version</th>
+        <th>Configs</th>
+      </tr></thead>
+      <tbody>
+      {[~it.dep_remotes :v]}
+      <tr id="incp-app-specset-depremotes-id{[=v.id]}">
+        <td>{[=v.id]}</td>
+        <td>{[=v.name]}</td>
+        <td>{[=v.version]}</td>
+        <td>{[? v.configs]}{[=v.configs.join(", ")]}{[?]}</td>
+      </tr>
+      {[~]}
+      </tbody>
+    </table>
+  </td>
+</tr>
+{[}]}
+
+
 
 {[if (it.executors.length > 0) {]}
 <tr>
@@ -154,16 +185,6 @@
 </tr>
 {[}]}
 
-{[if (it._roles.length > 0) {]}
-<tr>
-  <td>Allowed Roles</td>
-  <td>
-    {[~it._roles :v]}
-    <span class="badge badge-primary">{[=v]}</span>
-    {[~]}
-  </td>
-</tr>
-{[}]}
 
 <tr>
   <td>Minimum Requirements</td>
@@ -206,6 +227,18 @@
   </td>
 </tr>
 {[?]}
+
+
+{[if (it._roles.length > 0) {]}
+<tr>
+  <td>Allowed Roles</td>
+  <td>
+    {[~it._roles :v]}
+    <span class="badge badge-primary">{[=v]}</span>
+    {[~]}
+  </td>
+</tr>
+{[}]}
 
 
 </tbody>

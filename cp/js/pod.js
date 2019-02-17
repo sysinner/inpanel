@@ -789,6 +789,10 @@ inCpPod.Info = function(pod_id, options) {
                     }
                 }
             }
+            pod.spec._box_image_driver = pod.spec.box.image.driver;
+            pod.spec._cpu_limit = pod.spec.box.resources.cpu_limit;
+            pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
+
             var btns = [{
                 onclick: "l4iModal.Close()",
                 title: "Close",
@@ -800,10 +804,10 @@ inCpPod.Info = function(pod_id, options) {
             }
 
             l4iModal.Open({
-                title: "Pod Instance Info",
+                title: "Pod Instance Information",
                 tplsrc: tpl,
-                width: 900,
-                height: 600,
+                width: 1100,
+                height: 800,
                 data: pod,
                 buttons: btns,
             });

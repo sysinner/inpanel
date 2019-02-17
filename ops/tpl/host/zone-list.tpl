@@ -34,7 +34,7 @@
     {[~]}
   </td>
   <td>
-    <button class="btn btn-sm"
+    <button class="btn btn-sm btn-default"
       onclick="inOpsHost.CellList('{[=v.meta.id]}')">
       {[=v.cells.length]}
     </button>
@@ -42,7 +42,7 @@
   <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
-    <button class="btn btn-sm"
+    <button class="btn btn-sm btn-default"
       onclick="inOpsHost.ZoneSet('{[=v.meta.id]}')">
       Setting
     </button>

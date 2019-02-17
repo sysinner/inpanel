@@ -67,7 +67,7 @@
             <input name="label_value" type="text" value="{[=vl.value]}" class="form-control input-sm">
           </td>
           <td align="right">
-            <button class="btn btn-sm" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
+            <button class="btn btn-sm btn-default" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
               Delete
             </button>
           </td>
@@ -102,7 +102,7 @@
             <input name="annotation_value" type="text" value="{[=vl.value]}" class="form-control input-sm">
           </td>
           <td align="right">
-            <button class="btn btn-sm" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
+            <button class="btn btn-sm btn-default" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
               Delete
             </button>
           </td>
@@ -143,7 +143,7 @@
     <input name="label_value" type="text" value="" class="form-control input-sm" placeholder="Value">
   </td>
   <td align="right">
-    <button class="btn btn-sm" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
+    <button class="btn btn-sm btn-default" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
       Delete
     </button>
   </td>
@@ -159,7 +159,7 @@
     <input name="annotation_value" type="text" value="" class="form-control input-sm" placeholder="Value">
   </td>
   <td align="right">
-    <button class="btn btn-sm" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
+    <button class="btn btn-sm btn-default" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
       Delete
     </button>
   </td>

@@ -108,7 +108,7 @@
     <thead>
       <tr class="incp-formtable-row-line">
         <th width="40px">ID</th>
-        {[if (inCp.syscfg.zone_master.replica_enable) {]}
+        {[if (inCp.syscfg.zone_master.multi_replica_enable) {]}
         <th>Host</th>
         {[}]}
         <th>Service Port Mapping</th>
@@ -118,7 +118,7 @@
     {[~it.operate.replicas :rep]}
     <tr class="incp-formtable-tr-line">
       <td>{[=rep.rep_id]}</td>
-      {[if (inCp.syscfg.zone_master.replica_enable) {]}
+      {[if (inCp.syscfg.zone_master.multi_replica_enable) {]}
       <td id="incp-podentry-rep-host-value-{[=rep.rep_id]}" class="incp-font-fixspace">
         {[? rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}
       </td>

@@ -41,8 +41,8 @@
   </td>
 </tr>
 
-{[if (inCp.syscfg.zone_master.replica_enable) {]}
-{[if (it._op_rep_min < it._op_rep_max) {]}
+{[if (inCp.syscfg.zone_master.multi_replica_enable) {]}
+{[if (it._op_rep_min <= it._op_rep_max) {]}
 <tr>
   <td>Number of Replica</td>
   <td>

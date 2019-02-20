@@ -1415,7 +1415,7 @@ inCpPod.entryAutoRefresh = function() {
                     elrep.innerHTML = inCp.OpActionStatusTitle(data.replicas[i].action);
                 }
 
-                if (inCp.syscfg.zone_master.replica_enable) {
+                if (inCp.syscfg.zone_master.multi_replica_enable) {
                     if (data.replicas[i].node && data.replicas[i].node.length > 10) {
                         var elrep = document.getElementById("incp-podentry-rep-host-value-" + i);
                         if (elrep) {
@@ -2071,6 +2071,8 @@ inCpPod.SpecSet = function(pod_id) {
             pod._plans = plans;
             pod._plan_selected = pod.spec.ref.id;
 
+            pod._image_selected = spec_image_id;
+
 
             inCpPod.specSetActive = pod;
 
@@ -2169,7 +2171,8 @@ inCpPod.SpecSetCommit = function() {
         res_volume_size: vol_size,
         box: {
             name: "main",
-            image: inCpPod.plan.image_selected,
+            // image: inCpPod.plan.image_selected,
+            image: inCpPod.specSetActive._image_selected,
             res_compute: inCpPod.plan.res_compute_selected,
         },
     };

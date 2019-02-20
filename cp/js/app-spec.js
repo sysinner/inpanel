@@ -381,7 +381,7 @@ inCpAppSpec.Info = function(id, spec, version) {
                     }
                 }
             }
-            rsj._replica_enable = inCp.syscfg.zone_master.replica_enable;
+            rsj._multi_replica_enable = inCp.syscfg.zone_master.multi_replica_enable;
 
             l4iModal.Open({
                 title: "AppSpec Information",
@@ -572,7 +572,7 @@ inCpAppSpec.Set = function(id) {
                 data: {
                     actionTitle: ((rsj.meta.id == "") ? "New AppSpec" : "Setting (" + rsj.meta.id + ")"),
                     spec: rsj,
-                    _replica_enable: inCp.syscfg.zone_master.replica_enable,
+                    _multi_replica_enable: inCp.syscfg.zone_master.multi_replica_enable,
                     _deploy_sys_states: inCpAppSpec.deploySysStates,
                 },
                 callback: function() {

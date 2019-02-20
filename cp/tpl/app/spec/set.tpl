@@ -220,7 +220,7 @@
 </tr>
 
 
-{[? it._replica_enable]}
+{[? it._multi_replica_enable]}
 <tr>
   <td>Deployment Requirements</td>
   <td></td>

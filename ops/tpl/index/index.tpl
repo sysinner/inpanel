@@ -2,11 +2,11 @@
   <div class="incp-topbar-collapse">
     <ul class="incp-nav" id="incp-topbar-siteinfo">
       <li><img class="incp-topbar-logo" src="/in/cp/~/cp/img/logo-g1s48.png" title="frontend_header_site_logo_url"></li>
-      <li class="incp-topbar-brand">inPanel Ops</li>
+      <li class="incp-topbar-brand">InnerStack Ops</li>
     </ul>
     <ul class="incp-nav incp-topbar-nav" id="inops-topbar-nav-menus">
       <li><a class="l4i-nav-item" href="#host/index">Cluster</a></li>
-      <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>
+      <li><a class="l4i-nav-item" href="#pod/index">Containers</a></li>
       <li><a class="l4i-nav-item" href="#app/index">Applications</a></li>
     </ul>
     <ul class="incp-nav incp-nav-right" id="incp-topbar-userbar"></ul>
@@ -32,8 +32,8 @@
 
 <div class="incp-footer">
   <div class="incp-items incp-fontsize-x0090" style="text-align:center">
-    <span class="incp-item"><span class="fa fa-award"></span> Powered by <a href="https://www.sysinner.com" target="_blank">Sysinner PaaS Engine</a></span>
-    <span class="incp-item"><span class="fa fa-bug"></span> <a href="https://github.com/sysinner/incore/issues" target="_blank">Bug Report</a></span>
+    <span class="incp-item"><span class="fa fa-award"></span> Powered by <a href="https://www.sysinner.com" target="_blank">InnerStack</a></span>
+    <span class="incp-item"><span class="fa fa-bug"></span> <a href="https://github.com/sysinner/innerstack/issues" target="_blank">Bug Report</a></span>
     <span class="incp-item"><span class="fa fa-info-circle"></span> <a class="l4i-nav-item" href="#about" onclick="inCp.About()">About</a></span>
   </div>
 </div>

@@ -6,7 +6,7 @@
     </ul>
     <ul class="incp-nav incp-topbar-nav" id="incp-topbar-nav-menus">
       <li><a class="l4i-nav-item" href="#app/index">Applications</a></li>
-      <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>
+      <li><a class="l4i-nav-item" href="#pod/index">Containers</a></li>
       <li><a class="l4i-nav-item" href="#ips/index">Packages</a></li>
       <li><a class="l4i-nav-item" href="#res/index">Resources</a></li>
     </ul>
@@ -36,8 +36,8 @@
 
 <div class="incp-footer">
   <div class="incp-items incp-fontsize-x0090" style="text-align:center">
-    <span class="incp-item"><span class="fa fa-award"></span> Powered by <a href="https://www.sysinner.com" target="_blank">Sysinner PaaS Engine</a></span>
-    <span class="incp-item"><span class="fa fa-bug"></span> <a href="https://github.com/sysinner/incore/issues" target="_blank">Bug Report</a></span>
+    <span class="incp-item"><span class="fa fa-award"></span> Powered by <a href="https://www.sysinner.com" target="_blank">InnerStack</a></span>
+    <span class="incp-item"><span class="fa fa-bug"></span> <a href="https://github.com/sysinner/innerstack/issues" target="_blank">Bug Report</a></span>
     <span class="incp-item"><span class="fa fa-info-circle"></span> <a class="l4i-nav-item" href="#about" onclick="inCp.About()">About</a></span>
   </div>
 </div>

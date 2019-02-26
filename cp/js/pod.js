@@ -1433,6 +1433,10 @@ inCpPod.entryAutoRefresh = function() {
                 } else if (data.replicas[i].updated &&
                     data.replicas[i].started) {
 
+					if (!inCpPod.itemActive.operate.replicas[i].ports) {
+						inCpPod.itemActive.operate.replicas[i].ports = [];
+					}
+
                     if (data.replicas[i].ports &&
                         data.replicas[i].ports.length != inCpPod.itemActive.operate.replicas[i].ports.length) {
                         return inCpPod.EntryOverview();

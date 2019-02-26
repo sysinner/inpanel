@@ -28,7 +28,7 @@
     {[=v.spec.peer_wan_addr]}
   </td>  
   <td class="incp-ctn-hover" onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">
-    {[=v.spec.capacity.cpu/1e3]}<br/>{[=inCp.UtilResSizeFormat(v.spec.capacity.mem)]}
+    {[=v.spec.capacity.cpu/10]}<br/>{[=inCp.UtilResSizeFormat(v.spec.capacity.mem * inCp.ByteMB)]}
   </td>  
   <td class="incp-ctn-hover" onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">
     {[=v.spec.platform.kernel]}

@@ -27,6 +27,7 @@ var inCpApp = {
     instSet: {},
     instDeployActive: null,
     list_options: {},
+    listActives: null,
 }
 
 inCpApp.Index = function() {
@@ -106,6 +107,7 @@ inCpApp.InstListRefresh = function(options) {
                     rsj.items[i].operate.action = inCp.OpActionStop;
                 }
             }
+            inCpApp.listActives = rsj;
 
             l4iTemplate.Render({
                 dstid: "incp-appls",
@@ -677,16 +679,33 @@ inCpApp.InstDeployCommit = function(app_id, auto_start) {
                 return;
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successful deployed");
             inCpApp.instDeployActive = null;
-            l4iModal.Close();
 
-            //
-            l4i.UrlEventActive("pod/index");
-            inCpPod.EntryIndex(inCpAppInstDeployActivePod);
+            l4iModal.Close(function() {
+
+                var msg = l4i.T("Successfully deployed Application to Container (ID: %s)",
+                    inCpAppInstDeployActivePod);
+
+                l4iModal.Open({
+                    title: "Deployment",
+                    width: 600,
+                    height: 200,
+                    tplsrc: "<div class='alert alert-success'>" + msg + "</div>",
+                    buttons: [{
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    }, {
+                        onclick: 'inCpApp.InstPodEntryIndex("' + inCpAppInstDeployActivePod + '")',
+                        title: "Go to Container Details",
+                        style: "btn btn-primary",
+                    }],
+                });
+            });
         }
     });
 }
+
+
 
 
 inCpApp.InstNew = function(spec_id) {
@@ -866,7 +885,20 @@ inCpApp.InstSet = function(app_id, spec_id) {
         return alert("No AppID Found");
     }
 
-    inCpApp.inseSet = {};
+    inCpApp.instSet = {};
+    var spec_version = "";
+
+    if (inCpApp.listActives && inCpApp.listActives.items) {
+        for (var i in inCpApp.listActives.items) {
+            if (inCpApp.listActives.items[i].meta.id == app_id) {
+                inCpApp.instSet = inCpApp.listActives.items[i];
+                if (spec_id == inCpApp.instSet.spec.meta.id) {
+                    spec_version = inCpApp.instSet.spec.meta.version;
+                }
+                break;
+            }
+        }
+    }
 
     seajs.use(["ep"], function(EventProxy) {
 
@@ -904,8 +936,6 @@ inCpApp.InstSet = function(app_id, spec_id) {
             inCpApp.instSet = inst;
             inCpApp.instSet._op_actions = inCp.OpActions;
 
-
-
             if (spec_vs && spec_vs.items && spec_vs.items.length > 0) {
                 var hit = false;
                 for (var i in spec_vs.items) {
@@ -918,6 +948,7 @@ inCpApp.InstSet = function(app_id, spec_id) {
                     spec_vs.items.push({
                         version: inst.spec.meta.version,
                         created: inst.spec.meta.updated,
+                        comment: "",
                     });
                 }
                 inCpApp.instSet._spec_vs = spec_vs.items;
@@ -945,7 +976,7 @@ inCpApp.InstSet = function(app_id, spec_id) {
         });
 
         if (spec_id) {
-            inCp.ApiCmd("app-spec/version-list?id=" + spec_id, {
+            inCp.ApiCmd("app-spec/version-list?id=" + spec_id + "&version=" + spec_version, {
                 callback: ep.done("spec_vs"),
             });
         } else {
@@ -1011,8 +1042,13 @@ inCpApp.InstSetCommit = function(options) {
                 return l4i.InnerAlert(alert_id, 'error', msg);
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successful operation");
+            var msg = "Successful updated";
+            if (options.deploy) {
+                msg += ", Next starts the deployment ...";
+            }
 
+
+            l4i.InnerAlert(alert_id, 'ok', msg);
 
 
             window.setTimeout(function() {
@@ -1044,6 +1080,7 @@ inCpApp.InstPodInfo = function(pod_id) {
 
 inCpApp.InstPodEntryIndex = function(pod_id) {
     l4iModal.Close();
+    l4i.UrlEventActive("pod/index");
     inCpPod.EntryIndex(pod_id);
 }
 

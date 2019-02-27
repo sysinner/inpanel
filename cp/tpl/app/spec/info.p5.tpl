@@ -241,6 +241,16 @@
 {[}]}
 
 
+{[if (it.comment && it.comment.length > 0) {]}
+<tr>
+  <td>Comment</td>
+  <td>
+    {[=it.comment]}
+  </td>
+</tr>
+{[}]}
+
+
 </tbody>
 </table>
 

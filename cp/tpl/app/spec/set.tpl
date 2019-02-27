@@ -282,6 +282,15 @@
 
 
 <tr>
+  <td>Comment</td>
+  <td></td>
+  <td>
+    <input type="text" name="comment" class="form-control form-control-sm" value="{[=it.spec.comment]}">
+  </td>
+</tr>
+
+
+<tr>
   <td></td>
   <td></td>
   <td>

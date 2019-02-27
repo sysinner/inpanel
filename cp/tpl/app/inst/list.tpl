@@ -27,7 +27,7 @@
   <td>{[=v.meta.user]}</td>
   {[?]}
   <td class="incp-font-fixspace">
-    <a href="#spec.detail" onclick="inCpAppSpec.Info('{[=v.spec.meta.id]}', null, '{[=v.spec.meta.version]}')">{[=v.spec.meta.id]}/v{[=v.spec.meta.version]}</a>
+    <a href="#spec.detail" onclick="inCpAppSpec.Info('{[=v.spec.meta.id]}', null, '{[=v.spec.meta.version]}', '{[=v.meta.id]}')">{[=v.spec.meta.id]}/v{[=v.spec.meta.version]}</a>
   </td>
   <td>
     <a href="#pod.detail" onclick="inCpApp.InstPodInfo('{[=v.operate.pod_id]}')" class="incp-font-fixspace">{[=v.operate.pod_id]}</a>

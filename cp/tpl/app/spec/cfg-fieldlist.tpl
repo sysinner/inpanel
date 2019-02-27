@@ -3,15 +3,24 @@
 <div id="incp-appspec-cfg-fieldlist"></div>
 
 <script type="text/html" id="incp-appspec-cfg-fieldlist-tpl">
-<div class="l4i-form-group">
-  <label>Name</label>
-  <p><input name="name" class="form-control" value="{[=it.configurator.name]}"></p>
-</div>
 
-<div class="l4i-form-group">
-  <label>Fields</label>
-  <div>
-    <table class="table table-hover">
+<table class="incp-formtable">
+<tbody>
+
+<tr>
+  <td width="150px">Name</td>
+  <td width="30px"></td>
+  <td>
+    <input name="name" class="form-control" value="{[=it.configurator.name]}">
+  </td>
+</tr>
+
+
+<tr>
+  <td>Fields</td>
+  <td></td>
+  <td>
+    <table class="">
     <thead>
     <tr>
       <th>Name</th>
@@ -43,8 +52,11 @@
     {[~]}
     </tbody>
     </table>
-  </div>
-</div>
-</script>
+  </td>
+</tr>
 
+</tbody>
+</table>
+
+</script>
 

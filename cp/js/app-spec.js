@@ -262,7 +262,7 @@ inCpAppSpec.ListSelectorQueryCommit = function() {
     inCpAppSpec.listDataRefresh("incp-app-specls-selector", options);
 }
 
-inCpAppSpec.Info = function(id, spec, version) {
+inCpAppSpec.Info = function(id, spec, version, app_id) {
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", "roles", function(tpl, rsj, roles) {
@@ -438,6 +438,9 @@ inCpAppSpec.Info = function(id, spec, version) {
             if (version) {
                 url += "&version=" + version;
             }
+            if (app_id) {
+                url += "&app_id=" + app_id;
+            }
 
             inCp.ApiCmd(url, {
                 callback: ep.done("data"),
@@ -454,6 +457,78 @@ inCpAppSpec.Download = function(id) {
         return;
     }
     window.open(inCp.api + "app-spec/entry?id=" + id + "&download=true&fmt_json_indent=true", "Download");
+}
+
+inCpAppSpec.ItemDel = function(id) {
+
+    if (!id) {
+        return alert("No Item Found");
+    }
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", function(tpl) {
+
+            l4iModal.Open({
+                title: "AppSpec Delete",
+                tplsrc: tpl,
+                width: 800,
+                height: 200,
+                data: {
+                    "_id": id,
+                },
+                buttons: [{
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                }, {
+                    onclick: "inCpAppSpec.ItemDelCommit()",
+                    title: "Confirm to Destroy",
+                    style: "btn btn-danger",
+                }],
+            });
+        });
+
+        ep.fail(function(err) {
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
+        });
+
+        inCp.TplFetch("app/spec/item-del", {
+            callback: ep.done("tpl"),
+        });
+    })
+}
+
+inCpAppSpec.ItemDelCommit = function() {
+
+    var alert_id = "#incp-appspecitem-del-alert";
+    var form = $("#incp-appspecitem-del");
+    var id = form.find("input[name=app_spec_id]").val()
+
+    inCp.ApiCmd("app-spec/item-del?id=" + id, {
+        method: "GET",
+        callback: function(err, rsj) {
+
+            if (err || !rsj) {
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+            }
+
+            if (rsj.error) {
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+            }
+
+            if (!rsj.kind || rsj.kind != "AppSpec") {
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+            }
+
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+
+            $("#app-spec-" + id + "-row").remove();
+
+            window.setTimeout(function() {
+                l4iModal.Close();
+            }, 1000);
+        }
+    });
 }
 
 inCpAppSpec.Set = function(id) {
@@ -475,6 +550,10 @@ inCpAppSpec.Set = function(id) {
 
             if (!rsj.description) {
                 rsj.description = "";
+            }
+
+            if (!rsj.comment) {
+                rsj.comment = "";
             }
 
             if (!rsj.packages) {
@@ -1380,6 +1459,7 @@ inCpAppSpec.SetCommit = function() {
         inCpAppSpec.setActive.meta.id = form.find("input[name=meta_id]").val();
         inCpAppSpec.setActive.meta.name = form.find("input[name=meta_name]").val();
         inCpAppSpec.setActive.description = form.find("input[name=description]").val();
+        inCpAppSpec.setActive.comment = form.find("input[name=comment]").val();
 
         var dep_pv = 0;
         if (inCpAppSpec.setActive.packages && inCpAppSpec.setActive.packages.length > 0) {
@@ -1467,7 +1547,7 @@ inCpAppSpec.SetCommit = function() {
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'error', err);
     }
-    console.log(inCpAppSpec.setActive);
+    // console.log(inCpAppSpec.setActive);
 
     inCp.ApiCmd("app-spec/set", {
         method: "POST",

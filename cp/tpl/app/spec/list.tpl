@@ -18,7 +18,7 @@
 
 <script id="incp-app-specls-tpl" type="text/html">  
 {[~it.items :v]}
-<tr>
+<tr id="app-spec-{[=v.meta.id]}-row">
   <td class="incp-font-fixspace">
     <a href="#app/spec/info" onclick="inCpAppSpec.Info('{[=v.meta.id]}')">{[=v.meta.id]}</a> v{[=v.meta.version]}
   </td>
@@ -32,6 +32,11 @@
     </button>
   </td>
   <td align="right">
+    {[if (v.meta.user == inCp.UserSession.username || inCp.UserSession.username == "sysadmin") {]}
+    <button class="btn btn-sm btn-outline-primary" onclick="inCpAppSpec.ItemDel('{[=v.meta.id]}')">
+      <span class="fa fa-times-circle"></span>
+    </button>
+    {[}]}
     {[if (inCp.UserSession.username == "sysadmin") {]}
     <button class="btn btn-sm btn-outline-primary" onclick="inCpAppSpec.SetRaw('{[=v.meta.id]}')">
       <span class="fa fa-edit"></span>

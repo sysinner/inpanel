@@ -127,6 +127,10 @@ inOpsPod.SpecPlanSet = function(name) {
                     plan = l4i.Clone(inOpsPod.specPlanDef)
                 }
 
+                if (zones.error && zones.error.code == "AccessDenied") {
+                    return inCp.AlertAccessDenied();
+                }
+
                 if (!zones.kind || zones.kind != "HostZoneList") {
                     return alert("HostZoneList Not Found");
                 }

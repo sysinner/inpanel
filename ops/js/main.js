@@ -16,7 +16,7 @@ inOps.debug_uri = function() {
     return "?_=" + Math.random();
 }
 
-inOps.Boot = function() {
+inOps.Boot = function(login_first) {
     seajs.config({
         base: inOps.base,
         alias: {
@@ -40,6 +40,14 @@ inOps.Boot = function() {
             || (browser == 'Firefox' && version >= 31.0)
             || (browser == 'Safari' && version >= 5.0 && OS == 'Mac'))) {
             $('body').load(inOps.base + "~/cp/tpl/error/browser.tpl");
+            return;
+        }
+
+        if (login_first && login_first === true) {
+            var elem = $("#incp-well-status");
+            elem.removeClass("status_dark");
+            elem.addClass("info");
+            elem.html(inCp.well_signin_html);
             return;
         }
 
@@ -74,6 +82,10 @@ inOps.load_index = function() {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
             inOps.UserSession = session;
+
+            if (zones.error && zones.error.code == "AccessDenied") {
+                return inCp.AlertAccessDenied();
+            }
 
             if (!zones.items || zones.items.length == 0) {
                 zones.items = [];

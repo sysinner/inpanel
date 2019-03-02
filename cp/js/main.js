@@ -231,6 +231,17 @@ inCp.AlertUserLogin = function() {
     });
 }
 
+inCp.AlertAccessDenied = function() {
+    l4iAlert.Open("warn", "Access Denied", {
+        close: false,
+        buttons: [{
+            title: "Close",
+            onclick: "l4iAlert.Close()",
+            style: "btn-outline-secondary",
+        }],
+    });
+}
+
 inCp.ApiCmd = function(url, options) {
     var appcb = null;
     if (options.callback) {

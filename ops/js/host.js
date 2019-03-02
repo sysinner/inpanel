@@ -111,7 +111,10 @@ inOpsHost.Index = function() {
         });
 
         ep.fail(function(err) {
-            alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
+            if (err == "AccessDenied") {
+                return inCp.AlertAccessDenied();
+            }
+            alert("Error: " + err);
         });
 
         inOps.TplFetch("host/index", {
@@ -1117,6 +1120,9 @@ inOpsHost.ZoneRefresh = function(cb, force) {
             }
 
             if (zones.error) {
+                if (zones.error.code == "AccessDenied") {
+                    return cb(zones.error.code, null);
+                }
                 return cb(zones.error.message, null);
             }
 

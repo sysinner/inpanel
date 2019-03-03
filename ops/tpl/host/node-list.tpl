@@ -5,11 +5,10 @@
   <th>Name<br/>ID</th>
   <th>LAN<br/>WAN Address</th>
   <th>CPU<br/>Memory</th>
-  <th>Kernel</th>
   <th>Ports</th>
+  <th>Pods</th>
   <th>Action</th>
-  <th width="220px"></th>
-  <th width="30px"></th>
+  <th width="160px"></th>
 </tr>
 </thead>
 <tbody id="inops-host-nodes"></tbody>
@@ -28,15 +27,19 @@
     {[=v.spec.peer_wan_addr]}
   </td>  
   <td class="incp-ctn-hover" onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">
-    {[=v.spec.capacity.cpu/10]}<br/>{[=inCp.UtilResSizeFormat(v.spec.capacity.mem * inCp.ByteMB)]}
-  </td>  
-  <td class="incp-ctn-hover" onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">
-    {[=v.spec.platform.kernel]}
+    {[=(v.operate.cpu_used/10).toFixed(1)]} / {[=v.spec.capacity.cpu/10]}<br/>
+    {[=inCp.UtilResSizeFormat(v.operate.mem_used * inCp.ByteMB)]} / {[=inCp.UtilResSizeFormat(v.spec.capacity.mem * inCp.ByteMB)]}
   </td>  
   <td>
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsHost.NodeOpPortUsedInfo(null, null, '{[=v.meta.id]}')">
       {[=v.operate.port_used.length]}
+    </button>
+  </td>  
+  <td>
+    <button class="btn btn-sm btn-outline-primary"
+      onclick="inOpsHost.NodePodList(null, null, '{[=v.meta.id]}')">
+      {[=v.operate.box_num]}
     </button>
   </td>  
   <td class="incp-ctn-hover" onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">
@@ -45,15 +48,11 @@
   <td align="right">
     <button class="btn btn-sm btn-outline-primary" onclick="inOpsHost.Node(null, '{[=v.meta.id]}', 'stats')">
       <span class="fa fa-chart-line"></span>
-      Graphs
     </button>
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsHost.NodeSet(null, null, '{[=v.meta.id]}')">
       <span class="fa fa-cog"></span>
-      Setting
     </button>
-  </td>  
-  <td align="right">
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsHost.Node(null, '{[=v.meta.id]}')">
       <span class="fa fa-chevron-right"></span>

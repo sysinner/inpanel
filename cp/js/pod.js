@@ -94,23 +94,21 @@ inCpPod.list_nav_menus = [{
 
 inCpPod.list_options = {};
 
-inCpPod.List = function(tplid, options) {
-    if (!tplid || tplid.indexOf("/") >= 0) {
-        tplid = "incp-podls";
-    }
-    var alert_id = "#" + tplid + "-alert";
-    var uri = "?";
-    if (options) {
-        inCpPod.list_options = options;
-    } else {
-        options = inCpPod.list_options;
+inCpPod.ListRefresh = function(options) {
+    if (!options || !options.zone_id || !options.callback) {
+        return;
     }
 
-    if (inCp.Zones.items && inCp.Zones.items.length == 1) {
-        inCpPod.zoneActive = inCp.Zones.items[0].meta.id;
-        uri += "zone_id=" + inCpPod.zoneActive;
-    }
+    var uri = "?zone_id=" + options.zone_id;
+
     uri += "&fields=meta/id|name|user,operate/action|replicas,spec/ref/id|name,spec/zone|cell,apps/meta/name";
+
+    if (options.fields) {
+        for (var i in options.fields) {
+            uri += "," + options.fields[i];
+        }
+    }
+
     if (options.destroy_enable) {
         uri += "&destroy_enable=1";
     }
@@ -123,35 +121,29 @@ inCpPod.List = function(tplid, options) {
     if (options.exp_filter_app_spec_id) {
         uri += "&exp_filter_app_spec_id=" + options.exp_filter_app_spec_id;
     }
+    if (options.exp_filter_host_id) {
+        uri += "&exp_filter_host_id=" + options.exp_filter_host_id;
+    }
 
-    if (!options.ops_mode) {
-        inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus, "pod/instance");
-    } else {
+    if (options.exp_filter_meta_user) {
         uri += "&filter_meta_user=all";
     }
 
-    seajs.use(["ep"], function(EventProxy) {
+    inCp.ApiCmd("pod/list" + uri, {
+        callback: function(err, data) {
 
-        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
-
-            if (tpl) {
-                $("#work-content").html(tpl);
+            if (err) {
+                return options.callback(err, null);
             }
 
-            inCp.OpToolActive = null;
-            if (options.ops_mode) {
-                inCp.OpToolsClean();
-            } else {
-                inCp.OpToolsRefresh("#" + tplid + "-optools");
-            }
-
-            if (!data || data.error || !data.kind || data.kind != "PodList") {
-
-                if (data.error) {
-                    return l4i.InnerAlert(alert_id, 'error', data.error.message);
+            if (!data || !data.kind || data.kind != "PodList") {
+                if (!data.error) {
+                    data.error = {
+                        "code": "ItemNotFound",
+                        "message": "No Item Found Yet ...",
+                    };
                 }
-
-                return l4i.InnerAlert(alert_id, 'error', "Items Not Found");
+                return options.callback(null, data);
             }
 
             if (!data.items) {
@@ -187,16 +179,68 @@ inCpPod.List = function(tplid, options) {
                 data.items[i].operate._action = inCp.OpActionTitle(data.items[i].operate.action);
             }
 
+            data._actions = inCp.OpActions;
+            data._options = options;
+
+            options.callback(null, data);
+        }
+    });
+}
+
+inCpPod.List = function(tplid, options) {
+    if (!tplid || tplid.indexOf("/") >= 0) {
+        tplid = "incp-podls";
+    }
+    var alert_id = "#" + tplid + "-alert";
+    var uri = "?";
+    if (options) {
+        inCpPod.list_options = options;
+    } else {
+        options = inCpPod.list_options;
+    }
+
+    if (inCp.Zones.items && inCp.Zones.items.length == 1) {
+        inCpPod.zoneActive = inCp.Zones.items[0].meta.id;
+        options.zone_id = inCpPod.zoneActive;
+    }
+
+    if (!options.ops_mode) {
+        inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus, "pod/instance");
+    } else {
+        options.exp_filter_meta_user = true;
+    }
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
+
+            if (tpl) {
+                $("#work-content").html(tpl);
+            }
+
+            inCp.OpToolActive = null;
+            if (options.ops_mode) {
+                inCp.OpToolsClean();
+            } else {
+                inCp.OpToolsRefresh("#" + tplid + "-optools");
+            }
+
+            if (data.error) {
+                return l4i.InnerAlert(alert_id, 'error', data.error.message);
+            }
+
             if (inCpPod.zoneActive) {
                 data._zoneActive = inCpPod.zoneActive;
             }
 
             // $("#incp-podls-alert").hide();
+            if (!data.items) {
+                data.items = [];
+            }
             if (data.items.length < 1) {
                 return l4i.InnerAlert(alert_id, 'alert-info', "No Item Found Yet ...");
             }
-            data._actions = inCp.OpActions;
-            data._options = options;
+
             inCpPod.list = data.items;
 
             l4iTemplate.Render({
@@ -227,9 +271,8 @@ inCpPod.List = function(tplid, options) {
             ep.emit("tpl", null);
         }
 
-        inCp.ApiCmd("pod/list" + uri, {
-            callback: ep.done("data"),
-        });
+        options.callback = ep.done("data");
+        inCpPod.ListRefresh(options);
     });
 }
 
@@ -804,6 +847,7 @@ inCpPod.Info = function(pod_id, options) {
             }
 
             l4iModal.Open({
+                id: "incp-pod-item-info",
                 title: "Pod Instance Information",
                 tplsrc: tpl,
                 width: 1100,
@@ -1401,7 +1445,7 @@ inCpPod.entryAutoRefresh = function() {
             }
 
             if (data.replicas.length != inCpPod.itemActive.operate.replicas.length) {
-                return inCpPod.EntryOverview();
+                return setTimeout(inCpPod.EntryOverview, 3000);
             }
 
             for (var i in data.replicas) {
@@ -1433,13 +1477,13 @@ inCpPod.entryAutoRefresh = function() {
                 } else if (data.replicas[i].updated &&
                     data.replicas[i].started) {
 
-					if (!inCpPod.itemActive.operate.replicas[i].ports) {
-						inCpPod.itemActive.operate.replicas[i].ports = [];
-					}
+                    if (!inCpPod.itemActive.operate.replicas[i].ports) {
+                        inCpPod.itemActive.operate.replicas[i].ports = [];
+                    }
 
                     if (data.replicas[i].ports &&
                         data.replicas[i].ports.length != inCpPod.itemActive.operate.replicas[i].ports.length) {
-                        return inCpPod.EntryOverview();
+                        return setTimeout(inCpPod.EntryOverview, 3000);
                     }
 
                     var elrep = document.getElementById("incp-podentry-box-uptime-value-" + i);
@@ -1959,7 +2003,6 @@ inCpPod.EntryAccessSetCommit = function() {
             },
         },
     };
-    // console.log(set);
 
     $(alert_id).hide();
 
@@ -2099,9 +2142,9 @@ inCpPod.SpecSet = function(pod_id) {
                 id: "podset-planset",
                 tplsrc: tpl,
                 title: "Setting Pod Spec",
-                width: 1100,
+                width: 1200,
                 min_width: 900,
-                height: "max",
+                height: 900,
                 callback: function() {
                     l4iTemplate.Render({
                         dstid: "incp-podnew-form",
@@ -2208,7 +2251,7 @@ inCpPod.SpecSetCommit = function() {
                 } else {
                     inCpPod.List(null, null);
                 }
-            }, 1000);
+            }, 1500);
         }
     });
 }

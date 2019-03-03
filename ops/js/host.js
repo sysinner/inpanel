@@ -278,6 +278,76 @@ inOpsHost.NodeOpPortUsedInfo = function(z, c, node_id) {
     }
 }
 
+inOpsHost.NodePodList = function(z, c, node_id) {
+
+    var node = null;
+
+    for (var i in inOpsHost.nodes.items) {
+        if (node_id != inOpsHost.nodes.items[i].meta.id) {
+            continue;
+        }
+        node = inOpsHost.nodes.items[i];
+        break;
+    }
+    if (!node) {
+        return;
+    }
+
+    var alert_id = "#inops-host-podls-selector-alert";
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
+
+            console.log(data);
+            l4iModal.Open({
+                id: "inops-host-pod-list",
+                title: "Pod List",
+                tplsrc: tpl,
+                width: 1200,
+                height: 800,
+                callback: function() {
+                    if (data.error) {
+                        return l4i.InnerAlert(alert_id, 'error', data.error.message);
+                    }
+                    if (data.items.length < 1) {
+                        return l4i.InnerAlert(alert_id, 'alert-info', "No Item Found Yet ...");
+                    }
+                    l4iTemplate.Render({
+                        dstid: "inops-host-podls-selector",
+                        tplid: "inops-host-podls-selector-tpl",
+                        data: data,
+                    });
+                },
+                buttons: [{
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                }]
+            });
+
+        });
+
+        ep.fail(function(err) {
+            //
+        });
+
+        inCpPod.ListRefresh({
+            zone_id: node.operate.zone_id,
+            exp_filter_host_id: node.meta.id,
+            callback: ep.done("data"),
+            fields: ["spec/volumes", "spec/box"],
+        });
+
+        inOps.TplFetch("host/node-pod-selector", {
+            callback: ep.done("tpl"),
+        });
+    });
+}
+
+inOpsHost.NodePodInfo = function(pod_id) {
+    inCpPod.Info(pod_id);
+}
+
 inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
     if (!zoneid) {
         zoneid = l4iStorage.Get("inops_cluster_zone_id");
@@ -655,6 +725,9 @@ inOpsHost.NodeOverview = function() {
 
             if (!node.operate.port_used) {
                 node.operate.port_used = [];
+            }
+            if (!node.operate.box_num) {
+                node.operate.box_num = 0;
             }
 
             if (!node.status.volumes) {
@@ -1240,6 +1313,9 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
                 }
                 if (!nodes.items[i].operate.port_used) {
                     nodes.items[i].operate.port_used = [];
+                }
+                if (!nodes.items[i].operate.box_num) {
+                    nodes.items[i].operate.box_num = 0;
                 }
             }
 

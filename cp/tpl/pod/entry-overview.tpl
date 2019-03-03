@@ -47,7 +47,7 @@
 {[?]}
 
 
-{[? it.replicas]}
+{[? it.replicas && it.replicas.length > 0]}
 {[~it.replicas :rep]}
 <div class="incp-card-frame-row">
 <div class="incp-card-frame">
@@ -176,7 +176,7 @@
 </div>
 <!-- /frame-inline -->
 
-{[?it.apps]}
+{[? it.apps && it.apps.length > 0]}
 <div class="incp-card-frame-row">
 <div class="incp-card-frame">
 <div class="incp-div-light">
@@ -213,7 +213,7 @@
 {[?]}
 
 
-{[?it.operate.replicas]}
+{[? it.operate.replicas && it.operate.replicas.length > 0]}
 <div class="incp-card-frame-row">
 <div class="incp-card-frame">
 <div class="incp-div-light">

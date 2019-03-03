@@ -43,7 +43,7 @@
       Save
     </button>
 
-    <button type="button" class="btn" onclick="inCpPod.List()" style="margin-left:10px">
+    <button type="button" class="btn btn-default" onclick="inCpPod.List()" style="margin-left:10px">
       Cancel
     </button>
   </td>

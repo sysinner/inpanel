@@ -161,6 +161,11 @@ body {
   width: 100%;
 }
 
+.incp-formtable table.valign-middle td,
+.incp-formtable table.valign-middle th {
+  vertical-align: middle !important;
+}
+
 .incp-formtable-row-line,
 .incp-formtable-tr-line {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
@@ -178,6 +183,7 @@ body {
   border-bottom: 0;
 }
 
+
 .incp-formtable>tbody>tr>td {
   padding: 10px 20px 10px 0;
   vertical-align: top;
@@ -193,6 +199,11 @@ body {
 
 .incp-formtable>tbody>tr>td:first-child {
   font-weight: bold;
+}
+
+.incp-formtable tbody>tr.hover:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .incp-formtable table td,

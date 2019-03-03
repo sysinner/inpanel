@@ -4,57 +4,67 @@
   font-size: 12px;
   line-height: 100%;
 }
+#inops-podspec-planset button.icon-x20 {
+  padding: 0px;
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
+  text-align: center;
+}
+#inops-podspec-planset th {
+  font-weight: normal;
+}
+#inops-podspec-planset .card-body {
+  padding: 0 10px;
+}
 </style>
+
 <div id="inops-podspec-planset-alert"></div>
+<div id="inops-podspec-planset" class="incp-div-light" style="box-sizing: border-box;">loading</div>
 
-<div id="inops-podspec-planset" class="incp-div-light" style="padding:10px;margin-bottom:20px;">
-  <div id="inops-podspec-planset-info"></div>
-  <div id="inops-podspec-planset-zone"></div>
-  <div id="inops-podspec-planset-rescompute"></div>
-  <div id="inops-podspec-planset-image"></div>
-  <div id="inops-podspec-planset-resvolume"></div>
-  <div>
-    <button type="button" class="btn btn-primary" onclick="inOpsPod.SpecPlanSetCommit()">
-      Save
-    </button>
-    <button type="button" class="btn" onclick="inOpsPod.SpecPlanList()" style="margin-left:10px">
-      Cancel
-    </button>
-  </div>
-</div>
+<script type="text/html" id="inops-podspec-planset-tpl">
 
-<script type="text/html" id="inops-podspec-planset-info-tpl">
+<div class="card" id="inops-podspec-planset">
+<div class="card-header">Plan Setting</div>
+<div class="card-body" id="inops-podspec-planset-info">
+
+<table class="incp-formtable">
+<tbody>
 
 {[if (!it.meta.id || it.meta.id.length < 1) {]}
-<div class="l4i-form-group">
-  <label class="">ID</label>
-  <div class="">
+<tr>
+  <td>ID</td>
+  <td></td>
+  <td>
     <input type="text" class="form-control" name="plan_meta_id" value="">
-  </div>
-</div>
+  </td>
+</tr>
 {[} else {]}
 <input type="hidden" name="plan_meta_id" value="{[=it.meta.id]}">
 {[}]}
 
-<div class="l4i-form-group">
-  <label class="">Name</label>
-  <div class="">
+<tr>
+  <td width="200px">Name</td>
+  <td width="30px"></td>
+  <td>
     <input type="text" class="form-control" name="plan_meta_name" value="{[=it.meta.name]}">
-  </div>
-</div>
+  </td>
+</tr>
 
-<div class="l4i-form-group">
-  <label class="">Labels</label>
-  <button class="btn btn-default btn-sm" onclick="inOpsPod.SpecPlanSetLabelAppend()">
-    <span class="fa fa-plus"></span> &nbsp; Add new Label
-  </button>
-  <div class="">
-    <table class="table table-hover">
+<tr>
+  <td>Labels</td>
+  <td>
+    <button class="btn btn-default icon-x20" onclick="inOpsPod.SpecPlanSetLabelAppend()">
+      <span class="fa fa-plus"></span>
+    </button>
+  </td>
+  <td>
+    <table>
       <thead>
         <tr>
-          <th width="30%">Name (ex. namespace/module/name, ...)</th>
+          <th width="50%">Name (ex. namespace/module/name, ...)</th>
           <th>Value</th>
-          <th width="100px"></th>
+          <th width="30px"></th>
         <tr>
       </thead>
       <tbody id="inops-podspec-planset-labels">
@@ -67,29 +77,31 @@
             <input name="label_value" type="text" value="{[=vl.value]}" class="form-control input-sm">
           </td>
           <td align="right">
-            <button class="btn btn-sm btn-default" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
-              Delete
+            <button class="btn btn-default icon-x20" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
+              <i class="fa fa-times"></i>
             </button>
           </td>
         </tr>
         {[~]}
       </tbody>
     </table>
-  </div>
-</div>
+  </td>
+</tr>
 
-<div class="l4i-form-group">
-  <label class="">Annotations</label>
-  <button class="btn btn-default btn-sm" onclick="inOpsPod.SpecPlanSetAnnotationAppend()">
-    <span class="fa fa-plus"></span> &nbsp; Add new Annotation
-  </button>
-  <div class="">
-    <table class="table table-hover">
+<tr>
+  <td>Annotations</td>
+  <td>
+    <button class="btn btn-default icon-x20" onclick="inOpsPod.SpecPlanSetAnnotationAppend()">
+      <span class="fa fa-plus"></span>
+    </button>
+  </td>
+  <td>
+    <table>
       <thead>
         <tr>
-          <th width="30%">Name (ex. namespace/module/name, ...)</th>
+          <th width="50%">Name (ex. namespace/module/name, ...)</th>
           <th>Value</th>
-          <th width="100px"></th>
+          <th width="30px"></th>
         <tr>
       </thead>
       <tbody id="inops-podspec-planset-annotations">
@@ -102,36 +114,119 @@
             <input name="annotation_value" type="text" value="{[=vl.value]}" class="form-control input-sm">
           </td>
           <td align="right">
-            <button class="btn btn-sm btn-default" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
-              Delete
+            <button class="btn btn-default icon-x20" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
+              <i class="fa fa-times"></i>
             </button>
           </td>
         </tr>
         {[~]}
       </tbody>
     </table>
-  </div>
-</div>
+  </td>
+</tr>
 
 
-<div class="l4i-form-group">
-  <label class="">Status</label>
-  <div class="">
+<tr>
+  <td>Status</td>
+  <td></td>
+  <td>
   {[~it._statuses :v]}
     <span class="incp-form-checkbox checkbox-inline">
       <input type="radio" name="plan_status" value="{[=v.name]}" {[ if (v._selected) { ]}checked="checked"{[ } ]}> {[=v.value]}
     </span>
   {[~]}
-  </div>
-</div>
+  </td>
+</tr>
 
-<div class="l4i-form-group">
-  <label class="">Sort Order (0 ~ 15)</label>
-  <div class="">
+<tr>
+  <td>Sort Order (0 ~ 15)</td>
+  <td></td>
+  <td>
     <input type="text" class="form-control" name="plan_sort_order" value="{[=it.sort_order]}">
-  </div>
-</div>
+  </td>
+</tr>
 
+<tr>
+  <td>Zone / Cluster</td>
+  <td></td>
+  <td class="incp-form-box-selector">
+    {[~it._zones.items :v]}
+    {[~v.cells :vc]}
+    <div class="incp-form-box-selector-item {[if (vc._selected) { ]}selected{[ } ]}" 
+      id="inops-podspec-planset-zone-id-{[=v.meta.id]}-{[=vc.meta.id]}"
+      onclick="inOpsPod.SpecPlanSetClusterChange('{[=v.meta.id]}', '{[=vc.meta.id]}')">
+      <div>{[=v.meta.id]}</div>
+      <div>{[=vc.meta.id]}</div>
+    </div>
+    {[~]}
+    {[~]}
+  </td>
+</tr>
+
+<tr>
+  <td>CPU cores and Memory</td>
+  <td></td>
+  <td class="incp-form-box-selector">
+    {[~it._rescomputes.items :v]}
+    <div class="incp-font-fixspace incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
+      id="inops-podspec-planset-res-compute-id-{[=v.meta.id]}"
+      onclick="inOpsPod.SpecPlanSetResComputeChange('{[=v.meta.id]}')">
+      <div>CPU {[=(v.cpu_limit/10).toFixed(1)]}</div>
+      <div>RAM {[=inCp.UtilResSizeFormat(v.mem_limit * inCp.ByteMB)]}</div>
+    </div>
+    {[~]}
+  </td>
+</tr>
+
+
+<tr>
+  <td>Image</td>
+  <td></td>
+  <td class="incp-form-box-selector">
+    {[~it._images.items :v]}
+    <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
+      id="inops-podspec-planset-box-image-id-{[=l4iString.CryptoMd5(v.meta.id)]}"
+      onclick="inOpsPod.SpecPlanSetBoxImageChange('{[=v.meta.id]}')">
+      <div>{[=v.meta.id]}</div>
+      <div>{[=v.driver]} / {[=v.os_dist]}</div>
+    </div>
+    {[~]}
+  </td>
+</tr>
+
+<tr>
+  <td>System Storage</td>
+  <td></td>
+  <td class="incp-form-box-selector">
+    {[~it._resvolumes.items :v]}
+    <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
+      id="inops-podspec-planset-res-volume-id-{[=v.meta.id]}"
+      onclick="inOpsPod.SpecPlanSetResVolumeChange('{[=v.meta.id]}')">
+      <div>Default: {[=v.default]} GB</div>
+      <div>Range: {[=v.request]} ~ {[=v.limit]} GB</div>
+    </div>
+    {[~]}
+  </td>
+</tr>
+
+<tr>
+  <td></td>
+  <td></td>
+  <td>
+    <button type="button" class="btn btn-primary" onclick="inOpsPod.SpecPlanSetCommit()">
+      Save
+    </button>
+    <button type="button" class="btn" onclick="inOpsPod.SpecPlanList()" style="margin-left:10px">
+      Cancel
+    </button>
+  </td>
+</tr>
+
+</tbody>
+</table>
+
+</div>
+</div>
 </script>
 
 <script type="text/html" id="inops-podspec-planset-label-tpl">
@@ -143,8 +238,8 @@
     <input name="label_value" type="text" value="" class="form-control input-sm" placeholder="Value">
   </td>
   <td align="right">
-    <button class="btn btn-sm btn-default" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
-      Delete
+    <button class="btn btn-default icon-x20" onclick="inOpsPod.SpecPlanSetLabelDel(this)">
+      <i class="fa fa-times"></i>
     </button>
   </td>
 </tr>
@@ -159,78 +254,10 @@
     <input name="annotation_value" type="text" value="" class="form-control input-sm" placeholder="Value">
   </td>
   <td align="right">
-    <button class="btn btn-sm btn-default" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
-      Delete
+    <button class="btn btn-default icon-x20" onclick="inOpsPod.SpecPlanSetAnnotationDel(this)">
+      <i class="fa fa-times"></i>
     </button>
   </td>
 </tr>
-</script>
-
-<script type="text/html" id="inops-podspec-planset-zone-tpl">
-<div class="l4i-form-group">
-  <label>Zone / Cluster</label>
-  <div class="incp-form-box-selector">
-    {[~it.items :v]}
-    {[~v.cells :vc]}
-    <div class="incp-form-box-selector-item {[if (vc._selected) { ]}selected{[ } ]}" 
-      id="inops-podspec-planset-zone-id-{[=v.meta.id]}-{[=vc.meta.id]}"
-      onclick="inOpsPod.SpecPlanSetClusterChange('{[=v.meta.id]}', '{[=vc.meta.id]}')">
-      <div>{[=v.meta.id]}</div>
-      <div>{[=vc.meta.id]}</div>
-    </div>
-    {[~]}
-    {[~]}
-  </div>
-</div>
-</script>
-
-
-<script type="text/html" id="inops-podspec-planset-rescompute-tpl">
-<div class="l4i-form-group">
-  <label>CPU cores and Memory</label>
-  <div class="incp-form-box-selector">
-    {[~it.items :v]}
-    <div class="incp-font-fixspace incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
-      id="inops-podspec-planset-res-compute-id-{[=v.meta.id]}"
-      onclick="inOpsPod.SpecPlanSetResComputeChange('{[=v.meta.id]}')">
-      <div>CPU {[=(v.cpu_limit/10).toFixed(1)]}</div>
-      <div>RAM {[=inCp.UtilResSizeFormat(v.mem_limit * inCp.ByteMB)]}</div>
-    </div>
-    {[~]}
-  </div>
-</div>
-</script>
-
-
-<script type="text/html" id="inops-podspec-planset-image-tpl">
-<div class="l4i-form-group">
-  <label>Image</label>
-  <div class="incp-form-box-selector">
-    {[~it.items :v]}
-    <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
-      id="inops-podspec-planset-box-image-id-{[=l4iString.CryptoMd5(v.meta.id)]}"
-      onclick="inOpsPod.SpecPlanSetBoxImageChange('{[=v.meta.id]}')">
-      <div>{[=v.meta.id]}</div>
-      <div>{[=v.driver]} / {[=v.os_dist]}</div>
-    </div>
-    {[~]}
-  </div>
-</div>
-</script>
-
-<script type="text/html" id="inops-podspec-planset-resvolume-tpl">
-<div class="l4i-form-group">
-  <label>System Storage</label>
-  <div class="incp-form-box-selector">
-    {[~it.items :v]}
-    <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
-      id="inops-podspec-planset-res-volume-id-{[=v.meta.id]}"
-      onclick="inOpsPod.SpecPlanSetResVolumeChange('{[=v.meta.id]}')">
-      <div>Default: {[=v.default]} GB</div>
-      <div>Range: {[=v.request]} ~ {[=v.limit]} GB</div>
-    </div>
-    {[~]}
-  </div>
-</div>
 </script>
 

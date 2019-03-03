@@ -223,33 +223,9 @@ inOpsPod.SpecPlanSet = function(name) {
                 inOpsPod.planset_active._resvolumes = resvolumes;
 
                 l4iTemplate.Render({
-                    dstid: "inops-podspec-planset-info",
-                    tplid: "inops-podspec-planset-info-tpl",
+                    dstid: "inops-podspec-planset",
+                    tplid: "inops-podspec-planset-tpl",
                     data: plan,
-                });
-
-                l4iTemplate.Render({
-                    dstid: "inops-podspec-planset-zone",
-                    tplid: "inops-podspec-planset-zone-tpl",
-                    data: zones,
-                });
-
-                l4iTemplate.Render({
-                    dstid: "inops-podspec-planset-rescompute",
-                    tplid: "inops-podspec-planset-rescompute-tpl",
-                    data: rescomputes,
-                });
-
-                l4iTemplate.Render({
-                    dstid: "inops-podspec-planset-image",
-                    tplid: "inops-podspec-planset-image-tpl",
-                    data: images,
-                });
-
-                l4iTemplate.Render({
-                    dstid: "inops-podspec-planset-resvolume",
-                    tplid: "inops-podspec-planset-resvolume-tpl",
-                    data: resvolumes,
                 });
             });
 

@@ -301,9 +301,13 @@
       Cancel
     </button>
   </td>
+</tr>
+
 </tbody>
 </table>
 
+</div>
+</div>
 </script>
 
 

@@ -148,7 +148,7 @@ inCp.load_index = function() {
             //
             inCp.syscfg.zone_id = syscfg.zone_id;
             if (syscfg.zone_master) {
-                inCp.syscfg = syscfg;
+                inCp.syscfg.zone_master = syscfg.zone_master;
             }
 
             $("#body-content").html(tpl);
@@ -251,7 +251,7 @@ inCp.ApiCmd = function(url, options) {
         for (var i in inCp.Zones.items) {
             if (inCp.Zones.items[i].meta.id == options.api_zone_id &&
                 inCp.Zones.items[i].wan_api && inCp.Zones.items[i].wan_api.length > 10) {
-                url = "/zonebound/" + options.api_zone_id + "/" + url;
+                url = "zonebound/" + options.api_zone_id + "/" + url;
                 break;
             }
         }
@@ -411,7 +411,6 @@ inCp.OpToolsRefresh = function(div_target, cb) {
     if (typeof div_target == "string") {
 
         var opt = $("#comp-content").find(div_target);
-        // console.log(opt.html());
         if (opt) {
             // $("#incp-module-navbar-optools").html(opt.html());
             l4iTemplate.Render({

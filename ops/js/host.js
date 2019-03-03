@@ -80,6 +80,8 @@ var inOpsHost = {
         name: "Hosts",
         uri: "node/list",
     }],
+    PriorityDefault: 2,
+    PriorityLength: 6,
 }
 
 inOpsHost.ActionTitle = function(action) {
@@ -231,6 +233,9 @@ inOpsHost.NodeList = function(zoneid, cellid) {
                 if (!data.items[i].meta.name || data.items[i].meta.name.length < 1) {
                     data.items[i].meta.name = "localhost";
                 }
+                if (!data.items[i].operate.pr) {
+                    data.items[i].operate.pr = inOpsHost.PriorityDefault;
+                }
             }
 
             l4iTemplate.Render({
@@ -299,7 +304,6 @@ inOpsHost.NodePodList = function(z, c, node_id) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
-            console.log(data);
             l4iModal.Open({
                 id: "inops-host-pod-list",
                 title: "Pod List",
@@ -334,6 +338,7 @@ inOpsHost.NodePodList = function(z, c, node_id) {
         inCpPod.ListRefresh({
             zone_id: node.operate.zone_id,
             exp_filter_host_id: node.meta.id,
+            exp_filter_meta_user_all: true,
             callback: ep.done("data"),
             fields: ["spec/volumes", "spec/box"],
         });
@@ -384,12 +389,28 @@ inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
             if (!rsj.meta.name) {
                 rsj.meta.name = "";
             }
+            if (!rsj.operate.pr) {
+                rsj.operate.pr = inOpsHost.PriorityDefault;
+            }
+            rsj._priorities = [];
+            for (var i = 1; i < (inOpsHost.PriorityLength - 1); i++) {
+                var v = "";
+                if (i == 1) {
+                    v = " First allocation";
+                } else if (i + 2 == inOpsHost.PriorityLength) {
+                    v = " Final allocation";
+                }
+                rsj._priorities.push({
+                    pr: i,
+                    name: i + v,
+                });
+            }
 
             l4iModal.Open({
                 title: "Host Setting",
                 tplsrc: tpl,
                 data: rsj,
-                width: 700,
+                width: 900,
                 height: 350,
                 buttons: [{
                     onclick: "l4iModal.Close()",
@@ -412,7 +433,8 @@ inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
         });
 
         // data
-        inOps.ApiSysCmd("host/node-entry?zoneid=" + zoneid + "&cellid=" + cellid + "&nodeid=" + nodeid, {
+        inOps.ApiCmd("host/node-entry?zoneid=" + zoneid + "&cellid=" + cellid + "&nodeid=" + nodeid, {
+            api_zone_id: zoneid,
             callback: ep.done("data"),
         });
     });
@@ -431,12 +453,14 @@ inOpsHost.NodeSetCommit = function() {
             action: parseInt(form.find("input[name=operate_action]:checked").val()),
             zone_id: form.find("input[name=operate_zone_id]").val(),
             cell_id: form.find("input[name=operate_cell_id]").val(),
+            pr: parseInt(form.find("select[name=operate_pr]").val()),
         },
         spec: {
         },
     };
 
-    inOps.ApiSysCmd("host/node-set", {
+    inOps.ApiCmd("host/node-set", {
+        api_zone_id: req.operate.zone_id,
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, rsj) {
@@ -537,7 +561,8 @@ inOpsHost.NodeSecretKeySetCommit = function() {
         secret_key: form.find("input[name=secret_key]").val(),
     };
 
-    inOps.ApiSysCmd("host/node-secret-key-set", {
+    inOps.ApiCmd("host/node-secret-key-set", {
+        api_zone_id: req.zone_id,
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, rsj) {
@@ -584,6 +609,21 @@ inOpsHost.NodeNew = function(zoneid, cellid) {
     inOps.TplFetch("host/node-new", {
         callback: function(err, tpl) {
 
+            var priorities = [];
+            for (var i = 1; i < (inOpsHost.PriorityLength - 1); i++) {
+                var v = "";
+                if (i == 1) {
+                    v = " First allocation";
+                } else if (i + 2 == inOpsHost.PriorityLength) {
+                    v = " Final allocation";
+                }
+                priorities.push({
+                    pr: i,
+                    name: i + v,
+                });
+            }
+
+
             l4iModal.Open({
                 title: "New Host",
                 tplsrc: tpl,
@@ -594,9 +634,11 @@ inOpsHost.NodeNew = function(zoneid, cellid) {
                         zone_id: zoneid,
                         cell_id: cellid,
                         action: 1,
+                        pr: inOpsHost.PriorityDefault,
                     },
                     _phase: "Running",
                     _actions: inOpsHost.actions,
+                    _priorities: priorities,
                 },
                 buttons: [{
                     onclick: "l4iModal.Close()",
@@ -624,7 +666,8 @@ inOpsHost.NodeNewCommit = function() {
         secret_key: form.find("input[name=secret_key]").val(),
     };
 
-    inOps.ApiSysCmd("host/node-new", {
+    inOps.ApiCmd("host/node-new", {
+        api_zone_id: req.zone_id,
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, rsj) {
@@ -776,6 +819,7 @@ inOpsHost.NodeOverview = function() {
         });
 
         inOps.ApiCmd("host/node-entry?zoneid=" + inOpsHost.node_active_zone_id + "&nodeid=" + inOpsHost.node_active_id, {
+            api_zone_id: inOpsHost.node_active_zone_id,
             callback: ep.done("node"),
         });
 
@@ -1160,10 +1204,12 @@ inOpsHost.NodeStats = function(time_past) {
         });
 
         inOps.ApiCmd("host/node-entry?zoneid=" + zoneid + "&nodeid=" + inOpsHost.node_active_id, {
+            api_zone_id: zoneid,
             callback: ep.done("node"),
         });
 
         inOps.ApiCmd("host/node-stats-feed?" + stats_url, {
+            api_zone_id: zoneid,
             callback: ep.done("stats"),
         });
 
@@ -1181,7 +1227,7 @@ inOpsHost.ZoneRefresh = function(cb, force) {
         return cb(null, inOpsHost.zones);
     }
 
-    inOps.ApiSysCmd("host/zone-list?fields=cells", {
+    inOps.ApiCmd("host/zone-list?fields=cells", {
         callback: function(err, zones) {
 
             if (err) {
@@ -1230,7 +1276,8 @@ inOpsHost.ZoneRefresh = function(cb, force) {
 }
 
 inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
-    inOps.ApiSysCmd("host/node-list?zoneid=" + zoneid + "&cellid=" + cellid, {
+    inOps.ApiCmd("host/node-list?zoneid=" + zoneid + "&cellid=" + cellid, {
+        api_zone_id: zoneid,
         callback: function(err, nodes) {
 
             if (err) {
@@ -1316,6 +1363,9 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
                 }
                 if (!nodes.items[i].operate.box_num) {
                     nodes.items[i].operate.box_num = 0;
+                }
+                if (!nodes.items[i].operate.pr) {
+                    nodes.items[i].operate.pr = inOpsHost.PriorityDefault;
                 }
             }
 
@@ -1456,6 +1506,7 @@ inOpsHost.CellSet = function(zoneid, cellid) {
                 title: "Cell Setting",
                 tplsrc: tpl,
                 data: cell,
+                width: 900,
                 height: 400,
                 buttons: [{
                     onclick: "l4iModal.Close()",
@@ -1481,7 +1532,7 @@ inOpsHost.CellSet = function(zoneid, cellid) {
         if (!cellid) {
             ep.emit("cell", null);
         } else {
-            inOps.ApiSysCmd("host/cell-entry?zoneid=" + zoneid + "&cellid=" + cellid, {
+            inOps.ApiCmd("host/cell-entry?zoneid=" + zoneid + "&cellid=" + cellid, {
                 callback: ep.done("cell"),
             });
         }
@@ -1501,7 +1552,7 @@ inOpsHost.CellSetCommit = function() {
         description: form.find("input[name=description]").val(),
     };
 
-    inOps.ApiSysCmd("host/cell-set", {
+    inOps.ApiCmd("host/cell-set", {
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, cell) {
@@ -1673,7 +1724,7 @@ inOpsHost.ZoneList = function() {
     //         callback: ep.done("tpl"),
     //     });
 
-//     inOps.ApiSysCmd("host/zone-list", {
+//     inOps.ApiCmd("host/zone-list", {
 //         callback: ep.done("data"),
 //     });
 // });
@@ -1719,8 +1770,8 @@ inOpsHost.ZoneSet = function(zoneid) {
                 title: title,
                 tplsrc: tpl,
                 data: rsj,
-                width: 950,
-                height: 650,
+                width: 900,
+                height: 600,
                 buttons: [{
                     onclick: "l4iModal.Close()",
                     title: "Close",
@@ -1730,9 +1781,11 @@ inOpsHost.ZoneSet = function(zoneid) {
                     style: "btn btn-primary",
                 }],
                 callback: function() {
-                    // console.log(rsj.lan_addrs.length);
                     if (rsj.lan_addrs.length < 1) {
                         inOpsHost.ZoneLanAddressAppend();
+                    }
+                    if (rsj.wan_addrs.length < 1) {
+                        inOpsHost.ZoneWanAddressAppend();
                     }
                 },
             });
@@ -1751,7 +1804,7 @@ inOpsHost.ZoneSet = function(zoneid) {
         if (!zoneid) {
             ep.emit("data", null);
         } else {
-            inOps.ApiSysCmd("host/zone-entry?id=" + zoneid, {
+            inOps.ApiCmd("host/zone-entry?id=" + zoneid, {
                 callback: ep.done("data"),
             });
         }
@@ -1829,7 +1882,7 @@ inOpsHost.ZoneSetCommit = function() {
         return l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', err);
     }
 
-    inOps.ApiSysCmd("host/zone-set", {
+    inOps.ApiCmd("host/zone-set", {
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, rsj) {

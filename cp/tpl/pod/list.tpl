@@ -7,7 +7,7 @@
   <thead>
     <tr>
       <th>Instances</th>
-      {[if (!it._zone_active) {]}
+      {[if (it._multi_zone_enable || it._multi_cell_enable) {]}
       <th>Location</th>
       {[}]}
       {[? it._options.ops_mode]}
@@ -27,8 +27,15 @@
       <span><strong>{[=v.meta.name]}</strong></span>
       <div>{[=v.meta.id]}</div>
     </td>
-    {[if (!it._zone_active) {]}
-    <td class="incp-ctn-hover">{[=v.spec.zone]} / {[=v.spec.cell]}</td>
+    {[if (it._multi_zone_enable || it._multi_cell_enable) {]}
+    <td class="incp-ctn-hover">
+      {[if (it._multi_zone_enable) {]}
+	    {[=v.spec.zone]} / 
+	  {[}]}
+      {[if (it._multi_cell_enable) {]}
+	    {[=v.spec.cell]}
+	  {[}]}
+	</td>
     {[}]}
     {[? it._options.ops_mode]}
     <td class="incp-ctn-hover">{[=v.meta.user]}</td>

@@ -3,11 +3,11 @@
 <div class="incp-div-light">
 <table class="table table-hover valign-middle">
   <thead><tr>
-    <th>ID</th>
+    <th>Cell ID</th>
     <th>Description</th>
-    <th>Hosts</th>
     <th>Action</th>
     <th>Updated</th>
+    <th>Hosts</th>
     <th></th>
   </tr></thead>
   <tbody id="inops-host-cells"></tbody>
@@ -18,10 +18,11 @@
 {[~it.items :v]}
 <tr>
   <td class="incp-font-fixspace">
-    <a href="#node-list" onclick="inOpsHost.NodeList('{[=v.zone_id]}', '{[=v.meta.id]}')">{[=v.meta.id]}</a>
+    {[=v.meta.id]}
   </td>  
   <td>{[=v.description]}</td>
-  
+  <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
+  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td>
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsHost.NodeList('{[=v.zone_id]}', '{[=v.meta.id]}')">
@@ -29,8 +30,6 @@
       <span style="display:inline-block;width:30px">{[=v.node_num]}</span>
     </button>
   </td>
-  <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
-  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsHost.CellSet('{[=v.zone_id]}', '{[=v.meta.id]}')">

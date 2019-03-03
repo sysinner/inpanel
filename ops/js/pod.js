@@ -47,6 +47,7 @@ inOpsPod.Index = function() {
 inOpsPod.List = function() {
     inCpPod.List(null, {
         ops_mode: true,
+        exp_filter_meta_user_all: true,
         entry_back: inOpsPod.Index,
     });
 // inCp.ModuleNavbarMenu("ops/pod/list", inOpsPod.list_nav_menus);

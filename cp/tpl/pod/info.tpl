@@ -89,7 +89,7 @@
         <td>
             {[=v.spec.meta.id]} / v{[=v.spec.meta.version]}
         </td>
-        <td>{[if (v.spec.service_ports) { ]}{[=v.spec.service_ports.length]}{[ } ]}</td>
+        <td>{[? v.spec.service_ports]}{[=v.spec.service_ports.length]}{[??]}0{[?]}</td>
         <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
       </tr>
       {[~]}
@@ -124,7 +124,7 @@
       </td>
       {[}]}
       <td>
-        {[? rep.ports]}
+        {[? rep.ports && rep.ports.length > 0]}
         <table class="incp-font-fixspace table-reset" style="width:0%">
           {[~rep.ports :opv]}
           <tr>
@@ -146,7 +146,9 @@
           </tr>
           {[~]}
         </table>
-      {[?]}
+        {[??]}
+		  no service yet ...
+        {[?]}
       </td>
     </tr>
     {[~]}

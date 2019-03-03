@@ -408,8 +408,6 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
         }
 
         var depRemotes = [];
-        console.log(spec_id);
-        console.log(inCpApp.instDeployActive.spec.meta.id);
         if (spec_id == inCpApp.instDeployActive.spec.meta.id) {
             depRemotes = inCpApp.instDeployActive.spec.dep_remotes;
             for (var i in inCpApp.instDeployActive.operate.options) {
@@ -582,7 +580,6 @@ inCpApp.instConfigCommit = function() {
         return l4i.InnerAlert(alert_id, 'error', err);
     }
 
-    // return console.log(req);
     if (inCpApp.instConfiguratorEntryActive.spec_id &&
         inCpApp.instConfiguratorEntryActive.spec_id.length > 8) {
         req.spec_id = inCpApp.instConfiguratorEntryActive.spec_id;

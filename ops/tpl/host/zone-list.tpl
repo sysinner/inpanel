@@ -3,13 +3,13 @@
 <div class="incp-div-light">
 <table class="table table-hover valign-middle">
   <thead><tr>
-    <th>Zone</th>
+    <th>Zone ID</th>
   	<th>Description</th>
     <th>LAN Address</th>
     <th>WAN Address</th>
-    <th>Cells</th>
     <th>Action</th>
     <th>Updated</th>
+    <th>Cells</th>
     <th></th>
   </tr></thead>
   <tbody id="inops-host-zones"></tbody>
@@ -20,7 +20,7 @@
 {[~it.items :v]}
 <tr>
   <td class="incp-font-fixspace">
-    <a href="#cell-list" onclick="inOpsHost.CellList('{[=v.meta.id]}')">{[=v.meta.id]}</a>
+    {[=v.meta.id]}
   </td>
   <td>{[=v.summary]}</td>
   <td>
@@ -33,17 +33,19 @@
     <div>{[=addr]}</div>
     {[~]}
   </td>
-  <td>
-    <button class="btn btn-sm btn-default"
-      onclick="inOpsHost.CellList('{[=v.meta.id]}')">
-      {[=v.cells.length]}
-    </button>
-  </td>
   <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+  <td>
+    <button class="btn btn-sm btn-outline-primary"
+      onclick="inOpsHost.CellList('{[=v.meta.id]}')">
+      <span class="fa fa-layer-group"></span>
+      <span style="display:inline-block;width:30px">{[=v.cells.length]}</span>
+    </button>
+  </td>
   <td align="right">
-    <button class="btn btn-sm btn-default"
+    <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsHost.ZoneSet('{[=v.meta.id]}')">
+      <span class="fa fa-cog"></span>
       Setting
     </button>
   </td>

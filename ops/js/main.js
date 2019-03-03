@@ -4,7 +4,6 @@ var inOps = {
     base: "/in/ops/",
     basetpl: "/in/ops/-/",
     api: "/in/ops/",
-    apisys: "/in/ops/",
     debug: true,
     UserSession: null,
 }
@@ -76,7 +75,7 @@ inOps.load_index = function() {
 
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "zones", "session", function(tpl, zones, session) {
+        var ep = EventProxy.create("tpl", "zones", "session", "syscfg", function(tpl, zones, session, syscfg) {
 
             if (!session || session.username == "") {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
@@ -91,6 +90,14 @@ inOps.load_index = function() {
                 zones.items = [];
             }
             inCp.Zones = zones;
+            inCp.zone_id = inOps.zone_id;
+
+            //
+            inCp.syscfg.zone_id = syscfg.zone_id;
+            if (syscfg.zone_master) {
+                inCp.syscfg.zone_master = syscfg.zone_master;
+            }
+
 
             $("#body-content").html(tpl);
 
@@ -133,6 +140,10 @@ inOps.load_index = function() {
             callback: ep.done("zones"),
         });
 
+        inCp.ApiCmd("sys/cfg", {
+            callback: ep.done("syscfg"),
+        });
+
         l4i.Ajax(inCp.base + "auth/session", {
             callback: function(err, data) {
                 if (!data || data.kind != "AuthSession") {
@@ -154,6 +165,17 @@ inOps.ApiCmd = function(url, options) {
     if (options.callback) {
         appcb = options.callback;
     }
+
+    if (inCp.Zones && options.api_zone_id && inCp.zone_id && options.api_zone_id != inCp.zone_id) {
+        for (var i in inCp.Zones.items) {
+            if (inCp.Zones.items[i].meta.id == options.api_zone_id &&
+                inCp.Zones.items[i].wan_api && inCp.Zones.items[i].wan_api.length > 10) {
+                url = "zonebound/" + options.api_zone_id + "/" + url;
+                break;
+            }
+        }
+    }
+
     options.callback = function(err, data) {
         if (err == "Unauthorized") {
             return inCp.AlertUserLogin();
@@ -162,25 +184,9 @@ inOps.ApiCmd = function(url, options) {
             appcb(err, data);
         }
     }
+    url = url.replace(/^\/|\s+$/g, '');
 
     l4i.Ajax(inOps.api + url, options);
-}
-
-inOps.ApiSysCmd = function(url, options) {
-    var appcb = null;
-    if (options.callback) {
-        appcb = options.callback;
-    }
-    options.callback = function(err, data) {
-        if (err == "Unauthorized") {
-            return inCp.AlertUserLogin();
-        }
-        if (appcb) {
-            appcb(err, data);
-        }
-    }
-
-    l4i.Ajax(inOps.apisys + url, options);
 }
 
 inOps.TplFetch = function(url, options) {

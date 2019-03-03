@@ -47,7 +47,6 @@ var inCpPod = {
     planSelected: null,
     clusters: null,
     clusterSelected: null,
-    zoneActive: null,
     itemNewOptions: {},
     itemActive: null,
     itemActivePast: 3600,
@@ -95,14 +94,18 @@ inCpPod.list_nav_menus = [{
 inCpPod.list_options = {};
 
 inCpPod.ListRefresh = function(options) {
-    if (!options || !options.zone_id || !options.callback) {
+    if (!options || !options.callback) {
         return;
     }
 
-    var uri = "?zone_id=" + options.zone_id;
+    var uri = "?";
+    if (options.zone_id && options.zone_id.length > 1) {
+        uri += "&zone_id=" + options.zone_id;
+    } else {
+        options.zone_id = null;
+    }
 
     uri += "&fields=meta/id|name|user,operate/action|replicas,spec/ref/id|name,spec/zone|cell,apps/meta/name";
-
     if (options.fields) {
         for (var i in options.fields) {
             uri += "," + options.fields[i];
@@ -125,11 +128,12 @@ inCpPod.ListRefresh = function(options) {
         uri += "&exp_filter_host_id=" + options.exp_filter_host_id;
     }
 
-    if (options.exp_filter_meta_user) {
+    if (options.exp_filter_meta_user_all) {
         uri += "&filter_meta_user=all";
     }
 
     inCp.ApiCmd("pod/list" + uri, {
+        api_zone_id: options.zone_id,
         callback: function(err, data) {
 
             if (err) {
@@ -199,15 +203,8 @@ inCpPod.List = function(tplid, options) {
         options = inCpPod.list_options;
     }
 
-    if (inCp.Zones.items && inCp.Zones.items.length == 1) {
-        inCpPod.zoneActive = inCp.Zones.items[0].meta.id;
-        options.zone_id = inCpPod.zoneActive;
-    }
-
     if (!options.ops_mode) {
         inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus, "pod/instance");
-    } else {
-        options.exp_filter_meta_user = true;
     }
 
     seajs.use(["ep"], function(EventProxy) {
@@ -229,8 +226,11 @@ inCpPod.List = function(tplid, options) {
                 return l4i.InnerAlert(alert_id, 'error', data.error.message);
             }
 
-            if (inCpPod.zoneActive) {
-                data._zoneActive = inCpPod.zoneActive;
+            if (inCp.syscfg.zone_master.multi_zone_enable) {
+                data._multi_zone_enable = true;
+            }
+            if (inCp.syscfg.zone_master.multi_cell_enable) {
+                data._multi_cell_enable = true;
             }
 
             // $("#incp-podls-alert").hide();
@@ -850,7 +850,7 @@ inCpPod.Info = function(pod_id, options) {
                 id: "incp-pod-item-info",
                 title: "Pod Instance Information",
                 tplsrc: tpl,
-                width: 1100,
+                width: 1200,
                 height: 800,
                 data: pod,
                 buttons: btns,

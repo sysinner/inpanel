@@ -38,9 +38,9 @@
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
   {[? it.options.cfg_selector]}
   <td>
-  {[? v.configurator]}
+  {[? v.configurator && v.configurator.name]}
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="appspec-cfg-main" value="{[=v.configurator.name]}">
+      <input class="form-check-input" type="checkbox" id="appspec-cfg-main-{[=v.meta.id]}" value="{[=v.configurator.name]}">
       <label class="form-check-label">
         {[=v.configurator.name]}
       </label>

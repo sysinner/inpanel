@@ -1,6 +1,6 @@
-<div id="incp-appinst-cfg-wizard-alert" class="alert" style="display:none"></div>
+<div id="incp-appinst-cfg-wizard-depremotes-alert" class="alert" style="display:none"></div>
 
-<div id="incp-appinst-cfg-wizard"></div>
+<div id="incp-appinst-cfg-wizard-depremotes"></div>
 
 <style type="text/css">
 .incp-appinst-cfgfield-boundapp-item {
@@ -16,20 +16,8 @@
 </style>
 
 
-<script id="incp-appinst-cfg-wizard-tpl" type="text/html">
-{[~it.fields :v]}
-
-{[if (v.type == 1) {]}
-<div class="l4i-form-group">
-  <label>{[=v.title]}</label>
-  <div> 
-    <input name="fn_{[=v.name]}" class="form-control incp-appinst-cfg-wizard-item" value="{[=v._value]}" {[if (v.auto_fill && v.auto_fill.length > 0) {]}readonly="readonly"{[}]}>
-  </div>
-</div>
-{[}]}
-{[~]}
-
-{[if (it._dep_remotes && it.dep_remotes.length > 0) {]}
+<script id="incp-appinst-cfg-wizard-depremotes-tpl" type="text/html">
+{[if (it.dep_remotes && it.dep_remotes.length > 0) {]}
 {[~ it.dep_remotes :v]}
 <div class="l4i-form-group">
   <label>Remotely dependent to AppSpec : {[=v.name]}</label>

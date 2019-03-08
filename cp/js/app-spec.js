@@ -245,7 +245,7 @@ inCpAppSpec.ListSelectorClick = function(id) {
             id: id,
             configs: [],
         }
-        var check = $("#appspec-cfg-main");
+        var check = $("#appspec-cfg-main-" + id);
         if (check && check.is(":checked")) {
             options.configs.push(check.val());
         }

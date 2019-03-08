@@ -326,11 +326,19 @@ inCpApp.instConfigurator = function(cb) {
         });
     }
 
+    if (inCpApp.instDeployActive.spec.dep_remotes &&
+        inCpApp.instDeployActive.spec.dep_remotes.length > 0 &&
+        !inCpApp.instDeployActive.spec.dep_remotes_setid) {
+        inCpApp.instDeployActive.spec.dep_remotes_setid = inCpApp.instDeployActive.spec.meta.id;
+        return inCpApp.instConfigDepRemotes(inCpApp.instDeployActive.spec.meta.id);
+    }
+
     if (inCpApp.instDeployActive.spec.configurator &&
         !inCpApp.instDeployActive.spec.configurator._setid) {
         inCpApp.instDeployActive.spec.configurator._setid = inCpApp.instDeployActive.spec.meta.id;
         return inCpApp.instConfiguratorEntry(inCpApp.instDeployActive.spec.configurator, inCpApp.instDeployActive.spec.meta.id);
     }
+
 
     for (var i in inCpApp.instDeployActive.spec.depends) {
         inCpApp.instDeployActive.spec.depends[i]._setid = null;
@@ -343,6 +351,144 @@ inCpApp.instConfigurator = function(cb) {
 
     inCpApp.instDeployActive = null;
     inCpApp.instConfiguratorCallback = null;
+}
+
+inCpApp.instConfigDepRemotesActive = null;
+
+inCpApp.instConfigDepRemotes = function(spec_id) {
+
+    if (!inCpApp.instDeployActive.operate.services) {
+        inCpApp.instDeployActive.operate.services = [];
+    }
+    if (!inCpApp.instDeployActive.operate.options) {
+        inCpApp.instDeployActive.operate.options = [];
+    }
+
+    inCpApp.instConfigDepRemotesActive = spec_id;
+
+    var depRemotes = inCpApp.instDeployActive.spec.dep_remotes;
+
+    for (var i in inCpApp.instDeployActive.operate.services) {
+        if (!inCpApp.instDeployActive.operate.services[i].app_id) {
+            continue;
+        }
+        for (var j in depRemotes) {
+            if (depRemotes[j].id == inCpApp.instDeployActive.operate.services[i].spec) {
+                depRemotes[j]._app_id = inCpApp.instDeployActive.operate.services[i].app_id;
+                break;
+            }
+        }
+    }
+
+    for (var i in inCpApp.instDeployActive.operate.options) {
+        if (!inCpApp.instDeployActive.operate.options[i].ref) {
+            continue;
+        }
+        for (var j in depRemotes) {
+            if (depRemotes[j].id == inCpApp.instDeployActive.operate.options[i].ref.spec_id) {
+                depRemotes[j]._app_id = inCpApp.instDeployActive.operate.options[i].ref.app_id;
+                break;
+            }
+        }
+    }
+
+
+    l4iModal.Open({
+        id: "incp-appinst-cfgwizard-depremotes",
+        title: "App Configuration Wizard with remote depends",
+        width: 900,
+        height: 600,
+        tpluri: inCp.TplPath("app/inst/cfg-wizard-depremotes"),
+        callback: function(err, data) {
+
+            l4iTemplate.Render({
+                dstid: "incp-appinst-cfg-wizard-depremotes",
+                tplid: "incp-appinst-cfg-wizard-depremotes-tpl",
+                data: {
+                    dep_remotes: depRemotes,
+                }
+            });
+        },
+        buttons: [{
+            onclick: "l4iModal.Close()",
+            title: "Close",
+        }, {
+            onclick: "inCpApp.instConfigDepRemotesCommit()",
+            title: "Next",
+            style: "btn-primary",
+        }],
+    });
+}
+
+
+inCpApp.instConfigDepRemotesCommit = function() {
+
+    if (!inCpApp.instConfigDepRemotesActive) {
+        return;
+    }
+
+    var alert_id = "#incp-appinst-cfg-wizard-depremotes-alert";
+    var form = $("#incp-appinst-cfg-wizard-depremotes");
+    if (!form) {
+        return;
+    }
+
+    var req = {
+        id: inCpApp.instDeployActive.meta.id,
+        dep_remotes: [],
+    }
+
+
+    try {
+
+        if (inCpApp.instConfigDepRemotesActive == inCpApp.instDeployActive.spec.meta.id) {
+
+            for (var i in inCpApp.instDeployActive.spec.dep_remotes) {
+
+                var field = inCpApp.instDeployActive.spec.dep_remotes[i];
+                var value = form.find("input[name=fn_" + field.id + "]").val();
+
+                if (value) {
+                    req.dep_remotes.push({
+                        spec_id: field.id,
+                        app_id: value,
+                    });
+                }
+            }
+        }
+
+    } catch (err) {
+        return l4i.InnerAlert(alert_id, 'error', err);
+    }
+
+
+    inCp.ApiCmd("app/config-rep-remotes", {
+        method: "POST",
+        data: JSON.stringify(req),
+        callback: function(err, rsj) {
+
+            if (err || !rsj) {
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+            }
+
+            if (rsj.error) {
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+            }
+
+            if (!rsj.kind || rsj.kind != "AppInstConfig") {
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+            }
+
+            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+
+            window.setTimeout(function() {
+                l4i.InnerAlert(alert_id, "");
+                if (inCpApp.instConfiguratorCallback) {
+                    inCpApp.instConfigurator();
+                }
+            }, 300);
+        },
+    });
 }
 
 inCpApp.instConfiguratorEntryActive = null;
@@ -407,6 +553,7 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
             configurator.fields[i]._value = value;
         }
 
+        /**
         var depRemotes = [];
         if (spec_id == inCpApp.instDeployActive.spec.meta.id) {
             depRemotes = inCpApp.instDeployActive.spec.dep_remotes;
@@ -422,6 +569,7 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
                 }
             }
         }
+        */
 
         l4iModal.Open({
             id: "incp-appinst-cfgwizard",
@@ -437,7 +585,7 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
                     data: {
                         name: configurator.name,
                         fields: configurator.fields,
-                        dep_remotes: depRemotes,
+                    // dep_remotes: depRemotes,
                     }
                 });
             },
@@ -531,7 +679,7 @@ inCpApp.instConfigCommit = function() {
     var req = {
         id: inCpApp.instDeployActive.meta.id,
         option: option,
-        dep_remotes: [],
+    // dep_remotes: [],
     }
 
 
@@ -560,6 +708,7 @@ inCpApp.instConfigCommit = function() {
             }
         }
 
+        /**
         if (inCpApp.instConfiguratorEntryActive.spec_id == inCpApp.instDeployActive.spec.meta.id) {
 
             for (var i in inCpApp.instDeployActive.spec.dep_remotes) {
@@ -575,6 +724,7 @@ inCpApp.instConfigCommit = function() {
                 }
             }
         }
+        */
 
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'error', err);

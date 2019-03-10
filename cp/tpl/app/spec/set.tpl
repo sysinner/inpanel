@@ -30,22 +30,24 @@
 <tbody>
 
 <tr>
+  <td>ID</td>
+  <td></td>
+  <td>
+    <input name="meta_id" class="form-control form-control-sm" 
+      value="{[=it.spec.meta.id]}" {[? it.spec.meta.id && it.spec.meta.id.length > 0]}readonly{[?]}>
+    {[? !it.spec.meta.id || it.spec.meta.id.length < 1]}
+	<small>Example: company-product, or company-product-alias</small>
+    {[?]}
+  </td>
+</div>
+
+<tr>
   <td width="260px">Name</td>
   <td width="30px"></td>
   <td>
     <input name="meta_name" class="form-control form-control-sm" value="{[=it.spec.meta.name]}">
   </td>
 </tr>
-
-{[if (it.spec.meta.id && it.spec.meta.id.length > 0) {]}
-<input type="hidden" name="meta_id" value="{[=it.spec.meta.id]}">
-{[} else {]}
-<tr>
-  <td>ID</td>
-  <td></td>
-  <td><input name="meta_id" class="form-control form-control-sm" value="{[=it.spec.meta.id]}"></td>
-</div>
-{[}]}
 
 <tr>
   <td>Description</td>
@@ -137,7 +139,7 @@
 
 <tr>
   <td>
-    Services
+    Service Ports
   </td>
   <td>
     <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetServicePortAppend()">
@@ -148,8 +150,8 @@
     <table>
       <thead>
         <tr>
+          <th width="33%">Port (1025 ~ 65535)</th>
           <th width="33%">Name (tcp,http, ...)</th>
-          <th width="33%">Pod Port (1025 ~ 65535)</th>
           {[? it.spec._host_port_enable]}
           <th>Host Port (1 ~ 9999)</th>
           {[??]}
@@ -285,7 +287,7 @@
   <td>Comment</td>
   <td></td>
   <td>
-    <input type="text" name="comment" class="form-control form-control-sm" value="{[=it.spec.comment]}">
+    <input type="text" name="comment" class="form-control form-control-sm" value="">
   </td>
 </tr>
 
@@ -477,10 +479,10 @@
 <script id="incp-app-specset-serviceport-tpl" type="text/html">
 <tr class="incp-app-specset-serviceport-item">
   <td>
-    <input name="sp_name" type="text" value="" class="form-control form-control-sm">
+    <input name="sp_box_port" type="text" value="" class="form-control form-control-sm">
   </td>
   <td>
-    <input name="sp_box_port" type="text" value="" class="form-control form-control-sm">
+    <input name="sp_name" type="text" value="" class="form-control form-control-sm">
   </td>
   {[? it._host_port_enable]}
   <td>

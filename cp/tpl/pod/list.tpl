@@ -7,13 +7,16 @@
   <thead>
     <tr>
       <th>Instances</th>
-      {[if (it._multi_zone_enable || it._multi_cell_enable) {]}
+      {[if (inCp.syscfg.zone_master.multi_zone_enable || inCp.syscfg.zone_master.multi_cell_enable) {]}
       <th>Location</th>
       {[}]}
       {[? it._options.ops_mode]}
       <th>User</th>
       {[?]}
-      <th>Spec</th>
+      <th>CPU - RAM</th>
+      {[? inCp.syscfg.zone_master.multi_replica_enable]}
+      <th>Replicas</th>      
+      {[?]}
       <th>Apps</th>      
       <th>Action</th>
       <th></th>
@@ -27,28 +30,38 @@
       <span><strong>{[=v.meta.name]}</strong></span>
       <div>{[=v.meta.id]}</div>
     </td>
-    {[if (it._multi_zone_enable || it._multi_cell_enable) {]}
+    {[if (inCp.syscfg.zone_master.multi_zone_enable || inCp.syscfg.zone_master.multi_cell_enable) {]}
     <td class="incp-ctn-hover">
-      {[if (it._multi_zone_enable) {]}
-	    {[=v.spec.zone]} / 
-	  {[}]}
-      {[if (it._multi_cell_enable) {]}
-	    {[=v.spec.cell]}
-	  {[}]}
-	</td>
+      {[? inCp.syscfg.zone_master.multi_zone_enable]}
+        {[=v.spec.zone]}
+      {[?]}
+      {[? inCp.syscfg.zone_master.multi_cell_enable]}
+        {[? inCp.syscfg.zone_master.multi_zone_enable]}<br/>{[?]} {[=v.spec.cell]}
+      {[?]}
+    </td>
     {[}]}
     {[? it._options.ops_mode]}
     <td class="incp-ctn-hover">{[=v.meta.user]}</td>
     {[?]}
-    <td class="incp-ctn-hover">{[=v.spec.ref.name]}</td>
+    <td class="incp-ctn-hover">
+      <span>{[=(v.spec.box.resources.cpu_limit/10).toFixed(1)]}</span>
+      <div>{[=inCp.UtilResSizeFormat(v.spec.box.resources.mem_limit * inCp.ByteMB)]}</div>
+    </td>
+    {[? inCp.syscfg.zone_master.multi_replica_enable]}
+    <td class="incp-ctn-hover">{[=v.operate.replica_cap]}</td>
+    {[?]}
     <td class="incp-ctn-hover">{[=v.apps.length]}</td>
     <td class="incp-ctn-hover">
-      <span class="badge badge-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionRunning)) {]}success{[} else {]}default{[}]}">
-      {[=inCp.OpActionTitle(v.operate.action)]}
+      {[~inCp.OpActions :v2]}
+      {[? inCp.OpActionAllow(v.operate.action, v2.action)]}
+      <span class="badge badge-{[=v2.style]}">
+      {[=l4i.T(v2.title)]}
       </span>
+      {[?]}
+      {[~]}
     </td>
-    <td align="right">
-	  <!--
+    <td class="incp-ctn-hover" align="right">
+      <!--
       {[if (!inCp.OpActionAllow(v.operate.action, inCp.OpActionDestroy)) {]}
       <button class="btn btn-outline-primary" onclick="inCpPod.EntryIndex('{[=v.meta.id]}', 'stats')">
         <span class="fa fa-chart-line"></span>
@@ -59,9 +72,9 @@
         Setup
       </button>
       {[}]}
-	  -->
+      -->
     </td>
-    <td align="right">
+    <td align="right" width="30px">
       <span class="fa fa-chevron-right"></span>
     </td>
   </tr>

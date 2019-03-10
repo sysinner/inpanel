@@ -161,21 +161,21 @@
 
 {[if (it.service_ports.length > 0) {]}
 <tr>
-  <td>Services</td>
+  <td>Service Ports</td>
   <td>
     <table>
       <thead>
         <tr>
+          <th width="33%">Port</th>
           <th width="33%">Name (http,https, ...)</th>
-          <th width="33%">Pod Port</th>
           <th></th>
         <tr>
       </thead>
       <tbody>
         {[~it.service_ports :vp]}
         <tr>
-          <td>{[=vp.name]}</td>
           <td>{[=vp.box_port]}</td>
+          <td>{[=vp.name]}</td>
           <td></td>
         </tr>
         {[~]}

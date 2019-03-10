@@ -61,6 +61,7 @@ inOps.Boot = function(login_first) {
             "~/ops/js/host.js" + inOps.debug_uri(),
             "~/ops/js/pod.js" + inOps.debug_uri(),
             "~/ops/js/app.js" + inOps.debug_uri(),
+            "~/ops/js/sys.js" + inOps.debug_uri(),
             "hchart/~/hchart.js" + inCp.debug_uri(),
         ], inOps.load_index);
     });
@@ -97,9 +98,24 @@ inOps.load_index = function() {
             if (syscfg.zone_master) {
                 inCp.syscfg.zone_master = syscfg.zone_master;
             }
-
+            if (syscfg.sys_configs) {
+                inCp.syscfg.sys_configs = syscfg.sys_configs;
+            }
 
             $("#body-content").html(tpl);
+
+            l4iTemplate.Render({
+                dstid: "incp-topbar",
+                tplid: "incp-topbar-tpl",
+                data: {},
+            });
+
+            l4iTemplate.Render({
+                dstid: "incp-footer",
+                tplid: "incp-footer-tpl",
+                data: {},
+            });
+
 
             l4iTemplate.Render({
                 dstid: "incp-topbar-userbar",
@@ -125,6 +141,7 @@ inOps.load_index = function() {
             l4i.UrlEventRegister("host/index", inOpsHost.Index, "inops-topbar-nav-menus");
             l4i.UrlEventRegister("pod/index", inOpsPod.Index, "inops-topbar-nav-menus");
             l4i.UrlEventRegister("app/index", inOpsApp.Index, "inops-topbar-nav-menus");
+            l4i.UrlEventRegister("sys/index", inOpsSys.Index, "inops-topbar-nav-menus");
             l4i.UrlEventHandler("host/index", true);
         });
 

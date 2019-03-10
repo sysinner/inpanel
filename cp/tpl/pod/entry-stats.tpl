@@ -3,6 +3,28 @@
 </div>
 
 <script type="text/html" id="incp-podentry-stats-item-tpl">
+{[? it.pod.operate.replicas && it.pod.operate.replica_cap > 1]}
+<div class="incp-div-light _incp-body-frame">
+<div class="incp-card-frame-row">
+  <ul class="incp-nav">
+    <li class="incp-topbar-brand" style="padding-left: 20px">Replicas</li>
+  </ul>
+  <ul class="incp-nav incp-nav-item-underline">
+    <li>
+      <a href="#" class="l4i-nav-item {[? it._pod_rep_id == -1]}active{[?]}"
+        onclick="inCpPod.EntryStats(null, -1)">All</a>
+    </li>
+    {[~it.pod.operate.replicas :v]}
+    <li>
+      <a href="#" class="l4i-nav-item {[? v.rep_id == it._pod_rep_id]}active{[?]}"
+        onclick="inCpPod.EntryStats(null, {[=v.rep_id]})">{[=v.rep_id]}</a>
+    </li>
+    {[~]}
+  </ul>
+</div>
+</div>
+{[?]}
+
 {[~it.items :v]}
 <div class="incp-card-frame-row">
 <div class="incp-card-frame">

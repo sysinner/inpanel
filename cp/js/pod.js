@@ -50,6 +50,7 @@ var inCpPod = {
     itemNewOptions: {},
     itemActive: null,
     itemActivePast: 3600,
+    itemStatusActive: null,
     itemOperateAccessDef: {
         ssh_on: false,
         ssh_key: "",
@@ -226,13 +227,6 @@ inCpPod.List = function(tplid, options) {
                 return l4i.InnerAlert(alert_id, 'error', data.error.message);
             }
 
-            if (inCp.syscfg.zone_master.multi_zone_enable) {
-                data._multi_zone_enable = true;
-            }
-            if (inCp.syscfg.zone_master.multi_cell_enable) {
-                data._multi_cell_enable = true;
-            }
-
             // $("#incp-podls-alert").hide();
             if (!data.items) {
                 data.items = [];
@@ -272,6 +266,7 @@ inCpPod.List = function(tplid, options) {
         }
 
         options.callback = ep.done("data");
+        options.fields = ["spec/box", "operate/replica_cap", "operate/status"];
         inCpPod.ListRefresh(options);
     });
 }
@@ -614,7 +609,7 @@ inCpPod.NewRefreshPlan = function() {
             tplid: "incp-podnew-resource-selector-tpl",
             data: inCpPod.plan,
             afterAppend: true,
-            callback: inCpPod.newAccountChargeRefresh,
+            callback: inCpPod.HookAccountChargeRefresh,
         });
 
         break;
@@ -631,7 +626,7 @@ inCpPod.NewPlanClusterChange = function(zn) {
     $("#incp-podnew-zone-id-" + l4iString.CryptoMd5(zn)).addClass("selected");
 
     inCpPod.plan._zone_selected = zn;
-    inCpPod.newAccountChargeRefresh();
+    inCpPod.HookAccountChargeRefresh();
 }
 
 inCpPod.NewPlanResComputeChange = function(res_compute_id) {
@@ -654,7 +649,7 @@ inCpPod.NewPlanResComputeChange = function(res_compute_id) {
     $("#incp-podnew-res-compute-id-" + res_compute_id).addClass("selected");
 
     inCpPod.plan.res_compute_selected = res_compute_id;
-    inCpPod.newAccountChargeRefresh();
+    inCpPod.HookAccountChargeRefresh();
 }
 
 inCpPod.NewPlanImageChange = function(image_id) {
@@ -669,7 +664,7 @@ inCpPod.NewPlanImageChange = function(image_id) {
     inCpPod.plan.image_selected = image_id;
 }
 
-inCpPod.newAccountChargeRefresh = function() {
+inCpPod.HookAccountChargeRefresh = function() {
     var alert_id = "#incp-podnew-alert",
         vol_size = parseInt($("#incp-podnew-resource-value").val());
 
@@ -696,7 +691,7 @@ inCpPod.newAccountChargeRefresh = function() {
     };
 
 
-    inCp.ApiCmd("charge/pod-estimate?fields=pod&cycles=3600,86400", {
+    inCp.ApiCmd("charge/pod-estimate?fields=pod&cycles=3600", {
         method: "POST",
         data: JSON.stringify(set),
         callback: function(err, data) {
@@ -706,9 +701,9 @@ inCpPod.newAccountChargeRefresh = function() {
             var cas = [];
             for (var i in data.items) {
                 if (data.items[i].cycle_time == 3600) {
-                    cas.push(data.items[i].cycle_amount + " / hour");
+                    cas.push(l4i.T("%0.2f / Hour", data.items[i].cycle_amount));
                 } else if (data.items[i].cycle_time == 86400) {
-                    cas.push(data.items[i].cycle_amount + " / day");
+                    cas.push(l4i.T("%0.2f / Day", data.items[i].cycle_amount));
                 }
             }
             if (cas.length > 0) {
@@ -935,7 +930,7 @@ inCpPod.SetInfo = function(pod_id) {
                 title: "Pod Instance Setup",
                 tplsrc: tpl,
                 width: 900,
-                height: 400,
+                height: 450,
                 data: {
                     pod: pod,
                     _op_actions: actions,
@@ -1350,16 +1345,19 @@ inCpPod.EntryOverview = function() {
             pod.spec._cpu_limit = pod.spec.box.resources.cpu_limit;
             pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
 
-            /**
-                if (!podStatus.replicas) {
-                    podStatus.replicas = [];
+            if (pod.payment && pod.payment.cycle_amount && pod.operate.replica_cap) {
+                pod.payment._cycle_amount = l4i.T("%.2f / Hour", pod.payment.cycle_amount * pod.operate.replica_cap);
+            }
+
+            for (var i in inCpPod.opSysStates) {
+                if (inCpPod.opSysStates[i].value == pod.operate.exp_sys_state) {
+                    pod.operate._exp_sys_state_title = l4i.T(inCpPod.opSysStates[i].title);
+                    break;
                 }
-                for (var i in podStatus.replicas) {
-                    if (!podStatus.replicas[i].rep_id) {
-                        podStatus.replicas[i].rep_id = 0;
-                    }
-                }
-            */
+            }
+            if (!pod.operate._exp_sys_state_title) {
+                pod.operate._exp_sys_state_title = l4i.T("Stateful");
+            }
 
             inCp.OpToolsClean();
             $("#work-content").html(tpl);
@@ -1371,14 +1369,6 @@ inCpPod.EntryOverview = function() {
                 tplid: "incp-podentry-overview-info-tpl",
                 data: pod,
             });
-
-            /**
-                l4iTemplate.Render({
-                    dstid: "incp-podentry-sidebar",
-                    tplid: "incp-podentry-overview-oplog-tpl",
-                    data: podStatus,
-                });
-            */
 
             setTimeout(inCpPod.entryAutoRefresh, 500);
         });
@@ -1403,6 +1393,21 @@ inCpPod.EntryOverview = function() {
             callback: ep.done("tpl"),
         });
     });
+}
+
+inCpPod.EntryRepOpLogActive = function(rep_id) {
+    inCpPod.itemActive._rep_oplog_active_id = rep_id;
+    $("#incp-podentry-rep-oplog-nav").find("a.active").removeClass("active");
+    $("#incp-podentry-rep-oplog-nav-item-" + rep_id).addClass("active");
+    // $(this).addClass("active");
+    if (inCpPod.itemStatusActive) {
+        inCpPod.itemStatusActive._rep_oplog_active_id = rep_id;
+        l4iTemplate.Render({
+            dstid: "incp-podentry-sidebar",
+            tplid: "incp-podentry-overview-oplog-tpl",
+            data: inCpPod.itemStatusActive,
+        });
+    }
 }
 
 inCpPod.entryAutoRefresh = function() {
@@ -1454,9 +1459,12 @@ inCpPod.entryAutoRefresh = function() {
                     data.replicas[i].rep_id = 0;
                 }
                 //
-                var elrep = document.getElementById("incp-podentry-box-action-status-value-" + i);
-                if (elrep) {
-                    elrep.innerHTML = inCp.OpActionStatusTitle(data.replicas[i].action);
+                var item = inCp.OpActionStatusItem(data.replicas[i].action);
+                if (item) {
+                    var elrep = document.getElementById("incp-podentry-box-action-status-value-" + i);
+                    if (elrep) {
+                        elrep.innerHTML = '<span class="badge badge-' + item.style + '">' + l4i.T(item.title) + '</span>';
+                    }
                 }
 
                 if (inCp.syscfg.zone_master.multi_replica_enable) {
@@ -1508,13 +1516,19 @@ inCpPod.entryAutoRefresh = function() {
                         }
                     }
                 }
-
             }
+
+            if (!inCpPod.itemActive._rep_oplog_active_id) {
+                inCpPod.itemActive._rep_oplog_active_id = 0;
+            }
+            data._rep_oplog_active_id = inCpPod.itemActive._rep_oplog_active_id;
+
+            inCpPod.itemStatusActive = l4i.Clone(data);
 
             l4iTemplate.Render({
                 dstid: "incp-podentry-sidebar",
                 tplid: "incp-podentry-overview-oplog-tpl",
-                data: data,
+                data: inCpPod.itemStatusActive,
             });
 
             setTimeout(inCpPod.entryAutoRefresh, 5000);
@@ -1522,11 +1536,13 @@ inCpPod.entryAutoRefresh = function() {
     });
 }
 
+
 inCpPod.EntryStatsButton = function(obj) {
     $("#incp-module-navbar-optools").find(".hover").removeClass("hover");
     obj.setAttribute("class", 'hover');
     inCpPod.EntryStats(parseInt(obj.getAttribute('value')));
 }
+
 
 inCpPod.entryStatsFeedMaxValue = function(feed, names) {
     var max = 0;
@@ -1544,7 +1560,7 @@ inCpPod.entryStatsFeedMaxValue = function(feed, names) {
     return max;
 }
 
-inCpPod.EntryStats = function(time_past) {
+inCpPod.EntryStats = function(time_past, rep_id) {
 
     if (time_past) {
         inCpPod.itemActivePast = parseInt(time_past);
@@ -1557,6 +1573,9 @@ inCpPod.EntryStats = function(time_past) {
     }
     if (inCpPod.itemActivePast > (30 * 86400)) {
         inCpPod.itemActivePast = 30 * 86400;
+    }
+    if (rep_id == undefined) {
+        rep_id = -1;
     }
     var pod_zone_id = null;
     if (inCpPod.itemActive && inCpPod.itemActive.spec.zone) {
@@ -1571,7 +1590,7 @@ inCpPod.EntryStats = function(time_past) {
     }
 
     var stats_url = "id=" + inCpPod.itemActiveId;
-    stats_url += "&rep_all=yes";
+    stats_url += "&rep_id=" + rep_id;
     var stats_query = {
         tc: 180,
         tp: inCpPod.itemActivePast,
@@ -1873,6 +1892,8 @@ inCpPod.EntryStats = function(time_past) {
                 tplid: "incp-podentry-stats-item-tpl",
                 data: {
                     items: statses,
+                    pod: inCpPod.itemActive,
+                    _pod_rep_id: rep_id,
                 },
                 callback: function() {
 

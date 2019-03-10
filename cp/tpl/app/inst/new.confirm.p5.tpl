@@ -1,20 +1,31 @@
 
 <div id="incp-appnew-cf-alert" class="alert alert-danger" style="display:none"></div>
 
+<table class="incp-formtable">
+<tbody>
 
-<div id="incp-appnew-cf-form">
-  <div class="l4i-form-group">
-    <label>Name</label>
-    <p>{[=it.meta.name]}</p>
-  </div>
+<tr>
+  <td width="300px">Name</td>
+  <td>
+    {[=it.meta.name]}
+  </td>
+</tr>
 
-  <div class="l4i-form-group">
-    <label>Spec</label>
-    <div>{[=it.spec.meta.id]}</div>
-  </div>
+<tr>
+  <td>AppSpec</td>
+  <td>
+    {[=it.spec.meta.id]}
+  </td>
+</tr>
 
-  <div class="l4i-form-group">
-    <label>Pod</label>
-    <div>{[=it._operate_pod.meta.name]}</div>
-  </div>
-</div>
+<tr>
+  <td>Pod Instance</td>
+  <td>
+    {[=it._operate_pod.meta.name]}
+  </td>
+</tr>
+
+
+</tbody>
+</table>
+

@@ -29,9 +29,9 @@
 
 
 <tr>
-  <td></td>
+  <td>Cost of running</td>
   <td>
-    <div id="incp-podnew-charge-estimate-value" class="font-size:30px"></div>
+    <div id="incp-podnew-charge-estimate-value"></div>
   </td>
 </tr>
 
@@ -144,7 +144,7 @@
   <td>
   <div class="incp-form-box-selector form-inline" id="incp-podnew-res-volumes">
     <div class="input-group" style="width:300px;">
-      <input type="text" class="form-control" id="incp-podnew-resource-value" value="{[=it._res_volume._valued]}">
+      <input type="text" class="form-control" id="incp-podnew-resource-value" value="{[=it._res_volume._valued]}" oninput="inCpPod.HookAccountChargeRefresh()">
       <div class="input-group-append"><div class="input-group-text">GB</div></div>
     </div>
     <div class="form-text text-muted">

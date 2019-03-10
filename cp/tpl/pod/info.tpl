@@ -34,7 +34,7 @@
 </tr>
 
 <tr>
-  <td>Spec</td>
+  <td>Pod Spec</td>
   <td>
     <div class="incp-card-frame-inline">
       <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
@@ -77,8 +77,8 @@
     <thead>
       <tr class="incp-formtable-row-line">
         <th>Name</th>
-        <th>Spec</th>
-        <th>Services</th>
+        <th>App Spec</th>
+        <th>Service Ports</th>
         <th></th>
       </tr>
     </thead>
@@ -89,7 +89,15 @@
         <td>
             {[=v.spec.meta.id]} / v{[=v.spec.meta.version]}
         </td>
-        <td>{[? v.spec.service_ports]}{[=v.spec.service_ports.length]}{[??]}0{[?]}</td>
+        <td>
+          {[? v.spec.service_ports && v.spec.service_ports.length > 0]}
+            {[~v.spec.service_ports :ssp]}
+            <span class="badge badge-dark">{[=ssp.box_port]} ({[=ssp.name]})</span>
+            {[~]}
+          {[??]}
+            0
+          {[?]}
+        </td>
         <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
       </tr>
       {[~]}

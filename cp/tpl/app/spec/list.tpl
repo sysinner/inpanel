@@ -82,7 +82,7 @@ $("#incp-app-specls-qry").submit(function(event) {
 </li>
 <li class="incp-btn incp-btn-primary">
   <a href="#" onclick="inCpAppSpec.SetRaw()">
-     New AppSpec by JSON RAW
+     Upload AppSpec file
   </a>
 </li>
 </script>

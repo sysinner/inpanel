@@ -976,7 +976,7 @@ inCpApp.InstNewConfirm = function() {
         id: "incp-appnew-confirm",
         title: "Confirm",
         width: 900,
-        height: 500,
+        height: 400,
         tpluri: inCp.TplPath("app/inst/new.confirm.p5"),
         data: inCpApp.instSet,
         backEnable: true,

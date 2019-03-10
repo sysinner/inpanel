@@ -392,10 +392,12 @@ inCpAppSpec.Info = function(id, spec, version, app_id) {
                 data: rsj,
                 buttons: [{
                     onclick: "inCpAppSpec.Download(\"" + rsj.meta.id + "\")",
-                    title: "Download",
+                    title: "Download the AppSpec file",
+                    style: "btn-primary",
                 }, {
                     onclick: "l4iModal.Close()",
                     title: "Close",
+                    style: "btn-primary",
                 }],
                 callback: function() {
                     inCp.CodeRender();

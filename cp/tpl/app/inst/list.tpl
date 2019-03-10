@@ -12,7 +12,7 @@
     <th>AppSpec</th>
     <th>Pod</th>
     <th>Options</th>
-    <th>Status</th>
+    <th>Action</th>
     <th></th>
   </tr>
 </thead>

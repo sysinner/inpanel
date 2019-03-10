@@ -7,6 +7,8 @@
     <th>Description</th>
     <th>Action</th>
     <th>Updated</th>
+    <th>CPU %</th>
+    <th>Mem %</th>
     <th>Hosts</th>
     <th></th>
   </tr></thead>
@@ -23,6 +25,23 @@
   <td>{[=v.description]}</td>
   <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+   
+  <td>
+    {[? v.status && v.status.cpu_used]}
+      {[=(100 * v.status.cpu_used/v.status.cpu_cap).toFixed(2)]}
+    {[??]}
+	  0
+    {[?]}
+  </td>
+
+  <td>
+    {[? v.status && v.status.mem_used]}
+      {[=(100 * v.status.mem_used/v.status.mem_cap).toFixed(2)]}
+    {[??]}
+	  0
+    {[?]}
+  </td>
+
   <td>
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsHost.NodeList('{[=v.zone_id]}', '{[=v.meta.id]}')">
@@ -30,6 +49,7 @@
       <span style="display:inline-block;width:30px">{[=v.node_num]}</span>
     </button>
   </td>
+
   <td align="right">
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsHost.CellSet('{[=v.zone_id]}', '{[=v.meta.id]}')">

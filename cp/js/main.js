@@ -11,41 +11,50 @@ var inCp = {
     syscfg: {
         zone_id: "local",
         zone_master: {},
+        sys_configs: [],
     },
     OpActions: [
         {
             action: 1 << 1,
             title: "Start",
+            style: "success",
         },
         {
             action: 1 << 3,
             title: "Stop",
+            style: "warning",
         },
         {
             action: 1 << 5,
             title: "Destroy",
+            style: "secondary",
         },
     ],
     OpActionStatus: [
         {
             action: 1 << 2,
             title: "Running",
+            style: "success",
         },
         {
             action: 1 << 4,
             title: "Stopped",
+            style: "warning",
         },
         {
             action: 1 << 6,
             title: "Destroyed",
+            style: "secondary",
         },
         {
             action: 1 << 11,
             title: "Pending",
+            style: "primary",
         },
         {
             action: 1 << 12,
             title: "Warning",
+            style: "warning",
         },
     ],
     OpActionStart: 1 << 1,
@@ -150,8 +159,23 @@ inCp.load_index = function() {
             if (syscfg.zone_master) {
                 inCp.syscfg.zone_master = syscfg.zone_master;
             }
+            if (syscfg.sys_configs) {
+                inCp.syscfg.sys_configs = syscfg.sys_configs;
+            }
 
             $("#body-content").html(tpl);
+
+            l4iTemplate.Render({
+                dstid: "incp-topbar",
+                tplid: "incp-topbar-tpl",
+                data: {},
+            });
+
+            l4iTemplate.Render({
+                dstid: "incp-footer",
+                tplid: "incp-footer-tpl",
+                data: {},
+            });
 
             l4iTemplate.Render({
                 dstid: "incp-topbar-userbar",
@@ -185,7 +209,7 @@ inCp.load_index = function() {
             l4i.UrlEventRegister("res/index", inCpRes.Index, "incp-topbar-nav-menus");
             l4i.UrlEventRegister("ips/index", inpack.Index, "incp-topbar-nav-menus");
 
-            l4i.UrlEventHandler("app/index", true);
+            l4i.UrlEventHandler("pod/index", true);
         });
 
         ep.fail(function(err) {
@@ -565,27 +589,35 @@ inCp.ArrayUint32MatchAny = function(ar, ar2)
 }
 */
 
-inCp.OpActionTitle = function(op_action) {
-    op_action = parseInt(op_action);
-    for (var i in inCp.OpActions) {
-        if (inCp.OpActionAllow(op_action, inCp.OpActionDestroy)) {
-            return "Destroy";
-        }
-        if (inCp.OpActionAllow(op_action, inCp.OpActions[i].action)) {
-            return (inCp.OpActions[i].title);
-        }
-    }
-    return "";
-}
-
-inCp.OpActionStatusTitle = function(action) {
+inCp.OpActionStatusItem = function(action) {
     var action = parseInt(action);
     for (var i in inCp.OpActionStatus) {
         if (inCp.OpActionAllow(action, inCp.OpActionStatus[i].action)) {
-            return inCp.OpActionStatus[i].title;
+            return inCp.OpActionStatus[i];
         }
     }
-    return "Pending";
+    return null;
+}
+
+inCp.OpActionItem = function(op_action) {
+    op_action = parseInt(op_action);
+    for (var i in inCp.OpActions) {
+        if (inCp.OpActionAllow(op_action, inCp.OpActionDestroy)) {
+            return inCp.OpActions[i];
+        }
+        if (inCp.OpActionAllow(op_action, inCp.OpActions[i].action)) {
+            return inCp.OpActions[i];
+        }
+    }
+    return null;
+}
+
+inCp.OpActionTitle = function(op_action) {
+    var item = inCp.OpActionItem(op_action);
+    if (item) {
+        return item.title;
+    }
+    return "";
 }
 
 inCp.OpActionAllow = function(opbase, action) {
@@ -677,3 +709,27 @@ inCp.TimeUptime = function(sec) {
 
     return s.join(", ");
 }
+
+inCp.SysConfigValue = function(group_name, item_name) {
+    for (var i in inCp.syscfg.sys_configs) {
+        if (inCp.syscfg.sys_configs[i].name != group_name) {
+            continue;
+        }
+        for (var j in inCp.syscfg.sys_configs[i].items) {
+            if (inCp.syscfg.sys_configs[i].items[j].name == item_name) {
+                return inCp.syscfg.sys_configs[i].items[j].value;
+            }
+        }
+        break;
+    }
+    return null;
+}
+
+inCp.SysConfigValueIf = function(group_name, item_name, if_str) {
+    var v = inCp.SysConfigValue(group_name, item_name);
+    if (v) {
+        return v;
+    }
+    return if_str;
+}
+

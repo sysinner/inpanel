@@ -1,12 +1,26 @@
-<div id="incp-topbar" class="incp-body-frame">
+<div id="incp-topbar" class="incp-body-frame"></div>
+
+<div class="incp-body-frame">
+  <div id="comp-content" class="incp-body-container">loading</div>
+</div>
+
+<div id="incp-footer" class="incp-footer"></div>
+
+<script id="incp-topbar-tpl" type="text/html">
   <div class="incp-topbar-collapse incp-body-container">
     <ul class="incp-nav" id="incp-topbar-siteinfo">
-	    <li><img class="incp-topbar-logo" src="/in/cp/~/cp/img/logo-g1s48.png" title="frontend_header_site_logo_url"></li>
-      <li class="incp-topbar-brand">InnerStack</li>
+      <li>
+        <img class="incp-topbar-logo" 
+          src="{[=inCp.SysConfigValueIf("innerstack/sys/webui", "cp_navbar_logo", "/in/cp/~/cp/img/logo-g1s48.png")]}" 
+          title="frontend_header_site_logo_url">
+      </li>
+      <li class="incp-topbar-brand">
+        {[=inCp.SysConfigValueIf("innerstack/sys/webui", "cp_navbar_title", "InnerStack")]}
+      </li>
     </ul>
     <ul class="incp-nav incp-topbar-nav" id="incp-topbar-nav-menus">
-      <li><a class="l4i-nav-item" href="#app/index">Applications</a></li>
       <li><a class="l4i-nav-item" href="#pod/index">Containers</a></li>
+      <li><a class="l4i-nav-item" href="#app/index">Applications</a></li>
       <li><a class="l4i-nav-item" href="#ips/index">Packages</a></li>
       <li><a class="l4i-nav-item" href="#res/index">Resources</a></li>
     </ul>
@@ -15,11 +29,15 @@
       <li><a class="l4i-nav-item" href="/in/ops" id="incp-nav-ops-entry" style="display:none">Management</a></li>
     </ul>
   </div>
-</div>
+</script>
 
-<div class="incp-body-frame">
-  <div id="comp-content" class="incp-body-container">loading</div>
-</div>
+<script id="incp-footer-tpl" type="text/html">
+  <div class="incp-items incp-fontsize-x0090" style="text-align:center">
+    <span class="incp-item"><span class="fa fa-award"></span> Powered by <a href="https://www.sysinner.com" target="_blank">InnerStack</a></span>
+    <span class="incp-item"><span class="fa fa-bug"></span> <a href="https://github.com/sysinner/innerstack/issues" target="_blank">Bug Report</a></span>
+    <span class="incp-item"><span class="fa fa-info-circle"></span> <a class="l4i-nav-item" href="#about" onclick="inCp.About()">About</a></span>
+  </div>
+</script>
 
 <script id="incp-topbar-user-signed-tpl" type="text/html">
 
@@ -34,10 +52,4 @@
 </div>
 </script>
 
-<div class="incp-footer">
-  <div class="incp-items incp-fontsize-x0090" style="text-align:center">
-    <span class="incp-item"><span class="fa fa-award"></span> Powered by <a href="https://www.sysinner.com" target="_blank">InnerStack</a></span>
-    <span class="incp-item"><span class="fa fa-bug"></span> <a href="https://github.com/sysinner/innerstack/issues" target="_blank">Bug Report</a></span>
-    <span class="incp-item"><span class="fa fa-info-circle"></span> <a class="l4i-nav-item" href="#about" onclick="inCp.About()">About</a></span>
-  </div>
-</div>
+

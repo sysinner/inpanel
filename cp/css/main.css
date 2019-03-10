@@ -59,6 +59,10 @@
   padding: 0 10px;
 }
 
+.incp-nav-frame {
+  left: 0;
+  right: 0;
+}
 
 .incp-nav {
   position: relative;
@@ -113,6 +117,10 @@
 .incp-nav>li>a.active {
   color: #000;
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+.incp-nav-item-underline>li>a.active {
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
 }
 
 .incp-topbar-logo {
@@ -509,6 +517,9 @@
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.15);
 }
 
+.incp-div-block {
+  margin-bottom: 10px !important;
+}
 
 .incp-btn {
   font-size: 12px;
@@ -740,8 +751,16 @@ pre code {
   flex: 0 0 100%;
 }
 
+.incp-card-frame-p60 {
+  flex: 0 0 60.0%;
+}
+
 .incp-card-frame-p50 {
   flex: 0 0 50%;
+}
+
+.incp-card-frame-p40 {
+  flex: 0 0 40.0%;
 }
 
 .incp-card-frame-p33 {
@@ -802,8 +821,8 @@ pre code {
 }
 
 #incp-podnew-charge-estimate-value {
-  padding: 10px 0;
-  font-size: 30px !important;
+  font-size: 1.5rem !important;
+  font-weight: bold;
   color: #5cb85c !important;
 }
 

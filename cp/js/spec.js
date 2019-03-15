@@ -618,7 +618,7 @@ inCpSpec.PodSetCommit = function() {
                 });
             });
 
-            req.box = box; // boxes
+            req.box = box;
         });
 
     } catch (err) {

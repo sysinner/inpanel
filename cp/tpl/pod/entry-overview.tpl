@@ -198,7 +198,7 @@
 <div class="incp-card-frame incp-card-frame-p40">
 <div class="incp-div-light">
   <div class="incp-card-title">
-    <span>Pod Spec</span>
+    <span>PodSpec</span>
     <span class="incp-card-title-rbar incp-btn-hover" onclick="inCpPod.SpecSet()">
       <span class="fa fa-cog"></span>
     </span>
@@ -261,7 +261,7 @@
       <tr class="incp-formtable-tr-line">
         <td>{[=v.meta.name]}</td>
         <td>
-          <a href="#" onclick="inCpAppSpec.Info('{[=v.spec.meta.id]}', null, '{[=v.spec.meta.version]}', '{[=v.meta.id]}')">
+          <a href="#" onclick="inCpAppSpec.Info('{[=v.spec.meta.id]}', null, '{[=v.spec.meta.version]}', '{[=v.meta.id]}');return false">
             {[=v.spec.meta.id]} / v{[=v.spec.meta.version]}
           </a>
         </td>

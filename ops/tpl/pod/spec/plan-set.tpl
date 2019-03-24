@@ -199,11 +199,11 @@
   <td></td>
   <td class="incp-form-box-selector">
     {[~it._resvolumes.items :v]}
-    <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
+    <div class="incp-form-box-selector-item incp-form-box-selector-item-w2 {[if (v._selected) { ]}selected{[ } ]}" 
       id="inops-podspec-planset-res-volume-id-{[=v.meta.id]}"
       onclick="inOpsPod.SpecPlanSetResVolumeChange('{[=v.meta.id]}')">
-      <div>Default: {[=v.default]} GB</div>
-      <div>Range: {[=v.request]} ~ {[=v.limit]} GB</div>
+      <div>{[=v.meta.name]}</div>
+      <div>Range: {[=v.request]} ~ {[=v.limit]} GB, Default: {[=v.default]} GB{[? v._attrs]}, Attrs: {[=v._attrs]}{[?]}</div>
     </div>
     {[~]}
   </td>

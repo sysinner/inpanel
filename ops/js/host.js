@@ -340,7 +340,7 @@ inOpsHost.NodePodList = function(z, c, node_id) {
             exp_filter_host_id: node.meta.id,
             exp_filter_meta_user_all: true,
             callback: ep.done("data"),
-            fields: ["spec/volumes", "spec/box"],
+            fields: ["spec/vol_sys", "spec/box"],
         });
 
         inOps.TplFetch("host/node-pod-selector", {

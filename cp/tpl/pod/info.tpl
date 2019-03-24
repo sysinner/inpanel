@@ -56,12 +56,8 @@
       <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
         <div class="name">System Volume</div>
         <div class="value">
-        {[? it.spec.volumes]}
-        {[~it.spec.volumes :v]}
-          {[if (v.name == "system") {]}
-            {[=inCp.UtilResSizeFormat(v.size_limit * inCp.ByteGB)]}
-          {[}]}
-        {[~]}
+        {[? it.spec.vol_sys]}
+          {[=inCp.UtilResSizeFormat(it.spec.vol_sys.size * inCp.ByteGB)]}
         {[?]}
         </div>
       </div>

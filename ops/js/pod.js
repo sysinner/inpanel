@@ -214,6 +214,11 @@ inOpsPod.SpecPlanSet = function(name) {
                     if (inCp.ArrayStringHas(plan_resvolumes, resvolumes.items[i].meta.id)) {
                         resvolumes.items[i]._selected = true;
                     }
+                    if (resvolumes.items[i].attrs) {
+                        if (inCp.OpActionAllow(resvolumes.items[i].attrs, inCp.ResVolValueAttrSSD)) {
+                            resvolumes.items[i]._attrs = "SSD";
+                        }
+                    }
                 }
 
                 if (!plan.sort_order) {

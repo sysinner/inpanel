@@ -452,10 +452,12 @@
         <td width="120">ExecStart</td>
         <td><pre><code class="bash">{[=v.exec_start.trim()]}</code></pre></td>
       </tr>
+      {[? v.exec_stop && v.exec_stop.trim().length > 0]}
       <tr>
         <td>ExecStop</td>
         <td><pre><code class="bash">{[=v.exec_stop.trim()]}</code></pre></td>
       </tr>
+      {[?]}
       <tr>
         <td>Priority</td>
         <td>{[=v.priority]}</td>

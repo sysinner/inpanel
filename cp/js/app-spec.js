@@ -1279,8 +1279,8 @@ inCpAppSpec.SetExecutorSet = function(name) {
             if (err) {
                 return;
             }
-            inCp.CodeEditor("spec_exec_start", "shell", 16);
-            inCp.CodeEditor("spec_exec_stop", "shell", 8);
+            inCp.CodeEditor("spec_exec_start", "shell", 12);
+            inCp.CodeEditor("spec_exec_stop", "shell", 6);
         },
         buttons: [{
             onclick: "l4iModal.Close()",

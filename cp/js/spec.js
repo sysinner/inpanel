@@ -57,7 +57,7 @@ var inCpSpec = {
             name: "",
         },
         phase: "Active",
-        volumes: [],
+        vol_sys: {},
         box: {},
     },
     _boxImages: null,

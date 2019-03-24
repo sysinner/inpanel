@@ -66,6 +66,7 @@ var inCp = {
     OpActionMigrate: 1 << 7,
     OpActionPending: 1 << 11,
     OpActionWarning: 1 << 12,
+    ResVolValueAttrSSD: 1 << 5,
     ByteMB: 1024 * 1024,
     ByteGB: 1024 * 1024 * 1024,
     well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/in/cp/auth/login" class="btn btn-primary">SIGN IN</a></div>',

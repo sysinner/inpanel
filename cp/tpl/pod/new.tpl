@@ -111,7 +111,7 @@
 </tr>
 
 <tr class="incp-podnew-resource-selector-row">
-  <td>Resources</td>
+  <td>CPU / Memory</td>
   <td class="incp-form-box-selector" id="incp-podnew-res-computes" style="padding-bottom:0">
     {[~it.res_computes :v]}
     <div class="incp-font-fixspace incp-form-box-selector-item {[if (!inCpPod.NewOptionResFit(v)) {]}disable{[} else if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
@@ -141,16 +141,24 @@
 
 <tr class="incp-podnew-resource-selector-row">
   <td>System Storage</td>
-  <td>
-  <div class="incp-form-box-selector form-inline" id="incp-podnew-res-volumes">
-    <div class="input-group" style="width:300px;">
-      <input type="text" class="form-control" id="incp-podnew-resource-value" value="{[=it._res_volume._valued]}" oninput="inCpPod.HookAccountChargeRefresh()">
-      <div class="input-group-append"><div class="input-group-text">GB</div></div>
+  <td id="incp-podnew-vols">
+    {[~it.res_volumes :v]}
+    <div class="incp-form-box-selector-item {[if (v.ref_id == it._res_volume.ref_id) { ]}selected{[ } ]}"
+      id="incp-podnew-vol-id-{[=v.ref_id]}"
+	  onclick="inCpPod.NewPlanVolChange('{[=v.ref_id]}')"> 
+      <div>{[=v.ref_id]}</div>
+      <div>{[=v.ref_name]}</div>
     </div>
-    <div class="form-text text-muted">
-      Range: {[=it._res_volume.request]} ~ {[=it._res_volume.limit]} GB
-    </div>    
-  </div>
+    {[~]}
+    <div class="incp-form-box-selector form-inline" id="incp-podnew-res-volumes">
+      <div class="input-group" style="width:300px;">
+        <input type="text" class="form-control" id="incp-podnew-resource-value" value="{[=it._res_volume._valued]}" oninput="inCpPod.HookAccountChargeRefresh()">
+        <div class="input-group-append"><div class="input-group-text">GB</div></div>
+      </div>
+      <div class="form-text text-muted" id="incp-podnew-resource-hint">
+        Range: {[=it._res_volume.request]} ~ {[=it._res_volume.limit]} GB
+      </div>    
+    </div>
   </td>
 </tr>
 

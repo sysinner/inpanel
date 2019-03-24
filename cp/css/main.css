@@ -353,6 +353,10 @@
   cursor: pointer;
 }
 
+.incp-form-box-selector-item-w2 {
+  width: 410px !important;
+}
+
 .incp-form-box-selector-item:hover {
   outline: #5cb85c solid 3px;
 }
@@ -578,6 +582,7 @@
 .incp-app-specset-gn-box {
   background-color: #f5f5f5;
   border-radius: 5px;
+  margin-top: 5px;
   padding: 5px;
 }
 
@@ -617,6 +622,10 @@
 .incp-app-specset-gn-box pre>code {
   white-space: pre-wrap;
   display: block;
+}
+
+#incp-app-specset-executorls > .incp-app-specset-gn-box:first-child {
+  margin-top: 0 !important;
 }
 
 #incp-appset-bound {

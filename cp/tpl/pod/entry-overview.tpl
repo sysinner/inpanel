@@ -180,7 +180,7 @@
       </div>
       <div class="incp-card-frame incp-card-frame-p33 incp-card-body-inline-item">
         <div class="name">Cost of running</div>
-        <div class="value">{[? it.payment && it.payment._cycle_amount]}{[=it.payment._cycle_amount]}{[?]}</div>
+        <div class="value" id="incp-podentry-payment-amount">{[? it.payment && it.payment._cycle_amount]}{[=it.payment._cycle_amount]}{[?]}</div>
       </div>
       <div class="incp-card-frame incp-card-frame-p33 incp-card-body-inline-item">
         <div class="name">Health of replicas</div>
@@ -224,12 +224,8 @@
       <div class="incp-card-frame incp-card-frame-c6 incp-card-body-inline-item">
         <div class="name">System Volume</div>
         <div class="value">
-        {[? it.spec.volumes]}
-        {[~it.spec.volumes :v]}
-          {[if (v.name == "system") {]}
-            {[=inCp.UtilResSizeFormat(v.size_limit * inCp.ByteGB)]}
-          {[}]}
-        {[~]}
+        {[? it.spec.vol_sys]}
+          {[=inCp.UtilResSizeFormat(it.spec.vol_sys.size * inCp.ByteGB)]}
         {[?]}
         </div>
       </div>
@@ -251,8 +247,9 @@
     <thead>
       <tr class="incp-formtable-row-line">
         <th>Name</th>
-        <th>App Spec</th>
+        <th>AppSpec</th>
         <th>Service Ports</th>
+        <th>Configs</th>
         <th style="text-align:right"></th>
       </tr>
     </thead>
@@ -273,6 +270,11 @@
           {[??]}
             0
           {[?]}
+        </td>
+        <td>
+         {[if (v.operate.options.length > 0) {]}
+           <button class="btn btn-sm btn-default" onclick="inCpApp.OpOptInfo('{[=v.meta.id]}')" style="width:40px">{[=v.operate.options.length]}</button>
+         {[}]}
         </td>
         <td align="right">{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
       </tr>

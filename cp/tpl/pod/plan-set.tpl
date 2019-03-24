@@ -55,13 +55,13 @@
 -->
 
 <tr class="incp-podnew-resource-selector-row">
-  <td>Resources</td>
+  <td>CPU / RAM</td>
   <td class="incp-form-box-selector" id="incp-podnew-res-computes" style="padding-bottom:0">
     {[~it.res_computes :v]}
     <div class="incp-font-fixspace incp-form-box-selector-item {[if (!inCpPod.NewOptionResFit(v)) {]}disable{[} else if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-res-compute-id-{[=v.ref_id]}"
       onclick="inCpPod.NewPlanResComputeChange('{[=v.ref_id]}')">
-      <div>CPU {[=(v.cpu_limit/10).toFixed(1)]} Cores</div>
+      <div>CPU {[=(v.cpu_limit/10).toFixed(1)]} cores</div>
       <div>RAM {[=inCp.UtilResSizeFormat(v.mem_limit * inCp.ByteMB)]}</div>
     <span class="disable_close">&times;</span>
     </div>
@@ -69,21 +69,21 @@
   </td>
 </tr>
 
-<!-- TODO
 <tr class="incp-podnew-resource-selector-row">
   <td>Image</td>
   <td class="incp-form-box-selector" id="incp-podnew-images" style="padding-bottom:0">
     {[~it.images :v]}
+    {[? (it.image_driver && it.image_driver == v.driver) || !it.image_driver]}
     <div class="incp-form-box-selector-item {[if (v.ref_id == it.image_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-image-id-{[=l4iString.CryptoMd5(v.ref_id)]}"
       onclick="inCpPod.NewPlanImageChange('{[=v.ref_id]}')">
+      <div>{[? v.ref_title]}{[=v.ref_title]} / {[?]}{[=v.driver]}</div>
       <div>{[=v.ref_id]}</div>
-      <div>{[=v.driver]} / {[=v.os_dist]}</div>
     </div>
+    {[?]}
     {[~]}
   </td>
 </tr>
--->
 
 <tr class="incp-podnew-resource-selector-row">
   <td>System Storage</td>

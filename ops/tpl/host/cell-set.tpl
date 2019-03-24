@@ -14,6 +14,14 @@
       </tr>
 
       <tr>
+        <td>Name</td>
+        <td>
+          <input type="text" name="name" class="form-control" value="{[? it.meta.name]}{[=it.meta.name]}{[?]}">
+        </td>
+      </tr>
+
+
+      <tr>
         <td>Description</td>
         <td>
           <input name="description" class="form-control" value="{[=it.description]}">

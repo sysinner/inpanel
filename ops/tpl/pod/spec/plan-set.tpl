@@ -31,17 +31,13 @@
 <table class="incp-formtable">
 <tbody>
 
-{[if (!it.meta.id || it.meta.id.length < 1) {]}
 <tr>
   <td>ID</td>
   <td></td>
   <td>
-    <input type="text" class="form-control" name="plan_meta_id" value="">
+    <input type="text" class="form-control" name="plan_meta_id" value="{[=it.meta.id]}" {[? it.meta.id.length > 0]}readonly{[?]}>
   </td>
 </tr>
-{[} else {]}
-<input type="hidden" name="plan_meta_id" value="{[=it.meta.id]}">
-{[}]}
 
 <tr>
   <td width="200px">Name</td>
@@ -51,6 +47,7 @@
   </td>
 </tr>
 
+<!--
 <tr>
   <td>Labels</td>
   <td>
@@ -124,27 +121,7 @@
     </table>
   </td>
 </tr>
-
-
-<tr>
-  <td>Status</td>
-  <td></td>
-  <td>
-  {[~it._statuses :v]}
-    <span class="incp-form-checkbox checkbox-inline">
-      <input type="radio" name="plan_status" value="{[=v.name]}" {[ if (v._selected) { ]}checked="checked"{[ } ]}> {[=v.value]}
-    </span>
-  {[~]}
-  </td>
-</tr>
-
-<tr>
-  <td>Sort Order (0 ~ 15)</td>
-  <td></td>
-  <td>
-    <input type="text" class="form-control" name="plan_sort_order" value="{[=it.sort_order]}">
-  </td>
-</tr>
+-->
 
 <tr>
   <td>Zone / Cluster</td>
@@ -164,14 +141,14 @@
 </tr>
 
 <tr>
-  <td>CPU cores and Memory</td>
+  <td>CPU / RAM</td>
   <td></td>
   <td class="incp-form-box-selector">
     {[~it._rescomputes.items :v]}
     <div class="incp-font-fixspace incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
       id="inops-podspec-planset-res-compute-id-{[=v.meta.id]}"
       onclick="inOpsPod.SpecPlanSetResComputeChange('{[=v.meta.id]}')">
-      <div>CPU {[=(v.cpu_limit/10).toFixed(1)]}</div>
+      <div>CPU {[=(v.cpu_limit/10).toFixed(1)]} cores</div>
       <div>RAM {[=inCp.UtilResSizeFormat(v.mem_limit * inCp.ByteMB)]}</div>
     </div>
     {[~]}
@@ -187,8 +164,8 @@
     <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
       id="inops-podspec-planset-box-image-id-{[=l4iString.CryptoMd5(v.meta.id)]}"
       onclick="inOpsPod.SpecPlanSetBoxImageChange('{[=v.meta.id]}')">
+      <div>{[? v.meta.name]}{[=v.meta.name]} / {[?]}{[=v.driver]}</div>
       <div>{[=v.meta.id]}</div>
-      <div>{[=v.driver]} / {[=v.os_dist]}</div>
     </div>
     {[~]}
   </td>
@@ -203,9 +180,30 @@
       id="inops-podspec-planset-res-volume-id-{[=v.meta.id]}"
       onclick="inOpsPod.SpecPlanSetResVolumeChange('{[=v.meta.id]}')">
       <div>{[=v.meta.name]}</div>
-      <div>Range: {[=v.request]} ~ {[=v.limit]} GB, Default: {[=v.default]} GB{[? v._attrs]}, Attrs: {[=v._attrs]}{[?]}</div>
+      <div>Range: {[=v.request]} ~ {[=v.limit]} GB</div>
+      <div>Default: {[=v.default]} GB{[? v._attrs]}, Attrs: {[=v._attrs]}{[?]}</div>
     </div>
     {[~]}
+  </td>
+</tr>
+
+<tr>
+  <td>Sort Order (0 ~ 10)</td>
+  <td></td>
+  <td>
+    <input type="text" class="form-control" name="plan_sort_order" value="{[=it.sort_order]}">
+  </td>
+</tr>
+
+<tr>
+  <td>Action</td>
+  <td></td>
+  <td>
+  {[~it._statuses :v]}
+    <span class="incp-form-checkbox checkbox-inline">
+      <input type="radio" name="plan_status" value="{[=v.name]}" {[ if (v._selected) { ]}checked="checked"{[ } ]}> {[=v.value]}
+    </span>
+  {[~]}
   </td>
 </tr>
 

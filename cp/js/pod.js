@@ -584,7 +584,12 @@ inCpPod.NewRefreshPlan = function() {
 
         //
         if (!inCpPod.plan.image_selected) {
-            inCpPod.plan.image_selected = inCpPod.plan.image_default;
+            if (inCpPod.specSetActive && inCpPod.specSetActive._image_selected) {
+                inCpPod.plan.image_selected = inCpPod.specSetActive._image_selected;
+                inCpPod.plan.image_driver = inCpPod.specSetActive._image_driver;
+            } else {
+                inCpPod.plan.image_selected = inCpPod.plan.image_default;
+            }
         }
 
         //
@@ -2127,6 +2132,7 @@ inCpPod.SpecSet = function(pod_id) {
                 spec_vol_id = pod.spec.vol_sys.ref_id,
                 spec_vol_size = pod.spec.vol_sys.size,
                 spec_image_id = pod.spec.box.image.ref.id;
+            spec_image_driver = pod.spec.box.image.driver;
 
             var _plans = [];
             for (var i in plans.items) {
@@ -2135,6 +2141,7 @@ inCpPod.SpecSet = function(pod_id) {
                     if (pod.spec.ref.id == plans.items[i].meta.id) {
                         plans.items[i].res_compute_default = spec_res_id;
                         plans.items[i].image_default = spec_image_id;
+                        plans.items[i].image_driver = spec_image_driver;
                         plans.items[i].res_volume_default = spec_vol_id;
                         for (var k in plans.items[i].res_volumes) {
                             if (plans.items[i].res_volumes[k].ref_id == spec_vol_id) {
@@ -2164,6 +2171,7 @@ inCpPod.SpecSet = function(pod_id) {
             pod._plan_selected = pod.spec.ref.id;
 
             pod._image_selected = spec_image_id;
+            pod._image_driver = spec_image_driver;
 
 
             inCpPod.specSetActive = pod;
@@ -2263,11 +2271,12 @@ inCpPod.SpecSetCommit = function() {
         res_volume_size: vol_size,
         box: {
             name: "main",
-            // image: inCpPod.plan.image_selected,
-            image: inCpPod.specSetActive._image_selected,
+            image: inCpPod.plan.image_selected,
+            // image: inCpPod.specSetActive._image_selected,
             res_compute: inCpPod.plan.res_compute_selected,
         },
     };
+    console.log(set);
 
     $(alert_id).hide();
 

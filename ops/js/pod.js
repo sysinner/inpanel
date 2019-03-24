@@ -32,7 +32,22 @@ var inOpsPod = {
     }, {
         name: "Spec Plans",
         uri: "pod-spec/plan-list",
+    }, {
+        name: "Images",
+        uri: "pod-spec/image-list",
     }],
+    image_actives: null,
+    image_def: {
+        meta: {
+            id: "",
+            name: "",
+        },
+        name: "",
+        tag: "",
+        driver: "docker",
+        action: 1 << 1,
+        sort_order: 10,
+    },
 }
 
 inOpsPod.Index = function() {
@@ -40,6 +55,7 @@ inOpsPod.Index = function() {
 
     l4i.UrlEventRegister("pod/list", inOpsPod.List, "incp-module-navbar-menus");
     l4i.UrlEventRegister("pod-spec/plan-list", inOpsPod.SpecPlanList, "incp-module-navbar-menus");
+    l4i.UrlEventRegister("pod-spec/image-list", inOpsPod.SpecPlanImageList, "incp-module-navbar-menus");
 
     l4i.UrlEventHandler("pod/list", true);
 }
@@ -500,3 +516,193 @@ inOpsPod.SpecPlanSetCommit = function() {
         }
     });
 }
+
+inOpsPod.SpecPlanImageList = function() {
+
+    var tplid = "inops-podspec-imagels";
+    var alert_id = "#" + tplid + "-alert";
+    var uri = "";
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
+
+            if (tpl) {
+                $("#work-content").html(tpl);
+            }
+            inCp.OpToolsRefresh("#inops-podspec-imagels-optools");
+
+            if (!data || data.error || !data.kind || data.kind != "PodSpecBoxImageList") {
+
+                if (data.error) {
+                    return l4i.InnerAlert(alert_id, 'alert-danger', data.error.message);
+                }
+
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Items Not Found");
+            }
+
+            if (!data.items) {
+                data.items = [];
+            }
+            for (var i in data.items) {
+            }
+
+            if (data.items.length < 1) {
+                return l4i.InnerAlert(alert_id, 'alert-info', "No Item Found Yet ...");
+            }
+
+            inOpsPod.image_actives = data.items;
+            console.log(data.items);
+            console.log(inOps.ooActions);
+
+            l4iTemplate.Render({
+                dstid: tplid,
+                tplid: tplid + "-tpl",
+                data: {
+                    items: data.items,
+                    actions: l4i.Clone(inOps.ooActions),
+                },
+                callback: function(err) {
+                    //
+                },
+            });
+        });
+
+        ep.fail(function(err) {
+            alert("ListRefresh error, Please try again later (EC:001)");
+        });
+
+        inOps.TplFetch("pod/spec/box-image-list", {
+            callback: ep.done("tpl"),
+        });
+
+        inOps.ApiCmd("pod-spec/box-image-list" + uri, {
+            callback: ep.done("data"),
+        });
+    });
+}
+
+
+inOpsPod.SpecPlanImageSet = function(id) {
+
+    var image = null;
+    if (inOpsPod.image_actives) {
+        for (var i in inOpsPod.image_actives) {
+            if (inOpsPod.image_actives[i].meta.id == id) {
+                image = inOpsPod.image_actives[i];
+                break;
+            }
+        }
+    }
+    if (!image) {
+        image = inOpsPod.image_def;
+    }
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
+
+            var title = "Image Settings";
+            if (data.meta.id == "") {
+                title = "New Image";
+            }
+            inOpsPod.image_active = data;
+
+            l4iModal.Open({
+                title: title,
+                tplsrc: tpl,
+                width: 900,
+                height: 600,
+                data: {
+                    image: data,
+                    actions: l4i.Clone(inOps.ooActions),
+                },
+                buttons: [{
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                }, {
+                    onclick: "inOpsPod.SpecPlanImageSetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
+                }],
+            });
+
+        });
+
+        ep.fail(function(err) {
+            alert("SpecSet error, Please try again later (EC:mix-spec-podset)");
+        });
+
+        inOps.TplFetch("pod/spec/box-image-set", {
+            callback: ep.done("tpl"),
+        });
+
+        ep.emit("data", image);
+    });
+}
+
+
+inOpsPod.SpecPlanImageSetCommit = function() {
+
+    if (!inOpsPod.image_active) {
+        return;
+    }
+
+    var alert_id = "#inops-podspec-imageset-alert";
+    var form = $("#inops-podspec-imageset-form");
+    if (!form) {
+        return;
+    }
+
+    var req = {
+        meta: {},
+        action: "",
+        sort_order: 0,
+        driver: "",
+        tag: "",
+    };
+
+    try {
+
+        req.name = form.find("input[name=name]").val();
+        req.tag = form.find("input[name=tag]").val();
+        req.meta.id = req.name + ":" + req.tag;
+        req.meta.name = form.find("input[name=meta_name]").val();
+
+        req.action = parseInt(form.find("input[name=action]:checked").val());
+        req.sort_order = parseInt(form.find("input[name=sort_order]").val());
+        req.driver = form.find("input[name=driver]").val();
+
+    } catch (err) {
+        return l4i.InnerAlert(alert_id, 'alert-danger', err);
+    }
+    console.log(req);
+
+    inOps.ApiCmd("pod-spec/box-image-set", {
+        method: "POST",
+        data: JSON.stringify(req),
+        timeout: 3000,
+        callback: function(err, rsj) {
+
+            if (err || !rsj) {
+                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed");
+            }
+
+            if (!rsj || rsj.kind != "PodSpecBoxImage") {
+                var msg = "Bad Request";
+                if (rsj.error) {
+                    msg = rsj.error.message;
+                }
+                return l4i.InnerAlert(alert_id, 'alert-danger', msg);
+            }
+
+            l4i.InnerAlert(alert_id, 'alert-success', "Successful operation");
+
+            window.setTimeout(function() {
+                inOpsPod.SpecPlanImageList();
+                l4iModal.Close();
+            }, 1000);
+        }
+    });
+}
+

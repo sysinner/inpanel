@@ -4,6 +4,7 @@
 <table class="table table-hover valign-middle">
   <thead><tr>
     <th>Cell ID</th>
+    <th>Name</th>
     <th>Description</th>
     <th>Action</th>
     <th>Updated</th>
@@ -22,6 +23,7 @@
   <td class="incp-font-fixspace">
     {[=v.meta.id]}
   </td>  
+  <td>{[=v.meta.name]}</td>
   <td>{[=v.description]}</td>
   <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
   <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>

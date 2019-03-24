@@ -1546,6 +1546,7 @@ inOpsHost.CellSetCommit = function() {
     var req = {
         meta: {
             id: form.find("input[name=id]").val(),
+            name: form.find("input[name=name]").val(),
         },
         zone_id: form.find("input[name=zone_id]").val(),
         phase: parseInt(form.find("input[name=phase]:checked").val()),
@@ -1764,14 +1765,18 @@ inOpsHost.ZoneSet = function(zoneid) {
                 rsj.wan_api = "";
             }
 
+            if (!rsj.image_services) {
+                rsj.image_services = [];
+            }
+
             rsj._actions = inOpsHost.actions;
 
             l4iModal.Open({
                 title: title,
                 tplsrc: tpl,
                 data: rsj,
-                width: 900,
-                height: 600,
+                width: 1200,
+                height: 900,
                 buttons: [{
                     onclick: "l4iModal.Close()",
                     title: "Close",
@@ -1786,6 +1791,9 @@ inOpsHost.ZoneSet = function(zoneid) {
                     }
                     if (rsj.wan_addrs.length < 1) {
                         inOpsHost.ZoneWanAddressAppend();
+                    }
+                    if (rsj.image_services.length < 1) {
+                        inOpsHost.ZoneImageServiceAppend();
                     }
                 },
             });
@@ -1835,6 +1843,18 @@ inOpsHost.ZoneLanAddressDel = function(field) {
     $(field).parent().parent().remove();
 }
 
+inOpsHost.ZoneImageServiceAppend = function() {
+    l4iTemplate.Render({
+        append: true,
+        dstid: "inops-host-zoneset-imageservice",
+        tplid: "inops-host-zoneset-imageservice-tpl",
+    });
+}
+
+inOpsHost.ZoneImageServiceDel = function(field) {
+    $(field).parent().parent().remove();
+}
+
 inOpsHost.ZoneSetCommit = function() {
     var form = $("#inops-host-zone-form"),
         alertid = "#inops-host-zoneset-alert";
@@ -1842,11 +1862,13 @@ inOpsHost.ZoneSetCommit = function() {
     var req = {
         meta: {
             id: form.find("input[name=id]").val(),
+            name: form.find("input[name=name]").val(),
         },
         phase: parseInt(form.find("input[name=phase]:checked").val()),
         summary: form.find("input[name=summary]").val(),
         wan_addrs: [],
         lan_addrs: [],
+        image_services: [],
         wan_api: form.find("input[name=wan_api]").val(),
     };
 
@@ -1873,6 +1895,22 @@ inOpsHost.ZoneSetCommit = function() {
 
             req.lan_addrs.push(addr);
         });
+
+        form.find(".inops-host-zoneset-imageservice-item").each(function() {
+
+            var driver = $(this).find("input[name=image_service_driver]").val();
+            var url = $(this).find("input[name=image_service_url]").val();
+
+            if (!driver || (driver != "docker" && driver != "pouch")) {
+                return;
+            }
+
+            req.image_services.push({
+                driver: driver,
+                url: url,
+            });
+        });
+
 
         if (req.lan_addrs.length < 1) {
             throw "No LAN Address Found";

@@ -332,29 +332,41 @@
 }
 
 .incp-form-box-selector {
+  /**
   position: relative;
   display: inline-block;
+  */
   padding: 0;
   width: 100%;
+  display: flex;
+  align-content: flex-start;
+  flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 .incp-form-box-selector-item {
+  /**
   position: relative;
   display: block;
   float: left;
+  */
   padding: 5px;
   margin: 0 10px 10px 0;
   background-color: #ECF0F1;
   box-shadow: inset 0px 0px 1px #FFFFCC;
-  width: 200px;
+  min-width: 280px;
+  max-width: 280px;
   overflow: hidden;
   text-align: left;
   font-size: 16px;
   cursor: pointer;
+  align-self: flex-start;
+  flex-grow: 1;
 }
 
 .incp-form-box-selector-item-w2 {
-  width: 410px !important;
+  width: 500px !important;
+  flex-grow: 2;
 }
 
 .incp-form-box-selector-item:hover {

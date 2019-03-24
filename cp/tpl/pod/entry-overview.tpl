@@ -272,9 +272,9 @@
           {[?]}
         </td>
         <td>
-         {[if (v.operate.options.length > 0) {]}
+         {[? v.operate.options && v.operate.options.length > 0 ]}
            <button class="btn btn-sm btn-default" onclick="inCpApp.OpOptInfo('{[=v.meta.id]}')" style="width:40px">{[=v.operate.options.length]}</button>
-         {[}]}
+         {[?]}
         </td>
         <td align="right">{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
       </tr>

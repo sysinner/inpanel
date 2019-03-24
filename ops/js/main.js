@@ -6,6 +6,16 @@ var inOps = {
     api: "/in/ops/",
     debug: true,
     UserSession: null,
+    ooActions: [
+        {
+            action: 1 << 1,
+            title: "Enable"
+        },
+        {
+            action: 1 << 3,
+            title: "Disable"
+        },
+    ],
 }
 
 inOps.debug_uri = function() {

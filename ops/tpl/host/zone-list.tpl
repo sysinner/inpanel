@@ -4,6 +4,7 @@
 <table class="table table-hover valign-middle">
   <thead><tr>
     <th>Zone ID</th>
+    <th>Name</th>
   	<th>Description</th>
     <th>LAN Address</th>
     <th>WAN Address</th>
@@ -22,6 +23,7 @@
   <td class="incp-font-fixspace">
     {[=v.meta.id]}
   </td>
+  <td>{[=v.meta.name]}</td>
   <td>{[=v.summary]}</td>
   <td>
     {[~v.lan_addrs :addr]}

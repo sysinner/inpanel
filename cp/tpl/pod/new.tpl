@@ -132,8 +132,8 @@
     <div class="incp-form-box-selector-item {[if (v.ref_id == it.image_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-image-id-{[=l4iString.CryptoMd5(v.ref_id)]}"
       onclick="inCpPod.NewPlanImageChange('{[=v.ref_id]}')">
+      <div>{[? v.ref_title]}{[=v.ref_title]} / {[?]}{[=v.driver]}</div>
       <div>{[=v.ref_id]}</div>
-      <div>{[=v.driver]} / {[=v.os_dist]}</div>
     </div>
     {[~]}
   </td>
@@ -142,6 +142,7 @@
 <tr class="incp-podnew-resource-selector-row">
   <td>System Storage</td>
   <td id="incp-podnew-vols">
+    <div class="incp-form-box-selector">
     {[~it.res_volumes :v]}
     <div class="incp-form-box-selector-item {[if (v.ref_id == it._res_volume.ref_id) { ]}selected{[ } ]}"
       id="incp-podnew-vol-id-{[=v.ref_id]}"
@@ -150,7 +151,8 @@
       <div>{[=v.ref_name]}</div>
     </div>
     {[~]}
-    <div class="incp-form-box-selector form-inline" id="incp-podnew-res-volumes">
+    </div>
+    <div class="form" id="incp-podnew-res-volumes">
       <div class="input-group" style="width:300px;">
         <input type="text" class="form-control" id="incp-podnew-resource-value" value="{[=it._res_volume._valued]}" oninput="inCpPod.HookAccountChargeRefresh()">
         <div class="input-group-append"><div class="input-group-text">GB</div></div>

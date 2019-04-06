@@ -210,8 +210,8 @@
         <div class="value">{[=it.spec.ref.name]}</div>
       </div>
       <div class="incp-card-frame incp-card-frame-c6 incp-card-body-inline-item">
-        <div class="name">Driver</div>
-        <div class="value">{[=it.spec._box_image_driver]}</div>
+        <div class="name">Image</div>
+        <div class="value">{[? it.spec.box.image.ref_title]}{[=it.spec.box.image.ref_title]} - {[?]}{[=it.spec._box_image_driver]}</div>
       </div>
     </div>
     <div class="incp-card-frame-inline">

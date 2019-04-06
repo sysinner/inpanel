@@ -1071,6 +1071,7 @@ inCpPod.EntryDel = function(pod_id) {
                 pod.apps = [];
             }
 
+            // This will result in permanent data loss.
             l4iModal.Open({
                 title: "Pod Destroy",
                 tplsrc: tpl,

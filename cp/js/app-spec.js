@@ -355,6 +355,11 @@ inCpAppSpec.Info = function(id, spec, version, app_id) {
                 rsj.exp_deploy.rep_min = 1;
                 rsj.exp_deploy.rep_max = 1;
             }
+            if (!rsj.exp_deploy.failover_time) {
+                rsj.exp_deploy.failover_time = 300;
+                rsj.exp_deploy.failover_num_max = 0;
+                rsj.exp_deploy.failover_rate_max = 0;
+            }
             if (!rsj.exp_deploy.sys_state) {
                 rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
             }
@@ -640,6 +645,15 @@ inCpAppSpec.Set = function(id) {
             }
             if (rsj.exp_deploy.rep_min > rsj.exp_deploy.rep_max) {
                 rsj.exp_deploy.rep_min = rsj.exp_deploy.rep_max;
+            }
+            if (!rsj.exp_deploy.failover_time) {
+                rsj.exp_deploy.failover_time = 300;
+            }
+            if (!rsj.exp_deploy.failover_num_max) {
+                rsj.exp_deploy.failover_num_max = 0;
+            }
+            if (!rsj.exp_deploy.failover_rate_max) {
+                rsj.exp_deploy.failover_rate_max = 0;
             }
             if (!rsj.exp_deploy.sys_state) {
                 rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateless;
@@ -1538,12 +1552,30 @@ inCpAppSpec.SetCommit = function() {
         inCpAppSpec.setActive.exp_deploy.rep_min = rep_min;
         inCpAppSpec.setActive.exp_deploy.rep_max = rep_max;
 
+        //	
         var sys_state = parseInt(form.find("select[name=exp_deploy_sys_state]").val());
         if (sys_state != inCpAppSpec.deploySysStateless &&
             sys_state != inCpAppSpec.deploySysStateful) {
             sys_state = inCpAppSpec.deploySysStateless;
         }
         inCpAppSpec.setActive.exp_deploy.sys_state = sys_state;
+
+        //
+        var fail_time = parseInt(form.find("input[name=exp_deploy_failover_time]").val());
+        var fail_num_max = parseInt(form.find("input[name=exp_deploy_failover_num_max]").val());
+        var fail_rate_max = parseInt(form.find("input[name=exp_deploy_failover_rate_max]").val());
+        if (fail_time < 0) {
+            fail_time = 0;
+        }
+        if (fail_num_max < 0) {
+            fail_num_max = 0;
+        }
+        if (fail_rate_max < 0) {
+            fail_rate_max = 0;
+        }
+        inCpAppSpec.setActive.exp_deploy.failover_time = fail_time;
+        inCpAppSpec.setActive.exp_deploy.failover_num_max = fail_num_max;
+        inCpAppSpec.setActive.exp_deploy.failover_rate_max = fail_rate_max;
 
 
     } catch (err) {

@@ -222,7 +222,6 @@
 </tr>
 
 
-{[? it._multi_replica_enable]}
 <tr>
   <td>Deployment Requirements</td>
   <td></td>
@@ -260,7 +259,42 @@
     </table>
   </td>
 </tr>
-{[?]}
+
+<tr>
+  <td>High Availability</td>
+  <td></td>
+  <td>
+    <table>
+    <tbody>
+    <tr>
+      <td width="33%">
+        <label>Delay time before start failover</label>
+        <div class="input-group input-group-sm">
+          <input type="text" class="form-control form-control-sm" name="exp_deploy_failover_time" value="{[=it.spec.exp_deploy.failover_time]}">
+          <div class="input-group-append"><div class="input-group-text">seconds</div></div>
+        </div>
+        <small>when fail occurs, the scheduler will delay a fixed time before performing a failover task</small>
+      </td>
+      <td width="33%">
+        <label>Max number of fails to stop failover</label>
+        <div class="input-group input-group-sm">
+          <input type="text" class="form-control form-control-sm" name="exp_deploy_failover_num_max" value="{[=it.spec.exp_deploy.failover_num_max]}">
+        </div>
+        <small>when the number of fails is greater than this, the scheduler will stop create failover task</small>
+      </td>
+      <td>
+        <label>Max rate of fails to stop failover</label>
+        <div class="input-group input-group-sm">
+          <input type="text" class="form-control form-control-sm" name="exp_deploy_failover_rate_max" value="{[=it.spec.exp_deploy.failover_rate_max]}">
+          <div class="input-group-append"><div class="input-group-text">0 ~ 100%</div></div>
+        </div>
+        <small>when the rate of fails is greater than this, the scheduler will stop create failover task</small>
+      </td>
+    </tr>
+    </tbody>
+    </table>
+  </td>
+</tr>
 
 
 <tr>

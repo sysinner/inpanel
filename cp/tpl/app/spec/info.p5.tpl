@@ -206,7 +206,6 @@
   </td>
 </tr>
 
-{[? it._multi_replica_enable]}
 <tr>
   <td>Deploy Requirements</td>
   <td>
@@ -226,7 +225,26 @@
     </table>
   </td>
 </tr>
-{[?]}
+
+<tr>
+  <td>High Availability</td>
+  <td>
+    <table width="100%">
+      <thead><tr>
+        <th width="33%">Delay time before failover</th>
+        <th width="33%">Max number of replicas in recovering</th>
+        <th>Max rate of replicas in recovering</th>
+      </tr></thead>
+      <tbody>
+      <tr>
+        <td>{[=it.exp_deploy.failover_time]} seconds</td>
+        <td>{[=it.exp_deploy.failover_num_max]}</td>
+        <td>{[=it.exp_deploy.failover_rate_max]} %</td>
+      </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>
 
 
 {[if (it._roles.length > 0) {]}

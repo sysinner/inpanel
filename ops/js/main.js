@@ -65,6 +65,7 @@ inOps.Boot = function(login_first) {
             "~/lessui/js/lessui.js" + inOps.debug_uri(),
             "~/cp/css/main.css" + inOps.debug_uri(),
             "~/cp/js/pod.js" + inOps.debug_uri(),
+            "~/cp/js/pod-rep.js" + inOps.debug_uri(),
             "~/cp/js/app.js" + inOps.debug_uri(),
             "~/cp/js/app-spec.js" + inOps.debug_uri(),
             "~/ops/css/base.css" + inOps.debug_uri(),

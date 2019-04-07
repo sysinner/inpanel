@@ -232,8 +232,8 @@
     <table width="100%">
       <thead><tr>
         <th width="33%">Delay time before failover</th>
-        <th width="33%">Max number of replicas in recovering</th>
-        <th>Max rate of replicas in recovering</th>
+        <th width="33%">Max number of fails in recovering</th>
+        <th>Max rate of fails in recovering</th>
       </tr></thead>
       <tbody>
       <tr>

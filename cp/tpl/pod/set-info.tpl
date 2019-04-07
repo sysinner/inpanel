@@ -32,7 +32,7 @@
   <td>State</td>
   <td>
     <div class="">
-      <select name="operate_exp_sys_state" class="form-control form-control-sm">
+      <select name="operate_exp_sys_state" class="form-control">
       {[~it._op_sys_states :v]}
         <option value="{[=v.value]}" {[if (it.pod.operate.exp_sys_state == v.value) {]} selected{[}]}>{[=v.title]}</option>
       {[~]}

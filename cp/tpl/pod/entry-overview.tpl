@@ -318,7 +318,7 @@
       {[}]}
       <td>
         {[? rep.ports]}
-        <table class="incp-font-fixspace table-reset" style="width:0%">
+        <table class="incp-font-fixspace table-reset" style="width:100%">
           {[~rep.ports :opv]}
           <tr>
             <td>

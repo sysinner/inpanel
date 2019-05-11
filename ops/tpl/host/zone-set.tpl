@@ -44,7 +44,7 @@
       </tr>
 
       <tr>
-        <td>Summary</td>
+        <td>Description</td>
         <td></td>
         <td>
           <input type="text" name="summary" class="form-control" placeholder="Enter the Zone Summary" value="{[=it.summary]}">

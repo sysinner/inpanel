@@ -236,6 +236,12 @@ inOpsHost.NodeList = function(zoneid, cellid) {
                 if (!data.items[i].operate.pr) {
                     data.items[i].operate.pr = inOpsHost.PriorityDefault;
                 }
+                if (!data.items[i].operate.cpu_used) {
+                    data.items[i].operate.cpu_used = 0;
+                }
+                if (!data.items[i].operate.mem_used) {
+                    data.items[i].operate.mem_used = 0;
+                }
             }
 
             l4iTemplate.Render({

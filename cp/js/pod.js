@@ -1007,9 +1007,14 @@ inCpPod.SetInfoCommit = function() {
             action: parseInt(form.find("input[name=operate_action]:checked").val()),
             exp_sys_state: parseInt(form.find("select[name=operate_exp_sys_state]").val()),
             replica_cap: parseInt(form.find("input[name=operate_replica_cap]").val()),
+            deploy: {},
         },
     };
     var pod_id = set.meta.id;
+
+    if (parseInt(form.find("input[name=operate_deploy_alloc_host_repeat_enable]:checked").val()) == 1) {
+        set.operate.deploy.alloc_host_repeat_enable = true;
+    }
 
     if (inCp.OpActionAllow(set.operate.action, inCp.OpActionDestroy)) {
         return l4iModal.Close(function() {
@@ -2132,8 +2137,8 @@ inCpPod.SpecSet = function(pod_id) {
             var spec_res_id = pod.spec.box.resources.ref.id,
                 spec_vol_id = pod.spec.vol_sys.ref_id,
                 spec_vol_size = pod.spec.vol_sys.size,
-                spec_image_id = pod.spec.box.image.ref.id;
-            spec_image_driver = pod.spec.box.image.driver;
+                spec_image_id = pod.spec.box.image.ref.id,
+                spec_image_driver = pod.spec.box.image.driver;
 
             var _plans = [];
             for (var i in plans.items) {
@@ -2240,7 +2245,7 @@ inCpPod.SpecSet = function(pod_id) {
 
         inCp.ApiCmd("host/zone-list?fields=cells", {
             callback: ep.done("zones"),
-        })
+        });
     });
 }
 
@@ -2277,7 +2282,7 @@ inCpPod.SpecSetCommit = function() {
             res_compute: inCpPod.plan.res_compute_selected,
         },
     };
-    console.log(set);
+    // console.log(set);
 
     $(alert_id).hide();
 

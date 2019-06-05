@@ -73,14 +73,12 @@
   <td>Image</td>
   <td class="incp-form-box-selector" id="incp-podnew-images" style="padding-bottom:0">
     {[~it.images :v]}
-    {[? (it.image_driver && it.image_driver == v.driver) || !it.image_driver]}
     <div class="incp-form-box-selector-item {[if (v.ref_id == it.image_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-image-id-{[=l4iString.CryptoMd5(v.ref_id)]}"
       onclick="inCpPod.NewPlanImageChange('{[=v.ref_id]}')">
       <div>{[? v.ref_title]}{[=v.ref_title]} / {[?]}{[=v.driver]}</div>
       <div>{[=v.ref_id]}</div>
     </div>
-    {[?]}
     {[~]}
   </td>
 </tr>

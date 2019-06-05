@@ -7,7 +7,7 @@
 <table class="incp-formtable">
 
 <tr>
-  <td width="200px">Name</td>
+  <td width="300px">Name</td>
   <td>
     <input type="text" class="form-control" name="meta_name" value="{[=it.pod.meta.name]}">
   </td>
@@ -51,6 +51,16 @@
   </td>
 </tr>
 {[}]}
+
+<tr>
+  <td>Multi replicas in one host</td>
+  <td>
+    <span class="incp-form-checkbox checkbox-inline">
+      <input type="checkbox" name="operate_deploy_alloc_host_repeat_enable" value="1" {[? it.pod.operate.deploy && it.pod.operate.deploy.alloc_host_repeat_enable]}checked="checked"{[?]}> Enable
+    </span>
+  </td>
+</tr>
+
 {[}]}
 
 

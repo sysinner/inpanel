@@ -66,6 +66,13 @@ var inCpAppSpec = {
         title: "Stateless",
         value: 2,
     }],
+    deployNetworkModes: [{
+        title: "Bridge",
+        value: 1,
+    }, {
+        title: "Host (sysadmin)",
+        value: 2,
+    }],
     deploySysStateful: 1,
     deploySysStateless: 2,
     fieldNameRe: /^[a-z]{1}[0-9a-z_\/\-]{1,30}$/,
@@ -669,6 +676,7 @@ inCpAppSpec.Set = function(id) {
                     spec: rsj,
                     _multi_replica_enable: inCp.syscfg.zone_master.multi_replica_enable,
                     _deploy_sys_states: inCpAppSpec.deploySysStates,
+                    _deploy_network_modes: inCpAppSpec.deployNetworkModes,
                 },
                 callback: function() {
                     inCpAppSpec.setDependRefresh();
@@ -1085,6 +1093,18 @@ inCpAppSpec.SetVcsSet = function(dir) {
     if (!item) {
         item = l4i.Clone(inCpAppSpec.vcsDef);
         modal_title = "Import from Git Repo";
+    }
+    if (!item.hook_exec_restart) {
+        item.hook_exec_restart = "";
+    }
+    if (!item.auth_user) {
+        item.auth_user = "";
+    }
+    if (!item.auth_pass) {
+        item.auth_pass = "";
+    }
+    if (!item.branch) {
+        item.branch = "";
     }
 
     l4iModal.Open({
@@ -1559,6 +1579,13 @@ inCpAppSpec.SetCommit = function() {
             sys_state = inCpAppSpec.deploySysStateless;
         }
         inCpAppSpec.setActive.exp_deploy.sys_state = sys_state;
+
+        //
+        var network_mode = parseInt(form.find("select[name=exp_deploy_network_mode]").val());
+        if (network_mode < 1) {
+            network_mode = 1;
+        }
+        inCpAppSpec.setActive.exp_deploy.network_mode = network_mode;
 
         //
         var fail_time = parseInt(form.find("input[name=exp_deploy_failover_time]").val());

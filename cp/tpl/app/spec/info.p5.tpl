@@ -238,8 +238,8 @@
       <tbody>
       <tr>
         <td>{[=it.exp_deploy.failover_time]} seconds</td>
-        <td>{[=it.exp_deploy.failover_num_max]}</td>
-        <td>{[=it.exp_deploy.failover_rate_max]} %</td>
+        <td>{[? it.exp_deploy.failover_num_max]}{[=it.exp_deploy.failover_num_max]}{[??]}--{[?]}</td>
+        <td>{[? it.exp_deploy.failover_rate_max]}{[=it.exp_deploy.failover_rate_max]} %{[??]}--{[?]}</td>
       </tr>
       </tbody>
     </table>
@@ -247,7 +247,7 @@
 </tr>
 
 
-{[if (it._roles.length > 0) {]}
+{[? it._roles && it._roles.length > 0]}
 <tr>
   <td>Allowed Roles</td>
   <td>
@@ -256,17 +256,17 @@
     {[~]}
   </td>
 </tr>
-{[}]}
+{[?]}
 
 
-{[if (it.comment && it.comment.length > 0) {]}
+{[? it.comment]}
 <tr>
   <td>Comment</td>
   <td>
     {[=it.comment]}
   </td>
 </tr>
-{[}]}
+{[?]}
 
 
 </tbody>

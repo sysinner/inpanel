@@ -164,10 +164,10 @@
         {[~it.spec.service_ports :vp]}
         <tr class="incp-app-specset-serviceport-item">
           <td>
-            <input name="sp_name" type="text" value="{[=vp.name]}" class="form-control form-control-sm">
+            <input name="sp_box_port" type="text" value="{[=vp.box_port]}" class="form-control form-control-sm">
           </td>
           <td>
-            <input name="sp_box_port" type="text" value="{[=vp.box_port]}" class="form-control form-control-sm">
+            <input name="sp_name" type="text" value="{[=vp.name]}" class="form-control form-control-sm">
           </td>
           {[? it.spec._host_port_enable]}
           <td>
@@ -231,7 +231,7 @@
     <tr>
       <td width="33%">Number of Replicas (1 ~ 256)</td>
       <td width="33%">System State</td>
-      <td></td>
+      <td>Network Mode</td>
     </tr>
     <tr>
       <td>
@@ -253,7 +253,13 @@
         {[~]}
         </select>
       </td>
-      <td></td>
+      <td>
+        <select name="exp_deploy_network_mode" class="form-control form-control-sm">
+        {[~it._deploy_network_modes :v]}
+        <option value="{[=v.value]}" {[if (it.spec.exp_deploy.network_mode == v.value) {]} selected{[}]}>{[=v.title]}</option>
+        {[~]}
+        </select>
+      </td>
     </tr>
     </tbody>
     </table>

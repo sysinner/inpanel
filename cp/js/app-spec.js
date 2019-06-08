@@ -364,9 +364,18 @@ inCpAppSpec.Info = function(id, spec, version, app_id) {
             }
             if (!rsj.exp_deploy.failover_time) {
                 rsj.exp_deploy.failover_time = 300;
-                rsj.exp_deploy.failover_num_max = 0;
-                rsj.exp_deploy.failover_rate_max = 0;
             }
+            if (!rsj.exp_deploy.failover_num_max) {
+                rsj.exp_deploy.failover_num_max = 0;
+            } else if (rsj.exp_deploy.failover_num_max > 0) {
+                rsj.exp_deploy._failover_enable = true;
+            }
+            if (!rsj.exp_deploy.failover_rate_max) {
+                rsj.exp_deploy.failover_rate_max = 0;
+            } else if (rsj.exp_deploy.failover_rate_max > 0) {
+                rsj.exp_deploy._failover_enable = true;
+            }
+
             if (!rsj.exp_deploy.sys_state) {
                 rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
             }
@@ -654,16 +663,20 @@ inCpAppSpec.Set = function(id) {
                 rsj.exp_deploy.rep_min = rsj.exp_deploy.rep_max;
             }
             if (!rsj.exp_deploy.failover_time) {
-                rsj.exp_deploy.failover_time = 300;
+                rsj.exp_deploy.failover_time = 600;
             }
             if (!rsj.exp_deploy.failover_num_max) {
                 rsj.exp_deploy.failover_num_max = 0;
+            } else if (rsj.exp_deploy.failover_num_max > 0) {
+                rsj.exp_deploy._failover_enable = true;
             }
             if (!rsj.exp_deploy.failover_rate_max) {
                 rsj.exp_deploy.failover_rate_max = 0;
+            } else if (rsj.exp_deploy.failover_rate_max > 0) {
+                rsj.exp_deploy._failover_enable = true;
             }
             if (!rsj.exp_deploy.sys_state) {
-                rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateless;
+                rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
             }
 
             inCpAppSpec.setActive = rsj;
@@ -1480,6 +1493,19 @@ inCpAppSpec.setExecutorRefresh = function() {
     });
 }
 
+inCpAppSpec.SetDeployFailoverRefresh = function() {
+    var el = document.getElementById("exp_deploy_failover_checkbox");
+    var el2 = document.getElementById("exp_deploy_failover_box");
+    if (!el || !el2) {
+        return;
+    }
+    if (el.checked === true) {
+        el2.style.display = "block";
+    } else {
+        el2.style.display = "none";
+    }
+}
+
 inCpAppSpec.SetCommit = function() {
     var alert_id = "#incp-app-specset-alert";
 
@@ -1576,7 +1602,7 @@ inCpAppSpec.SetCommit = function() {
         var sys_state = parseInt(form.find("select[name=exp_deploy_sys_state]").val());
         if (sys_state != inCpAppSpec.deploySysStateless &&
             sys_state != inCpAppSpec.deploySysStateful) {
-            sys_state = inCpAppSpec.deploySysStateless;
+            sys_state = inCpAppSpec.deploySysStateful;
         }
         inCpAppSpec.setActive.exp_deploy.sys_state = sys_state;
 

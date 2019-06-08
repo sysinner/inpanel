@@ -5,6 +5,10 @@
   <td>{[=it.meta.id]}</td>
 </tr>
 
+<tr>
+  <td>Name</td>
+  <td>{[=it.meta.name]}</td>
+</tr>
 
 {[? it.description]}
 <tr>
@@ -16,7 +20,7 @@
 
 {[if (it.packages.length > 0) {]}
 <tr>
-  <td>Imported Package</td>
+  <td>Import Package</td>
   <td id="incp-app-specset-ipmls">
     <table>
       <thead><tr>
@@ -41,7 +45,7 @@
 
 {[if (it.vcs_repos.length > 0) {]}
 <tr>
-  <td>Imported Git Repo</td>
+  <td>Import Git Repo</td>
   <td id="incp-app-specset-vcsls">
     <table>
       <thead><tr>
@@ -66,7 +70,7 @@
 
 {[if (it.depends.length > 0) {]}
 <tr>
-  <td>Internally dependent AppSpec</td>
+  <td>Import AppSpec</td>
   <td id="incp-app-specset-depls">
     <table>
       <thead><tr>
@@ -226,6 +230,8 @@
   </td>
 </tr>
 
+
+{[? it.exp_deploy._failover_enable]}
 <tr>
   <td>High Availability</td>
   <td>
@@ -245,6 +251,7 @@
     </table>
   </td>
 </tr>
+{[?]}
 
 
 {[? it._roles && it._roles.length > 0]}

@@ -1354,6 +1354,21 @@ inCpPod.EntryOverview = function() {
 
         var ep = EventProxy.create("tpl", "pod", function(tpl, pod) {
 
+            if (!pod.operate.failover) {
+                pod.operate.failover = {};
+            }
+            if (!pod.operate.failover.reps) {
+                pod.operate.failover.reps = [];
+            }
+            for (var i in pod.operate.failover.reps) {
+                if (!pod.operate.failover.reps[i].rep_id) {
+                    pod.operate.failover.reps[i].rep_id = 0;
+                }
+            }
+            if (!pod.operate.exp_failovers) {
+                pod.operate.exp_failovers = [];
+            }
+
             if (!pod.operate.replicas) {
                 pod.operate.replicas = [];
             }
@@ -1373,6 +1388,12 @@ inCpPod.EntryOverview = function() {
                     }
                     if (!pod.operate.replicas[i].ports[j].wan_addr) {
                         pod.operate.replicas[i].ports[j].wan_addr = pod.operate.replicas[i].ports[j].lan_addr;
+                    }
+                }
+                for (var j in pod.operate.failover.reps) {
+                    if (pod.operate.replicas[i].rep_id == pod.operate.failover.reps[j].rep_id) {
+                        pod.operate.replicas[i]._failover_enable = true;
+                        break;
                     }
                 }
             }

@@ -36,7 +36,7 @@
     <input name="meta_id" class="form-control form-control-sm" 
       value="{[=it.spec.meta.id]}" {[? it.spec.meta.id && it.spec.meta.id.length > 0]}readonly{[?]}>
     {[? !it.spec.meta.id || it.spec.meta.id.length < 1]}
-	<small>Example: company-product, or company-product-alias</small>
+    <small>Example: company-product, or company-product-alias</small>
     {[?]}
   </td>
 </div>
@@ -63,7 +63,7 @@
 
 <tr>
   <td>
-    Imported Package
+    Import Package
   </td>
   <td>
     <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetPackageSelect()">
@@ -79,7 +79,7 @@
 
 <tr>
   <td>
-    Imported Git Repo
+    Import Git Repo
   </td>
   <td>
     <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetVcsSet()">
@@ -94,7 +94,7 @@
 
 <tr>
   <td>
-    Internally dependent AppSpec
+    Import AppSpec
   </td>
   <td>
     <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetDependSelect()">
@@ -268,20 +268,25 @@
 
 <tr>
   <td>High Availability</td>
-  <td></td>
   <td>
-    <table width="100%">
+    <div class="form-check">
+      <input id="exp_deploy_failover_checkbox" class="form-check-input" type="checkbox" value="1" {[? it.spec.exp_deploy._failover_enable]}checked="checked"{[?]} onclick="inCpAppSpec.SetDeployFailoverRefresh()">
+    </div>
+  </td>
+  <td>
+    <table id="exp_deploy_failover_box" width="100%" style="{[? it.spec.exp_deploy._failover_enable]}{[??]}display:none{[?]}">
     <tbody>
     <tr>
-      <td width="33%">
+      <td width="33%" valign="top">
         <label>Delay time before failover</label>
       </td>
-      <td width="33%">
+      <!-- <td width="33%" valign="top">
         <label>Max number of fails in recovering</label>
+      </td> -->
+      <td width="33%" valign="top">
+        <label>Max percentage of fails and replicas in recovering</label>
       </td>
-      <td>
-        <label>Max rate of fails in recovering</label>
-      </td>
+	  <td></td>
     </tr>
     <tr>
       <td valign="top">
@@ -291,19 +296,20 @@
         </div>
         <small>when fail occurs, the scheduler will delay a fixed time before performing a failover task</small>
       </td>
-      <td valign="top">
+      <!-- <td valign="top">
         <div class="input-group input-group-sm">
           <input type="text" class="form-control form-control-sm" name="exp_deploy_failover_num_max" value="{[=it.spec.exp_deploy.failover_num_max]}">
         </div>
         <small>when the number of fails is greater than this, the scheduler will stop create failover task</small>
-      </td>
+      </td> -->
       <td valign="top">
         <div class="input-group input-group-sm">
           <input type="text" class="form-control form-control-sm" name="exp_deploy_failover_rate_max" value="{[=it.spec.exp_deploy.failover_rate_max]}">
-          <div class="input-group-append"><div class="input-group-text">0 ~ 100%</div></div>
+          <div class="input-group-append"><div class="input-group-text">1 ~ 50</div></div>
         </div>
-        <small>when the rate of fails is greater than this, the scheduler will stop create failover task</small>
+        <small>when the percentage of fails and replicas is greater than this, the scheduler will stop create failover task</small>
       </td>
+	  <td></td>
     </tr>
     </tbody>
     </table>
@@ -332,7 +338,7 @@
 
 
 <tr>
-  <td>Comment</td>
+  <td>Version Comment</td>
   <td></td>
   <td>
     <input type="text" name="comment" class="form-control form-control-sm" value="">

@@ -100,3 +100,64 @@ inCpPodRep.SetCommit = function() {
     });
 }
 
+inCpPodRep.failoverConfirmActive = {};
+inCpPodRep.FailoverConfirm = function(podId, repId) {
+    inCpPodRep.failoverConfirmActive = {
+        pod_id: podId,
+        rep_id: repId,
+    };
+
+    l4iModal.Open({
+        title: "Pod Replica Failover Confirm",
+        tplsrc: "<div class='alert alert-danger'>This current replica is not available, the system will create a replica on the new host. This operation is risky (may lose data), do you confirm to continue?</div>",
+        width: 900,
+        height: 300,
+        buttons: [{
+            onclick: "l4iModal.Close()",
+            title: "Close",
+        }, {
+            onclick: "inCpPodRep.FailoverCommit()",
+            title: "Confirm to start failover task",
+            style: "btn btn-danger",
+        }],
+    });
+
+}
+
+inCpPodRep.FailoverCommit = function() {
+    var req = {
+        meta: {
+            id: inCpPodRep.failoverConfirmActive.pod_id,
+        },
+        replica: {
+            rep_id: inCpPodRep.failoverConfirmActive.rep_id,
+            action: inCp.OpActionFailover,
+        },
+    }
+
+    inCp.ApiCmd("pod-rep/set", {
+        method: "POST",
+        data: JSON.stringify(req),
+        callback: function(err, rsj) {
+
+            if (err || !rsj) {
+                return l4iModal.FootAlert('error', "Network Connection Exception", 3000);
+            }
+
+            if (rsj.error) {
+                return l4iModal.FootAlert('error', rsj.error.message, 3000);
+            }
+
+            if (!rsj.kind || rsj.kind != "PodRep") {
+                return l4iModal.FootAlert('error', "Network Connection Exception", 3000);
+            }
+
+            l4iModal.FootAlert('ok', "Successfully Updated");
+
+            window.setTimeout(function() {
+                inCpPodRep.failoverConfirmActive = {};
+                l4iModal.Close();
+            }, 1000);
+        }
+    });
+}

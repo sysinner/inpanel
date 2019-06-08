@@ -345,6 +345,11 @@
       <td id="incp-podentry-box-action-status-value-{[=rep.rep_id]}"></td>
       <td id="incp-podentry-box-uptime-value-{[=rep.rep_id]}"></td>
       <td id="incp-podentry-repitem-setup-{[=rep.rep_id]}" align="right">
+        {[? rep._failover_enable]}
+        <span class="incp-btn-hover" onclick="inCpPodRep.FailoverConfirm('{[=it.meta.id]}', {[=rep.rep_id]})">
+          <i class="fa fa-exclamation-circle"></i>
+        </span>
+        {[?]}
         {[if (inCp.syscfg.zone_master.multi_replica_enable && !inCp.OpActionAllow(it.operate.action, inCp.OpActionDestroy)) {]}
         <span class="incp-btn-hover" onclick="inCpPodRep.Set('{[=it.meta.id]}', {[=rep.rep_id]})">
           <i class="fa fa-cog"></i>

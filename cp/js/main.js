@@ -64,6 +64,8 @@ var inCp = {
     OpActionDestroy: 1 << 5,
     OpActionDestroyed: 1 << 6,
     OpActionMigrate: 1 << 7,
+    OpActionMigrated: 1 << 8,
+    OpActionFailover: 1 << 9,
     OpActionPending: 1 << 11,
     OpActionWarning: 1 << 12,
     ResVolValueAttrSSD: 1 << 5,

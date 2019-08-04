@@ -79,6 +79,7 @@ var inCpPod = {
     OpRepMin: 1,
     OpRepMax: 32,
     VolSizeMax: 2 * 1024, // GB
+    userTransfers: null,
 }
 
 inCpPod.Index = function() {
@@ -228,7 +229,12 @@ inCpPod.List = function(tplid, options) {
                 return l4i.InnerAlert(alert_id, 'error', data.error.message);
             }
 
-            // $("#incp-podls-alert").hide();
+            if (data.user_transfers && data.user_transfers.length > 0) {
+                inCpPod.userTransfers = data.user_transfers;
+                return inCpPod.UserTransferPerform();
+            }
+
+
             if (!data.items) {
                 data.items = [];
             }
@@ -972,6 +978,9 @@ inCpPod.SetInfo = function(pod_id) {
                     onclick: "l4iModal.Close()",
                     title: "Close",
                 }, {
+                    onclick: "inCpPod.UserTransferView()",
+                    title: "Transfer Ownership",
+                }, {
                     onclick: "inCpPod.SetInfoCommit()",
                     title: "Save",
                     style: "btn btn-primary",
@@ -992,6 +1001,7 @@ inCpPod.SetInfo = function(pod_id) {
         });
     });
 }
+
 
 
 inCpPod.SetInfoCommit = function() {
@@ -1059,6 +1069,192 @@ inCpPod.SetInfoCommit = function() {
     });
 }
 
+inCpPod.UserTransferView = function(pod_id) {
+
+    if (!pod_id && inCpPod.itemActiveId) {
+        pod_id = inCpPod.itemActiveId;
+    }
+    if (!pod_id) {
+        return alert("No Pod Found");
+    }
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", "pod", function(tpl, pod) {
+
+            l4iModal.Open({
+                id: "pod-user-transfer",
+                title: "Transfer Ownership",
+                tplsrc: tpl,
+                height: 450,
+                data: {
+                    pod: pod,
+                },
+                buttons: [{
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                }, {
+                    onclick: "inCpPod.UserTransferCommit()",
+                    title: "Perform Transfer",
+                    style: "btn btn-primary",
+                }],
+            });
+        });
+
+        ep.fail(function(err) {
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
+        });
+
+        inCp.ApiCmd("pod/entry?id=" + pod_id, {
+            callback: ep.done("pod"),
+        });
+
+        inCp.TplFetch("pod/user-transfer", {
+            callback: ep.done("tpl"),
+        });
+    });
+}
+
+
+inCpPod.UserTransferCommit = function() {
+
+    var alert_id = "#incp-pod-user-transfer-alert";
+    var form = $("#incp-pod-user-transfer");
+
+    var set = {
+        id: form.find("input[name=pod_id]").val(),
+        user_to: form.find("input[name=user_to]").val(),
+    };
+
+    $(alert_id).hide();
+
+    inCp.ApiCmd("pod/user-transfer", {
+        method: "POST",
+        data: JSON.stringify(set),
+        callback: function(err, rsj) {
+
+            if (err || !rsj) {
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+            }
+
+            if (rsj.error) {
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+            }
+
+            if (!rsj.kind || rsj.kind != "PodInstance") {
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+            }
+
+            l4iModal.FootAlert('ok', l4i.T("Successfully Updated") + ", " +
+                l4i.T("msg-transter-ownership-confirm"));
+
+            window.setTimeout(function() {
+                l4iModal.Close();
+                var el = document.getElementById("incp-podls");
+                if (el) {
+                    inCpPod.List(null, null);
+                }
+            }, 10000);
+        }
+    });
+}
+
+inCpPod.UserTransferPerform = function() {
+
+    if (!inCpPod.userTransfers || inCpPod.userTransfers.length < 1) {
+        return alert("No Transfer Found");
+    }
+
+    seajs.use(["ep"], function(EventProxy) {
+
+        var ep = EventProxy.create("tpl", function(tpl) {
+
+            l4iModal.Open({
+                title: "Transfer Ownership Requets",
+                tplsrc: tpl,
+                width: 900,
+                height: 450,
+                data: {
+                    items: inCpPod.userTransfers,
+                },
+                buttons: [{
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                }, {
+                    onclick: "inCpPod.UserTransferPerformCommit()",
+                    title: "Perform Transfer",
+                    style: "btn btn-primary",
+                }],
+            });
+        });
+
+        ep.fail(function(err) {
+            alert("Network Connection Error, Please try again later (EC:incp-pod)");
+        });
+
+        inCp.TplFetch("pod/user-transfer-perform", {
+            callback: ep.done("tpl"),
+        });
+    });
+}
+
+inCpPod.UserTransferPerformCommit = function() {
+
+    var alert_id = "#incp-pod-user-transfer-perform-alert";
+
+    var pod_ids = [];
+
+    try {
+
+        var form = $("#incp-pod-user-transfer-perform");
+        if (!form) {
+            throw "Form Not Found";
+        }
+
+        form.find("input[name=user_transfer_pod_id]:checked").each(function() {
+            var val = $(this).val();
+            pod_ids.push(val);
+        });
+
+        if (pod_ids.length < 1) {
+            throw "No Item Seleced";
+        }
+
+    } catch (err) {
+        return l4i.InnerAlert(alert_id, 'error', err);
+    }
+
+    $(alert_id).hide();
+
+    inCp.ApiCmd("pod/user-transfer-perform?pod_ids=" + pod_ids.join(","), {
+        // method: "POST",
+        // data: JSON.stringify(set),
+        callback: function(err, rsj) {
+
+            if (err || !rsj) {
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+            }
+
+            if (rsj.error) {
+                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+            }
+
+            if (!rsj.kind || rsj.kind != "PodInstance") {
+                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+            }
+
+            l4iModal.FootAlert('ok', l4i.T("Successfully Updated"));
+
+            window.setTimeout(function() {
+                l4iModal.Close();
+                var el = document.getElementById("incp-podls");
+                if (el) {
+                    inCpPod.List(null, null);
+                }
+            }, 2000);
+        }
+    });
+}
 
 inCpPod.EntryDel = function(pod_id) {
     if (!pod_id && inCpPod.itemActiveId) {

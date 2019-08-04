@@ -144,7 +144,11 @@ inCp.load_index = function() {
 
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "zones", "session", "syscfg", function(tpl, zones, session, syscfg) {
+        var ep = EventProxy.create("tpl", "zones", "session", "syscfg", "lang", function(tpl, zones, session, syscfg, lang) {
+
+            if (lang && lang.items) {
+                l4i.LangSync(lang.items, lang.locale);
+            }
 
             if (!session || session.username == "") {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
@@ -238,6 +242,10 @@ inCp.load_index = function() {
                 }
                 ep.emit("session", data);
             },
+        });
+
+        l4i.Ajax(inCp.base + "langsrv/locale", {
+            callback: ep.done("lang"),
         });
 
         inCp.TplFetch("index/index", {

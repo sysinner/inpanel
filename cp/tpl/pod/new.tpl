@@ -14,6 +14,19 @@
 <table class="incp-formtable">
 <tbody>
 
+{[? it._options.user_groups]}
+<tr>
+  <td width="180px">Owner</td>
+  <td>
+    <select name="incp-podnew-meta-user" id="incp-podnew-meta-user" class="form-control">
+    {[~it._options.user_groups :v]}
+      <option value="{[=v]}">{[=v]}</option>
+    {[~]}
+    </select>
+  </td>
+</tr>
+{[?]}
+
 <tr>
   <td width="180px">Name</td>
   <td>

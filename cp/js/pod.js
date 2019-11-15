@@ -157,7 +157,12 @@ inCpPod.ListRefresh = function(options) {
                 data.items = [];
             }
 
+            options.owner_column = false;
+
             for (var i in data.items) {
+                if (!options.owner_column && data.items[i].meta.user != inCp.UserSession.username) {
+                    options.owner_column = true;
+                }
                 if (!data.items[i].apps) {
                     data.items[i].apps = [];
                 }
@@ -368,6 +373,15 @@ inCpPod.New = function(options) {
 
             if (!pod._plan_selected) {
                 return l4i.InnerAlert(alert_id, 'error', "No SpecPodPlan Found");
+            }
+
+
+            //
+            if (inCp.UserSession.groups && inCp.UserSession.groups.length > 0) {
+                options.user_groups = [inCp.UserSession.username];
+                for (var i in inCp.UserSession.groups) {
+                    options.user_groups.push(inCp.UserSession.groups[i]);
+                }
             }
 
             inCpPod.plans = plans;
@@ -761,6 +775,7 @@ inCpPod.HookAccountChargeRefresh = function() {
 
 inCpPod.NewCommit = function() {
     var alert_id = "#incp-podnew-alert",
+        form = $("#incp-podnew-form"),
         url = "",
         vol_size = parseInt($("#incp-podnew-resource-value").val());
     if (vol_size <= 1) {
@@ -798,6 +813,12 @@ inCpPod.NewCommit = function() {
 
     if (!set.name || set.name == "") {
         return l4i.InnerAlert(alert_id, 'error', "Name Not Found");
+    }
+
+    //
+    var owner = form.find("select[name=incp-podnew-meta-user]").val();
+    if (owner && owner.length > 1) {
+        set.owner = owner;
     }
 
     $(alert_id).hide();

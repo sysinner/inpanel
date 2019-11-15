@@ -10,8 +10,8 @@
       {[if (inCp.syscfg.zone_master.multi_zone_enable || inCp.syscfg.zone_master.multi_cell_enable) {]}
       <th>Location</th>
       {[}]}
-      {[? it._options.ops_mode]}
-      <th>User</th>
+      {[? it._options.ops_mode || it._options.owner_column]}
+      <th>Owner</th>
       {[?]}
       <th>CPU - RAM</th>
       {[? inCp.syscfg.zone_master.multi_replica_enable]}
@@ -40,7 +40,7 @@
       {[?]}
     </td>
     {[}]}
-    {[? it._options.ops_mode]}
+    {[? it._options.ops_mode || it._options.owner_column]}
     <td class="incp-ctn-hover">{[=v.meta.user]}</td>
     {[?]}
     <td class="incp-ctn-hover">

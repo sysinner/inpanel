@@ -93,6 +93,7 @@ inOps.load_index = function() {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
             inOps.UserSession = session;
+            inCp.UserSession = session;
 
             if (zones.error && zones.error.code == "AccessDenied") {
                 return inCp.AlertAccessDenied();

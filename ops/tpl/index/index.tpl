@@ -18,7 +18,7 @@
     </ul>
     <ul class="incp-nav incp-topbar-nav" id="inops-topbar-nav-menus">
       <li><a class="l4i-nav-item" href="#host/index">Cluster</a></li>
-      <li><a class="l4i-nav-item" href="#pod/index">Containers</a></li>
+      <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>
       <li><a class="l4i-nav-item" href="#app/index">Applications</a></li>
       <li><a class="l4i-nav-item" href="#sys/index">System</a></li>
     </ul>

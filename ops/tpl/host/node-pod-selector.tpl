@@ -5,7 +5,7 @@
         <th>Name<br>ID</th>
         <th>Spec</th>
         <th>User</th>
-        <th>CPU<br/>Memory</th>
+        <th>CPU<br/>RAM</th>
         <th>Volume</th>
         <th>Apps</th>
         <th>Reps</th>

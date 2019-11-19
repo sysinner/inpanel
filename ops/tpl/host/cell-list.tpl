@@ -6,10 +6,9 @@
     <th>Cell ID</th>
     <th>Name</th>
     <th>Description</th>
-    <th>Action</th>
-    <th>Updated</th>
     <th>CPU %</th>
-    <th>Mem %</th>
+    <th>RAM %</th>
+    <th>Action</th>
     <th>Hosts</th>
     <th></th>
   </tr></thead>
@@ -25,9 +24,6 @@
   </td>  
   <td>{[=v.meta.name]}</td>
   <td>{[=v.description]}</td>
-  <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
-  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
-   
   <td>
     {[? v.status && v.status.cpu_used]}
       {[=(100 * v.status.cpu_used/v.status.cpu_cap).toFixed(2)]}
@@ -43,6 +39,8 @@
 	  0
     {[?]}
   </td>
+
+  <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
 
   <td>
     <button class="btn btn-sm btn-outline-primary"

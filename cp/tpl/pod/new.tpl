@@ -124,7 +124,7 @@
 </tr>
 
 <tr class="incp-podnew-resource-selector-row">
-  <td>CPU / Memory</td>
+  <td>CPU / RAM</td>
   <td class="incp-form-box-selector" id="incp-podnew-res-computes" style="padding-bottom:0">
     {[~it.res_computes :v]}
     <div class="incp-font-fixspace incp-form-box-selector-item {[if (!inCpPod.NewOptionResFit(v)) {]}disable{[} else if (v.ref_id == it.res_compute_selected) { ]}selected{[ } ]}" 

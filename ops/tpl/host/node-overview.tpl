@@ -37,7 +37,7 @@
         <div class="value">{[=(it.operate.cpu_used/10).toFixed(1)]} / {[=it.spec.capacity.cpu/10]}</div>
       </div>
       <div class="incp-card-frame incp-card-frame-p25 incp-card-body-inline-item">
-        <div class="name">Allocated Memory</div>
+        <div class="name">Allocated RAM</div>
         <div class="value">
           {[=inCp.UtilResSizeFormat(it.operate.mem_used * inCp.ByteMB)]} / {[=inCp.UtilResSizeFormat(it.spec.capacity.mem *inCp.ByteMB)]}
         </div>

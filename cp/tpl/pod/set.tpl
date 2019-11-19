@@ -80,7 +80,7 @@
         <thead>
           <tr>
             <th>CPU Cores</th>
-            <th>Memory (MB)</th>
+            <th>RAM (MB)</th>
             <th>Storage (MB)</th>    
           </tr>
         </thead>

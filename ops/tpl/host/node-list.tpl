@@ -4,7 +4,7 @@
 <tr>
   <th>Name<br/>ID</th>
   <th>Network</th>
-  <th>Allocated<br/>CPU - Memory</th>
+  <th>Allocated<br/>CPU - RAM</th>
   <th>Priority</th>
   <th>Action</th>
   <th>Ports</th>

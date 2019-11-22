@@ -5,9 +5,9 @@
 <table class="table table-hover valign-middle">
 <thead>
   <tr>
-    <th>Instances</th>
-    {[? it._options.ops_mode]}
-    <th>User</th>
+    <th>Instance</th>
+    {[? it._options.ops_mode || it._options.owner_column]}
+    <th>Owner</th>
     {[?]}
     <th>AppSpec</th>
     <th>Pod</th>
@@ -23,7 +23,7 @@
     <span><strong>{[=v.meta.name]}</strong></span>
     <div>{[=v.meta.id]}</div>
   </td>
-  {[? it._options.ops_mode]}
+  {[? it._options.ops_mode || it._options.owner_column]}
   <td>{[=v.meta.user]}</td>
   {[?]}
   <td class="incp-font-fixspace">

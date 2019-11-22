@@ -64,6 +64,10 @@ inCpApp.InstListRefresh = function(options) {
 
     var alert_id = "#incp-appls-alert";
 
+    if (options && typeof options === "string") {
+        options = {};
+    }
+
     if (options) {
         inCpApp.list_options = options;
     } else {
@@ -82,6 +86,7 @@ inCpApp.InstListRefresh = function(options) {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
+
             if (options.ops_mode) {
                 inCp.OpToolsClean();
             } else {
@@ -96,7 +101,13 @@ inCpApp.InstListRefresh = function(options) {
                 "display": "node"
             });
 
+            options.owner_column = false;
+
             for (var i in rsj.items) {
+
+                if (options.owner_column === false && rsj.items[i].meta.user != inCp.UserSession.username) {
+                    options.owner_column = true;
+                }
                 if (!rsj.items[i].operate.pod_id || rsj.items[i].operate.pod_id.length < 8) {
                     rsj.items[i].operate.pod_id = "-";
                 }

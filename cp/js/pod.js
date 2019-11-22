@@ -97,6 +97,11 @@ inCpPod.list_nav_menus = [{
 inCpPod.list_options = {};
 
 inCpPod.ListRefresh = function(options) {
+
+    if (options && typeof options === "string") {
+        options = {};
+    }
+
     if (!options || !options.callback) {
         return;
     }
@@ -1191,7 +1196,7 @@ inCpPod.UserTransferPerform = function() {
         var ep = EventProxy.create("tpl", function(tpl) {
 
             l4iModal.Open({
-                title: "Transfer Ownership Requets",
+                title: "Transfer Ownership Requests",
                 tplsrc: tpl,
                 width: 900,
                 height: 450,

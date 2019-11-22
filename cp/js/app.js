@@ -354,6 +354,7 @@ inCpApp.instConfigurator = function(cb) {
 }
 
 inCpApp.instConfigDepRemotesActive = null;
+inCpApp.instConfigDepRemotesBinds = null;
 
 inCpApp.instConfigDepRemotes = function(spec_id) {
 
@@ -373,9 +374,15 @@ inCpApp.instConfigDepRemotes = function(spec_id) {
             continue;
         }
         for (var j in depRemotes) {
+            if (!depRemotes[j]._binds) {
+                depRemotes[j]._binds = [];
+            }
             if (depRemotes[j].id == inCpApp.instDeployActive.operate.services[i].spec) {
-                depRemotes[j]._app_id = inCpApp.instDeployActive.operate.services[i].app_id;
-                break;
+                depRemotes[j]._binds.push({
+                    app_id: inCpApp.instDeployActive.operate.services[i].app_id,
+                    pod_id: inCpApp.instDeployActive.operate.services[i].pod_id,
+                    hash_id: l4iString.CryptoMd5(depRemotes[j].id + ":" + inCpApp.instDeployActive.operate.services[i].app_id),
+                });
             }
         }
     }
@@ -385,13 +392,31 @@ inCpApp.instConfigDepRemotes = function(spec_id) {
             continue;
         }
         for (var j in depRemotes) {
-            if (depRemotes[j].id == inCpApp.instDeployActive.operate.options[i].ref.spec_id) {
-                depRemotes[j]._app_id = inCpApp.instDeployActive.operate.options[i].ref.app_id;
-                break;
+            if (!depRemotes[j]._binds) {
+                depRemotes[j]._binds = [];
             }
+            if (depRemotes[j].id != inCpApp.instDeployActive.operate.options[i].ref.spec_id) {
+                continue;
+            }
+            var hit = false;
+            for (var k in depRemotes[j]._binds) {
+                if (depRemotes[j]._binds[k].app_id == inCpApp.instDeployActive.operate.options[i].ref.app_id) {
+                    hit = true;
+                    break;
+                }
+            }
+            if (hit) {
+                continue;
+            }
+            depRemotes[j]._binds.push({
+                app_id: inCpApp.instDeployActive.operate.options[i].ref.app_id,
+                pod_id: inCpApp.instDeployActive.operate.options[i].ref.pod_id,
+                hash_id: l4iString.CryptoMd5(depRemotes[j].id + ":" + inCpApp.instDeployActive.operate.options[i].ref.app_id),
+            });
         }
     }
 
+    inCpApp.instConfigDepRemotesBinds = l4i.Clone(depRemotes);
 
     l4iModal.Open({
         id: "incp-appinst-cfgwizard-depremotes",
@@ -421,6 +446,70 @@ inCpApp.instConfigDepRemotes = function(spec_id) {
 }
 
 
+inCpApp.InstConfigDepRemoteSelect = function(spec_id) {
+
+    if (!spec_id) {
+        return;
+    }
+
+    inCpApp.InstConfigWizardAppBound(spec_id, function(err, select_item) {
+
+        for (var i in inCpApp.instConfigDepRemotesBinds) {
+            if (inCpApp.instConfigDepRemotesBinds[i].id != spec_id) {
+                continue;
+            }
+            if (!inCpApp.instConfigDepRemotesBinds[i]._binds) {
+                inCpApp.instConfigDepRemotesBinds[i]._binds = [];
+            }
+            for (var j in inCpApp.instConfigDepRemotesBinds[i]._binds) {
+                if (inCpApp.instConfigDepRemotesBinds[i]._binds[j].app_id == select_item) {
+                    return
+                }
+            }
+            inCpApp.instConfigDepRemotesBinds[i]._binds.push({
+                app_id: select_item,
+                spec_id: spec_id,
+            });
+        }
+
+        l4iTemplate.Render({
+            append: true,
+            dstid: "incp-appinst-cfg-wizard-depremotes-binds-" + spec_id,
+            tplid: "incp-appinst-cfg-wizard-depremotes-binds-item-tpl",
+            data: {
+                spec_id: spec_id,
+                app_id: select_item,
+                pod_id: "new selected",
+                hash_id: l4iString.CryptoMd5(spec_id + ":" + select_item),
+            },
+        });
+    });
+}
+
+inCpApp.instConfigDepRemoteDel = function(field, spec_id, app_id) {
+
+    if (!inCpApp.instConfigDepRemotesActive) {
+        return;
+    }
+
+    $(field).parent().parent().remove();
+
+    for (var i in inCpApp.instConfigDepRemotesBinds) {
+        if (inCpApp.instConfigDepRemotesBinds[i].id != spec_id ||
+            !inCpApp.instConfigDepRemotesBinds[i]._binds) {
+            continue;
+        }
+        for (var j in inCpApp.instConfigDepRemotesBinds[i]._binds) {
+            if (inCpApp.instConfigDepRemotesBinds[i]._binds[j].app_id == app_id) {
+                inCpApp.instConfigDepRemotesBinds[i]._binds[j].delete = true;
+                break;
+            }
+        }
+        break;
+    }
+}
+
+
 inCpApp.instConfigDepRemotesCommit = function() {
 
     if (!inCpApp.instConfigDepRemotesActive) {
@@ -438,20 +527,20 @@ inCpApp.instConfigDepRemotesCommit = function() {
         dep_remotes: [],
     }
 
-
     try {
+
 
         if (inCpApp.instConfigDepRemotesActive == inCpApp.instDeployActive.spec.meta.id) {
 
-            for (var i in inCpApp.instDeployActive.spec.dep_remotes) {
-
-                var field = inCpApp.instDeployActive.spec.dep_remotes[i];
-                var value = form.find("input[name=fn_" + field.id + "]").val();
-
-                if (value) {
+            for (var i in inCpApp.instConfigDepRemotesBinds) {
+                if (!inCpApp.instConfigDepRemotesBinds[i]._binds) {
+                    continue;
+                }
+                for (var j in inCpApp.instConfigDepRemotesBinds[i]._binds) {
                     req.dep_remotes.push({
-                        spec_id: field.id,
-                        app_id: value,
+                        spec_id: inCpApp.instConfigDepRemotesBinds[i].id,
+                        app_id: inCpApp.instConfigDepRemotesBinds[i]._binds[j].app_id,
+                        delete: inCpApp.instConfigDepRemotesBinds[i]._binds[j].delete,
                     });
                 }
             }
@@ -603,7 +692,7 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
     }
 }
 
-inCpApp.InstConfigWizardAppBound = function(spec_id) {
+inCpApp.InstConfigWizardAppBound = function(spec_id, cb) {
 
     var alert_id = "#incp-appinst-cfg-wizard-alert";
 
@@ -630,8 +719,13 @@ inCpApp.InstConfigWizardAppBound = function(spec_id) {
                     title: "Close",
                 }],
                 fn_selector: function(err, select_item) {
+                    if (cb) {
+                        cb(err, select_item);
+                        return l4iModal.Prev();
+                    }
                     $("#incp-appinst-cfgfield-" + spec_id).val(select_item);
                     $("#incp-appinst-cfgfield-" + spec_id + "-dp").text(select_item);
+
                     l4iModal.Prev();
                 },
                 callback: function(err, data) {

@@ -31,7 +31,7 @@
 <tr>
   <td>{[=v.meta.id]}</td>
   <td>{[=v.meta.user]}</td>
-  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+  <td>{[=l4i.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="btn btn-default btn-sm" onclick="incp_app_specls_selector_on('{[=v.meta.id]}')">Select</button>
   </td>

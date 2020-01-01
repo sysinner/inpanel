@@ -1,9 +1,17 @@
 <div class="incp-div-light">
-<div id="incp-resdomain-list-alert" class="incp-hide"></div>
+  <div id="incp-resdomain-list-alert" class="incp-hide"></div>
+  <div id="incp-resdomain-list-box"></div>
+</div>
+
+
+<script type="text/html" id="incp-resdomain-list-tpl">
 <table class="table table-hover valign-middle">
   <thead>
     <tr>
       <th>Domain</th>
+      {[? it._options.ops_mode || it._options.owner_column]}
+      <th>Owner</th>
+      {[?]}
       <th>Description</th>
       <th>Bounds</th>
       <th>App</th>
@@ -12,33 +20,34 @@
       <th></th>
     </tr>
   </thead>
-  <tbody id="incp-resdomain-list"></tbody>
+  <tbody id="incp-resdomain-list">
+    {[~it.items :v]}
+    <tr>
+      <td class="incp-font-fixspace">{[=v._name]}</td>
+      {[? it._options.ops_mode || it._options.owner_column]}
+      <td class="incp-ctn-hover">{[=v.meta.user]}</td>
+      {[?]}
+      <td>{[=v.description]}</td>
+      <td>
+        <button class="incp-btn incp-btn-xsmall" onclick="inCpResDomain.BoundList('{[=v._name]}')" style="width:40px">{[=v.bounds.length]}</button>
+      </td>
+      <td class="incp-font-fixspace">{[=v.operate.app_id]}</td>
+      <td>{[=v.action]}</td>
+      <td>{[=l4i.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
+      <td align="right">
+        <button class="btn btn-sm btn-outline-primary" onclick="inCpResDomain.Deploy('{[=v._name]}')">
+          <span class="fa fa-cloud-upload-alt"></span>
+          Deploy
+        </button>
+        <button class="btn btn-sm btn-outline-primary" onclick="inCpResDomain.Set('{[=v._name]}')">
+          <span class="fa fa-cog"></span>
+          Setting
+        </button>
+      </td>
+    </tr>
+    {[~]}
+  </tbody>
 </table>
-</div>
-
-<script type="text/html" id="incp-resdomain-list-tpl">
-{[~it.items :v]}
-<tr>
-  <td class="incp-font-fixspace">{[=v._name]}</td>
-  <td>{[=v.description]}</td>
-  <td>
-    <button class="incp-btn incp-btn-xsmall" onclick="inCpResDomain.BoundList('{[=v._name]}')" style="width:40px">{[=v.bounds.length]}</button>
-  </td>
-  <td class="incp-font-fixspace">{[=v.operate.app_id]}</td>
-  <td>{[=v.action]}</td>
-  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
-  <td align="right">
-    <button class="btn btn-sm btn-outline-primary" onclick="inCpResDomain.Deploy('{[=v._name]}')">
-      <span class="fa fa-cloud-upload-alt"></span>
-      Deploy
-    </button>
-    <button class="btn btn-sm btn-outline-primary" onclick="inCpResDomain.Set('{[=v._name]}')">
-      <span class="fa fa-cog"></span>
-      Setting
-    </button>
-  </td>
-</tr>
-{[~]}
 </script>
 
 <script type="text/html" id="incp-resdomain-optools">

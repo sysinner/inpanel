@@ -1137,7 +1137,7 @@ inCpAppSpec.SetVcsSet = function(dir) {
     });
 }
 
-inCpAppSpec.vcsDirReg = /^([a-zA-Z0-9\.\/\-_]{1,50})$/;
+inCpAppSpec.vcsDirReg = /^([a-zA-Z0-9\.\/\-_]{1,100})$/;
 inCpAppSpec.vcsGitHttpRe = /^(https?:\/\/)([\w\-_.\/]+)(.git)$/;
 inCpAppSpec.vcsGitBranchRe = /^([\w\-_.]+)$/;
 

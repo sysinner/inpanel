@@ -39,7 +39,9 @@ var inCpResDomain = {
 
 inCpResDomain.List = function() {
     var uri = "?type=domain";
-    uri += "&fields=meta/id|name|updated,description,bounds/name,operate/app_id,action";
+    uri += "&fields=meta/id|user|name|updated,description,bounds/name,operate/app_id,action";
+
+    var options = {};
 
     seajs.use(["ep"], function(EventProxy) {
 
@@ -64,8 +66,13 @@ inCpResDomain.List = function() {
             if (!data.items) {
                 data.items = [];
             }
+            options.owner_column = false;
 
             for (var i in data.items) {
+
+                if (!options.owner_column && data.items[i].meta.user != inCp.UserSession.username) {
+                    options.owner_column = true;
+                }
 
                 if (!data.items[i].action) {
                     data.items[i].action = "ok";
@@ -86,10 +93,12 @@ inCpResDomain.List = function() {
                 data.items[i]._name = data.items[i].meta.name.substr("domain/".length);
             }
 
+            data._options = options;
+
             $(alert_id).hide();
 
             l4iTemplate.Render({
-                dstid: "incp-resdomain-list",
+                dstid: "incp-resdomain-list-box",
                 tplid: "incp-resdomain-list-tpl",
                 data: data,
                 callback: function(err) {
@@ -118,7 +127,7 @@ inCpResDomain.New = function() {
     l4iModal.Open({
         title: "Domain Add",
         tpluri: inCp.TplPath("res/domain-new"),
-        width: 600,
+        width: 900,
         height: 400,
         buttons: [{
             title: "Cancel",
@@ -204,7 +213,7 @@ inCpResDomain.Set = function(name) {
             l4iModal.Open({
                 title: "Domain Set",
                 tplsrc: tpl,
-                width: 600,
+                width: 900,
                 height: 400,
                 data: data,
                 buttons: [{
@@ -617,7 +626,7 @@ inCpResDomain.DeployWizard = function(name) {
     l4iModal.Open({
         id: "incp-resdomain-deploy",
         title: "Resource Domain Deploy Wizard",
-        width: 800,
+        width: 900,
         height: 300,
         tpluri: inCp.TplPath("res/domain-deploy"),
         callback: function(err, data) {
@@ -655,7 +664,7 @@ inCpResDomain.DeploySelectApp = function(name) {
 
             l4iModal.Open({
                 title: "Select a App to Deploy",
-                width: 800,
+                width: 900,
                 height: 400,
                 tplsrc: tpl,
                 callback: function(err) {

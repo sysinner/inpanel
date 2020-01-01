@@ -25,7 +25,7 @@
     {[? av.action == v.action]}{[=av.title]}{[?]}
   {[~]}
   </td>
-  <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+  <td>{[=l4i.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsPod.SpecPlanImageSet('{[=v.meta.id]}')">

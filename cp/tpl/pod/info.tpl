@@ -27,7 +27,7 @@
       </div>
       <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
         <div class="name">Created</div>
-        <div class="value">{[=l4i.MetaTimeParseFormat(it.meta.created, "Y-m-d")]}</div>
+        <div class="value">{[=l4i.UnixMillisecondFormat(it.meta.created, "Y-m-d")]}</div>
       </div>
     </div>
   </td>
@@ -94,7 +94,7 @@
             0
           {[?]}
         </td>
-        <td>{[=l4i.MetaTimeParseFormat(v.meta.updated, "Y-m-d")]}</td>
+        <td>{[=l4i.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
       </tr>
       {[~]}
     </tbody>

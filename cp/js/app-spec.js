@@ -479,7 +479,8 @@ inCpAppSpec.Download = function(id) {
     if (!id) {
         return;
     }
-    window.open(inCp.api + "app-spec/entry?id=" + id + "&download=true&fmt_json_indent=true", "Download");
+    window.open(inCp.api + "app-spec/entry?id=" + id
+        + "&download=true&ct=toml", "Download");
 }
 
 inCpAppSpec.ItemDel = function(id) {
@@ -1680,9 +1681,12 @@ inCpAppSpec.SetRaw = function(id) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
 
-            if (data && data.kind && data.kind == "AppSpec") {
-                formset.spec_text = JSON.stringify(data, null, "  ");;
-            }
+            /**
+                if (data && data.kind && data.kind == "AppSpec") {
+                    formset.spec_text = JSON.stringify(data, null, "  ");;
+                }
+            */
+            formset.spec_text = data;
 
             l4iModal.Open({
                 title: title,
@@ -1714,7 +1718,7 @@ inCpAppSpec.SetRaw = function(id) {
         if (!id) {
             ep.emit("data", "");
         } else {
-            inCp.ApiCmd("app-spec/entry?id=" + id, {
+            inCp.ApiCmd("app-spec/entry?ct=toml&id=" + id, {
                 callback: ep.done("data"),
             });
         }
@@ -1736,6 +1740,9 @@ inCpAppSpec.SetRawCommit = function() {
         if (!txt || txt.length < 10) {
             throw "No Data Found";
         }
+
+        setActive = txt;
+        /**
         setActive = JSON.parse(txt)
         if (!setActive) {
             throw "Invalid JSON Data";
@@ -1767,6 +1774,7 @@ inCpAppSpec.SetRawCommit = function() {
         if (id) {
             setActive.meta.id = id;
         }
+        */
 
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'error', err);
@@ -1774,7 +1782,7 @@ inCpAppSpec.SetRawCommit = function() {
 
     inCp.ApiCmd("app-spec/set", {
         method: "POST",
-        data: JSON.stringify(setActive),
+        data: setActive, // JSON.stringify(setActive),
         timeout: 3000,
         callback: function(err, rsj) {
 

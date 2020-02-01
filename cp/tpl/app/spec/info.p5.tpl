@@ -5,10 +5,13 @@
   <td>{[=it.meta.id]}</td>
 </tr>
 
+
+{[? it.meta.name]}
 <tr>
   <td>Name</td>
   <td>{[=it.meta.name]}</td>
 </tr>
+{[?]}
 
 {[? it.description]}
 <tr>

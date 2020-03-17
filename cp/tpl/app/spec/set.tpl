@@ -66,7 +66,7 @@
     Import Package
   </td>
   <td>
-    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetPackageSelect()">
+    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetPackSelect()">
       <i class="fa fa-plus"></i>
     </button>
   </td>
@@ -444,7 +444,7 @@
     <td>{[=v.dist]} / {[=v.arch]}</td>
     <td>/usr/sysinner/{[=v.name]}/{[=v.version]}</td>
     <td align="right">
-      <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetPackageRemove('{[=v.name]}')">
+      <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetPackRemove('{[=v.name]}')">
         <i class="fa fa-times"></i>
       </button>
     </td>

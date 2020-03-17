@@ -695,7 +695,7 @@ inCpAppSpec.Set = function(id) {
                 callback: function() {
                     inCpAppSpec.setDependRefresh();
                     inCpAppSpec.setDepRemoteRefresh();
-                    inCpAppSpec.setPackageRefresh();
+                    inCpAppSpec.setPackRefresh();
                     inCpAppSpec.setVcsRefresh();
                     inCpAppSpec.setExecutorRefresh();
 
@@ -966,7 +966,7 @@ inCpAppSpec.setDepRemoteRefresh = function() {
 }
 
 // TODO
-inCpAppSpec.SetPackageSelect = function() {
+inCpAppSpec.SetPackSelect = function() {
     l4iModal.Open({
         title: "Select a dependent Package",
         width: 900,
@@ -974,7 +974,7 @@ inCpAppSpec.SetPackageSelect = function() {
         tpluri: inCp.base + "/ips/~/ips/tpl/pkginfo/selector.html",
         fn_selector: function(err, rsp) {
             l4iModal.Close();
-            inCpAppSpec.setPackageInfo({
+            inCpAppSpec.setPackInfo({
                 id: rsp
             });
         },
@@ -985,7 +985,7 @@ inCpAppSpec.SetPackageSelect = function() {
     });
 }
 
-inCpAppSpec.setPackageInfo = function(opt) {
+inCpAppSpec.setPackInfo = function(opt) {
     var req = "";
     if (opt.id) {
         req += "&id=" + opt.id;
@@ -1010,7 +1010,7 @@ inCpAppSpec.setPackageInfo = function(opt) {
                 return l4i.InnerAlert(alert_id, 'error', err);
             }
 
-            if (!rsj || rsj.kind != "Package") {
+            if (!rsj || rsj.kind != "Pack") {
                 var msg = "Bad Request";
                 if (rsj.error) {
                     msg = rsj.error.message;
@@ -1047,12 +1047,12 @@ inCpAppSpec.setPackageInfo = function(opt) {
                 });
             }
 
-            inCpAppSpec.setPackageRefresh();
+            inCpAppSpec.setPackRefresh();
         }
     });
 }
 
-inCpAppSpec.SetPackageRemove = function(name) {
+inCpAppSpec.SetPackRemove = function(name) {
     if (name.length < 1) {
         return;
     }
@@ -1064,10 +1064,10 @@ inCpAppSpec.SetPackageRemove = function(name) {
         }
     }
 
-    inCpAppSpec.setPackageRefresh();
+    inCpAppSpec.setPackRefresh();
 }
 
-inCpAppSpec.setPackageRefresh = function() {
+inCpAppSpec.setPackRefresh = function() {
     if (!inCpAppSpec.setActive || !inCpAppSpec.setActive.packages) {
         return;
     }

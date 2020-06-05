@@ -208,6 +208,10 @@ inCpResDomain.Set = function(name) {
                 data.description = "";
             }
 
+            if (!data.options) {
+                data.options = [];
+            }
+
             data._name = data.meta.name.substr("domain/".length);
 
             l4iModal.Open({
@@ -255,7 +259,21 @@ inCpResDomain.SetCommit = function() {
             user: form.find("input[name=meta_user]").val(),
         },
         description: form.find("input[name=description]").val(),
+        options: [],
     };
+
+    var optValue = form.find("input[name=option_letsencrypt_enable]:checked").val();
+    if (optValue == "on") {
+        req.options.push({
+            "name": "letsencrypt_enable",
+            "value": "on"
+        });
+    } else {
+        req.options.push({
+            "name": "letsencrypt_enable",
+            "value": "off"
+        });
+    }
 
     inCp.ApiCmd("resource/domain-set", {
         method: "POST",

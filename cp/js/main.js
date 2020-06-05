@@ -581,6 +581,25 @@ inCp.ArrayStringHas = function(ar, v) {
     return false;
 }
 
+inCp.ArrayLabelHas = function(ar, name, value) {
+    if (!ar || !name) {
+        return false;
+    }
+
+    for (var i in ar) {
+        if (ar[i].name == name) {
+            if (value) {
+                if (ar[i].value && ar[i].value != value) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    return false;
+}
+
 /*
 inCp.ArrayUint32MatchAny = function(ar, ar2)
 {

@@ -264,7 +264,7 @@ inCpApp.OpOptInfo = function(app_id) {
 
             l4iModal.Open({
                 title: "App Options",
-                width: 1000,
+                width: 1600,
                 height: 1000,
                 tplsrc: tpl,
                 data: rsj,
@@ -432,8 +432,8 @@ inCpApp.instConfigDepRemotes = function(spec_id) {
     l4iModal.Open({
         id: "incp-appinst-cfgwizard-depremotes",
         title: "App Configuration Wizard with remote depends",
-        width: 900,
-        height: 600,
+        width: 1600,
+        height: 800,
         tpluri: inCp.TplPath("app/inst/cfg-wizard-depremotes"),
         callback: function(err, data) {
 
@@ -674,8 +674,8 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
         l4iModal.Open({
             id: "incp-appinst-cfgwizard",
             title: "App Configuration Wizard : " + configurator.name,
-            width: 900,
-            height: 600,
+            width: 1600,
+            height: 800,
             tpluri: inCp.TplPath("app/inst/cfg-wizard"),
             callback: function(err, data) {
 
@@ -776,14 +776,12 @@ inCpApp.instConfigCommit = function() {
         return;
     }
 
-    var option = {
-        name: inCpApp.instConfiguratorEntryActive.name,
-        items: [],
-    }
-
     var req = {
         id: inCpApp.instDeployActive.meta.id,
-        option: option,
+        option: {
+            name: inCpApp.instConfiguratorEntryActive.name,
+            items: [],
+        },
     // dep_remotes: [],
     }
 
@@ -800,13 +798,17 @@ inCpApp.instConfigCommit = function() {
                     value = form.find("input[name=fn_" + field.name + "]").val();
                     break;
 
+                case 3:
+                    value = form.find("textarea[name=fn_" + field.name + "]").val();
+                    break;
+
                 case 10:
                     value = form.find("input[name=fn_" + field.name + "]").val();
                     break;
             }
 
             if (value) {
-                option.items.push({
+                req.option.items.push({
                     name: field.name,
                     value: value,
                 });

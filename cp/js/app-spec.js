@@ -34,6 +34,9 @@ var inCpAppSpec = {
         type: 1,
         title: "String",
     }, {
+        type: 3,
+        title: "Text",
+    }, {
         type: 2,
         title: "Select",
     }],
@@ -1877,8 +1880,8 @@ inCpAppSpec.CfgSet = function(spec_id) {
                 id: "incp-appspec-cfg-fieldlist-modal",
                 title: "Configurator",
                 tplsrc: tpl,
-                width: 1100,
-                height: 700,
+                width: 1200,
+                height: 800,
                 buttons: btns,
                 callback: function() {
                     inCpAppSpec.cfgFieldListRefresh();
@@ -1901,12 +1904,27 @@ inCpAppSpec.CfgSet = function(spec_id) {
 }
 
 inCpAppSpec.cfgFieldListRefresh = function() {
+
+    var name = null;
+    var elem = $("#incp-appspec-cfg-fieldlist-name");
+    if (elem) {
+        name = elem.val();
+    }
+    if (!name || name.length < 4) {
+        name = "cfg/" + inCpAppSpec.active.meta.id;
+    }
+
     inCpAppSpec.active._cfgFieldTypes = inCpAppSpec.cfgFieldTypes;
     inCpAppSpec.active._cfgFieldAutoFills = inCpAppSpec.cfgFieldAutoFills;
     l4iTemplate.Render({
         dstid: "incp-appspec-cfg-fieldlist",
         tplid: "incp-appspec-cfg-fieldlist-tpl",
         data: inCpAppSpec.active,
+        callback: function() {
+            if (name && name.length > 0) {
+                $("#incp-appspec-cfg-fieldlist-name").val(name);
+            }
+        },
     });
 }
 
@@ -1921,6 +1939,9 @@ inCpAppSpec.CfgSetCommit = function() {
         var name = form.find("input[name=name]").val();
         if (!name || !inCpAppSpec.fieldNameRe.test(name)) {
             throw "Invalid Name";
+        }
+        if (!name.startsWith("cfg/")) {
+            name = "cfg/" + name;
         }
         inCpAppSpec.active.configurator.name = name;
     } catch (err) {
@@ -2093,7 +2114,7 @@ inCpAppSpec.CfgFieldSetCommit = function() {
     if (field) {
         fields.push(field);
     }
-    if (!inCpAppSpec.active.configurator.name) {
+    if (!inCpAppSpec.active.configurator.name || inCpAppSpec.active.configurator.name.length < 1) {
         inCpAppSpec.active.configurator.fields = fields;
         l4iModal.Prev(inCpAppSpec.cfgFieldListRefresh);
         return;

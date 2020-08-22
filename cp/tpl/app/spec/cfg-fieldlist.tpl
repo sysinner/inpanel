@@ -11,7 +11,7 @@
   <td width="150px">Name</td>
   <td width="30px"></td>
   <td>
-    <input name="name" class="form-control" value="{[=it.configurator.name]}">
+    <input id="incp-appspec-cfg-fieldlist-name" name="name" class="form-control" value="{[=it.configurator.name]}">
   </td>
 </tr>
 

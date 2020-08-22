@@ -17,17 +17,32 @@
 
 
 <script id="incp-appinst-cfg-wizard-tpl" type="text/html">
+<table class="incp-formtable">
+<tbody>
 {[~it.fields :v]}
 
 {[if (v.type == 1) {]}
-<div class="l4i-form-group">
-  <label>{[=v.title]}</label>
-  <div> 
+<tr>
+  <td width="220px">{[=v.title]}</td>
+  <td>
     <input name="fn_{[=v.name]}" class="form-control incp-appinst-cfg-wizard-item" value="{[=v._value]}" {[if (v.auto_fill && v.auto_fill.length > 0) {]}readonly="readonly"{[}]}>
-  </div>
-</div>
+  </td>
+</tr>
+{[}]}
+
+{[if (v.type == 3) {]}
+<tr>
+  <td width="220px">{[=v.title]}</td>
+  <td>
+    <textarea name="fn_{[=v.name]}" class="form-control incp-appinst-cfg-wizard-item" {[if (v.auto_fill && v.auto_fill.length > 0) {]}readonly="readonly"{[}]} rows="3">
+    {[=v._value]}
+    </textarea>
+  </td>
+</tr>
 {[}]}
 {[~]}
+</tbody>
+</table>
 
 {[if (it._dep_remotes && it.dep_remotes.length > 0) {]}
 {[~ it.dep_remotes :v]}

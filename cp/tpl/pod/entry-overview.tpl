@@ -198,7 +198,7 @@
 <div class="incp-card-frame incp-card-frame-p40">
 <div class="incp-div-light">
   <div class="incp-card-title">
-    <span>PodSpec</span>
+    <span>Spec</span>
     <span class="incp-card-title-rbar incp-btn-hover" onclick="inCpPod.SpecSet()">
       <span class="fa fa-cog"></span>
     </span>

@@ -990,7 +990,7 @@ inCpPod.SetInfo = function(pod_id) {
             l4iModal.Open({
                 title: "Pod Instance Setup",
                 tplsrc: tpl,
-                width: 900,
+                width: 1000,
                 height: 450,
                 data: {
                     pod: pod,

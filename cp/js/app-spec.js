@@ -214,7 +214,7 @@ inCpAppSpec.ListSelector = function(options) {
     }
 
     if (!options.width) {
-        options.width = 900;
+        options.width = 1200;
     }
 
     if (!options.height) {
@@ -409,7 +409,7 @@ inCpAppSpec.Info = function(id, spec, version, app_id) {
 
             l4iModal.Open({
                 title: "AppSpec Information",
-                width: 1300,
+                width: 1400,
                 width_min: 1000,
                 height: "max",
                 tplsrc: tpl,
@@ -748,7 +748,7 @@ inCpAppSpec.Set = function(id) {
 inCpAppSpec.SetDependSelect = function() {
     inCpAppSpec.ListSelector({
         title: "Select a Internally dependent AppSpec",
-        width: 950,
+        width: 1000,
         height: 600,
         fn_selector: function(err, options) {
             l4iModal.Close();

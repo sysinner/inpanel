@@ -1,7 +1,7 @@
 <table class="incp-formtable">
 <tbody>
 <tr>
-  <td width="200px">ID</td>
+  <td width="260px">ID</td>
   <td>{[=it.meta.id]}</td>
 </tr>
 

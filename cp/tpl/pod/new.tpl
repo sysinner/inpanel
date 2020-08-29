@@ -16,7 +16,7 @@
 
 {[? it._options.user_groups]}
 <tr>
-  <td width="180px">Owner</td>
+  <td width="260px">Owner</td>
   <td>
     <select name="incp-podnew-meta-user" id="incp-podnew-meta-user" class="form-control">
     {[~it._options.user_groups :v]}

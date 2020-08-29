@@ -71,7 +71,7 @@ var inCp = {
     ResVolValueAttrSSD: 1 << 5,
     ByteMB: 1024 * 1024,
     ByteGB: 1024 * 1024 * 1024,
-    well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/in/cp/auth/login" class="btn btn-primary">SIGN IN</a></div>',
+    well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/in/cp/auth/login" class="btn btn-dark">SIGN IN</a></div>',
 }
 
 inCp.debug_uri = function() {

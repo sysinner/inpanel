@@ -1,6 +1,7 @@
 <div id="incp-appinst-opopt-info-alert" class="alert" style="display:none"></div>
 
 <div id="incp-appinst-opopt-info">
+
 {[~it.operate.options :cv]}
 {[if (cv.items && cv.items.length > 0) {]}
 <div class="card">
@@ -17,7 +18,13 @@
       {[~cv.items :cvf]}
       <tr>
         <td width="300" class="lpt-title">{[=cvf.name]}</td>
-        <td>{[=cvf.value]}</td>
+        <td>
+          {[? cvf.type && cvf.type >= 300 && cvf.type <= 399]}
+            <textarea id="op_fn_{[=cv.name]}_{[=cvf.name]}" class="form-control" rows="4" readonly>{[=cvf.value]}</textarea>
+          {[??]}
+            <pre>{[=cvf.value]}</pre>
+          {[?]}
+        </td>
       </tr>
       {[~]}
     </table>

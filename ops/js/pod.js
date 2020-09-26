@@ -45,9 +45,12 @@ var inOpsPod = {
         name: "",
         tag: "",
         driver: "docker",
+        os_dist: "",
+        arch: "",
         action: 1 << 1,
         sort_order: 10,
     },
+    image_action_active: 1 << 1,
 }
 
 inOpsPod.Index = function() {
@@ -271,7 +274,7 @@ inOpsPod.SpecPlanSet = function(name) {
             callback: ep.done("rescomputes"),
         });
 
-        inOps.ApiCmd("pod-spec/box-image-list", {
+        inOps.ApiCmd("pod-spec/box-image-list?action=" + inOpsPod.image_action_active, {
             callback: ep.done("images"),
         });
 
@@ -672,11 +675,12 @@ inOpsPod.SpecPlanImageSetCommit = function() {
         req.action = parseInt(form.find("input[name=action]:checked").val());
         req.sort_order = parseInt(form.find("input[name=sort_order]").val());
         req.driver = form.find("input[name=driver]").val();
+        req.os_dist = form.find("input[name=os_dist]").val();
+        req.arch = form.find("input[name=arch]").val();
 
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'alert-danger', err);
     }
-    console.log(req);
 
     inOps.ApiCmd("pod-spec/box-image-set", {
         method: "POST",

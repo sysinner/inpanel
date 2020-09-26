@@ -34,11 +34,32 @@ var inCpAppSpec = {
         type: 1,
         title: "String",
     }, {
-        type: 3,
-        title: "Text",
-    }, {
         type: 2,
         title: "Select",
+    }, {
+        type: 300,
+        title: "Text",
+        lang: "shell",
+    }, {
+        type: 301,
+        title: "Text/JSON",
+        lang: "json",
+    }, {
+        type: 302,
+        title: "Text/TOML",
+        lang: "toml",
+    }, {
+        type: 303,
+        title: "Text/YAML",
+        lang: "yaml",
+    }, {
+        type: 304,
+        title: "Text/INI",
+        lang: "ini",
+    }, {
+        type: 305,
+        title: "Text/JavaProperties",
+        lang: "shell",
     }],
     cfgFieldAutoFills: [{
         type: "",
@@ -61,6 +82,7 @@ var inCpAppSpec = {
         default: "",
         auto_fill: "",
         validates: [],
+        description: "",
     },
     deploySysStates: [{
         title: "Stateful",
@@ -91,6 +113,16 @@ var inCpAppSpec = {
         hook_pod_restart: false,
     },
     listActives: null,
+}
+
+
+inCpAppSpec.CfgFieldTypeFetch = function(t) {
+    for (var i in inCpAppSpec.cfgFieldTypes) {
+        if (inCpAppSpec.cfgFieldTypes[i].type == t) {
+            return inCpAppSpec.cfgFieldTypes[i];
+        }
+    }
+    return null;
 }
 
 //
@@ -1330,8 +1362,12 @@ inCpAppSpec.SetExecutorSet = function(name) {
             if (err) {
                 return;
             }
-            inCp.CodeEditor("spec_exec_start", "shell", 12);
-            inCp.CodeEditor("spec_exec_stop", "shell", 6);
+            inCp.CodeEditor("spec_exec_start", "shell", {
+                "numberLines": 12
+            });
+            inCp.CodeEditor("spec_exec_stop", "shell", {
+                "numberLines": 6
+            });
         },
         buttons: [{
             onclick: "l4iModal.Close()",
@@ -1669,12 +1705,12 @@ inCpAppSpec.SetCommit = function() {
 }
 
 inCpAppSpec.SetRaw = function(id) {
-    var title = "New AppSpec",
-        formset = {
-            spec_text: ""
-        };
+    var formset = {
+        actionTitle: "New AppSpec",
+        spec_text: ""
+    };
     if (id) {
-        title = "Setting AppSpec (" + id + ")";
+        formset.actionTitle = "Setting AppSpec (" + id + ")";
         formset.meta_id = id;
     } else {
         formset.meta_id = "";
@@ -1682,40 +1718,32 @@ inCpAppSpec.SetRaw = function(id) {
 
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
+        var ep = EventProxy.create("data", function(data) {
 
-            /**
-                if (data && data.kind && data.kind == "AppSpec") {
-                    formset.spec_text = JSON.stringify(data, null, "  ");;
-                }
-            */
             formset.spec_text = data;
 
-            l4iModal.Open({
-                title: title,
-                width: 960,
-                height: 700,
-                tplsrc: tpl,
+            l4iTemplate.Render({
+                dstid: "incp-app-specset",
+                tplid: "incp-app-specset-raw-tpl",
                 data: formset,
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }, {
-                    onclick: "inCpAppSpec.SetRawCommit()",
-                    title: "Commit",
-                    style: "btn-primary",
-                }],
+                callback: function() {
+                    var bh = $(window).height();
+                    var pp = $("#incp-app-specset").position();
+                    var height = bh - pp.top - 250;
+                    if (height < 200) {
+                        height = 200;
+                    }
+
+                    inCp.CodeEditor("incp-app-specset-spectext", "toml", {
+                        height: height,
+                    });
+                },
             });
         });
 
         ep.fail(function(err) {
             // TODO
             alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
-        });
-
-        // template
-        inCp.TplFetch("app/spec/set-raw", {
-            callback: ep.done("tpl"),
         });
 
         if (!id) {
@@ -1729,55 +1757,22 @@ inCpAppSpec.SetRaw = function(id) {
 }
 
 inCpAppSpec.SetRawCommit = function() {
-    var alert_id = "#incp-app-specset-raw-alert";
+    var alert_id = "#incp-app-specset-alert";
     var setActive = null;
 
     try {
 
-        var form = $("#incp-app-specset-raw");
+        var form = $("#incp-app-specset");
         if (!form) {
             throw "No Form Data Found";
         }
 
-        var txt = form.find("textarea[name=spec_text]").val();
+        var txt = inCp.CodeEditorValue("incp-app-specset-spectext");
         if (!txt || txt.length < 10) {
             throw "No Data Found";
         }
 
         setActive = txt;
-        /**
-        setActive = JSON.parse(txt)
-        if (!setActive) {
-            throw "Invalid JSON Data";
-        }
-
-        if (!setActive.meta || !setActive.meta.id) {
-            throw "No Meta/ID Found";
-        }
-
-        for (var i in setActive.service_ports) {
-
-            if (!setActive.service_ports[i].name) {
-                throw "Invalid Network Name";
-            }
-            if (!setActive.service_ports[i].box_port ||
-                setActive.service_ports[i].box_port < 1 ||
-                setActive.service_ports[i].box_port > 65535) {
-                throw "Invalid Network BoxPort";
-            }
-
-            if (inCp.UserSession.username == "sysadmin") {
-                if (setActive.service_ports[i].host_port > 1024) {
-                    setActive.service_ports[i].host_port = 0;
-                }
-            }
-        }
-
-        var id = form.find("input[name=meta_id]").val();
-        if (id) {
-            setActive.meta.id = id;
-        }
-        */
 
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'error', err);
@@ -1785,7 +1780,7 @@ inCpAppSpec.SetRawCommit = function() {
 
     inCp.ApiCmd("app-spec/set", {
         method: "POST",
-        data: setActive, // JSON.stringify(setActive),
+        data: setActive,
         timeout: 3000,
         callback: function(err, rsj) {
 
@@ -1802,10 +1797,9 @@ inCpAppSpec.SetRawCommit = function() {
             }
 
             l4i.InnerAlert(alert_id, 'ok', "Successful operation");
-            inCpAppSpec.ListRefresh();
             window.setTimeout(function() {
-                l4iModal.Close();
-            }, 500);
+                inCpAppSpec.ListRefresh();
+            }, 1000);
         }
     });
 }
@@ -1865,10 +1859,13 @@ inCpAppSpec.CfgSet = function(spec_id) {
                 onclick: "l4iModal.Close()",
             }];
             if (inCp.UserSession.username == data.meta.user) {
-                btns.push({
-                    title: "New Field",
-                    onclick: 'inCpAppSpec.CfgFieldSet()',
-                });
+                /**
+                        btns.push({
+                            title: "New Field",
+                            onclick: 'inCpAppSpec.CfgFieldSet()',
+                            style: "btn-primary",
+                        });
+                */
                 btns.push({
                     title: "Save",
                     onclick: 'inCpAppSpec.CfgSetCommit()',
@@ -1911,7 +1908,12 @@ inCpAppSpec.cfgFieldListRefresh = function() {
         name = elem.val();
     }
     if (!name || name.length < 4) {
-        name = "cfg/" + inCpAppSpec.active.meta.id;
+        if (inCpAppSpec.active.configurator.name &&
+            inCpAppSpec.active.configurator.name.length > 3) {
+            name = inCpAppSpec.active.configurator.name;
+        } else {
+            name = "cfg/" + inCpAppSpec.active.meta.id;
+        }
     }
 
     inCpAppSpec.active._cfgFieldTypes = inCpAppSpec.cfgFieldTypes;
@@ -1926,6 +1928,13 @@ inCpAppSpec.cfgFieldListRefresh = function() {
             }
         },
     });
+}
+
+inCpAppSpec.CfgFieldSubString = function(str, len) {
+    if (str && str.length > len) {
+        return str.substring(0, len) + " (size " + str.length + ") ...";
+    }
+    return str;
 }
 
 inCpAppSpec.CfgSetCommit = function() {
@@ -1987,6 +1996,10 @@ inCpAppSpec.CfgFieldSet = function(name) {
     if (!inCpAppSpec.active) {
         return;
     }
+    var cname = $("#incp-appspec-cfg-fieldlist-name");
+    if (cname) {
+        inCpAppSpec.active.configurator.name = cname.val();
+    }
 
     var field = null;
     if (name) {
@@ -2000,6 +2013,9 @@ inCpAppSpec.CfgFieldSet = function(name) {
     }
     if (!field) {
         field = l4i.Clone(inCpAppSpec.cfgFieldDef);
+    }
+    if (!field.description) {
+        field.description = "";
     }
     field._cfgFieldTypes = inCpAppSpec.cfgFieldTypes;
     field._cfgFieldAutoFills = inCpAppSpec.cfgFieldAutoFills;
@@ -2068,14 +2084,15 @@ inCpAppSpec.CfgFieldSetCommit = function() {
         if (!field.title) {
             throw "Invalid Title";
         }
+        field.description = form.find("textarea[name=description]").val();
 
         field.prompt = form.find("input[name=prompt]").val();
-        field.default = form.find("input[name=default]").val();
+        field.default = form.find("textarea[name=default]").val();
 
         field.auto_fill = form.find("select[name=auto_fill]").val();
 
         field.type = parseInt(form.find("select[name=type]").val());
-        if (!field.type || field.type < 1 || field.type > 10) {
+        if (!field.type || field.type < 1 || field.type > 999) {
             throw "Invalid Type";
         }
 

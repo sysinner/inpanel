@@ -21,9 +21,67 @@
   padding: 0 10px;
 }
 </style>
+<script id="incp-app-specset-raw-tpl" type="text/html">
+<div class="card">
+
+<div class="card-header">
+  <div class="row">
+    <div class="col-md-8">
+      {[=it.actionTitle]}
+    </div>
+    <div class="col-md-4 text-right">
+      <button class="btn btn-sm btn-primary" onclick="inCpAppSpec.Set('{[=it.meta_id]}')">
+        <span class="fa fa-edit"></span> Visual editing mode
+      </button>
+      <button class="btn btn-sm btn-outline-danger" onclick="inCpAppSpec.ItemDel('{[=it.meta_id]}')">
+        <span class="fa fa-times-circle"></span> Delete
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="card-body">
+
+  <input type="hidden" name="meta_id" value="{[=it.meta_id]}">
+
+  <div style="padding:10px 0">
+    <textarea id="incp-app-specset-spectext" name="spec_text" class="form-control" rows="20">{[=it.spec_text]}</textarea>
+  </div>
+
+  <div style="padding:10px 0">
+    <button class="btn btn-primary" onclick="inCpAppSpec.SetRawCommit()">
+      Save
+    </button>
+    <button class="btn btn-default" onclick="inCpAppSpec.ListRefresh()" style="margin-left:10px">
+      Cancel
+    </button>
+  </div>
+</div>
+
+</div>
+</script>
+
 <script id="incp-app-specset-tpl" type="text/html">
 <div class="card">
-<div class="card-header">{[=it.actionTitle]}</div>
+
+<div class="card-header">
+  <div class="row">
+    <div class="col-md-8">
+      {[=it.actionTitle]}
+    </div>
+    <div class="col-md-4 text-right">
+      {[? it.spec.meta.user == inCp.UserSession.username || inCp.UserSession.username == "sysadmin"]}
+      <button class="btn btn-sm btn-primary" onclick="inCpAppSpec.SetRaw('{[=it.spec.meta.id]}')">
+        <span class="fa fa-edit"></span> Advanced editing mode
+      </button>
+      <button class="btn btn-sm btn-outline-danger" onclick="inCpAppSpec.ItemDel('{[=it.spec.meta.id]}')">
+        <span class="fa fa-times-circle"></span> Delete
+      </button>
+      {[?]}
+    </div>
+  </div>
+</div>
+
 <div class="card-body">
 
 <table class="incp-formtable">
@@ -286,7 +344,7 @@
       <td width="33%" valign="top">
         <label>Max percentage of fails and replicas in recovering</label>
       </td>
-	  <td></td>
+      <td></td>
     </tr>
     <tr>
       <td valign="top">
@@ -309,7 +367,7 @@
         </div>
         <small>when the percentage of fails and replicas is greater than this, the scheduler will stop create failover task</small>
       </td>
-	  <td></td>
+      <td></td>
     </tr>
     </tbody>
     </table>
@@ -430,8 +488,8 @@
   <thead><tr>
     <th>Name</th>
     <th>Version</th>
-    <th>Release</th>
-    <th>Dist/Arch</th>
+    <th>Dist</th>
+    <th>Arch</th>
     <th>Volume</th>
     <th></th>
   </tr></thead>
@@ -439,9 +497,9 @@
   {[~it.items :v]}
   <tr id="incp-app-specset-ipmls-name{[=v.name]}">
     <td>{[=v.name]}</td>
-    <td>{[=v.version]}</td>
-    <td>{[=v.release]}</td>
-    <td>{[=v.dist]} / {[=v.arch]}</td>
+    <td><input name="app_{[=v.name]}" class="form-control form-control-sm" value="{[=v.version]}" style="max-width:160px"/></td>
+    <td>{[=v.dist]}</td>
+    <td>{[=v.arch]}</td>
     <td>/usr/sysinner/{[=v.name]}/{[=v.version]}</td>
     <td align="right">
       <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetPackRemove('{[=v.name]}')">

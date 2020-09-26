@@ -10,12 +10,12 @@ var inCpSpec = {
         },
     ],
     boxImageSpecs: [{
-        distName: "CentOS 6",
-        dist: "el6",
-        arch: "x64",
-    }, {
         distName: "CentOS 7",
         dist: "el7",
+        arch: "x64",
+    }, {
+        distName: "CentOS 8",
+        dist: "el8",
         arch: "x64",
     }],
     boxSpecDef: {

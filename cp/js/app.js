@@ -226,49 +226,46 @@ inCpApp.OpOptInfo = function(app_id) {
                 rsj.operate.options = [];
             }
 
-            for (var i in rsj.spec.configurator) {
-
-                var option = null;
-                for (var j in rsj.operate.options) {
-                    if (rsj.spec.configurator[i].name == rsj.operate.options[j].name) {
-                        option = rsj.operate.options[j];
-                        break;
-                    }
-                }
-
-                for (var k in rsj.spec.configurator[i].fields) {
-                    var name = rsj.spec.configurator[i].fields[k].name;
-                    var auto_fill = rsj.spec.configurator[i].fields[k].auto_fill;
-                    var value = null;
-                    if (option) {
-                        for (var m in option.items) {
-                            if (option.items[m].name == name) {
-                                value = option.items[m].value;
-                                break;
-                            }
-                        }
-                    }
-                    if (!value) {
-                        if (rsj.spec.configurator[i].fields[k].default) {
-                            value = rsj.spec.configurator[i].fields[k].default;
-                        } else {
-                            value = "";
-                        }
-                    }
-                    if (value == "" && auto_fill) {
-                        value = auto_fill;
-                    }
-                    rsj.spec.configurator[i].fields[k]._value = value;
-                }
-            }
-
             l4iModal.Open({
                 title: "App Options",
                 width: 1600,
                 height: 1000,
                 tplsrc: tpl,
                 data: rsj,
-                callback: function(err, data) {},
+                callback: function(err, data) {
+                    for (var i in rsj.operate.options) {
+                        var opt = rsj.operate.options[i];
+                        for (var j in opt.items) {
+                            var type = opt.items[j].type;
+
+                            if (type && type >= 300 && type <= 399) {
+
+                                var value = opt.items[j].value;
+                                var fnType = inCpAppSpec.CfgFieldTypeFetch(type);
+
+                                var textRows = 4;
+                                if (value && value.length > 10) {
+                                    var arr = value.match(/\n/g);
+                                    if (arr) {
+                                        textRows = arr.length + 2;
+                                    }
+                                    if (textRows < 4) {
+                                        textRows = 4;
+                                    } else if (textRows > 50) {
+                                        textRows = 50;
+                                    }
+                                }
+
+                                if (fnType && fnType.lang) {
+                                    inCp.CodeEditor("op_fn_" + opt.name + "_" + opt.items[j].name, fnType.lang, {
+                                        numberLines: textRows,
+                                        readOnly: true,
+                                    });
+                                }
+                            }
+                        }
+                    }
+                },
                 buttons: [{
                     onclick: "l4iModal.Close()",
                     title: "Close",
@@ -619,11 +616,14 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
             option.items = [];
         }
 
+        var editors = [];
         for (var i in configurator.fields) {
 
+            var type = configurator.fields[i].type;
             var name = configurator.fields[i].name;
             var auto_fill = configurator.fields[i].auto_fill;
             var value = null;
+            var textRows = 4;
 
             for (var j in option.items) {
 
@@ -638,6 +638,11 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
                     value = configurator.fields[i].default;
                 }
             }
+            var readOnly = false;
+            if (auto_fill) {
+                readOnly = true;
+            }
+
             if (!value && auto_fill) {
                 for (var j in inCpAppSpec.cfgFieldAutoFills) {
                     if (inCpAppSpec.cfgFieldAutoFills[j].type == auto_fill) {
@@ -648,6 +653,32 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
             }
             if (!value) {
                 value = "";
+            }
+
+            var fnType = inCpAppSpec.CfgFieldTypeFetch(type);
+
+            if (fnType && type >= 300 && type <= 399) {
+
+                if (value.length > 10) {
+                    var arr = value.match(/\n/g);
+                    if (arr) {
+                        textRows = arr.length + 2;
+                    }
+                    if (textRows < 4) {
+                        textRows = 4;
+                    } else if (textRows > 20) {
+                        textRows = 20;
+                    }
+                }
+                editors.push({
+                    "name": name,
+                    "lang": fnType.lang,
+                    "line": textRows,
+                    "readOnly": readOnly,
+                });
+                configurator.fields[i]._textRows = textRows;
+                configurator.fields[i]._readOnly = readOnly;
+                configurator.fields[i]._editor = true;
             }
 
             configurator.fields[i]._value = value;
@@ -686,7 +717,16 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
                         name: configurator.name,
                         fields: configurator.fields,
                     // dep_remotes: depRemotes,
-                    }
+                    },
+                    callback: function() {
+                        for (var i in editors) {
+                            var c = editors[i];
+                            inCp.CodeEditor("fn_" + c.name, c.lang, {
+                                readOnly: c.readOnly,
+                                numberLines: c.line,
+                            });
+                        }
+                    },
                 });
             },
             buttons: [{
@@ -793,18 +833,23 @@ inCpApp.instConfigCommit = function() {
             var field = inCpApp.instConfiguratorEntryActive.fields[i];
             var value = null;
 
-            switch (field.type) {
-                case 1:
-                    value = form.find("input[name=fn_" + field.name + "]").val();
-                    break;
-
-                case 3:
+            if (field.type >= 300 && field.type <= 399) {
+                if (field._editor) {
+                    value = inCp.CodeEditorValue("fn_" + field.name);
+                } else {
                     value = form.find("textarea[name=fn_" + field.name + "]").val();
-                    break;
+                }
+            } else {
 
-                case 10:
-                    value = form.find("input[name=fn_" + field.name + "]").val();
-                    break;
+                switch (field.type) {
+                    case 1:
+                        value = form.find("input[name=fn_" + field.name + "]").val();
+                        break;
+
+                    case 10:
+                        value = form.find("input[name=fn_" + field.name + "]").val();
+                        break;
+                }
             }
 
             if (value) {
@@ -958,7 +1003,6 @@ inCpApp.InstDeployCommit = function(app_id, auto_start) {
         }
     });
 }
-
 
 
 

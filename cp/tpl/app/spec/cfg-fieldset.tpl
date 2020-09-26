@@ -43,6 +43,22 @@
 </tr>
 
 <tr>
+  <td>Title</td>
+  <td></td>
+  <td>
+    <input type="text" class="form-control" name="title" value="{[=it.title]}">
+  </td>
+</tr>
+
+<tr>
+  <td>Description</td>
+  <td></td>
+  <td>
+    <textarea type="text" class="form-control" name="description" rows="4">{[=it.description]}</textarea>
+  </td>
+</tr>
+
+<tr>
   <td>Type</td>
   <td></td>
   <td>
@@ -53,15 +69,6 @@
     </select>
   </td>
 </tr>
-
-<tr>
-  <td>Title</td>
-  <td></td>
-  <td>
-    <input type="text" class="form-control" name="title" value="{[=it.title]}">
-  </td>
-</tr>
-
 
 
 <tr>
@@ -78,7 +85,7 @@
   <td>Default Value</td>
   <td></td>
   <td>
-    <input type="text" class="form-control" name="default" value="{[=it.default]}">
+    <textarea type="text" class="form-control" name="default" rows="4">{[=it.default]}</textarea>
   </td>
 </tr>
 

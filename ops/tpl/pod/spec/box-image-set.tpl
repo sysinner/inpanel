@@ -26,6 +26,21 @@
       </tr>
 
       <tr>
+        <td>Dist</td>
+        <td>
+          <input name="os_dist" class="form-control" value="{[=it.image.os_dist]}">
+        </td>
+      </tr>
+
+      <tr>
+        <td>Arch</td>
+        <td>
+          <input name="arch" class="form-control" value="{[=it.image.arch]}">
+        </td>
+      </tr>
+
+
+      <tr>
         <td>Display Name</td>
         <td>
           <input name="meta_name" class="form-control" value="{[=it.image.meta.name]}">

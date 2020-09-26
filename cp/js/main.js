@@ -515,12 +515,14 @@ inCp.CodeRender = function() {
 
 inCp.codeEditorInstances = {};
 
-inCp.CodeEditor = function(id, lang, lines) {
+inCp.CodeEditor = function(id, lang, options) {
 
     var elem = document.getElementById(id);
     if (!elem) {
         return;
     }
+
+    options = options || {};
 
     var modes = [
         "~/cm/5/addon/runmode/runmode.js",
@@ -528,14 +530,43 @@ inCp.CodeEditor = function(id, lang, lines) {
         "~/cm/5/mode/clike/clike.js",
     ];
 
-
     switch (lang) {
+        case "json":
+            lang = "javascript";
+
+        case "ini":
+            lang = "toml";
+
+        case "hcl":
+            lang = "nginx";
+
         case "shell":
+        case "toml":
+        case "yaml":
+        case "nginx":
+        case "xml":
+        case "markdown":
+        case "protobuf":
+        case "dockerfile":
+        case "protobuf":
             modes.push("~/cm/5/mode/" + lang + "/" + lang + ".js");
             break;
 
         default:
             return;
+    }
+
+    if (!options.readOnly) {
+        options.readOnly = false;
+    }
+    if (!options.theme) {
+        options.theme = "monokai";
+    }
+    if (!options.showLineNumber) {
+        options.showLineNumber = true;
+    }
+    if (!options.width) {
+        options.width = "100%";
     }
 
     seajs.use([
@@ -548,13 +579,23 @@ inCp.CodeEditor = function(id, lang, lines) {
 
             inCp.codeEditorInstances[id] = CodeMirror.fromTextArea(elem, {
                 mode: lang,
-                lineNumbers: true,
-                theme: "monokai",
+                lineNumbers: options.showLineNumber,
+                theme: options.theme,
                 lineWrapping: true,
                 styleActiveLine: true,
+                readOnly: options.readOnly,
             });
-            var lh = inCp.codeEditorInstances[id].defaultTextHeight();
-            inCp.codeEditorInstances[id].setSize("100%", lines * lh);
+
+            if (options.numberLines) {
+                var lh = inCp.codeEditorInstances[id].defaultTextHeight() + 1;
+                options.height = options.numberLines * lh
+            }
+
+            if (!options.height) {
+                options.height = 100;
+            }
+
+            inCp.codeEditorInstances[id].setSize(options.width, options.height);
         });
     });
 }

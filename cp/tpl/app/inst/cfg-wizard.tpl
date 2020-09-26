@@ -26,17 +26,21 @@
   <td width="220px">{[=v.title]}</td>
   <td>
     <input name="fn_{[=v.name]}" class="form-control incp-appinst-cfg-wizard-item" value="{[=v._value]}" {[if (v.auto_fill && v.auto_fill.length > 0) {]}readonly="readonly"{[}]}>
+    {[? v.description && v.description.length > 0]}
+    <small>{[=v.description]}</small>
+    {[?]}
   </td>
 </tr>
 {[}]}
 
-{[if (v.type == 3) {]}
+{[if (v.type == 3 || (v.type >= 300 && v.type <= 399)) {]}
 <tr>
-  <td width="220px">{[=v.title]}</td>
+  <td width="220px">{[=v.title]} {[? v._readOnly === true]}<br>(Read Only){[?]}</td>
   <td>
-    <textarea name="fn_{[=v.name]}" class="form-control incp-appinst-cfg-wizard-item" {[if (v.auto_fill && v.auto_fill.length > 0) {]}readonly="readonly"{[}]} rows="3">
-    {[=v._value]}
-    </textarea>
+    <textarea id="fn_{[=v.name]}" name="fn_{[=v.name]}" class="form-control incp-appinst-cfg-wizard-item" {[if (v.auto_fill && v.auto_fill.length > 0) {]}readonly="readonly"{[}]} rows="{[? v._textRows]}{[=v._textRows]}{[??]}4{[?]}">{[=v._value]}</textarea>
+    {[? v.description && v.description.length > 0]}
+    <small>{[=v.description]}</small>
+    {[?]}
   </td>
 </tr>
 {[}]}

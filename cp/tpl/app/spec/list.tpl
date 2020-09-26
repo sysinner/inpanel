@@ -32,17 +32,6 @@
     </button>
   </td>
   <td align="right">
-    {[if (v.meta.user == inCp.UserSession.username || inCp.UserSession.username == "sysadmin") {]}
-    <button class="btn btn-sm btn-outline-primary" onclick="inCpAppSpec.ItemDel('{[=v.meta.id]}')">
-      <span class="fa fa-times-circle"></span>
-    </button>
-    {[}]}
-    {[if (inCp.UserSession.username == "sysadmin") {]}
-    <button class="btn btn-sm btn-outline-primary" onclick="inCpAppSpec.SetRaw('{[=v.meta.id]}')">
-      <span class="fa fa-edit"></span>
-      Modify RAW
-    </button>
-    {[}]}
     {[if (v.meta.user == inCp.UserSession.username) {]}
     <button class="btn btn-sm btn-outline-primary" onclick="inCpAppSpec.Set('{[=v.meta.id]}')">
       <span class="fa fa-edit"></span>
@@ -78,11 +67,6 @@ $("#incp-app-specls-qry").submit(function(event) {
 <li class="incp-btn incp-btn-primary">
   <a href="#" onclick="inCpAppSpec.Set()">
      New AppSpec
-  </a>
-</li>
-<li class="incp-btn incp-btn-primary">
-  <a href="#" onclick="inCpAppSpec.SetRaw()">
-     Upload AppSpec file
   </a>
 </li>
 </script>

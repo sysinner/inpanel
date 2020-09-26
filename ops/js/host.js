@@ -758,7 +758,7 @@ inOpsHost.NodeOverview = function() {
         var ep = EventProxy.create("tpl", "node", function(tpl, node) {
 
             if (node.spec.platform.kernel) {
-                node.spec.platform.kernel = node.spec.platform.kernel.replace(/.el7.x86_64$/g, '');
+                node.spec.platform.kernel = node.spec.platform.kernel.replace(/.x86_64$/g, '');
             }
 
             if (!node.meta.name) {

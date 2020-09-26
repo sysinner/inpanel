@@ -6,8 +6,8 @@
     <th>Name:Tag</th>
     <th>Display Name</th>
     <th>Driver</th>
+    <th>Dist/Arch</th>
     <th>Action</th>
-    <th>Updated</th>
     <th></th>
   </tr></thead>
   <tbody id="inops-podspec-imagels"></tbody>
@@ -20,12 +20,12 @@
   <td class="inops-font-mono">{[=v.name]}:{[=v.tag]}</td>
   <td>{[=v.meta.name]}</td>
   <td>{[=v.driver]}</td>
+  <td>{[=v.os_dist]}/{[=v.arch]}</td>
   <td>
   {[~it.actions :av]}
     {[? av.action == v.action]}{[=av.title]}{[?]}
   {[~]}
   </td>
-  <td>{[=l4i.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsPod.SpecPlanImageSet('{[=v.meta.id]}')">

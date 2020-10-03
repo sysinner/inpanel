@@ -88,8 +88,8 @@
 <tbody>
 
 <tr>
-  <td>ID</td>
-  <td></td>
+  <td width="260px">ID <span style="color:red">*</span></td>
+  <td width="30px"></td>
   <td>
     <input name="meta_id" class="form-control form-control-sm" 
       value="{[=it.spec.meta.id]}" {[? it.spec.meta.id && it.spec.meta.id.length > 0]}readonly{[?]}>
@@ -100,17 +100,30 @@
 </div>
 
 <tr>
-  <td width="260px">Name</td>
-  <td width="30px"></td>
+  <td>Title <span style="color:red">*</span></td>
+  <td></td>
   <td>
     <input name="meta_name" class="form-control form-control-sm" value="{[=it.spec.meta.name]}">
+	<small>A human readable title, between 1 and 30 characters in length.<small>
+  </td>
+</tr>
+
+<tr>
+  <td>Subtitle</td>
+  <td></td>
+  <td>
+    <input name="meta_subtitle" class="form-control form-control-sm" value="{[=it.spec.meta.subtitle]}">
+	<small>An optional and human readable subtitle, between 0 and 100 characters in length.<small>
   </td>
 </tr>
 
 <tr>
   <td>Description</td>
   <td></td>
-  <td><input name="description" class="form-control form-control-sm" value="{[=it.spec.description]}"></td>
+  <td>
+    <textarea name="description" class="form-control" rows="4">{[=it.spec.description]}</textarea>
+    <small>An optional and human readable description of this application, allow format in TEXT or Markdown and between 0 and 2000 characters in length.</small>
+  </td>
 </div>
 
 <!-- <tr>
@@ -248,7 +261,7 @@
 
 
 <tr>
-  <td>Minimum Requirements</td>
+  <td>Minimum Requirements <span style="color:red">*</span></td>
   <td></td>
   <td>
     <table>
@@ -281,7 +294,7 @@
 
 
 <tr>
-  <td>Deployment Requirements</td>
+  <td>Deployment Requirements <span style="color:red">*</span></td>
   <td></td>
   <td>
     <table>
@@ -408,12 +421,15 @@
   <td></td>
   <td></td>
   <td>
-    <button class="btn btn-primary" onclick="inCpAppSpec.SetCommit()">
-      Save
-    </button>
-    <button class="btn btn-default" onclick="inCpAppSpec.ListRefresh()" style="margin-left:10px">
-      Cancel
-    </button>
+    <div id="incp-appspec-set-footer">
+      <button class="btn btn-primary" onclick="inCpAppSpec.SetCommit()">
+        Save
+      </button>
+      <button class="btn btn-default" onclick="inCpAppSpec.ListRefresh()" style="margin-left:10px">
+        Cancel
+     </button>
+	</div>
+    <div id="incp-appspec-set-footer-alert" class="alert hide"></div>
   </td>
 </tr>
 
@@ -488,8 +504,6 @@
   <thead><tr>
     <th>Name</th>
     <th>Version</th>
-    <th>Dist</th>
-    <th>Arch</th>
     <th>Volume</th>
     <th></th>
   </tr></thead>
@@ -497,10 +511,8 @@
   {[~it.items :v]}
   <tr id="incp-app-specset-ipmls-name{[=v.name]}">
     <td>{[=v.name]}</td>
-    <td><input name="app_{[=v.name]}" class="form-control form-control-sm" value="{[=v.version]}" style="max-width:160px"/></td>
-    <td>{[=v.dist]}</td>
-    <td>{[=v.arch]}</td>
-    <td>/usr/sysinner/{[=v.name]}/{[=v.version]}</td>
+    <td><input id="app_spec_setform_pkg_{[=v.name]}" class="form-control form-control-sm" value="{[=v.version]}" style="max-width:160px" onchange="inCpAppSpec.SetPackVersionRefresh('{[=v.name]}')"/></td>
+    <td id="app_spec_setform_pkg_vol_{[=v.name]}">/usr/sysinner/{[=v.name]}/{[=v.version]}</td>
     <td align="right">
       <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetPackRemove('{[=v.name]}')">
         <i class="fa fa-times"></i>

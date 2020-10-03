@@ -4,6 +4,8 @@ var inCpAppSpec = {
             id: "",
             name: "",
             user: "",
+            title: "",
+            subtitle: "",
         },
         description: "",
         packages: [],
@@ -603,29 +605,18 @@ inCpAppSpec.Set = function(id) {
 
             $("#work-content").html(tpl);
 
-            if (!rsj.meta.name) {
-                rsj.meta.name = "";
-            }
+            rsj.meta.name = rsj.meta.name ? rsj.meta.name : "";
+            rsj.meta.title = rsj.meta.title ? rsj.meta.title : "";
+            rsj.meta.subtitle = rsj.meta.subtitle ? rsj.meta.subtitle : "";
 
-            if (!rsj.description) {
-                rsj.description = "";
-            }
+            rsj.description = rsj.description ? rsj.description : "";
+            rsj.comment = rsj.comment ? rsj.comment : "";
 
-            if (!rsj.comment) {
-                rsj.comment = "";
-            }
+            rsj.packages = rsj.packages ? rsj.packages : [];
+            rsj.executors = rsj.executors ? rsj.executors : [];
 
-            if (!rsj.packages) {
-                rsj.packages = [];
-            }
+            rsj.service_ports = rsj.service_ports ? rsj.service_ports : [];
 
-            if (!rsj.executors) {
-                rsj.executors = [];
-            }
-
-            if (!rsj.service_ports) {
-                rsj.service_ports = [];
-            }
 
             if (inCp.UserSession.username == "sysadmin") {
                 rsj._host_port_enable = true;
@@ -1102,6 +1093,26 @@ inCpAppSpec.SetPackRemove = function(name) {
     inCpAppSpec.setPackRefresh();
 }
 
+inCpAppSpec.SetPackVersionRefresh = function(name) {
+
+    if (name.length < 1) {
+        return;
+    }
+
+    var v = $("#app_spec_setform_pkg_" + name).val();
+    if (!v || v.length < 1) {
+        return;
+    }
+
+    for (var i in inCpAppSpec.setActive.packages) {
+        if (inCpAppSpec.setActive.packages[i].name == name) {
+            inCpAppSpec.setActive.packages[i].version = v;
+            $("#app_spec_setform_pkg_vol_" + name).text("/usr/sysinner/" + name + "/" + v);
+            break
+        }
+    }
+}
+
 inCpAppSpec.setPackRefresh = function() {
     if (!inCpAppSpec.setActive || !inCpAppSpec.setActive.packages) {
         return;
@@ -1547,7 +1558,7 @@ inCpAppSpec.SetDeployFailoverRefresh = function() {
 }
 
 inCpAppSpec.SetCommit = function() {
-    var alert_id = "#incp-app-specset-alert";
+    var footer_id = "incp-appspec-set-footer";
 
     try {
 
@@ -1560,7 +1571,8 @@ inCpAppSpec.SetCommit = function() {
 
         inCpAppSpec.setActive.meta.id = form.find("input[name=meta_id]").val();
         inCpAppSpec.setActive.meta.name = form.find("input[name=meta_name]").val();
-        inCpAppSpec.setActive.description = form.find("input[name=description]").val();
+        inCpAppSpec.setActive.meta.subtitle = form.find("input[name=meta_subtitle]").val();
+        inCpAppSpec.setActive.description = form.find("textarea[name=description]").val();
         inCpAppSpec.setActive.comment = form.find("input[name=comment]").val();
 
         var dep_pv = 0;
@@ -1672,9 +1684,9 @@ inCpAppSpec.SetCommit = function() {
 
 
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return l4iModal.FootAlert("error", "valid fail : " + err, 3000, footer_id);
     }
-    // console.log(inCpAppSpec.setActive);
+
 
     inCp.ApiCmd("app-spec/set", {
         method: "POST",
@@ -1683,7 +1695,7 @@ inCpAppSpec.SetCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Failed");
+                return l4iModal.FootAlert("error", "network error", 3000, footer_id)
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -1691,10 +1703,10 @@ inCpAppSpec.SetCommit = function() {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'error', msg);
+                return l4iModal.FootAlert("error", msg, 3000, footer_id);
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successful operation");
+            l4iModal.FootAlert("ok", "Successful operation", 3000, footer_id);
 
             window.setTimeout(function() {
                 inCpAppSpec.ListRefresh();

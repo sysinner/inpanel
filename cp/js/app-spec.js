@@ -8,6 +8,7 @@ var inCpAppSpec = {
             subtitle: "",
         },
         description: "",
+        type_tags: [],
         packages: [],
         executors: [],
         service_ports: [],
@@ -309,7 +310,7 @@ inCpAppSpec.ListSelectorQueryCommit = function() {
 inCpAppSpec.Info = function(id, spec, version, app_id) {
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", "roles", function(tpl, rsj, roles) {
+        var ep = EventProxy.create("tpl", "data", "roles", "tags", function(tpl, rsj, roles, tags) {
 
             if (!rsj || rsj.error || rsj.kind != "AppSpec") {
                 return l4iAlert.Open("error", "AppSpec Not Found");
@@ -441,6 +442,18 @@ inCpAppSpec.Info = function(id, spec, version, app_id) {
             }
             rsj._multi_replica_enable = inCp.syscfg.zone_master.multi_replica_enable;
 
+            rsj._type_tags = [];
+            rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
+            for (var i in rsj.type_tags) {
+                for (var j in tags.items) {
+                    if (rsj.type_tags[i] == tags.items[j].name) {
+                        rsj._type_tags.push(tags.items[j].value);
+                        break;
+                    }
+                }
+            }
+
+
             l4iModal.Open({
                 title: "AppSpec Information",
                 width: 1400,
@@ -486,6 +499,24 @@ inCpAppSpec.Info = function(id, spec, version, app_id) {
                 },
             });
         }
+
+        if (inCpAppSpec.TypeTagList) {
+            ep.emit("tags", inCpAppSpec.TypeTagList);
+        } else {
+            inCp.ApiCmd("app-spec/type-tag-list", {
+                callback: function(err, data) {
+                    if (err) {
+                        return alert(err);
+                    }
+                    if (!data || !data.items) {
+                        return alert("network error");
+                    }
+                    inCpAppSpec.TypeTagList = data;
+                    ep.emit("tags", data);
+                },
+            });
+        }
+
 
         // data
         if (spec) {
@@ -595,7 +626,7 @@ inCpAppSpec.ItemDelCommit = function() {
 inCpAppSpec.Set = function(id) {
     seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", "roles", function(tpl, rsj, roles) {
+        var ep = EventProxy.create("tpl", "data", "roles", "tags", function(tpl, rsj, roles, tags) {
 
             rsj = rsj || l4i.Clone(inCpAppSpec.def);
 
@@ -706,6 +737,18 @@ inCpAppSpec.Set = function(id) {
                 rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
             }
 
+            rsj._type_tags = l4i.Clone(tags);
+            rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
+            for (var i in rsj.type_tags) {
+                for (var j in rsj._type_tags.items) {
+                    if (rsj._type_tags.items[j].name == rsj.type_tags[i]) {
+                        rsj._type_tags.items[j]._checked = true;
+                        break;
+                    }
+                }
+            }
+
+
             inCpAppSpec.setActive = rsj;
 
             l4iTemplate.Render({
@@ -752,6 +795,23 @@ inCpAppSpec.Set = function(id) {
                     }
                     inCpAppSpec.iamAppRoles = data;
                     ep.emit("roles", data);
+                },
+            });
+        }
+
+        if (inCpAppSpec.TypeTagList) {
+            ep.emit("tags", inCpAppSpec.TypeTagList);
+        } else {
+            inCp.ApiCmd("app-spec/type-tag-list", {
+                callback: function(err, data) {
+                    if (err) {
+                        return alert(err);
+                    }
+                    if (!data || !data.items) {
+                        return alert("network error");
+                    }
+                    inCpAppSpec.TypeTagList = data;
+                    ep.emit("tags", data);
                 },
             });
         }
@@ -1586,6 +1646,20 @@ inCpAppSpec.SetCommit = function() {
             throw "Required Package or Git Repo";
         }
 
+        for (var i in inCpAppSpec.setActive.depends) {
+            var v = $("#app_specset_depend_version_" + inCpAppSpec.setActive.depends[i].id).val();
+            if (v && v.length) {
+                inCpAppSpec.setActive.depends[i].version = v;
+            }
+        }
+
+        for (var i in inCpAppSpec.setActive.dep_remotes) {
+            var v = $("#app_specset_dep_remote_version_" + inCpAppSpec.setActive.dep_remotes[i].id).val();
+            if (v && v.length) {
+                inCpAppSpec.setActive.dep_remotes[i].version = v;
+            }
+        }
+
         inCpAppSpec.setActive.service_ports = [];
         form.find(".incp-app-specset-serviceport-item").each(function() {
 
@@ -1623,6 +1697,14 @@ inCpAppSpec.SetCommit = function() {
             var val = parseInt($(this).val());
             if (val > 1) {
                 inCpAppSpec.setActive.roles.push(val);
+            }
+        });
+
+        inCpAppSpec.setActive.type_tags = [];
+        form.find("input[name=type_tags]:checked").each(function() {
+            var val = $(this).val();
+            if (val && val.length > 0) {
+                inCpAppSpec.setActive.type_tags.push(val);
             }
         });
 

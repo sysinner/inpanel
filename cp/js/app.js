@@ -8,7 +8,8 @@ var inCpApp = {
         spec: {
             meta: {
                 id: null,
-                name: null
+                name: null,
+                version: null
             }
         },
         operate: {
@@ -1006,7 +1007,7 @@ inCpApp.InstDeployCommit = function(app_id, auto_start) {
 
 
 
-inCpApp.InstNew = function(spec_id) {
+inCpApp.InstNew = function(spec_id, version) {
     if (!spec_id || spec_id.length < 4) {
         return alert("AppSpec error, Please try again later (EC:incp-appset)");
     }
@@ -1023,6 +1024,11 @@ inCpApp.InstNew = function(spec_id) {
 
             spec.exp_res._cpu_min = (spec.exp_res.cpu_min / 10).toFixed(1);
             inCpApp.instSet.spec = spec;
+
+            if (version) {
+                inCpApp.instSet.spec.meta.version = version;
+            }
+
 
             l4iModal.Open({
                 title: "Create new App Instance",
@@ -1292,6 +1298,7 @@ inCpApp.InstSetCommit = function(options) {
 
     options = options || {};
 
+
     var alert_id = "#incp-appset-alert";
     try {
 
@@ -1321,6 +1328,7 @@ inCpApp.InstSetCommit = function(options) {
     } catch (err) {
         return l4i.InnerAlert(alert_id, 'error', err);
     }
+
 
     inCp.ApiCmd("app/set", {
         method: "POST",

@@ -57,7 +57,7 @@ body {
 }
 
 .incp-well-panel>.body2c {
-  border-top: 2px solid #333;
+  border-top: 5px solid #ffc107;
   padding: 40px 0;
   width: 100%;
   overflow: auto;
@@ -106,7 +106,7 @@ body {
 }
 
 .incp-well-panel>.info {
-  background-color: #e2e3e5;
+  background-color: #ffc107;
   color: #383d41;
 }
 

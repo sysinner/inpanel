@@ -409,6 +409,18 @@
 
 
 <tr>
+  <td>Type Tags</td>
+  <td></td>
+  <td>
+    {[~it.spec._type_tags.items :v]}
+    <span style="margin-right:10px">
+      <input type="checkbox" name="type_tags" value="{[=v.name]}" {[? v._checked]}checked="checked"{[?]}> {[=v.value]}
+    </span>
+    {[~]}
+  </td>
+</tr>
+
+<tr>
   <td>Version Comment</td>
   <td></td>
   <td>
@@ -455,7 +467,7 @@
   <tr id="incp-app-specset-depls-id{[=v.id]}">
     <td>{[=v.id]}</td>
     <td>{[=v.name]}</td>
-    <td>{[=v.version]}</td>
+    <td><input id="app_specset_depend_version_{[=v.id]}" class="form-control form-control-sm" value="{[=v.version]}" style="max-width:120px"/></td>
     <td align="right">
       <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetDependRemove('{[=v.id]}')">
         <i class="fa fa-times"></i>
@@ -484,7 +496,7 @@
   <tr id="incp-app-specset-depremote-id{[=v.id]}">
     <td>{[=v.id]}</td>
     <td>{[=v.name]}</td>
-    <td>{[=v.version]}</td>
+    <td><input id="app_specset_dep_remote_version_{[=v.id]}" class="form-control form-control-sm" value="{[=v.version]}" style="max-width:120px"/></td>
     <td>{[=v.configs.join(", ")]}</td>
     <td align="right">
       <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetDepRemoteRemove('{[=v.id]}')">

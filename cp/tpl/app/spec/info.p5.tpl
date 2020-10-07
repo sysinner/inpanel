@@ -268,6 +268,17 @@
 </tr>
 {[?]}
 
+{[? it._type_tags && it._type_tags.length > 0]}
+<tr>
+  <td>Type Tags</td>
+  <td>
+    {[~it._type_tags :v]}
+    <span class="badge badge-primary">{[=v]}</span>
+    {[~]}
+  </td>
+</tr>
+{[?]}
+
 
 {[? it.comment]}
 <tr>

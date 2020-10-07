@@ -9,7 +9,7 @@
     <ul class="incp-nav" id="incp-topbar-siteinfo">
       <li>
         <img class="incp-topbar-logo" 
-          src="{[=inCp.SysConfigValueIf("innerstack/sys/webui", "cp_navbar_logo", "/in/cp/~/cp/img/logo-g1s48.png")]}" 
+          src="{[=inCp.SysConfigValueIf("innerstack/sys/webui", "cp_navbar_logo", "/in/cp/~/cp/img/logo-10x7-light-h128.png")]}" 
           title="frontend_header_site_logo_url">
       </li>
       <li class="incp-topbar-brand">

@@ -38,7 +38,7 @@
       Modify
     </button>
     {[}]}
-    <button class="btn btn-sm btn-outline-primary" onclick="inCpApp.InstNew('{[=v.meta.id]}')">
+    <button class="btn btn-sm btn-outline-primary" onclick="inCpApp.InstNew('{[=v.meta.id]}', '{[=v.meta.version]}')">
       <span class="fa fa-cloud-upload-alt"></span>
       New Instance
     </button>

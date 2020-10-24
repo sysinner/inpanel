@@ -282,26 +282,35 @@ inCp.ApiCmd = function(url, options) {
     if (options.callback) {
         appcb = options.callback;
     }
+    options._url = url.replace(/^\/|\s+$/g, '');
+
     if (inCp.Zones && options.api_zone_id && inCp.zone_id && options.api_zone_id != inCp.zone_id) {
         for (var i in inCp.Zones.items) {
             if (inCp.Zones.items[i].meta.id == options.api_zone_id &&
                 inCp.Zones.items[i].wan_api && inCp.Zones.items[i].wan_api.length > 10) {
-                url = "zonebound/" + options.api_zone_id + "/" + url;
+                options._zburl = "zonebound/" + options.api_zone_id + "/" + options._url;
                 break;
             }
         }
     }
+
     options.callback = function(err, data) {
         if (err == "Unauthorized") {
             return inCp.AlertUserLogin();
         }
-        if (appcb) {
+        if (err && options._zburl) {
+            options._zburl = null;
+            l4i.Ajax(inCp.api + options._url, options);
+        } else if (appcb) {
             appcb(err, data);
         }
     }
-    url = url.replace(/^\/|\s+$/g, '');
 
-    l4i.Ajax(inCp.api + url, options);
+    if (options._zburl) {
+        l4i.Ajax(inCp.api + options._zburl, options);
+    } else {
+        l4i.Ajax(inCp.api + options._url, options);
+    }
 }
 
 inCp.TplPath = function(url) {

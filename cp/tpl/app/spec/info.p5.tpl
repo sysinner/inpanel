@@ -97,7 +97,7 @@
 
 {[if (it.dep_remotes && it.dep_remotes.length > 0) {]}
 <tr>
-  <td>Remotely dependent AppSpec</td>
+  <td>Remotely Import AppSpec</td>
   <td id="incp-app-specset-depremotes">
     <table>
       <thead><tr>

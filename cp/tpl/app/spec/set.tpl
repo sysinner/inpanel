@@ -70,10 +70,12 @@
       {[=it.actionTitle]}
     </div>
     <div class="col-md-4 text-right">
-      {[? it.spec.meta.user == inCp.UserSession.username || inCp.UserSession.username == "sysadmin"]}
+      {[? it.spec.meta.user == "" || it.spec.meta.user == inCp.UserSession.username || inCp.UserSession.username == "sysadmin"]}
       <button class="btn btn-sm btn-primary" onclick="inCpAppSpec.SetRaw('{[=it.spec.meta.id]}')">
         <span class="fa fa-edit"></span> Advanced editing mode
       </button>
+      {[?]}
+      {[? it.spec.meta.user == inCp.UserSession.username || inCp.UserSession.username == "sysadmin"]}
       <button class="btn btn-sm btn-outline-danger" onclick="inCpAppSpec.ItemDel('{[=it.spec.meta.id]}')">
         <span class="fa fa-times-circle"></span> Delete
       </button>
@@ -180,7 +182,7 @@
 
 <tr>
   <td>
-    Remotely dependent AppSpec
+    Remotely Import AppSpec
   </td>
   <td>
     <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetDepRemoteSelect()">

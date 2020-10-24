@@ -216,13 +216,14 @@ inCpPod.List = function(tplid, options) {
         options = inCpPod.list_options;
     }
 
-    if (!options.ops_mode) {
-        inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus, "pod/instance");
-    }
 
     seajs.use(["ep"], function(EventProxy) {
 
         var ep = EventProxy.create("tpl", "data", function(tpl, data) {
+
+            if (!options.ops_mode) {
+                inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus, "pod/instance");
+            }
 
             if (tpl) {
                 $("#work-content").html(tpl);

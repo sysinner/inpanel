@@ -32,15 +32,20 @@
     </button>
   </td>
   <td align="right">
-    {[if (v.meta.user == inCp.UserSession.username) {]}
+    {[? v.meta.user == inCp.UserSession.username || inCp.UserSession.username == "sysadmin"]}
     <button class="btn btn-sm btn-outline-primary" onclick="inCpAppSpec.Set('{[=v.meta.id]}')">
       <span class="fa fa-edit"></span>
       Modify
     </button>
-    {[}]}
+    {[??]}
+    <button class="btn btn-sm btn-outline-primary" onclick="inCpAppSpec.Info('{[=v.meta.id]}')">
+      <span class="fa fa-eye"></span>
+      View
+    </button>
+    {[?]}
     <button class="btn btn-sm btn-outline-primary" onclick="inCpApp.InstNew('{[=v.meta.id]}', '{[=v.meta.version]}')">
       <span class="fa fa-cloud-upload-alt"></span>
-      New Instance
+      New Deploy
     </button>
   </td>
 </tr>

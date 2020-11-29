@@ -1643,7 +1643,7 @@ inCpAppSpec.SetCommit = function() {
             dep_pv += 1;
         }
         if (dep_pv < 1) {
-            throw "Required Package or Git Repo";
+            // throw "Required Package or Git Repo";
         }
 
         for (var i in inCpAppSpec.setActive.depends) {

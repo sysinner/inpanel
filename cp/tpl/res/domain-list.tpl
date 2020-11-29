@@ -57,3 +57,37 @@
   </a>
 </li>
 </script>
+
+
+<script type="text/html" id="incp-mod-domain-new-tpl">
+
+<div id="incp-mod-domain-new-alert"></div>
+
+<table class="incp-formtable" id="incp-mod-domain-new-form">
+<tbody>
+
+<tr>
+  <td width="200px">Name</td>
+  <td class="">
+    <input type="text" class="form-control" name="meta_name" value="">
+  </td>
+</tr>
+
+
+{[? it._options.user_groups]}
+<tr>
+  <td width="260px">Owner</td>
+  <td>
+    <select name="incp-mod-domain-new-meta-user" id="incp-mod-domain-new-meta-user" class="form-control">
+    {[~it._options.user_groups :v]}
+      <option value="{[=v]}">{[=v]}</option>
+    {[~]}
+    </select>
+  </td>
+</tr>
+{[?]}
+
+</tbody>
+</table>
+</script>
+

@@ -123,12 +123,27 @@ inCpResDomain.List = function() {
     });
 }
 
-inCpResDomain.New = function() {
+inCpResDomain.New = function(options) {
+
+    options = options || {};
+    //
+    if (inCp.UserSession.groups && inCp.UserSession.groups.length > 0) {
+        options.user_groups = [inCp.UserSession.username];
+        for (var i in inCp.UserSession.groups) {
+            options.user_groups.push(inCp.UserSession.groups[i]);
+        }
+    }
+
     l4iModal.Open({
         title: "Domain Add",
-        tpluri: inCp.TplPath("res/domain-new"),
+        // dstid: "incp-mod-domain-new",
+        tplid: "incp-mod-domain-new-tpl",
+        // tpluri: inCp.TplPath("res/domain-new"),
         width: 900,
         height: 400,
+        data: {
+            _options: options,
+        },
         buttons: [{
             title: "Cancel",
             onclick: "l4iModal.Close()",
@@ -141,8 +156,8 @@ inCpResDomain.New = function() {
 }
 
 inCpResDomain.NewCommit = function() {
-    var form = $("#incp-resdomain-new-form");
-    var alert_id = "#incp-resdomain-new-alert";
+    var form = $("#incp-mod-domain-new-form");
+    var alert_id = "#incp-mod-domain-new-alert";
 
     if (!form) {
         return;
@@ -153,6 +168,12 @@ inCpResDomain.NewCommit = function() {
             name: form.find("input[name=meta_name]").val(),
         },
     };
+
+    //
+    var owner = form.find("select[name=incp-mod-domain-new-meta-user]").val();
+    if (owner && owner.length > 1) {
+        req.meta.user = owner;
+    }
 
     inCp.ApiCmd("resource/domain-new", {
         method: "POST",

@@ -72,6 +72,15 @@
 <tr class="incp-podnew-resource-selector-row">
   <td>Image</td>
   <td class="incp-form-box-selector" id="incp-podnew-images" style="padding-bottom:0">
+    {[? it._options.app_runtime_images && it._options.app_runtime_images.length > 0]}
+    {[~it._options.app_runtime_images :ref_id]}
+    <div class="incp-form-box-selector-item" 
+      id="incp-podnew-image-id-{[=l4iString.CryptoMd5(ref_id)]}"
+      onclick="inCpPod.NewPlanImageChange('{[=ref_id]}')">
+      <div>{[=ref_id]}</div>
+    </div>
+    {[~]}
+    {[??]}
     {[~it.images :v]}
     <div class="incp-form-box-selector-item {[if (v.ref_id == it.image_selected) { ]}selected{[ } ]}" 
       id="incp-podnew-image-id-{[=l4iString.CryptoMd5(v.ref_id)]}"
@@ -80,6 +89,7 @@
       <div>{[=v.ref_id]}</div>
     </div>
     {[~]}
+    {[?]}
   </td>
 </tr>
 

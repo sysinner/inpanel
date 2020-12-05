@@ -37,7 +37,6 @@
   color: #28a745 !important;
 }
 
-
 #incp-topbar {
   margin-bottom: 10px;
   background-color: #fff;
@@ -84,11 +83,11 @@
   margin-right: 2px;
 }
 
-.incp-nav-right>li:last-child {
+.incp-nav-right > li:last-child {
   margin-right: 0;
 }
 
-.incp-nav>li {
+.incp-nav > li {
   position: relative;
   padding: 0;
   display: inline-block;
@@ -97,11 +96,11 @@
   line-height: 50px;
 }
 
-.incp-nav>li:first-child {
+.incp-nav > li:first-child {
   margin-left: 0;
 }
 
-.incp-nav>li>a {
+.incp-nav > li > a {
   padding: 0 10px;
   display: block;
   text-decoration: none;
@@ -110,16 +109,16 @@
   font-size: 16px;
 }
 
-.incp-nav>li>a:hover {
+.incp-nav > li > a:hover {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
-.incp-nav>li>a.active {
+.incp-nav > li > a.active {
   color: #000;
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.incp-nav-item-underline>li>a.active {
+.incp-nav-item-underline > li > a.active {
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
 }
 
@@ -134,17 +133,9 @@
   font-weight: bold;
 }
 
-
-
-
-
-
-
-
-
 /** user bar **/
 
-#incp-topbar-userbar>.iam-name {
+#incp-topbar-userbar > .iam-name {
   font-size: 16px;
   color: #666;
   max-width: 120px;
@@ -157,11 +148,11 @@
   display: inline-block;
 }
 
-#incp-topbar-userbar>.iam-photo {
+#incp-topbar-userbar > .iam-photo {
   margin-left: 0px;
 }
 
-#incp-topbar-userbar>.iam-photo>img {
+#incp-topbar-userbar > .iam-photo > img {
   height: 36px;
   width: 36px;
   border-radius: 50%;
@@ -224,7 +215,7 @@
   margin: 0 0 10px 0;
 }
 
-#work-content>.alert {
+#work-content > .alert {
   margin: 0 10px 10px 10px;
 }
 
@@ -233,7 +224,8 @@
 }
 
 #work-content table th,
-#work-content table td {}
+#work-content table td {
+}
 
 #work-content table.valign-middle td,
 #work-content table.valign-middle th {
@@ -314,7 +306,7 @@
   font-weight: bold;
 }
 
-.incp-form>.form-group {
+.incp-form > .form-group {
   padding: 0 !important;
   margin: 0 !important;
 }
@@ -352,8 +344,8 @@
   */
   padding: 5px;
   margin: 0 10px 10px 0;
-  background-color: #ECF0F1;
-  box-shadow: inset 0px 0px 1px #FFFFCC;
+  background-color: #ecf0f1;
+  box-shadow: inset 0px 0px 1px #ffffcc;
   min-width: 280px;
   max-width: 280px;
   overflow: hidden;
@@ -387,7 +379,7 @@
   outline: #a94442 solid 3px;
 }
 
-.incp-form-box-selector-item>.disable_close {
+.incp-form-box-selector-item > .disable_close {
   position: absolute;
   top: 0.5em;
   right: 0.5em;
@@ -396,7 +388,7 @@
   display: none;
 }
 
-.incp-form-box-selector-item.disable>.disable_close {
+.incp-form-box-selector-item.disable > .disable_close {
   display: block;
 }
 
@@ -407,7 +399,7 @@
   display: block;
 }
 
-#comp-content>#incp-module-navbar {
+#comp-content > #incp-module-navbar {
   padding: 0 10px;
 }
 
@@ -426,7 +418,7 @@
   margin-left: 0 !important;
 }
 
-.incp-module-nav>li {
+.incp-module-nav > li {
   position: relative;
   padding: 0;
   margin: 0 10px 0 0;
@@ -438,11 +430,11 @@
   border-radius: 2px;
 }
 
-.incp-module-nav>li:first-child {
+.incp-module-nav > li:first-child {
   /* margin-left: 0; */
 }
 
-.incp-module-nav>li>a {
+.incp-module-nav > li > a {
   padding: 0 10px;
   display: block;
   text-decoration: none;
@@ -452,7 +444,7 @@
   border-radius: 2px;
 }
 
-.incp-module-nav>li>a:hover {
+.incp-module-nav > li > a:hover {
   padding: 0 10px;
   display: block;
   text-decoration: none;
@@ -462,19 +454,19 @@
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.incp-module-nav>li.active,
-.incp-module-nav>li>a.active {
+.incp-module-nav > li.active,
+.incp-module-nav > li > a.active {
   background-color: #333;
   color: #fff;
 }
 
-.incp-module-nav>li.active>a {
+.incp-module-nav > li.active > a {
   color: #fff;
 }
 
-.incp-module-nav>li.active:after,
-.incp-module-nav>li>a.active:after {
-  content: '';
+.incp-module-nav > li.active:after,
+.incp-module-nav > li > a.active:after {
+  content: "";
   display: block;
   position: absolute;
   left: 50%;
@@ -487,19 +479,19 @@
   border-width: 6px;
 }
 
-.incp-module-nav>li.hover,
-.incp-module-nav>li>a.hover {
+.incp-module-nav > li.hover,
+.incp-module-nav > li > a.hover {
   background-color: rgba(0, 0, 0, 0.1);
   color: #777;
 }
 
-.incp-module-nav>li.hover_border,
-.incp-module-nav>li>a.hover_border {
+.incp-module-nav > li.hover_border,
+.incp-module-nav > li > a.hover_border {
   border: rgba(0, 0, 0, 0.1) 1px solid;
 }
 
-.incp-module-nav>li.primary,
-.incp-module-nav>li>a.primary {
+.incp-module-nav > li.primary,
+.incp-module-nav > li > a.primary {
   background-color: rgb(0, 120, 231);
   color: #fff;
 }
@@ -565,7 +557,6 @@
   font-size: 85%;
 }
 
-
 .incp-btn:last-child {
   margin-right: 0;
 }
@@ -575,13 +566,6 @@
   color: #fff !important;
   background-color: rgb(0, 120, 231);
 }
-
-
-
-
-
-
-
 
 /* ext::app */
 
@@ -631,7 +615,7 @@
   padding: 3px;
 }
 
-.incp-app-specset-gn-box pre>code {
+.incp-app-specset-gn-box pre > code {
   white-space: pre-wrap;
   display: block;
 }
@@ -773,7 +757,7 @@ pre code {
 }
 
 .incp-card-frame-p60 {
-  flex: 0 0 60.0%;
+  flex: 0 0 60%;
 }
 
 .incp-card-frame-p50 {
@@ -781,7 +765,7 @@ pre code {
 }
 
 .incp-card-frame-p40 {
-  flex: 0 0 40.0%;
+  flex: 0 0 40%;
 }
 
 .incp-card-frame-p33 {
@@ -813,7 +797,7 @@ pre code {
 .incp-card-title {
   padding: 5px 10px 5px 10px;
   font-size: 1.2rem !important;
-  line-height: 2.0rem !important;
+  line-height: 2rem !important;
   border-bottom: rgba(0, 0, 0, 0.2) 1px solid;
   display: inline-flex;
   flex-wrap: nowrap;
@@ -830,15 +814,31 @@ pre code {
   padding: 10px 15px;
 }
 
+.incp-card-body-inline-item {
+  display: table;
+  table-layout: fixed;
+}
+
+.incp-card-body-inline-item .table-row {
+  display: table-row;
+}
+
+.incp-card-body-inline-item .table-row > div {
+  display: table-cell;
+}
+
 .incp-card-body-inline-item .name {
-  font-size: 0.80rem !important;
+  font-size: 0.8rem !important;
   color: #868e96;
 }
 
 .incp-card-body-inline-item .value {
-  font-size: 1.3rem !important;
+  font-size: 1.2rem !important;
   font-weight: bold;
   color: #464a4e;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 #incp-podnew-charge-estimate-value {
@@ -885,15 +885,15 @@ pre code {
   font-weight: bold;
 }
 
-.incp-footer .incp-items>.incp-item {
+.incp-footer .incp-items > .incp-item {
   margin: 0 10px;
 }
 
-.incp-footer .incp-items>.incp-item:first-child {
+.incp-footer .incp-items > .incp-item:first-child {
   margin-left: 0;
 }
 
-.incp-footer .incp-items>.incp-item:last-child {
+.incp-footer .incp-items > .incp-item:last-child {
   margin-right: 0;
 }
 
@@ -920,17 +920,17 @@ pre code {
 }
 
 .incp-fontsize-x0080 {
-  font-size: 0.80rem;
+  font-size: 0.8rem;
 }
 
 .incp-fontsize-x0090 {
-  font-size: 0.90rem;
+  font-size: 0.9rem;
 }
 
 .incp-fontsize-x0100 {
-  font-size: 1.00rem;
+  font-size: 1rem;
 }
 
 .incp-fontsize-x0150 {
-  font-size: 1.50rem;
+  font-size: 1.5rem;
 }

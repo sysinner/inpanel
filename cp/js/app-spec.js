@@ -33,50 +33,64 @@ var inCpAppSpec = {
     setActive: {},
     infoCache: null,
     active: null,
-    cfgFieldTypes: [{
-        type: 1,
-        title: "String",
-    }, {
-        type: 2,
-        title: "Select",
-    }, {
-        type: 300,
-        title: "Text",
-        lang: "shell",
-    }, {
-        type: 301,
-        title: "Text/JSON",
-        lang: "json",
-    }, {
-        type: 302,
-        title: "Text/TOML",
-        lang: "toml",
-    }, {
-        type: 303,
-        title: "Text/YAML",
-        lang: "yaml",
-    }, {
-        type: 304,
-        title: "Text/INI",
-        lang: "ini",
-    }, {
-        type: 305,
-        title: "Text/JavaProperties",
-        lang: "shell",
-    }],
-    cfgFieldAutoFills: [{
-        type: "",
-        title: "Disable",
-    }, {
-        type: "defval",
-        title: "Default Value",
-    }, {
-        type: "hexstr_32",
-        title: "Random Hex String (32 length)",
-    }, {
-        type: "base64_48",
-        title: "Random Base64 String (48 length)",
-    }],
+    cfgFieldTypes: [
+        {
+            type: 1,
+            title: "String",
+        },
+        {
+            type: 2,
+            title: "Select",
+        },
+        {
+            type: 300,
+            title: "Text",
+            lang: "shell",
+        },
+        {
+            type: 301,
+            title: "Text/JSON",
+            lang: "json",
+        },
+        {
+            type: 302,
+            title: "Text/TOML",
+            lang: "toml",
+        },
+        {
+            type: 303,
+            title: "Text/YAML",
+            lang: "yaml",
+        },
+        {
+            type: 304,
+            title: "Text/INI",
+            lang: "ini",
+        },
+        {
+            type: 305,
+            title: "Text/JavaProperties",
+            lang: "shell",
+        },
+    ],
+    cfgFieldAutoFills: [
+        {
+            type: "",
+            title: "Disable",
+        },
+        {
+            type: "defval",
+            title: "Default Value",
+        },
+        {
+            type: "hexstr_32",
+            title: "Random Hex String (32 length)",
+        },
+        {
+            type: "base64_48",
+            title: "Random Base64 String (48 length)",
+        },
+    ],
     cfgFieldDef: {
         name: "",
         title: "",
@@ -87,20 +101,26 @@ var inCpAppSpec = {
         validates: [],
         description: "",
     },
-    deploySysStates: [{
-        title: "Stateful",
-        value: 1,
-    }, {
-        title: "Stateless",
-        value: 2,
-    }],
-    deployNetworkModes: [{
-        title: "Bridge",
-        value: 1,
-    }, {
-        title: "Host (sysadmin)",
-        value: 2,
-    }],
+    deploySysStates: [
+        {
+            title: "Stateful",
+            value: 1,
+        },
+        {
+            title: "Stateless",
+            value: 2,
+        },
+    ],
+    deployNetworkModes: [
+        {
+            title: "Bridge",
+            value: 1,
+        },
+        {
+            title: "Host (sysadmin)",
+            value: 2,
+        },
+    ],
     deploySysStateful: 1,
     deploySysStateless: 2,
     fieldNameRe: /^[a-z]{1}[0-9a-z_\/\-]{1,30}$/,
@@ -116,27 +136,26 @@ var inCpAppSpec = {
         hook_pod_restart: false,
     },
     listActives: null,
-}
+};
 
-
-inCpAppSpec.CfgFieldTypeFetch = function(t) {
+inCpAppSpec.CfgFieldTypeFetch = function (t) {
     for (var i in inCpAppSpec.cfgFieldTypes) {
         if (inCpAppSpec.cfgFieldTypes[i].type == t) {
             return inCpAppSpec.cfgFieldTypes[i];
         }
     }
     return null;
-}
+};
 
 //
-inCpAppSpec.ListRefresh = function(tplid) {
+inCpAppSpec.ListRefresh = function (tplid) {
     if (!tplid || tplid.indexOf("/") >= 0) {
         tplid = "incp-app-specls";
     }
 
     if (!document.getElementById(tplid)) {
         inCp.TplFetch("app/spec/list", {
-            callback: function(err, data) {
+            callback: function (err, data) {
                 $("#work-content").html(data);
                 inCp.OpToolsRefresh("#incp-app-specls-optools");
                 inCpAppSpec.listDataRefresh(tplid);
@@ -145,10 +164,9 @@ inCpAppSpec.ListRefresh = function(tplid) {
     } else {
         inCpAppSpec.listDataRefresh(tplid);
     }
-}
+};
 
-inCpAppSpec.listDataRefresh = function(tplid, options) {
-
+inCpAppSpec.listDataRefresh = function (tplid, options) {
     options = options || {};
     var uri = "";
     var alert_id = "#" + tplid + "-alert";
@@ -157,22 +175,21 @@ inCpAppSpec.listDataRefresh = function(tplid, options) {
     if (el && el.value.length > 0) {
         uri = "qry_text=" + el.value;
     }
-    uri += "&fields=meta/id|name|user|version|updated,depends/name,dep_remotes/name,packages/name,executors/name,configurator/name,configurator/fields/name";
+    uri +=
+        "&fields=meta/id|name|user|version|updated,depends/name,dep_remotes/name,packages/name,executors/name,configurator/name,configurator/fields/name";
 
     inCp.ApiCmd("app-spec/list?" + uri, {
         timeout: 3000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj || rsj.kind != "AppSpecList" || !rsj.items) {
                 return l4i.InnerAlert(alert_id, "alert-info", "No more results ...");
             } else {
                 $(alert_id).css({
-                    "display": "none"
+                    display: "none",
                 });
             }
 
             for (var i in rsj.items) {
-
                 if (!rsj.items[i].depends) {
                     rsj.items[i].depends = [];
                 }
@@ -197,7 +214,7 @@ inCpAppSpec.listDataRefresh = function(tplid, options) {
                     rsj.items[i].configurator = {
                         name: "",
                         fields: [],
-                    }
+                    };
                 }
 
                 if (!rsj.items[i].configurator.fields) {
@@ -205,13 +222,12 @@ inCpAppSpec.listDataRefresh = function(tplid, options) {
                 }
 
                 for (var j in rsj.items[i].configurator.fields) {
-
                     if (!rsj.items[i].configurator.fields[j].default) {
-                        rsj.items[i].configurator.fields[j].default = ""
+                        rsj.items[i].configurator.fields[j].default = "";
                     }
 
                     if (!rsj.items[i].configurator.fields[j].prompt) {
-                        rsj.items[i].configurator.fields[j].prompt = ""
+                        rsj.items[i].configurator.fields[j].prompt = "";
                     }
 
                     if (!rsj.items[i].configurator.fields[j].validates) {
@@ -236,12 +252,11 @@ inCpAppSpec.listDataRefresh = function(tplid, options) {
                     options: options,
                 },
             });
-        }
+        },
     });
-}
+};
 
-inCpAppSpec.ListSelector = function(options) {
-
+inCpAppSpec.ListSelector = function (options) {
     options = options || {};
 
     if (!options.title) {
@@ -257,7 +272,7 @@ inCpAppSpec.ListSelector = function(options) {
     }
 
     if (!options.fn_selector) {
-        options.fn_selector = function() {
+        options.fn_selector = function () {
             l4iModal.Close();
         };
     }
@@ -267,216 +282,235 @@ inCpAppSpec.ListSelector = function(options) {
         subOptions.cfg_selector = true;
     }
 
-
     l4iModal.Open({
         title: options.title,
         width: options.width,
         height: options.height,
         tpluri: inCp.TplPath("app/spec/selector-v2"),
         fn_selector: options.fn_selector,
-        callback: function() {
+        callback: function () {
             inCpAppSpec.listDataRefresh("incp-app-specls-selector", subOptions);
         },
-        buttons: [{
-            onclick: "l4iModal.Close()",
-            title: "Close",
-        }],
+        buttons: [
+            {
+                onclick: "l4iModal.Close()",
+                title: "Close",
+            },
+        ],
     });
-}
+};
 
-inCpAppSpec.ListSelectorClick = function(id) {
+inCpAppSpec.ListSelectorClick = function (id) {
     if (l4iModal.CurOptions.fn_selector) {
         var options = {
             id: id,
             configs: [],
-        }
+        };
         var check = $("#appspec-cfg-main-" + id);
         if (check && check.is(":checked")) {
             options.configs.push(check.val());
         }
         l4iModal.CurOptions.fn_selector(null, options);
     }
-}
+};
 
-inCpAppSpec.ListSelectorQueryCommit = function() {
+inCpAppSpec.ListSelectorQueryCommit = function () {
     var options = {};
     var v = $("#incp-app-specls-selector-option-cfg-selector").val();
     if (v && v == "true") {
         options.cfg_selector = true;
     }
     inCpAppSpec.listDataRefresh("incp-app-specls-selector", options);
-}
+};
 
-inCpAppSpec.Info = function(id, spec, version, app_id) {
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "data", "roles", "tags", function(tpl, rsj, roles, tags) {
-
-            if (!rsj || rsj.error || rsj.kind != "AppSpec") {
-                return l4iAlert.Open("error", "AppSpec Not Found");
-            }
-
-            if (!rsj.depends) {
-                rsj.depends = [];
-            }
-
-            if (!rsj.dep_remotes) {
-                rsj.dep_remotes = [];
-            }
-
-            if (!rsj.packages) {
-                rsj.packages = [];
-            }
-
-            if (!rsj.vcs_repos) {
-                rsj.vcs_repos = [];
-            }
-
-            if (!rsj.executors) {
-                rsj.executors = [];
-            }
-
-            for (var i in rsj.executors) {
-
-                if (!rsj.executors[i].exec_start) {
-                    rsj.executors[i].exec_start = "";
+inCpAppSpec.Info = function (id, spec, version, app_id) {
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create(
+            "tpl",
+            "data",
+            "roles",
+            "tags",
+            function (tpl, rsj, roles, tags) {
+                if (!rsj || rsj.error || rsj.kind != "AppSpec") {
+                    return l4iAlert.Open("error", "AppSpec Not Found");
                 }
 
-                if (!rsj.executors[i].exec_stop) {
-                    rsj.executors[i].exec_stop = "";
+                if (!rsj.depends) {
+                    rsj.depends = [];
                 }
 
-                if (!rsj.executors[i].priority) {
-                    rsj.executors[i].priority = 0;
+                if (!rsj.dep_remotes) {
+                    rsj.dep_remotes = [];
                 }
 
-                if (!rsj.executors[i].plan) {
-                    rsj.executors[i].plan = {
-                        on_boot: true,
-                        on_boot_selected: "selected",
+                if (!rsj.packages) {
+                    rsj.packages = [];
+                }
+
+                if (!rsj.vcs_repos) {
+                    rsj.vcs_repos = [];
+                }
+
+                if (!rsj.executors) {
+                    rsj.executors = [];
+                }
+
+                for (var i in rsj.executors) {
+                    if (!rsj.executors[i].exec_start) {
+                        rsj.executors[i].exec_start = "";
                     }
-                } else {
 
-                    if (rsj.executors[i].plan.on_boot == true) {
-                        rsj.executors[i].plan.on_boot_selected = "selected";
-                    } else if (rsj.executors[i].plan.on_tick > 0) {
-                        rsj.executors[i].plan.on_tick_selected = "selected";
+                    if (!rsj.executors[i].exec_stop) {
+                        rsj.executors[i].exec_stop = "";
+                    }
+
+                    if (!rsj.executors[i].priority) {
+                        rsj.executors[i].priority = 0;
+                    }
+
+                    if (!rsj.executors[i].plan) {
+                        rsj.executors[i].plan = {
+                            on_boot: true,
+                            on_boot_selected: "selected",
+                        };
+                    } else {
+                        if (rsj.executors[i].plan.on_boot == true) {
+                            rsj.executors[i].plan.on_boot_selected = "selected";
+                        } else if (rsj.executors[i].plan.on_tick > 0) {
+                            rsj.executors[i].plan.on_tick_selected = "selected";
+                        }
                     }
                 }
-            }
 
-            if (!rsj.service_ports) {
-                rsj.service_ports = [];
-            }
-
-            for (var i in rsj.service_ports) {
-                if (!rsj.service_ports[i].name) {
-                    rsj.service_ports[i].name = "";
+                if (!rsj.service_ports) {
+                    rsj.service_ports = [];
                 }
-                if (!rsj.service_ports[i].box_port) {
-                    rsj.service_ports[i].box_port = "";
-                }
-            }
 
-            for (var i in rsj.depends) {
-                if (!rsj.depends[i].name) {
-                    rsj.depends[i].name = "";
+                for (var i in rsj.service_ports) {
+                    if (!rsj.service_ports[i].name) {
+                        rsj.service_ports[i].name = "";
+                    }
+                    if (!rsj.service_ports[i].box_port) {
+                        rsj.service_ports[i].box_port = "";
+                    }
                 }
-            }
 
-            for (var i in rsj.dep_remotes) {
-                if (!rsj.dep_remotes[i].name) {
-                    rsj.dep_remotes[i].name = "";
+                for (var i in rsj.depends) {
+                    if (!rsj.depends[i].name) {
+                        rsj.depends[i].name = "";
+                    }
                 }
-                if (!rsj.dep_remotes[i].configs) {
-                    rsj.dep_remotes[i].configs = [];
+
+                for (var i in rsj.dep_remotes) {
+                    if (!rsj.dep_remotes[i].name) {
+                        rsj.dep_remotes[i].name = "";
+                    }
+                    if (!rsj.dep_remotes[i].configs) {
+                        rsj.dep_remotes[i].configs = [];
+                    }
                 }
-            }
 
-            if (!rsj.exp_deploy) {
-                rsj.exp_deploy = {};
-            }
-            if (!rsj.exp_deploy.rep_min) {
-                rsj.exp_deploy.rep_min = 1;
-                rsj.exp_deploy.rep_max = 1;
-            }
-            if (!rsj.exp_deploy.failover_time) {
-                rsj.exp_deploy.failover_time = 300;
-            }
-            if (!rsj.exp_deploy.failover_num_max) {
-                rsj.exp_deploy.failover_num_max = 0;
-            } else if (rsj.exp_deploy.failover_num_max > 0) {
-                rsj.exp_deploy._failover_enable = true;
-            }
-            if (!rsj.exp_deploy.failover_rate_max) {
-                rsj.exp_deploy.failover_rate_max = 0;
-            } else if (rsj.exp_deploy.failover_rate_max > 0) {
-                rsj.exp_deploy._failover_enable = true;
-            }
-
-            if (!rsj.exp_deploy.sys_state) {
-                rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
-            }
-            for (var i in inCpAppSpec.deploySysStates) {
-                if (inCpAppSpec.deploySysStates[i].value == rsj.exp_deploy.sys_state) {
-                    rsj.exp_deploy._sys_state = inCpAppSpec.deploySysStates[i].title;
-                    break;
+                if (!rsj.exp_deploy) {
+                    rsj.exp_deploy = {};
                 }
-            }
-            if (!rsj.exp_deploy._sys_state) {
-                rsj.exp_deploy._sys_state = "";
-            }
-            rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
+                if (!rsj.exp_deploy.rep_min) {
+                    rsj.exp_deploy.rep_min = 1;
+                    rsj.exp_deploy.rep_max = 1;
+                }
+                if (!rsj.exp_deploy.failover_time) {
+                    rsj.exp_deploy.failover_time = 300;
+                }
+                if (!rsj.exp_deploy.failover_num_max) {
+                    rsj.exp_deploy.failover_num_max = 0;
+                } else if (rsj.exp_deploy.failover_num_max > 0) {
+                    rsj.exp_deploy._failover_enable = true;
+                }
+                if (!rsj.exp_deploy.failover_rate_max) {
+                    rsj.exp_deploy.failover_rate_max = 0;
+                } else if (rsj.exp_deploy.failover_rate_max > 0) {
+                    rsj.exp_deploy._failover_enable = true;
+                }
 
-            rsj._roles = [];
-            if (!rsj.roles) {
-                rsj.roles = [];
-            }
-            for (var i in rsj.roles) {
-                for (var j in roles.items) {
-                    if (rsj.roles[i] == roles.items[j].id) {
-                        rsj._roles.push(roles.items[j].name);
+                if (!rsj.exp_deploy.sys_state) {
+                    rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
+                }
+                for (var i in inCpAppSpec.deploySysStates) {
+                    if (inCpAppSpec.deploySysStates[i].value == rsj.exp_deploy.sys_state) {
+                        rsj.exp_deploy._sys_state = inCpAppSpec.deploySysStates[i].title;
                         break;
                     }
                 }
-            }
-            rsj._multi_replica_enable = inCp.syscfg.zone_master.multi_replica_enable;
+                if (!rsj.exp_deploy._sys_state) {
+                    rsj.exp_deploy._sys_state = "";
+                }
+                rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
 
-            rsj._type_tags = [];
-            rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
-            for (var i in rsj.type_tags) {
-                for (var j in tags.items) {
-                    if (rsj.type_tags[i] == tags.items[j].name) {
-                        rsj._type_tags.push(tags.items[j].value);
-                        break;
+                rsj._roles = [];
+                if (!rsj.roles) {
+                    rsj.roles = [];
+                }
+                for (var i in rsj.roles) {
+                    for (var j in roles.items) {
+                        if (rsj.roles[i] == roles.items[j].id) {
+                            rsj._roles.push(roles.items[j].name);
+                            break;
+                        }
                     }
                 }
+                rsj._multi_replica_enable = inCp.syscfg.zone_master.multi_replica_enable;
+
+                rsj._type_tags = [];
+                rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
+                for (var i in rsj.type_tags) {
+                    for (var j in tags.items) {
+                        if (rsj.type_tags[i] == tags.items[j].name) {
+                            rsj._type_tags.push(tags.items[j].value);
+                            break;
+                        }
+                    }
+                }
+
+                rsj._runtime_images = [];
+                rsj.runtime_images = rsj.runtime_images || [];
+                var runtime_images_prefix = ["sysinner/innerstack-"];
+                for (var i in rsj.runtime_images) {
+                    var name = rsj.runtime_images[i];
+                    for (var j in runtime_images_prefix) {
+                        if (name.startsWith(runtime_images_prefix[i])) {
+                            name = name.substr(runtime_images_prefix[j].length);
+                            break;
+                        }
+                    }
+                    rsj._runtime_images.push(name);
+                }
+
+                l4iModal.Open({
+                    title: "AppSpec Information",
+                    width: 1400,
+                    width_min: 1000,
+                    height: "max",
+                    tplsrc: tpl,
+                    data: rsj,
+                    buttons: [
+                        {
+                            onclick: 'inCpAppSpec.Download("' + rsj.meta.id + '")',
+                            title: "Download the AppSpec file",
+                            style: "btn-primary",
+                        },
+                        {
+                            onclick: "l4iModal.Close()",
+                            title: "Close",
+                            style: "btn-primary",
+                        },
+                    ],
+                    callback: function () {
+                        inCp.CodeRender();
+                    },
+                });
             }
+        );
 
-
-            l4iModal.Open({
-                title: "AppSpec Information",
-                width: 1400,
-                width_min: 1000,
-                height: "max",
-                tplsrc: tpl,
-                data: rsj,
-                buttons: [{
-                    onclick: "inCpAppSpec.Download(\"" + rsj.meta.id + "\")",
-                    title: "Download the AppSpec file",
-                    style: "btn-primary",
-                }, {
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                    style: "btn-primary",
-                }],
-                callback: function() {
-                    inCp.CodeRender();
-                },
-            });
-        });
-
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             // TODO
             alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
         });
@@ -490,7 +524,7 @@ inCpAppSpec.Info = function(id, spec, version, app_id) {
             ep.emit("roles", inCpAppSpec.iamAppRoles);
         } else {
             l4i.Ajax(inCp.base + "auth/app-role-list", {
-                callback: function(err, data) {
+                callback: function (err, data) {
                     if (err) {
                         return alert(err);
                     }
@@ -504,7 +538,7 @@ inCpAppSpec.Info = function(id, spec, version, app_id) {
             ep.emit("tags", inCpAppSpec.TypeTagList);
         } else {
             inCp.ApiCmd("app-spec/type-tag-list", {
-                callback: function(err, data) {
+                callback: function (err, data) {
                     if (err) {
                         return alert(err);
                     }
@@ -517,14 +551,12 @@ inCpAppSpec.Info = function(id, spec, version, app_id) {
             });
         }
 
-
         // data
         if (spec) {
             ep.emit("data", spec);
         } else if (inCpAppSpec.InfoCache) {
             ep.emit("data", inCpAppSpec.InfoCache);
         } else if (id) {
-
             var url = "app-spec/entry?id=" + id;
             if (version) {
                 url += "&version=" + version;
@@ -536,246 +568,245 @@ inCpAppSpec.Info = function(id, spec, version, app_id) {
             inCp.ApiCmd(url, {
                 callback: ep.done("data"),
             });
-
         } else {
             ep.emit("data", "");
         }
     });
-}
+};
 
-inCpAppSpec.Download = function(id) {
+inCpAppSpec.Download = function (id) {
     if (!id) {
         return;
     }
-    window.open(inCp.api + "app-spec/entry?id=" + id
-        + "&download=true&ct=toml", "Download");
-}
+    window.open(inCp.api + "app-spec/entry?id=" + id + "&download=true&ct=toml", "Download");
+};
 
-inCpAppSpec.ItemDel = function(id) {
-
+inCpAppSpec.ItemDel = function (id) {
     if (!id) {
         return alert("No Item Found");
     }
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", function(tpl) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", function (tpl) {
             l4iModal.Open({
                 title: "AppSpec Delete",
                 tplsrc: tpl,
                 width: 800,
                 height: 200,
                 data: {
-                    "_id": id,
+                    _id: id,
                 },
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }, {
-                    onclick: "inCpAppSpec.ItemDelCommit()",
-                    title: "Confirm to Destroy",
-                    style: "btn btn-danger",
-                }],
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                    {
+                        onclick: "inCpAppSpec.ItemDelCommit()",
+                        title: "Confirm to Destroy",
+                        style: "btn btn-danger",
+                    },
+                ],
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
         inCp.TplFetch("app/spec/item-del", {
             callback: ep.done("tpl"),
         });
-    })
-}
+    });
+};
 
-inCpAppSpec.ItemDelCommit = function() {
-
+inCpAppSpec.ItemDelCommit = function () {
     var alert_id = "#incp-appspecitem-del-alert";
     var form = $("#incp-appspecitem-del");
-    var id = form.find("input[name=app_spec_id]").val()
+    var id = form.find("input[name=app_spec_id]").val();
 
     inCp.ApiCmd("app-spec/item-del?id=" + id, {
         method: "GET",
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
 
             $("#app-spec-" + id + "-row").remove();
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 l4iModal.Close();
             }, 1000);
-        }
+        },
     });
-}
+};
 
-inCpAppSpec.Set = function(id) {
-    seajs.use(["ep"], function(EventProxy) {
+inCpAppSpec.Set = function (id) {
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create(
+            "tpl",
+            "data",
+            "roles",
+            "tags",
+            function (tpl, rsj, roles, tags) {
+                rsj = rsj || l4i.Clone(inCpAppSpec.def);
 
-        var ep = EventProxy.create("tpl", "data", "roles", "tags", function(tpl, rsj, roles, tags) {
-
-            rsj = rsj || l4i.Clone(inCpAppSpec.def);
-
-            if (!rsj || rsj.error || rsj.kind != "AppSpec") {
-                rsj = l4i.Clone(inCpAppSpec.def);
-            }
-
-            $("#work-content").html(tpl);
-
-            rsj.meta.name = rsj.meta.name ? rsj.meta.name : "";
-            rsj.meta.title = rsj.meta.title ? rsj.meta.title : "";
-            rsj.meta.subtitle = rsj.meta.subtitle ? rsj.meta.subtitle : "";
-
-            rsj.description = rsj.description ? rsj.description : "";
-            rsj.comment = rsj.comment ? rsj.comment : "";
-
-            rsj.packages = rsj.packages ? rsj.packages : [];
-            rsj.executors = rsj.executors ? rsj.executors : [];
-
-            rsj.service_ports = rsj.service_ports ? rsj.service_ports : [];
-
-
-            if (inCp.UserSession.username == "sysadmin") {
-                rsj._host_port_enable = true;
-            }
-
-            for (var i in rsj.service_ports) {
-                if (!rsj.service_ports[i].name) {
-                    rsj.service_ports[i].name = "";
+                if (!rsj || rsj.error || rsj.kind != "AppSpec") {
+                    rsj = l4i.Clone(inCpAppSpec.def);
                 }
-                if (!rsj.service_ports[i].box_port) {
-                    rsj.service_ports[i].box_port = "";
-                }
-                if (!rsj.service_ports[i].host_port) {
-                    rsj.service_ports[i].host_port = "";
-                }
-            }
 
-            for (var i in rsj.depends) {
-                if (!rsj.depends[i].name) {
-                    rsj.depends[i].name = "";
-                }
-            }
+                $("#work-content").html(tpl);
 
-            for (var i in rsj.dep_remotes) {
-                if (!rsj.dep_remotes[i].name) {
-                    rsj.dep_remotes[i].name = "";
-                }
-                if (!rsj.dep_remotes[i].configs) {
-                    rsj.dep_remotes[i].configs = [];
-                }
-            }
+                rsj.meta.name = rsj.meta.name ? rsj.meta.name : "";
+                rsj.meta.title = rsj.meta.title ? rsj.meta.title : "";
+                rsj.meta.subtitle = rsj.meta.subtitle ? rsj.meta.subtitle : "";
 
-            rsj._roles = l4i.Clone(roles);
-            if (!rsj.roles) {
-                rsj.roles = [];
-            }
-            for (var i in rsj.roles) {
-                for (var j in rsj._roles.items) {
-                    if (rsj.roles[i] == rsj._roles.items[j].id) {
-                        rsj._roles.items[j]._checked = true;
-                        break;
+                rsj.description = rsj.description ? rsj.description : "";
+                rsj.comment = rsj.comment ? rsj.comment : "";
+
+                rsj.packages = rsj.packages ? rsj.packages : [];
+                rsj.executors = rsj.executors ? rsj.executors : [];
+
+                rsj.service_ports = rsj.service_ports ? rsj.service_ports : [];
+
+                if (inCp.UserSession.username == "sysadmin") {
+                    rsj._host_port_enable = true;
+                }
+
+                for (var i in rsj.service_ports) {
+                    if (!rsj.service_ports[i].name) {
+                        rsj.service_ports[i].name = "";
+                    }
+                    if (!rsj.service_ports[i].box_port) {
+                        rsj.service_ports[i].box_port = "";
+                    }
+                    if (!rsj.service_ports[i].host_port) {
+                        rsj.service_ports[i].host_port = "";
                     }
                 }
-            }
 
-            if (!rsj.exp_res.cpu_min) {
-                rsj.exp_res.cpu_min = 1;
-            }
-            rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
-
-            if (!rsj.exp_res.mem_min) {
-                rsj.exp_res.mem_min = 32;
-            }
-
-            if (!rsj.exp_res.vol_min) {
-                rsj.exp_res.vol_min = 1;
-            }
-
-            if (!rsj.exp_deploy) {
-                rsj.exp_deploy = {};
-            }
-            if (!rsj.exp_deploy.rep_min || rsj.exp_deploy.rep_min < 1) {
-                rsj.exp_deploy.rep_min = 1;
-            }
-            if (!rsj.exp_deploy.rep_max || rsj.exp_deploy.rep_max < 1) {
-                rsj.exp_deploy.rep_max = 1;
-            } else if (rsj.exp_deploy.rep_max > inCpPod.OpRepMax) {
-                rsj.exp_deploy.rep_max = inCpPod.OpRepMax;
-            }
-            if (rsj.exp_deploy.rep_min > rsj.exp_deploy.rep_max) {
-                rsj.exp_deploy.rep_min = rsj.exp_deploy.rep_max;
-            }
-            if (!rsj.exp_deploy.failover_time) {
-                rsj.exp_deploy.failover_time = 600;
-            }
-            if (!rsj.exp_deploy.failover_num_max) {
-                rsj.exp_deploy.failover_num_max = 0;
-            } else if (rsj.exp_deploy.failover_num_max > 0) {
-                rsj.exp_deploy._failover_enable = true;
-            }
-            if (!rsj.exp_deploy.failover_rate_max) {
-                rsj.exp_deploy.failover_rate_max = 0;
-            } else if (rsj.exp_deploy.failover_rate_max > 0) {
-                rsj.exp_deploy._failover_enable = true;
-            }
-            if (!rsj.exp_deploy.sys_state) {
-                rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
-            }
-
-            rsj._type_tags = l4i.Clone(tags);
-            rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
-            for (var i in rsj.type_tags) {
-                for (var j in rsj._type_tags.items) {
-                    if (rsj._type_tags.items[j].name == rsj.type_tags[i]) {
-                        rsj._type_tags.items[j]._checked = true;
-                        break;
+                for (var i in rsj.depends) {
+                    if (!rsj.depends[i].name) {
+                        rsj.depends[i].name = "";
                     }
                 }
-            }
 
-
-            inCpAppSpec.setActive = rsj;
-
-            l4iTemplate.Render({
-                dstid: "incp-app-specset",
-                tplid: "incp-app-specset-tpl",
-                data: {
-                    actionTitle: ((rsj.meta.id == "") ? "New AppSpec" : "Setting (" + rsj.meta.id + ")"),
-                    spec: rsj,
-                    _multi_replica_enable: inCp.syscfg.zone_master.multi_replica_enable,
-                    _deploy_sys_states: inCpAppSpec.deploySysStates,
-                    _deploy_network_modes: inCpAppSpec.deployNetworkModes,
-                },
-                callback: function() {
-                    inCpAppSpec.setDependRefresh();
-                    inCpAppSpec.setDepRemoteRefresh();
-                    inCpAppSpec.setPackRefresh();
-                    inCpAppSpec.setVcsRefresh();
-                    inCpAppSpec.setExecutorRefresh();
-
-                    if (rsj.service_ports.length == 0) {
-                        inCpAppSpec.SetServicePortAppend();
+                for (var i in rsj.dep_remotes) {
+                    if (!rsj.dep_remotes[i].name) {
+                        rsj.dep_remotes[i].name = "";
                     }
-                },
-            });
-        });
+                    if (!rsj.dep_remotes[i].configs) {
+                        rsj.dep_remotes[i].configs = [];
+                    }
+                }
 
-        ep.fail(function(err) {
+                rsj._roles = l4i.Clone(roles);
+                if (!rsj.roles) {
+                    rsj.roles = [];
+                }
+                for (var i in rsj.roles) {
+                    for (var j in rsj._roles.items) {
+                        if (rsj.roles[i] == rsj._roles.items[j].id) {
+                            rsj._roles.items[j]._checked = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!rsj.exp_res.cpu_min) {
+                    rsj.exp_res.cpu_min = 1;
+                }
+                rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
+
+                if (!rsj.exp_res.mem_min) {
+                    rsj.exp_res.mem_min = 32;
+                }
+
+                if (!rsj.exp_res.vol_min) {
+                    rsj.exp_res.vol_min = 1;
+                }
+
+                if (!rsj.exp_deploy) {
+                    rsj.exp_deploy = {};
+                }
+                if (!rsj.exp_deploy.rep_min || rsj.exp_deploy.rep_min < 1) {
+                    rsj.exp_deploy.rep_min = 1;
+                }
+                if (!rsj.exp_deploy.rep_max || rsj.exp_deploy.rep_max < 1) {
+                    rsj.exp_deploy.rep_max = 1;
+                } else if (rsj.exp_deploy.rep_max > inCpPod.OpRepMax) {
+                    rsj.exp_deploy.rep_max = inCpPod.OpRepMax;
+                }
+                if (rsj.exp_deploy.rep_min > rsj.exp_deploy.rep_max) {
+                    rsj.exp_deploy.rep_min = rsj.exp_deploy.rep_max;
+                }
+                if (!rsj.exp_deploy.failover_time) {
+                    rsj.exp_deploy.failover_time = 600;
+                }
+                if (!rsj.exp_deploy.failover_num_max) {
+                    rsj.exp_deploy.failover_num_max = 0;
+                } else if (rsj.exp_deploy.failover_num_max > 0) {
+                    rsj.exp_deploy._failover_enable = true;
+                }
+                if (!rsj.exp_deploy.failover_rate_max) {
+                    rsj.exp_deploy.failover_rate_max = 0;
+                } else if (rsj.exp_deploy.failover_rate_max > 0) {
+                    rsj.exp_deploy._failover_enable = true;
+                }
+                if (!rsj.exp_deploy.sys_state) {
+                    rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
+                }
+
+                rsj._type_tags = l4i.Clone(tags);
+                rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
+                for (var i in rsj.type_tags) {
+                    for (var j in rsj._type_tags.items) {
+                        if (rsj._type_tags.items[j].name == rsj.type_tags[i]) {
+                            rsj._type_tags.items[j]._checked = true;
+                            break;
+                        }
+                    }
+                }
+
+                inCpAppSpec.setActive = rsj;
+
+                l4iTemplate.Render({
+                    dstid: "incp-app-specset",
+                    tplid: "incp-app-specset-tpl",
+                    data: {
+                        actionTitle:
+                            rsj.meta.id == "" ? "New AppSpec" : "Setting (" + rsj.meta.id + ")",
+                        spec: rsj,
+                        _multi_replica_enable: inCp.syscfg.zone_master.multi_replica_enable,
+                        _deploy_sys_states: inCpAppSpec.deploySysStates,
+                        _deploy_network_modes: inCpAppSpec.deployNetworkModes,
+                    },
+                    callback: function () {
+                        inCpAppSpec.setDependRefresh();
+                        inCpAppSpec.setDepRemoteRefresh();
+                        inCpAppSpec.setPackRefresh();
+                        inCpAppSpec.setVcsRefresh();
+                        inCpAppSpec.setExecutorRefresh();
+
+                        if (rsj.service_ports.length == 0) {
+                            inCpAppSpec.SetServicePortAppend();
+                        }
+                    },
+                });
+            }
+        );
+
+        ep.fail(function (err) {
             // TODO
             alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
         });
@@ -789,7 +820,7 @@ inCpAppSpec.Set = function(id) {
             ep.emit("roles", inCpAppSpec.iamAppRoles);
         } else {
             l4i.Ajax(inCp.base + "auth/app-role-list", {
-                callback: function(err, data) {
+                callback: function (err, data) {
                     if (err) {
                         return alert(err);
                     }
@@ -803,7 +834,7 @@ inCpAppSpec.Set = function(id) {
             ep.emit("tags", inCpAppSpec.TypeTagList);
         } else {
             inCp.ApiCmd("app-spec/type-tag-list", {
-                callback: function(err, data) {
+                callback: function (err, data) {
                     if (err) {
                         return alert(err);
                     }
@@ -825,22 +856,22 @@ inCpAppSpec.Set = function(id) {
             });
         }
     });
-}
+};
 
 // TODO
-inCpAppSpec.SetDependSelect = function() {
+inCpAppSpec.SetDependSelect = function () {
     inCpAppSpec.ListSelector({
         title: "Select a Internally dependent AppSpec",
         width: 1000,
         height: 600,
-        fn_selector: function(err, options) {
+        fn_selector: function (err, options) {
             l4iModal.Close();
             inCpAppSpec.setDependEntry(options);
         },
     });
-}
+};
 
-inCpAppSpec.setDependEntry = function(opt) {
+inCpAppSpec.setDependEntry = function (opt) {
     if (!opt || !opt.id) {
         return;
     }
@@ -852,10 +883,9 @@ inCpAppSpec.setDependEntry = function(opt) {
 
     inCp.ApiCmd("app-spec/entry?id=" + opt.id, {
         timeout: 10000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, 'error', err);
+                return l4i.InnerAlert(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -863,7 +893,7 @@ inCpAppSpec.setDependEntry = function(opt) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'error', msg);
+                return l4i.InnerAlert(alert_id, "error", msg);
             }
 
             if (!inCpAppSpec.setActive.depends) {
@@ -871,13 +901,12 @@ inCpAppSpec.setDependEntry = function(opt) {
             }
 
             for (var i in inCpAppSpec.setActive.depends) {
-
                 if (inCpAppSpec.setActive.depends[i].id == rsj.meta.id) {
                     inCpAppSpec.setActive.depends[i] = {
                         id: rsj.meta.id,
                         name: rsj.meta.name,
                         version: rsj.meta.version,
-                    }
+                    };
                     rsj = null;
                     break;
                 }
@@ -892,11 +921,11 @@ inCpAppSpec.setDependEntry = function(opt) {
             }
 
             inCpAppSpec.setDependRefresh();
-        }
+        },
     });
-}
+};
 
-inCpAppSpec.SetDependRemove = function(id) {
+inCpAppSpec.SetDependRemove = function (id) {
     if (id.length < 1) {
         return;
     }
@@ -904,14 +933,14 @@ inCpAppSpec.SetDependRemove = function(id) {
     for (var i in inCpAppSpec.setActive.depends) {
         if (inCpAppSpec.setActive.depends[i].id == id) {
             inCpAppSpec.setActive.depends.splice(i, 1);
-            break
+            break;
         }
     }
 
     inCpAppSpec.setDependRefresh();
-}
+};
 
-inCpAppSpec.setDependRefresh = function() {
+inCpAppSpec.setDependRefresh = function () {
     if (!inCpAppSpec.setActive || !inCpAppSpec.setActive.depends) {
         return;
     }
@@ -923,7 +952,7 @@ inCpAppSpec.setDependRefresh = function() {
         display = "inline-block";
     }
     $("#incp-app-specset-depls-msg").css({
-        "display": display,
+        display: display,
     });
 
     l4iTemplate.Render({
@@ -933,23 +962,22 @@ inCpAppSpec.setDependRefresh = function() {
             items: inCpAppSpec.setActive.depends,
         },
     });
-}
+};
 
-inCpAppSpec.SetDepRemoteSelect = function() {
+inCpAppSpec.SetDepRemoteSelect = function () {
     inCpAppSpec.ListSelector({
         title: "Select a Remotely dependent AppSpec",
         width: 1100,
         height: 600,
         cfg_selector: true,
-        fn_selector: function(err, options) {
+        fn_selector: function (err, options) {
             l4iModal.Close();
             inCpAppSpec.setDepRemoteEntry(options);
         },
     });
-}
+};
 
-
-inCpAppSpec.setDepRemoteEntry = function(opt) {
+inCpAppSpec.setDepRemoteEntry = function (opt) {
     if (!opt || !opt.id) {
         return;
     }
@@ -965,10 +993,9 @@ inCpAppSpec.setDepRemoteEntry = function(opt) {
 
     inCp.ApiCmd("app-spec/entry?id=" + opt.id, {
         timeout: 10000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, 'error', err);
+                return l4i.InnerAlert(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -976,7 +1003,7 @@ inCpAppSpec.setDepRemoteEntry = function(opt) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'error', msg);
+                return l4i.InnerAlert(alert_id, "error", msg);
             }
 
             if (!inCpAppSpec.setActive.dep_remotes) {
@@ -984,14 +1011,13 @@ inCpAppSpec.setDepRemoteEntry = function(opt) {
             }
 
             for (var i in inCpAppSpec.setActive.dep_remotes) {
-
                 if (inCpAppSpec.setActive.dep_remotes[i].id == rsj.meta.id) {
                     inCpAppSpec.setActive.dep_remotes[i] = {
                         id: rsj.meta.id,
                         name: rsj.meta.name,
                         version: rsj.meta.version,
                         configs: opt.configs,
-                    }
+                    };
                     rsj = null;
                     break;
                 }
@@ -1007,11 +1033,11 @@ inCpAppSpec.setDepRemoteEntry = function(opt) {
             }
 
             inCpAppSpec.setDepRemoteRefresh();
-        }
+        },
     });
-}
+};
 
-inCpAppSpec.SetDepRemoteRemove = function(id) {
+inCpAppSpec.SetDepRemoteRemove = function (id) {
     if (id.length < 1) {
         return;
     }
@@ -1019,15 +1045,14 @@ inCpAppSpec.SetDepRemoteRemove = function(id) {
     for (var i in inCpAppSpec.setActive.dep_remotes) {
         if (inCpAppSpec.setActive.dep_remotes[i].id == id) {
             inCpAppSpec.setActive.dep_remotes.splice(i, 1);
-            break
+            break;
         }
     }
 
     inCpAppSpec.setDepRemoteRefresh();
-}
+};
 
-
-inCpAppSpec.setDepRemoteRefresh = function() {
+inCpAppSpec.setDepRemoteRefresh = function () {
     if (!inCpAppSpec.setActive || !inCpAppSpec.setActive.dep_remotes) {
         return;
     }
@@ -1039,7 +1064,7 @@ inCpAppSpec.setDepRemoteRefresh = function() {
         display = "inline-block";
     }
     $("#incp-app-specset-depremotes-msg").css({
-        "display": display,
+        display: display,
     });
 
     l4iTemplate.Render({
@@ -1049,29 +1074,31 @@ inCpAppSpec.setDepRemoteRefresh = function() {
             items: inCpAppSpec.setActive.dep_remotes,
         },
     });
-}
+};
 
 // TODO
-inCpAppSpec.SetPackSelect = function() {
+inCpAppSpec.SetPackSelect = function () {
     l4iModal.Open({
         title: "Select a dependent Package",
         width: 900,
         height: 600,
         tpluri: inCp.base + "/ips/~/ips/tpl/pkginfo/selector.html",
-        fn_selector: function(err, rsp) {
+        fn_selector: function (err, rsp) {
             l4iModal.Close();
             inCpAppSpec.setPackInfo({
-                id: rsp
+                id: rsp,
             });
         },
-        buttons: [{
-            onclick: "l4iModal.Close()",
-            title: "Close",
-        }],
+        buttons: [
+            {
+                onclick: "l4iModal.Close()",
+                title: "Close",
+            },
+        ],
     });
-}
+};
 
-inCpAppSpec.setPackInfo = function(opt) {
+inCpAppSpec.setPackInfo = function (opt) {
     var req = "";
     if (opt.id) {
         req += "&id=" + opt.id;
@@ -1090,10 +1117,9 @@ inCpAppSpec.setPackInfo = function(opt) {
 
     l4i.Ajax("/ips/v1/pkg/entry?" + req, {
         timeout: 10000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, 'error', err);
+                return l4i.InnerAlert(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "Pack") {
@@ -1101,7 +1127,7 @@ inCpAppSpec.setPackInfo = function(opt) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'error', msg);
+                return l4i.InnerAlert(alert_id, "error", msg);
             }
 
             if (!inCpAppSpec.setActive.packages) {
@@ -1109,7 +1135,6 @@ inCpAppSpec.setPackInfo = function(opt) {
             }
 
             for (var i in inCpAppSpec.setActive.packages) {
-
                 if (inCpAppSpec.setActive.packages[i].name == rsj.meta.name) {
                     inCpAppSpec.setActive.packages[i] = {
                         name: rsj.meta.name,
@@ -1117,7 +1142,7 @@ inCpAppSpec.setPackInfo = function(opt) {
                         release: rsj.version.release,
                         dist: rsj.version.dist,
                         arch: rsj.version.arch,
-                    }
+                    };
                     rsj = null;
                     break;
                 }
@@ -1134,11 +1159,11 @@ inCpAppSpec.setPackInfo = function(opt) {
             }
 
             inCpAppSpec.setPackRefresh();
-        }
+        },
     });
-}
+};
 
-inCpAppSpec.SetPackRemove = function(name) {
+inCpAppSpec.SetPackRemove = function (name) {
     if (name.length < 1) {
         return;
     }
@@ -1146,15 +1171,14 @@ inCpAppSpec.SetPackRemove = function(name) {
     for (var i in inCpAppSpec.setActive.packages) {
         if (inCpAppSpec.setActive.packages[i].name == name) {
             inCpAppSpec.setActive.packages.splice(i, 1);
-            break
+            break;
         }
     }
 
     inCpAppSpec.setPackRefresh();
-}
+};
 
-inCpAppSpec.SetPackVersionRefresh = function(name) {
-
+inCpAppSpec.SetPackVersionRefresh = function (name) {
     if (name.length < 1) {
         return;
     }
@@ -1168,12 +1192,12 @@ inCpAppSpec.SetPackVersionRefresh = function(name) {
         if (inCpAppSpec.setActive.packages[i].name == name) {
             inCpAppSpec.setActive.packages[i].version = v;
             $("#app_spec_setform_pkg_vol_" + name).text("/usr/sysinner/" + name + "/" + v);
-            break
+            break;
         }
     }
-}
+};
 
-inCpAppSpec.setPackRefresh = function() {
+inCpAppSpec.setPackRefresh = function () {
     if (!inCpAppSpec.setActive || !inCpAppSpec.setActive.packages) {
         return;
     }
@@ -1185,7 +1209,7 @@ inCpAppSpec.setPackRefresh = function() {
         display = "inline-block";
     }
     $("#incp-app-specset-ipmls-msg").css({
-        "display": display,
+        display: display,
     });
 
     l4iTemplate.Render({
@@ -1195,10 +1219,9 @@ inCpAppSpec.setPackRefresh = function() {
             items: inCpAppSpec.setActive.packages,
         },
     });
-}
+};
 
-inCpAppSpec.SetVcsSet = function(dir) {
-
+inCpAppSpec.SetVcsSet = function (dir) {
     var item = null,
         modal_title = "Setting Git Repo";
 
@@ -1233,26 +1256,28 @@ inCpAppSpec.SetVcsSet = function(dir) {
         height: 600,
         tpluri: inCp.TplPath("app/spec/set-vcs-set"),
         data: item,
-        buttons: [{
-            onclick: "l4iModal.Close()",
-            title: "Cancel",
-        }, {
-            onclick: "inCpAppSpec.SetVcsSetCommit()",
-            title: "OK",
-            style: "btn-primary",
-        }],
+        buttons: [
+            {
+                onclick: "l4iModal.Close()",
+                title: "Cancel",
+            },
+            {
+                onclick: "inCpAppSpec.SetVcsSetCommit()",
+                title: "OK",
+                style: "btn-primary",
+            },
+        ],
     });
-}
+};
 
 inCpAppSpec.vcsDirReg = /^([a-zA-Z0-9\.\/\-_]{1,100})$/;
 inCpAppSpec.vcsGitHttpRe = /^(https?:\/\/)([\w\-_.\/]+)(.git)$/;
 inCpAppSpec.vcsGitBranchRe = /^([\w\-_.]+)$/;
 
-inCpAppSpec.SetVcsSetCommit = function() {
+inCpAppSpec.SetVcsSetCommit = function () {
     var alert_id = "#incp-app-specset-vcsset-alert";
 
     try {
-
         var form = $("#incp-app-specset-vcsset");
         if (!form) {
             throw "No Form Data Found";
@@ -1311,7 +1336,6 @@ inCpAppSpec.SetVcsSetCommit = function() {
             hook_pod = true;
         }
 
-
         var vcsItem = {
             dir: dir,
             url: url,
@@ -1321,7 +1345,7 @@ inCpAppSpec.SetVcsSetCommit = function() {
             auth_pass: auth_pass,
             hook_exec_restart: hook_exec,
             hook_pod_restart: hook_pod,
-        }
+        };
         var ok = false;
 
         if (!inCpAppSpec.setActive.vcs_repos) {
@@ -1337,34 +1361,30 @@ inCpAppSpec.SetVcsSetCommit = function() {
         if (!ok) {
             inCpAppSpec.setActive.vcs_repos.push(vcsItem);
         }
-
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return l4i.InnerAlert(alert_id, "error", err);
     }
-
 
     inCpAppSpec.setVcsRefresh();
     l4iModal.Close();
-}
+};
 
-inCpAppSpec.setVcsRefresh = function() {
+inCpAppSpec.setVcsRefresh = function () {
     if (!inCpAppSpec.setActive || !inCpAppSpec.setActive.vcs_repos) {
         return;
     }
 
     var display = "none";
-    if (inCpAppSpec.setActive.vcs_repos &&
-        inCpAppSpec.setActive.vcs_repos.length > 0) {
+    if (inCpAppSpec.setActive.vcs_repos && inCpAppSpec.setActive.vcs_repos.length > 0) {
         //
     } else {
         display = "inline-block";
     }
     $("#incp-app-specset-vcsls-msg").css({
-        "display": display,
+        display: display,
     });
 
     for (var i in inCpAppSpec.setActive.vcs_repos) {
-
         if (!inCpAppSpec.setActive.vcs_repos[i].branch) {
             inCpAppSpec.setActive.vcs_repos[i].branch = "master";
         }
@@ -1381,9 +1401,9 @@ inCpAppSpec.setVcsRefresh = function() {
             items: inCpAppSpec.setActive.vcs_repos,
         },
     });
-}
+};
 
-inCpAppSpec.SetVcsRemove = function(dir) {
+inCpAppSpec.SetVcsRemove = function (dir) {
     if (!dir) {
         dir = "";
     }
@@ -1391,28 +1411,25 @@ inCpAppSpec.SetVcsRemove = function(dir) {
     for (var i in inCpAppSpec.setActive.vcs_repos) {
         if (inCpAppSpec.setActive.vcs_repos[i].dir == dir) {
             inCpAppSpec.setActive.vcs_repos.splice(i, 1);
-            break
+            break;
         }
     }
 
     inCpAppSpec.setVcsRefresh();
-}
+};
 
-inCpAppSpec.SetExecutorSet = function(name) {
+inCpAppSpec.SetExecutorSet = function (name) {
     var title = "Executor Setup";
     var executor = null;
     var alert_id = "#incp-app-specset-executorset-p5-alert";
 
     if (name) {
-
         for (var i in inCpAppSpec.setActive.executors) {
-
             if (inCpAppSpec.setActive.executors[i].name == name) {
                 executor = inCpAppSpec.setActive.executors[i];
                 break;
             }
         }
-
     } else {
         title = "Create new Executor";
     }
@@ -1421,7 +1438,6 @@ inCpAppSpec.SetExecutorSet = function(name) {
         executor = l4i.Clone(inCpAppSpec.executorDef);
     }
 
-
     l4iModal.Open({
         title: title,
         width: 1200,
@@ -1429,33 +1445,35 @@ inCpAppSpec.SetExecutorSet = function(name) {
         height: 1000,
         tpluri: inCp.TplPath("app/spec/executor-set"),
         data: executor,
-        callback: function(err) {
+        callback: function (err) {
             if (err) {
                 return;
             }
             inCp.CodeEditor("spec_exec_start", "shell", {
-                "numberLines": 12
+                numberLines: 12,
             });
             inCp.CodeEditor("spec_exec_stop", "shell", {
-                "numberLines": 6
+                numberLines: 6,
             });
         },
-        buttons: [{
-            onclick: "l4iModal.Close()",
-            title: "Cancel",
-        }, {
-            onclick: "inCpAppSpec.SetExecutorSave()",
-            title: "OK",
-            style: "btn-primary",
-        }],
+        buttons: [
+            {
+                onclick: "l4iModal.Close()",
+                title: "Cancel",
+            },
+            {
+                onclick: "inCpAppSpec.SetExecutorSave()",
+                title: "OK",
+                style: "btn-primary",
+            },
+        ],
     });
-}
+};
 
-inCpAppSpec.SetExecutorSave = function() {
+inCpAppSpec.SetExecutorSave = function () {
     var alert_id = "#incp-app-specset-executorset-p5-alert";
 
     try {
-
         var form = $("#incp-app-specset-executorset-p5");
 
         if (!form) {
@@ -1468,7 +1486,7 @@ inCpAppSpec.SetExecutorSave = function() {
             // exec_stop: form.find("textarea[name=exec_stop]").val(),
             priority: parseInt(form.find("input[name=priority]").val()),
             plan: {},
-        }
+        };
 
         //
         executor.exec_start = inCp.CodeEditorValue("spec_exec_start");
@@ -1478,7 +1496,6 @@ inCpAppSpec.SetExecutorSave = function() {
 
         //
         executor.exec_stop = inCp.CodeEditorValue("spec_exec_stop");
-
 
         var plan = form.find("select[name=plan]").val();
         switch (plan) {
@@ -1495,28 +1512,26 @@ inCpAppSpec.SetExecutorSave = function() {
         }
 
         for (var i in inCpAppSpec.setActive.executors) {
-
             if (inCpAppSpec.setActive.executors[i].name == executor.name) {
                 inCpAppSpec.setActive.executors[i] = executor;
                 executor = null;
-                break
+                break;
             }
         }
 
         if (executor) {
             inCpAppSpec.setActive.executors.push(executor);
         }
-
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return l4i.InnerAlert(alert_id, "error", err);
     }
 
     inCpAppSpec.setExecutorRefresh();
 
     l4iModal.Close();
-}
+};
 
-inCpAppSpec.SetExecutorRemove = function(name) {
+inCpAppSpec.SetExecutorRemove = function (name) {
     if (name.length < 4) {
         return;
     }
@@ -1524,14 +1539,14 @@ inCpAppSpec.SetExecutorRemove = function(name) {
     for (var i in inCpAppSpec.setActive.executors) {
         if (inCpAppSpec.setActive.executors[i].name == name) {
             inCpAppSpec.setActive.executors.splice(i, 1);
-            break
+            break;
         }
     }
 
     inCpAppSpec.setExecutorRefresh();
-}
+};
 
-inCpAppSpec.SetServicePortAppend = function() {
+inCpAppSpec.SetServicePortAppend = function () {
     var data = {};
     if (inCp.UserSession.username == "sysadmin") {
         data._host_port_enable = true;
@@ -1543,14 +1558,13 @@ inCpAppSpec.SetServicePortAppend = function() {
         tplid: "incp-app-specset-serviceport-tpl",
         data: data,
     });
-}
+};
 
-inCpAppSpec.SetServicePortDel = function(field) {
+inCpAppSpec.SetServicePortDel = function (field) {
     $(field).parent().parent().remove();
-}
+};
 
-
-inCpAppSpec.setExecutorRefresh = function() {
+inCpAppSpec.setExecutorRefresh = function () {
     if (!inCpAppSpec.setActive || !inCpAppSpec.setActive.executors) {
         return;
     }
@@ -1562,11 +1576,10 @@ inCpAppSpec.setExecutorRefresh = function() {
         display = "inline-block";
     }
     $("#incp-app-specset-executorls-msg").css({
-        "display": display,
+        display: display,
     });
 
     for (var i in inCpAppSpec.setActive.executors) {
-
         if (!inCpAppSpec.setActive.executors[i].exec_start) {
             inCpAppSpec.setActive.executors[i].exec_start = "";
         }
@@ -1583,9 +1596,8 @@ inCpAppSpec.setExecutorRefresh = function() {
             inCpAppSpec.setActive.executors[i].plan = {
                 on_boot: true,
                 on_boot_selected: "selected",
-            }
+            };
         } else {
-
             if (inCpAppSpec.setActive.executors[i].plan.on_boot == true) {
                 inCpAppSpec.setActive.executors[i].plan.on_boot_selected = "selected";
             } else if (inCpAppSpec.setActive.executors[i].plan.on_tick > 0) {
@@ -1598,13 +1610,13 @@ inCpAppSpec.setExecutorRefresh = function() {
         dstid: "incp-app-specset-executorls",
         tplid: "incp-app-specset-executorls-tpl",
         data: inCpAppSpec.setActive.executors,
-        callback: function() {
+        callback: function () {
             inCp.CodeRender();
         },
     });
-}
+};
 
-inCpAppSpec.SetDeployFailoverRefresh = function() {
+inCpAppSpec.SetDeployFailoverRefresh = function () {
     var el = document.getElementById("exp_deploy_failover_checkbox");
     var el2 = document.getElementById("exp_deploy_failover_box");
     if (!el || !el2) {
@@ -1615,13 +1627,12 @@ inCpAppSpec.SetDeployFailoverRefresh = function() {
     } else {
         el2.style.display = "none";
     }
-}
+};
 
-inCpAppSpec.SetCommit = function() {
+inCpAppSpec.SetCommit = function () {
     var footer_id = "incp-appspec-set-footer";
 
     try {
-
         inCpAppSpec.setActive.kind = "AppSpec";
 
         var form = $("#incp-app-specset");
@@ -1654,15 +1665,16 @@ inCpAppSpec.SetCommit = function() {
         }
 
         for (var i in inCpAppSpec.setActive.dep_remotes) {
-            var v = $("#app_specset_dep_remote_version_" + inCpAppSpec.setActive.dep_remotes[i].id).val();
+            var v = $(
+                "#app_specset_dep_remote_version_" + inCpAppSpec.setActive.dep_remotes[i].id
+            ).val();
             if (v && v.length) {
                 inCpAppSpec.setActive.dep_remotes[i].version = v;
             }
         }
 
         inCpAppSpec.setActive.service_ports = [];
-        form.find(".incp-app-specset-serviceport-item").each(function() {
-
+        form.find(".incp-app-specset-serviceport-item").each(function () {
             var sp_name = $(this).find("input[name=sp_name]").val();
             var sp_port = parseInt($(this).find("input[name=sp_box_port]").val());
             var sp_hport = 0;
@@ -1692,8 +1704,13 @@ inCpAppSpec.SetCommit = function() {
             });
         });
 
+        inCpAppSpec.setActive.runtime_images = form
+            .find("input[name=runtime_images]")
+            .val()
+            .split(",");
+
         inCpAppSpec.setActive.roles = [];
-        form.find("input[name=roles]:checked").each(function() {
+        form.find("input[name=roles]:checked").each(function () {
             var val = parseInt($(this).val());
             if (val > 1) {
                 inCpAppSpec.setActive.roles.push(val);
@@ -1701,16 +1718,22 @@ inCpAppSpec.SetCommit = function() {
         });
 
         inCpAppSpec.setActive.type_tags = [];
-        form.find("input[name=type_tags]:checked").each(function() {
+        form.find("input[name=type_tags]:checked").each(function () {
             var val = $(this).val();
             if (val && val.length > 0) {
                 inCpAppSpec.setActive.type_tags.push(val);
             }
         });
 
-        inCpAppSpec.setActive.exp_res.cpu_min = parseInt(parseFloat(form.find("input[name=exp_res_cpu_min]").val()) * 10);
-        inCpAppSpec.setActive.exp_res.mem_min = parseInt(form.find("input[name=exp_res_mem_min]").val());
-        inCpAppSpec.setActive.exp_res.vol_min = parseInt(form.find("input[name=exp_res_vol_min]").val());
+        inCpAppSpec.setActive.exp_res.cpu_min = parseInt(
+            parseFloat(form.find("input[name=exp_res_cpu_min]").val()) * 10
+        );
+        inCpAppSpec.setActive.exp_res.mem_min = parseInt(
+            form.find("input[name=exp_res_mem_min]").val()
+        );
+        inCpAppSpec.setActive.exp_res.vol_min = parseInt(
+            form.find("input[name=exp_res_vol_min]").val()
+        );
         if (inCpAppSpec.setActive.exp_res.vol_min < 1) {
             inCpAppSpec.setActive.exp_res.vol_min = 1;
         }
@@ -1732,10 +1755,12 @@ inCpAppSpec.SetCommit = function() {
         inCpAppSpec.setActive.exp_deploy.rep_min = rep_min;
         inCpAppSpec.setActive.exp_deploy.rep_max = rep_max;
 
-        //	
+        //
         var sys_state = parseInt(form.find("select[name=exp_deploy_sys_state]").val());
-        if (sys_state != inCpAppSpec.deploySysStateless &&
-            sys_state != inCpAppSpec.deploySysStateful) {
+        if (
+            sys_state != inCpAppSpec.deploySysStateless &&
+            sys_state != inCpAppSpec.deploySysStateful
+        ) {
             sys_state = inCpAppSpec.deploySysStateful;
         }
         inCpAppSpec.setActive.exp_deploy.sys_state = sys_state;
@@ -1763,21 +1788,17 @@ inCpAppSpec.SetCommit = function() {
         inCpAppSpec.setActive.exp_deploy.failover_time = fail_time;
         inCpAppSpec.setActive.exp_deploy.failover_num_max = fail_num_max;
         inCpAppSpec.setActive.exp_deploy.failover_rate_max = fail_rate_max;
-
-
     } catch (err) {
         return l4iModal.FootAlert("error", "valid fail : " + err, 3000, footer_id);
     }
-
 
     inCp.ApiCmd("app-spec/set", {
         method: "POST",
         data: JSON.stringify(inCpAppSpec.setActive),
         timeout: 3000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4iModal.FootAlert("error", "network error", 3000, footer_id)
+                return l4iModal.FootAlert("error", "network error", 3000, footer_id);
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -1790,18 +1811,18 @@ inCpAppSpec.SetCommit = function() {
 
             l4iModal.FootAlert("ok", "Successful operation", 3000, footer_id);
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 inCpAppSpec.ListRefresh();
                 inCpAppSpec.setActive = {};
             }, 1000);
-        }
+        },
     });
-}
+};
 
-inCpAppSpec.SetRaw = function(id) {
+inCpAppSpec.SetRaw = function (id) {
     var formset = {
         actionTitle: "New AppSpec",
-        spec_text: ""
+        spec_text: "",
     };
     if (id) {
         formset.actionTitle = "Setting AppSpec (" + id + ")";
@@ -1810,17 +1831,15 @@ inCpAppSpec.SetRaw = function(id) {
         formset.meta_id = "";
     }
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("data", function(data) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("data", function (data) {
             formset.spec_text = data;
 
             l4iTemplate.Render({
                 dstid: "incp-app-specset",
                 tplid: "incp-app-specset-raw-tpl",
                 data: formset,
-                callback: function() {
+                callback: function () {
                     var bh = $(window).height();
                     var pp = $("#incp-app-specset").position();
                     var height = bh - pp.top - 250;
@@ -1835,7 +1854,7 @@ inCpAppSpec.SetRaw = function(id) {
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             // TODO
             alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
         });
@@ -1848,14 +1867,13 @@ inCpAppSpec.SetRaw = function(id) {
             });
         }
     });
-}
+};
 
-inCpAppSpec.SetRawCommit = function() {
+inCpAppSpec.SetRawCommit = function () {
     var alert_id = "#incp-app-specset-alert";
     var setActive = null;
 
     try {
-
         var form = $("#incp-app-specset");
         if (!form) {
             throw "No Form Data Found";
@@ -1867,19 +1885,17 @@ inCpAppSpec.SetRawCommit = function() {
         }
 
         setActive = txt;
-
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return l4i.InnerAlert(alert_id, "error", err);
     }
 
     inCp.ApiCmd("app-spec/set", {
         method: "POST",
         data: setActive,
         timeout: 3000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Failed");
+                return l4i.InnerAlert(alert_id, "error", "Failed");
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -1887,27 +1903,24 @@ inCpAppSpec.SetRawCommit = function() {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'error', msg);
+                return l4i.InnerAlert(alert_id, "error", msg);
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successful operation");
-            window.setTimeout(function() {
+            l4i.InnerAlert(alert_id, "ok", "Successful operation");
+            window.setTimeout(function () {
                 inCpAppSpec.ListRefresh();
             }, 1000);
-        }
+        },
     });
-}
+};
 
 //
-inCpAppSpec.CfgSet = function(spec_id) {
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
-
+inCpAppSpec.CfgSet = function (spec_id) {
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
             var alert_id = "#incp-appspec-cfg-fieldlist-alert";
 
             if (!data || data.error || !data.kind || data.kind != "AppSpec") {
-
                 if (data.error) {
                     return alert(data.error.message);
                 }
@@ -1919,7 +1932,7 @@ inCpAppSpec.CfgSet = function(spec_id) {
                 data.configurator = {
                     name: "",
                     fields: [],
-                }
+                };
             }
 
             if (!data.configurator.fields) {
@@ -1948,10 +1961,12 @@ inCpAppSpec.CfgSet = function(spec_id) {
 
             inCpAppSpec.active = l4i.Clone(data);
 
-            var btns = [{
-                title: "Cancel",
-                onclick: "l4iModal.Close()",
-            }];
+            var btns = [
+                {
+                    title: "Cancel",
+                    onclick: "l4iModal.Close()",
+                },
+            ];
             if (inCp.UserSession.username == data.meta.user) {
                 /**
                         btns.push({
@@ -1962,7 +1977,7 @@ inCpAppSpec.CfgSet = function(spec_id) {
                 */
                 btns.push({
                     title: "Save",
-                    onclick: 'inCpAppSpec.CfgSetCommit()',
+                    onclick: "inCpAppSpec.CfgSetCommit()",
                     style: "btn-primary",
                 });
             }
@@ -1974,13 +1989,13 @@ inCpAppSpec.CfgSet = function(spec_id) {
                 width: 1200,
                 height: 800,
                 buttons: btns,
-                callback: function() {
+                callback: function () {
                     inCpAppSpec.cfgFieldListRefresh();
                 },
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("ApiCmd error, Please try again later (EC:001)");
         });
 
@@ -1992,18 +2007,19 @@ inCpAppSpec.CfgSet = function(spec_id) {
             callback: ep.done("data"),
         });
     });
-}
+};
 
-inCpAppSpec.cfgFieldListRefresh = function() {
-
+inCpAppSpec.cfgFieldListRefresh = function () {
     var name = null;
     var elem = $("#incp-appspec-cfg-fieldlist-name");
     if (elem) {
         name = elem.val();
     }
     if (!name || name.length < 4) {
-        if (inCpAppSpec.active.configurator.name &&
-            inCpAppSpec.active.configurator.name.length > 3) {
+        if (
+            inCpAppSpec.active.configurator.name &&
+            inCpAppSpec.active.configurator.name.length > 3
+        ) {
             name = inCpAppSpec.active.configurator.name;
         } else {
             name = "cfg/" + inCpAppSpec.active.meta.id;
@@ -2016,22 +2032,22 @@ inCpAppSpec.cfgFieldListRefresh = function() {
         dstid: "incp-appspec-cfg-fieldlist",
         tplid: "incp-appspec-cfg-fieldlist-tpl",
         data: inCpAppSpec.active,
-        callback: function() {
+        callback: function () {
             if (name && name.length > 0) {
                 $("#incp-appspec-cfg-fieldlist-name").val(name);
             }
         },
     });
-}
+};
 
-inCpAppSpec.CfgFieldSubString = function(str, len) {
+inCpAppSpec.CfgFieldSubString = function (str, len) {
     if (str && str.length > len) {
         return str.substring(0, len) + " (size " + str.length + ") ...";
     }
     return str;
-}
+};
 
-inCpAppSpec.CfgSetCommit = function() {
+inCpAppSpec.CfgSetCommit = function () {
     var alert_id = "#incp-appspec-cfg-fieldlist-alert";
     var form = $("#incp-appspec-cfg-fieldlist");
     if (!form) {
@@ -2048,7 +2064,7 @@ inCpAppSpec.CfgSetCommit = function() {
         }
         inCpAppSpec.active.configurator.name = name;
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return l4i.InnerAlert(alert_id, "error", err);
     }
 
     var req = {
@@ -2056,37 +2072,36 @@ inCpAppSpec.CfgSetCommit = function() {
             id: inCpAppSpec.active.meta.id,
         },
         configurator: inCpAppSpec.active.configurator,
-    }
+    };
 
     inCp.ApiCmd("app-spec/cfg-set", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
             inCpAppSpec.active = null;
-            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 l4iModal.Close();
                 inCpAppSpec.ListRefresh();
             }, 500);
-        }
+        },
     });
-}
+};
 
-inCpAppSpec.CfgFieldSet = function(name) {
+inCpAppSpec.CfgFieldSet = function (name) {
     if (!inCpAppSpec.active) {
         return;
     }
@@ -2097,7 +2112,6 @@ inCpAppSpec.CfgFieldSet = function(name) {
 
     var field = null;
     if (name) {
-
         for (var i in inCpAppSpec.active.configurator.fields) {
             if (inCpAppSpec.active.configurator.fields[i].name == name) {
                 field = l4i.Clone(inCpAppSpec.active.configurator.fields[i]);
@@ -2118,19 +2132,22 @@ inCpAppSpec.CfgFieldSet = function(name) {
         id: "incp-appspec-cfgfieldset-modal",
         title: "Setting Field",
         tpluri: inCp.TplPath("app/spec/cfg-fieldset"),
-        buttons: [{
-            title: "Cancel",
-            onclick: "l4iModal.Close()",
-        }, {
-            title: "Delete",
-            onclick: "inCpAppSpec.CfgFieldDelCommit()",
-        }, {
-            title: "Save",
-            onclick: 'inCpAppSpec.CfgFieldSetCommit()',
-            style: "btn-primary",
-        }],
-        callback: function(err) {
-
+        buttons: [
+            {
+                title: "Cancel",
+                onclick: "l4iModal.Close()",
+            },
+            {
+                title: "Delete",
+                onclick: "inCpAppSpec.CfgFieldDelCommit()",
+            },
+            {
+                title: "Save",
+                onclick: "inCpAppSpec.CfgFieldSetCommit()",
+                style: "btn-primary",
+            },
+        ],
+        callback: function (err) {
             if (err) {
                 return;
             }
@@ -2143,19 +2160,17 @@ inCpAppSpec.CfgFieldSet = function(name) {
             });
         },
     });
-}
+};
 
-
-inCpAppSpec.CfgFieldSetValidatorNew = function() {
+inCpAppSpec.CfgFieldSetValidatorNew = function () {
     l4iTemplate.Render({
         append: true,
         dstid: "incp-app-specset-cfgfield-validators",
         tplid: "incp-app-specset-cfgfield-validator-tpl",
     });
-}
+};
 
-
-inCpAppSpec.CfgFieldSetCommit = function() {
+inCpAppSpec.CfgFieldSetCommit = function () {
     var alert_id = "#incp-appspec-cfg-fieldset-alert";
     var form = $("#incp-appspec-cfg-fieldset-form");
     if (!form) {
@@ -2165,7 +2180,7 @@ inCpAppSpec.CfgFieldSetCommit = function() {
     var field = {
         type: 1,
         validates: [],
-    }
+    };
     var name_prev = form.find("input[name=name_prev]").val();
 
     try {
@@ -2190,7 +2205,7 @@ inCpAppSpec.CfgFieldSetCommit = function() {
             throw "Invalid Type";
         }
 
-        form.find(".incp-app-specset-cfgfield-validator-item").each(function() {
+        form.find(".incp-app-specset-cfgfield-validator-item").each(function () {
             var fv_key = $(this).find("input[name=fv_key]").val();
             var fv_val = $(this).find("input[name=fv_value]").val();
             if (!fv_key) {
@@ -2201,21 +2216,22 @@ inCpAppSpec.CfgFieldSetCommit = function() {
                 value: fv_val,
             });
         });
-
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return l4i.InnerAlert(alert_id, "error", err);
     }
 
     var fields = [];
 
     for (var i in inCpAppSpec.active.configurator.fields) {
-
-        if (inCpAppSpec.active.configurator.fields[i].name == name_prev && name_prev != field.name) {
+        if (
+            inCpAppSpec.active.configurator.fields[i].name == name_prev &&
+            name_prev != field.name
+        ) {
             continue;
         }
 
         if (field && inCpAppSpec.active.configurator.fields[i].name == field.name) {
-            fields.push(l4i.Clone(field))
+            fields.push(l4i.Clone(field));
             field = null;
         } else {
             fields.push(inCpAppSpec.active.configurator.fields[i]);
@@ -2238,54 +2254,50 @@ inCpAppSpec.CfgFieldSetCommit = function() {
             name: inCpAppSpec.active.configurator.name,
             fields: fields,
         },
-    }
+    };
 
     inCp.ApiCmd("app-spec/cfg-set", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 inCpAppSpec.active.configurator.fields = fields;
                 l4iModal.Prev(inCpAppSpec.cfgFieldListRefresh);
             }, 500);
-        }
+        },
     });
-}
+};
 
-
-inCpAppSpec.CfgFieldDelCommit = function() {
+inCpAppSpec.CfgFieldDelCommit = function () {
     var alert_id = "#incp-appspec-cfg-fieldset-alert";
     var form = $("#incp-appspec-cfg-fieldset-form");
     if (!form) {
         return;
     }
 
-    var field = {
-    }
+    var field = {};
 
     try {
         field.name = form.find("input[name=name]").val();
         if (!field.name || !inCpAppSpec.fieldNameRe.test(field.name)) {
             throw "Invalid Name";
         }
-
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return l4i.InnerAlert(alert_id, "error", err);
     }
 
     var fields = [];
@@ -2297,10 +2309,9 @@ inCpAppSpec.CfgFieldDelCommit = function() {
             name: inCpAppSpec.active.configurator.name,
             fields: [],
         },
-    }
+    };
 
     for (var i in inCpAppSpec.active.configurator.fields) {
-
         if (inCpAppSpec.active.configurator.fields[i].name == field.name) {
             req.configurator.fields.push(l4i.Clone(field));
         } else {
@@ -2309,33 +2320,31 @@ inCpAppSpec.CfgFieldDelCommit = function() {
     }
 
     if (req.configurator.fields.length == 0) {
-        return l4i.InnerAlert(alert_id, 'error', "No field name Found");
+        return l4i.InnerAlert(alert_id, "error", "No field name Found");
     }
 
     inCp.ApiCmd("app-spec/cfg-field-del", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 inCpAppSpec.active.configurator.fields = fields;
                 l4iModal.Prev(inCpAppSpec.cfgFieldListRefresh);
             }, 500);
-        }
+        },
     });
-}
-
+};

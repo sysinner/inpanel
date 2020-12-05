@@ -2,47 +2,47 @@ var inOpsHost = {
     statusls: [
         {
             status: 0,
-            title: "Unknown"
+            title: "Unknown",
         },
         {
             status: 1,
-            title: "Active"
+            title: "Active",
         },
         {
             status: 2,
-            title: "Suspend"
+            title: "Suspend",
         },
     ],
     node_statusls: [
         {
             phase: "Running",
-            title: "Running"
+            title: "Running",
         },
         {
             phase: "Suspended",
-            title: "Suspended"
+            title: "Suspended",
         },
         {
             phase: "Terminated",
-            title: "Terminated"
+            title: "Terminated",
         },
     ],
     actions: [
         // {action: 0, title: "Unknown"},
         {
             action: 1,
-            title: "Active"
+            title: "Active",
         },
         {
             action: 2,
-            title: "Suspended"
+            title: "Suspended",
         },
     ],
     zone_def: {
         kind: "HostZone",
         meta: {
             id: "",
-            name: ""
+            name: "",
         },
         status: 1,
         desc: "",
@@ -53,7 +53,7 @@ var inOpsHost = {
         kind: "HostCell",
         meta: {
             id: "",
-            name: ""
+            name: "",
         },
         zone_id: "",
         phase: 1,
@@ -66,43 +66,42 @@ var inOpsHost = {
     nav_cell: null,
     nav_node: null,
     hchart_def: {
-        "type": "line",
-        "options": {
-            "height": "200px",
-            "title": "",
+        type: "line",
+        options: {
+            height: "200px",
+            title: "",
         },
-        "data": {
-            "labels": [],
-            "datasets": [],
+        data: {
+            labels: [],
+            datasets: [],
         },
     },
-    list_nav_menus: [{
-        name: "Hosts",
-        uri: "node/list",
-    }],
+    list_nav_menus: [
+        {
+            name: "Hosts",
+            uri: "node/list",
+        },
+    ],
     PriorityDefault: 2,
     PriorityLength: 6,
-}
+};
 
-inOpsHost.ActionTitle = function(action) {
+inOpsHost.ActionTitle = function (action) {
     for (var i in inOpsHost.actions) {
         if (action == inOpsHost.actions[i].action) {
             return inOpsHost.actions[i].title;
         }
     }
     return "Unknown";
-}
+};
 
-inOpsHost.NavInit = function() {
+inOpsHost.NavInit = function () {
     // l4i.UrlEventRegister("host/index", inOpsHost.Index);
-}
+};
 
-inOpsHost.Index = function() {
-
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("zones", "tpl", function(zones, tpl) {
-
+inOpsHost.Index = function () {
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("zones", "tpl", function (zones, tpl) {
             if (!zones || !zones.items) {
                 return l4iAlert.Open("error", "Zone Not Found");
             }
@@ -112,7 +111,7 @@ inOpsHost.Index = function() {
             inOpsHost.ZoneIndex();
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             if (err == "AccessDenied") {
                 return inCp.AlertAccessDenied();
             }
@@ -126,16 +125,18 @@ inOpsHost.Index = function() {
         // zones
         inOpsHost.ZoneRefresh(ep.done("zones"));
     });
-}
+};
 
-inOpsHost.zone_active_fix = function(zoneid) {
+inOpsHost.zone_active_fix = function (zoneid) {
     if (!inOpsHost.zones) {
         return false;
     }
 
     if (zoneid) {
-        if (!inOpsHost.zone_active ||
-            (inOpsHost.zone_active && inOpsHost.zone_active.meta.id != zoneid)) {
+        if (
+            !inOpsHost.zone_active ||
+            (inOpsHost.zone_active && inOpsHost.zone_active.meta.id != zoneid)
+        ) {
             for (var i in inOpsHost.zones.items) {
                 if (zoneid == inOpsHost.zones.items[i].meta.id) {
                     inOpsHost.zone_active = l4i.Clone(inOpsHost.zones.items[i]);
@@ -148,17 +149,18 @@ inOpsHost.zone_active_fix = function(zoneid) {
         return false;
     }
     return true;
-}
+};
 
-inOpsHost.cell_active_fix = function(zoneid, cellid) {
-
+inOpsHost.cell_active_fix = function (zoneid, cellid) {
     if (!inOpsHost.zone_active_fix(zoneid)) {
         return false;
     }
 
     if (cellid) {
-        if (!inOpsHost.cell_active ||
-            (inOpsHost.cell_active && inOpsHost.cell_active.meta.id != cellid)) {
+        if (
+            !inOpsHost.cell_active ||
+            (inOpsHost.cell_active && inOpsHost.cell_active.meta.id != cellid)
+        ) {
             for (var i in inOpsHost.zone_active.cells) {
                 if (cellid == inOpsHost.zone_active.cells[i].meta.id) {
                     inOpsHost.cell_active = l4i.Clone(inOpsHost.zone_active.cells[i]);
@@ -176,11 +178,9 @@ inOpsHost.cell_active_fix = function(zoneid, cellid) {
     }
 
     return true;
-}
+};
 
-
-inOpsHost.NodeList = function(zoneid, cellid) {
-
+inOpsHost.NodeList = function (zoneid, cellid) {
     if (!inOpsHost.cell_active_fix(zoneid, cellid)) {
         return;
     }
@@ -195,27 +195,25 @@ inOpsHost.NodeList = function(zoneid, cellid) {
     inCp.ModuleNavbarMenuRefresh("inops-host-nav-tpl");
     if (inOps.nav_cluster_zone) {
         $("#inops-cluster-nav-zone").css({
-            "display": "block"
+            display: "block",
         });
         $("#inops-cluster-nav-zone-value").text("Zone: " + inOpsHost.zone_active.meta.id);
     }
 
     if (inOps.nav_cluster_cell) {
         $("#inops-cluster-nav-cell").css({
-            "display": "block"
+            display: "block",
         });
         $("#inops-cluster-nav-cell-value").text("Cell: " + inOpsHost.cell_active.meta.id);
     }
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
             $("#inops-cluster-nav-host").css({
-                "display": "block"
+                display: "block",
             });
 
             if (inOps.nav_cluster_host) {
@@ -251,7 +249,7 @@ inOpsHost.NodeList = function(zoneid, cellid) {
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -259,20 +257,25 @@ inOpsHost.NodeList = function(zoneid, cellid) {
             callback: ep.done("tpl"),
         });
 
-        inOpsHost.node_list_refresh(inOpsHost.zone_active.meta.id, inOpsHost.cell_active.meta.id, ep.done("data"));
+        inOpsHost.node_list_refresh(
+            inOpsHost.zone_active.meta.id,
+            inOpsHost.cell_active.meta.id,
+            ep.done("data")
+        );
     });
-}
+};
 
-inOpsHost.NodeOpPortUsedInfo = function(z, c, node_id) {
-
+inOpsHost.NodeOpPortUsedInfo = function (z, c, node_id) {
     for (var i in inOpsHost.nodes.items) {
-
         if (node_id != inOpsHost.nodes.items[i].meta.id) {
             continue;
         }
 
         var s = "no port assigned yet...";
-        if (inOpsHost.nodes.items[i].operate.port_used && inOpsHost.nodes.items[i].operate.port_used.length > 0) {
+        if (
+            inOpsHost.nodes.items[i].operate.port_used &&
+            inOpsHost.nodes.items[i].operate.port_used.length > 0
+        ) {
             s = inOpsHost.nodes.items[i].operate.port_used.join(", ");
         }
 
@@ -281,16 +284,17 @@ inOpsHost.NodeOpPortUsedInfo = function(z, c, node_id) {
             tplsrc: s,
             width: 700,
             height: 350,
-            buttons: [{
-                onclick: "l4iModal.Close()",
-                title: "Close",
-            }]
+            buttons: [
+                {
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                },
+            ],
         });
     }
-}
+};
 
-inOpsHost.NodePodList = function(z, c, node_id) {
-
+inOpsHost.NodePodList = function (z, c, node_id) {
     var node = null;
 
     for (var i in inOpsHost.nodes.items) {
@@ -306,22 +310,20 @@ inOpsHost.NodePodList = function(z, c, node_id) {
 
     var alert_id = "#inops-host-podls-selector-alert";
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
             l4iModal.Open({
                 id: "inops-host-pod-list",
                 title: "Pod List",
                 tplsrc: tpl,
                 width: 1200,
                 height: 800,
-                callback: function() {
+                callback: function () {
                     if (data.error) {
-                        return l4i.InnerAlert(alert_id, 'error', data.error.message);
+                        return l4i.InnerAlert(alert_id, "error", data.error.message);
                     }
                     if (data.items.length < 1) {
-                        return l4i.InnerAlert(alert_id, 'alert-info', "No Item Found Yet ...");
+                        return l4i.InnerAlert(alert_id, "alert-info", "No Item Found Yet ...");
                     }
                     l4iTemplate.Render({
                         dstid: "inops-host-podls-selector",
@@ -329,15 +331,16 @@ inOpsHost.NodePodList = function(z, c, node_id) {
                         data: data,
                     });
                 },
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }]
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                ],
             });
-
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             //
         });
 
@@ -353,13 +356,13 @@ inOpsHost.NodePodList = function(z, c, node_id) {
             callback: ep.done("tpl"),
         });
     });
-}
+};
 
-inOpsHost.NodePodInfo = function(pod_id) {
+inOpsHost.NodePodInfo = function (pod_id) {
     inCpPod.Info(pod_id);
-}
+};
 
-inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
+inOpsHost.NodeSet = function (zoneid, cellid, nodeid) {
     if (!zoneid) {
         zoneid = l4iStorage.Get("inops_cluster_zone_id");
     }
@@ -377,12 +380,10 @@ inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
 
     var alert_id = "#inops-host-nodeset-alert";
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
             if (!rsj || !rsj.kind || rsj.kind != "HostNode") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "alert-danger", "Network Connection Exception");
             }
 
             rsj._actions = inOpsHost.actions;
@@ -399,7 +400,7 @@ inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
                 rsj.operate.pr = inOpsHost.PriorityDefault;
             }
             rsj._priorities = [];
-            for (var i = 1; i < (inOpsHost.PriorityLength - 1); i++) {
+            for (var i = 1; i < inOpsHost.PriorityLength - 1; i++) {
                 var v = "";
                 if (i == 1) {
                     v = " First allocation";
@@ -418,18 +419,21 @@ inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
                 data: rsj,
                 width: 900,
                 height: 350,
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }, {
-                    onclick: "inOpsHost.NodeSetCommit()",
-                    title: "Save",
-                    style: "btn btn-primary",
-                }]
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                    {
+                        onclick: "inOpsHost.NodeSetCommit()",
+                        title: "Save",
+                        style: "btn btn-primary",
+                    },
+                ],
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -439,14 +443,17 @@ inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
         });
 
         // data
-        inOps.ApiCmd("host/node-entry?zoneid=" + zoneid + "&cellid=" + cellid + "&nodeid=" + nodeid, {
-            api_zone_id: zoneid,
-            callback: ep.done("data"),
-        });
+        inOps.ApiCmd(
+            "host/node-entry?zoneid=" + zoneid + "&cellid=" + cellid + "&nodeid=" + nodeid,
+            {
+                api_zone_id: zoneid,
+                callback: ep.done("data"),
+            }
+        );
     });
-}
+};
 
-inOpsHost.NodeSetCommit = function() {
+inOpsHost.NodeSetCommit = function () {
     var form = $("#inops-host-node-form"),
         alert_id = "#inops-host-nodeset-alert";
 
@@ -461,35 +468,33 @@ inOpsHost.NodeSetCommit = function() {
             cell_id: form.find("input[name=operate_cell_id]").val(),
             pr: parseInt(form.find("select[name=operate_pr]").val()),
         },
-        spec: {
-        },
+        spec: {},
     };
 
     inOps.ApiCmd("host/node-set", {
         api_zone_id: req.operate.zone_id,
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', err);
+                return l4i.InnerAlert(alert_id, "alert-danger", err);
             }
 
             if (!rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "alert-danger", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, "alert-danger", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "HostNode") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "alert-danger", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, "alert-success", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 l4iModal.Close();
                 var el = document.getElementById("inops-host-nodes");
                 if (el) {
@@ -502,10 +507,9 @@ inOpsHost.NodeSetCommit = function() {
             }, 500);
         },
     });
-}
+};
 
-
-inOpsHost.NodeSecretKeySet = function(zoneid, cellid, nodeid) {
+inOpsHost.NodeSecretKeySet = function (zoneid, cellid, nodeid) {
     if (!zoneid) {
         zoneid = l4iStorage.Get("inops_cluster_zone_id");
     }
@@ -523,10 +527,8 @@ inOpsHost.NodeSecretKeySet = function(zoneid, cellid, nodeid) {
 
     var alert_id = "#inops-host-node-secretkey-set-alert";
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", function(tpl) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", function (tpl) {
             l4iModal.Open({
                 title: "Reset Secret Key",
                 tplsrc: tpl,
@@ -536,18 +538,21 @@ inOpsHost.NodeSecretKeySet = function(zoneid, cellid, nodeid) {
                 },
                 width: 700,
                 height: 300,
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }, {
-                    onclick: "inOpsHost.NodeSecretKeySetCommit()",
-                    title: "Save",
-                    style: "btn btn-primary",
-                }]
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                    {
+                        onclick: "inOpsHost.NodeSecretKeySetCommit()",
+                        title: "Save",
+                        style: "btn btn-primary",
+                    },
+                ],
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -555,9 +560,9 @@ inOpsHost.NodeSecretKeySet = function(zoneid, cellid, nodeid) {
             callback: ep.done("tpl"),
         });
     });
-}
+};
 
-inOpsHost.NodeSecretKeySetCommit = function() {
+inOpsHost.NodeSecretKeySetCommit = function () {
     var form = $("#inops-host-node-secretkey-form"),
         alert_id = "#inops-host-node-secretkey-set-alert";
 
@@ -571,27 +576,26 @@ inOpsHost.NodeSecretKeySetCommit = function() {
         api_zone_id: req.zone_id,
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', err);
+                return l4i.InnerAlert(alert_id, "alert-danger", err);
             }
 
             if (!rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "alert-danger", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, "alert-danger", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "HostNode") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "alert-danger", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, "alert-success", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 l4iModal.Close();
                 var el = document.getElementById("inops-host-nodes");
                 if (el) {
@@ -600,10 +604,9 @@ inOpsHost.NodeSecretKeySetCommit = function() {
             }, 500);
         },
     });
-}
+};
 
-
-inOpsHost.NodeNew = function(zoneid, cellid) {
+inOpsHost.NodeNew = function (zoneid, cellid) {
     if (!zoneid) {
         zoneid = l4iStorage.Get("inops_cluster_zone_id");
     }
@@ -613,10 +616,9 @@ inOpsHost.NodeNew = function(zoneid, cellid) {
     }
 
     inOps.TplFetch("host/node-new", {
-        callback: function(err, tpl) {
-
+        callback: function (err, tpl) {
             var priorities = [];
-            for (var i = 1; i < (inOpsHost.PriorityLength - 1); i++) {
+            for (var i = 1; i < inOpsHost.PriorityLength - 1; i++) {
                 var v = "";
                 if (i == 1) {
                     v = " First allocation";
@@ -628,7 +630,6 @@ inOpsHost.NodeNew = function(zoneid, cellid) {
                     name: i + v,
                 });
             }
-
 
             l4iModal.Open({
                 title: "New Host",
@@ -646,20 +647,23 @@ inOpsHost.NodeNew = function(zoneid, cellid) {
                     _actions: inOpsHost.actions,
                     _priorities: priorities,
                 },
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }, {
-                    onclick: "inOpsHost.NodeNewCommit()",
-                    title: "Save",
-                    style: "btn btn-primary",
-                }],
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                    {
+                        onclick: "inOpsHost.NodeNewCommit()",
+                        title: "Save",
+                        style: "btn btn-primary",
+                    },
+                ],
             });
         },
     });
-}
+};
 
-inOpsHost.NodeNewCommit = function() {
+inOpsHost.NodeNewCommit = function () {
     var form = $("#inops-host-node-form"),
         alert_id = "#inops-host-nodenew-alert";
 
@@ -676,59 +680,62 @@ inOpsHost.NodeNewCommit = function() {
         api_zone_id: req.zone_id,
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "alert-danger", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alert_id, "alert-danger", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "HostNode") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "alert-danger", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, "alert-success", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 l4iModal.Close();
                 inOpsHost.NodeList();
             }, 500);
         },
     });
-}
+};
 
-inOpsHost.entry_nav_menus = [{
-    name: "Back",
-    onclick: "inOpsHost.NodeList()",
-    uri: "",
-    style: "primary",
-}, {
-    name: "Overview",
-    uri: "host/node/overview",
-}, {
-    name: "Graphs",
-    uri: "host/node/stats",
-}, {
-    //    name: "Settings",
-    //    uri: "host/node/setup",
-    //    onclick: "inOpsHost.NodeSet()",
-    // }, {
-    name: "ReSet SecretKey",
-    uri: "host/node/setretkey",
-    onclick: "inOpsHost.NodeSecretKeySet()",
-}];
+inOpsHost.entry_nav_menus = [
+    {
+        name: "Back",
+        onclick: "inOpsHost.NodeList()",
+        uri: "",
+        style: "primary",
+    },
+    {
+        name: "Overview",
+        uri: "host/node/overview",
+    },
+    {
+        name: "Graphs",
+        uri: "host/node/stats",
+    },
+    {
+        //    name: "Settings",
+        //    uri: "host/node/setup",
+        //    onclick: "inOpsHost.NodeSet()",
+        // }, {
+        name: "ReSet SecretKey",
+        uri: "host/node/setretkey",
+        onclick: "inOpsHost.NodeSecretKeySet()",
+    },
+];
 
-inOpsHost.Node = function(zone_id, host_id, nav_target) {
-
+inOpsHost.Node = function (zone_id, host_id, nav_target) {
     if (!zone_id) {
         zone_id = l4iStorage.Get("inops_cluster_zone_id");
     }
 
     if (!host_id) {
-        return
+        return;
     }
 
     inOpsHost.node_active_zone_id = zone_id;
@@ -748,22 +755,26 @@ inOpsHost.Node = function(zone_id, host_id, nav_target) {
             l4i.UrlEventHandler("host/node/overview", false);
             break;
     }
-}
+};
 
-
-inOpsHost.NodeOverview = function() {
-
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "node", function(tpl, node) {
+inOpsHost.NodeOverview = function () {
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "node", function (tpl, node) {
+            if (!node.spec.platform) {
+                node.spec.platform = {};
+            }
 
             if (node.spec.platform.kernel) {
-                node.spec.platform.kernel = node.spec.platform.kernel.replace(/.x86_64$/g, '');
+                node.spec.platform.kernel = node.spec.platform.kernel.replace(/.x86_64$/g, "");
             }
 
             if (!node.meta.name) {
                 node.meta.name = node.meta.id;
             }
+
+            node.spec.capacity = node.spec.capacity || {};
+            node.spec.capacity.cpu = node.spec.capacity.cpu || 1000;
+            node.spec.capacity.mem = node.spec.capacity.mem || 0;
 
             if (!node.operate.cpu_used) {
                 node.operate.cpu_used = 0;
@@ -779,6 +790,8 @@ inOpsHost.NodeOverview = function() {
                 node.operate.box_num = 0;
             }
 
+            node.status = node.status || {};
+
             if (!node.status.volumes) {
                 node.status.volumes = [];
             }
@@ -789,11 +802,13 @@ inOpsHost.NodeOverview = function() {
                 if (!node.status.volumes[i].used) {
                     node.status.volumes[i].used = 1;
                 }
-                node.status.volumes[i]._percent = parseInt((100 * node.status.volumes[i].used) / node.status.volumes[i].total);
+                node.status.volumes[i]._percent = parseInt(
+                    (100 * node.status.volumes[i].used) / node.status.volumes[i].total
+                );
             }
 
             if (node.status.uptime) {
-                node.status._uptime = parseInt((new Date()) / 1e3) - node.status.uptime;
+                node.status._uptime = parseInt(new Date() / 1e3) - node.status.uptime;
             }
 
             if (!node.spec.peer_wan_addr) {
@@ -820,14 +835,20 @@ inOpsHost.NodeOverview = function() {
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("Network Connection Error, Please try again later (EC:incp-node)");
         });
 
-        inOps.ApiCmd("host/node-entry?zoneid=" + inOpsHost.node_active_zone_id + "&nodeid=" + inOpsHost.node_active_id, {
-            api_zone_id: inOpsHost.node_active_zone_id,
-            callback: ep.done("node"),
-        });
+        inOps.ApiCmd(
+            "host/node-entry?zoneid=" +
+                inOpsHost.node_active_zone_id +
+                "&nodeid=" +
+                inOpsHost.node_active_id,
+            {
+                api_zone_id: inOpsHost.node_active_zone_id,
+                callback: ep.done("node"),
+            }
+        );
 
         // inCp.ApiCmd("pod/status?id=" + inOpsHost.node_active_id, {
         //     callback: ep.done("pstatus"),
@@ -837,16 +858,15 @@ inOpsHost.NodeOverview = function() {
             callback: ep.done("tpl"),
         });
     });
-}
+};
 
-
-inOpsHost.NodeStatsButton = function(obj) {
+inOpsHost.NodeStatsButton = function (obj) {
     $("#incp-module-navbar-optools").find(".hover").removeClass("hover");
-    obj.setAttribute("class", 'hover');
-    inOpsHost.NodeStats(parseInt(obj.getAttribute('value')));
-}
+    obj.setAttribute("class", "hover");
+    inOpsHost.NodeStats(parseInt(obj.getAttribute("value")));
+};
 
-inOpsHost.nodeStatsFeedMaxValue = function(feed, names) {
+inOpsHost.nodeStatsFeedMaxValue = function (feed, names) {
     var max = 0;
     var arr = names.split(",");
     for (var i in feed.items) {
@@ -860,10 +880,9 @@ inOpsHost.nodeStatsFeedMaxValue = function(feed, names) {
         }
     }
     return max;
-}
+};
 
-inOpsHost.NodeStats = function(time_past) {
-
+inOpsHost.NodeStats = function (time_past) {
     if (time_past) {
         inOpsHost.node_active_past = parseInt(time_past);
         if (!inOpsHost.node_active_past) {
@@ -873,12 +892,11 @@ inOpsHost.NodeStats = function(time_past) {
     if (inOpsHost.node_active_past < 600) {
         inOpsHost.node_active_past = 600;
     }
-    if (inOpsHost.node_active_past > (30 * 86400)) {
+    if (inOpsHost.node_active_past > 30 * 86400) {
         inOpsHost.node_active_past = 30 * 86400;
     }
 
     var zoneid = l4iStorage.Get("inops_cluster_zone_id");
-
 
     var stats_url = "id=" + inOpsHost.node_active_id;
     var stats_query = {
@@ -887,41 +905,41 @@ inOpsHost.NodeStats = function(time_past) {
         is: [
             {
                 n: "cpu/sys",
-                d: true
+                d: true,
             },
             {
                 n: "cpu/user",
-                d: true
+                d: true,
             },
             {
-                n: "ram/us"
+                n: "ram/us",
             },
             {
-                n: "ram/cc"
+                n: "ram/cc",
             },
             {
                 n: "net/rs",
-                d: true
+                d: true,
             },
             {
                 n: "net/ws",
-                d: true
+                d: true,
             },
             {
                 n: "fs/sp/rs",
-                d: true
+                d: true,
             },
             {
                 n: "fs/sp/rn",
-                d: true
+                d: true,
             },
             {
                 n: "fs/sp/ws",
-                d: true
+                d: true,
             },
             {
                 n: "fs/sp/wn",
-                d: true
+                d: true,
             },
         ],
     };
@@ -938,19 +956,19 @@ inOpsHost.NodeStats = function(time_past) {
     } else {
         inOpsHost.hchart_def.options.height = "220px";
     }
-    if (stats_query.tp > (10 * 86400)) {
+    if (stats_query.tp > 10 * 86400) {
         stats_query.tc = 6 * 3600;
         tfmt = "m-d H";
-    } else if (stats_query.tp > (3 * 86400)) {
+    } else if (stats_query.tp > 3 * 86400) {
         stats_query.tc = 3 * 3600;
         tfmt = "m-d H";
     } else if (stats_query.tp > 86400) {
         stats_query.tc = 3600;
         tfmt = "m-d H";
-    } else if (stats_query.tp >= (3 * 3600)) {
+    } else if (stats_query.tp >= 3 * 3600) {
         stats_query.tc = 1800;
         tfmt = "H:i";
-    } else if (stats_query.tp >= (3 * 600)) {
+    } else if (stats_query.tp >= 3 * 600) {
         stats_query.tc = 120;
         tfmt = "H:i";
     } else {
@@ -959,14 +977,12 @@ inOpsHost.NodeStats = function(time_past) {
     }
 
     stats_url += "&qry=" + btoa(JSON.stringify(stats_query));
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "node", "stats", function(tpl, node, stats) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "node", "stats", function (tpl, node, stats) {
             if (tpl) {
                 $("#work-content").html(tpl);
                 $(".incp-podentry-stats-item").css({
-                    "flex-basis": ww + "px"
+                    "flex-basis": ww + "px",
                 });
                 inCp.OpToolsRefresh("#inops-node-optools-stats");
             }
@@ -975,17 +991,17 @@ inOpsHost.NodeStats = function(time_past) {
             var tc_title = stats.cycle + " seconds";
             var tc_ns = stats.cycle * 1000000000;
             if (stats.cycle >= 86400 && stats.cycle % 86400 == 0) {
-                tc_title = (stats.cycle / 86400) + " Day";
+                tc_title = stats.cycle / 86400 + " Day";
                 if (stats.cycle > 86400) {
                     tc_title += "s";
                 }
             } else if (stats.cycle >= 3600 && stats.cycle % 3600 == 0) {
-                tc_title = (stats.cycle / 3600) + " Hour";
+                tc_title = stats.cycle / 3600 + " Hour";
                 if (stats.cycle > 3600) {
                     tc_title += "s";
                 }
             } else if (stats.cycle >= 60 && stats.cycle % 60 == 0) {
-                tc_title = (stats.cycle / 60) + " Minute";
+                tc_title = stats.cycle / 60 + " Minute";
                 if (stats.cycle > 60) {
                     tc_title += "s";
                 }
@@ -1010,7 +1026,6 @@ inOpsHost.NodeStats = function(time_past) {
                 }
             */
 
-
             //
             var stats_ram = l4i.Clone(inOpsHost.hchart_def);
             stats_ram.options.title = l4i.T("Memory Usage (MB)");
@@ -1019,7 +1034,7 @@ inOpsHost.NodeStats = function(time_past) {
             //
             var stats_net = l4i.Clone(inOpsHost.hchart_def);
             max = inOpsHost.nodeStatsFeedMaxValue(stats, "net/rs,net/ws");
-            if (max > (1024 * 1024)) {
+            if (max > 1024 * 1024) {
                 stats_net.options.title = l4i.T("Network Bytes (MB / %s)", tc_title);
                 stats_net._fix = 1024 * 1024;
             } else if (max > 1024) {
@@ -1036,7 +1051,7 @@ inOpsHost.NodeStats = function(time_past) {
             //
             var stats_fss = l4i.Clone(inOpsHost.hchart_def);
             max = inOpsHost.nodeStatsFeedMaxValue(stats, "fs/sp/rs,fs/sp/ws");
-            if (max > (1024 * 1024)) {
+            if (max > 1024 * 1024) {
                 stats_fss.options.title = l4i.T("Storage IO Bytes (MB / %s)", tc_title);
                 stats_fss._fix = 1024 * 1024;
             } else if (max > 1024) {
@@ -1046,12 +1061,10 @@ inOpsHost.NodeStats = function(time_past) {
                 stats_fss.options.title = l4i.T("Storage IO Bytes (Bytes / %s)", tc_title);
             }
 
-
             for (var i in stats.items) {
-
                 var v = stats.items[i];
                 var dataset = {
-                    data: []
+                    data: [],
                 };
                 var labels = [];
                 var fix = 1;
@@ -1073,7 +1086,6 @@ inOpsHost.NodeStats = function(time_past) {
                         }
                         break;
 
-
                     case "net/rs":
                     case "net/ws":
                         if (stats_net._fix && stats_net._fix > 1) {
@@ -1090,7 +1102,6 @@ inOpsHost.NodeStats = function(time_past) {
                 }
 
                 for (var j in v.items) {
-
                     var v2 = v.items[j];
 
                     var t = new Date(v2.time * 1000);
@@ -1124,69 +1135,74 @@ inOpsHost.NodeStats = function(time_past) {
                         stats_ram.data.labels = labels;
                         dataset.label = "Usage";
                         stats_ram.data.datasets.push(dataset);
-                        break
+                        break;
 
                     case "ram/cc":
                         stats_ram.data.labels = labels;
                         dataset.label = "Cache";
                         stats_ram.data.datasets.push(dataset);
-                        break
+                        break;
 
                     case "net/rs":
                         stats_net.data.labels = labels;
                         dataset.label = "Read";
                         stats_net.data.datasets.push(dataset);
-                        break
+                        break;
 
                     case "net/ws":
                         stats_net.data.labels = labels;
                         dataset.label = "Send";
                         stats_net.data.datasets.push(dataset);
-                        break
+                        break;
 
                     case "fs/sp/rs":
                         stats_fss.data.labels = labels;
                         dataset.label = "Read";
                         stats_fss.data.datasets.push(dataset);
-                        break
+                        break;
 
                     case "fs/sp/ws":
                         stats_fss.data.labels = labels;
                         dataset.label = "Write";
                         stats_fss.data.datasets.push(dataset);
-                        break
+                        break;
 
                     case "fs/sp/rn":
                         stats_fsn.data.labels = labels;
                         dataset.label = "Read";
                         stats_fsn.data.datasets.push(dataset);
-                        break
+                        break;
 
                     case "fs/sp/wn":
                         stats_fsn.data.labels = labels;
                         dataset.label = "Write";
                         stats_fsn.data.datasets.push(dataset);
-                        break
+                        break;
                 }
             }
 
-            var statses = [{
-                data: stats_cpu,
-                target: "cpu",
-            }, {
-                data: stats_ram,
-                target: "ram",
-            }, {
-                data: stats_net,
-                target: "net",
-            }, {
-                data: stats_fss,
-                target: "fss",
-            }, {
-                data: stats_fsn,
-                target: "fsn",
-            }];
-
+            var statses = [
+                {
+                    data: stats_cpu,
+                    target: "cpu",
+                },
+                {
+                    data: stats_ram,
+                    target: "ram",
+                },
+                {
+                    data: stats_net,
+                    target: "net",
+                },
+                {
+                    data: stats_fss,
+                    target: "fss",
+                },
+                {
+                    data: stats_fsn,
+                    target: "fsn",
+                },
+            ];
 
             l4iTemplate.Render({
                 dstid: "inops-node-stats-list",
@@ -1194,18 +1210,19 @@ inOpsHost.NodeStats = function(time_past) {
                 data: {
                     items: statses,
                 },
-                callback: function() {
-
+                callback: function () {
                     for (var i in statses) {
                         statses[i].data.options.title = "";
-                        hooto_chart.RenderElement(statses[i].data, "inops-node-stats-" + statses[i].target);
+                        hooto_chart.RenderElement(
+                            statses[i].data,
+                            "inops-node-stats-" + statses[i].target
+                        );
                     }
                 },
             });
-
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("Network Connection Error, Please try again later (EC:inops-node)");
         });
 
@@ -1223,19 +1240,15 @@ inOpsHost.NodeStats = function(time_past) {
             callback: ep.done("tpl"),
         });
     });
-}
+};
 
-
-
-
-inOpsHost.ZoneRefresh = function(cb, force) {
+inOpsHost.ZoneRefresh = function (cb, force) {
     if (inOpsHost.zones && !force) {
         return cb(null, inOpsHost.zones);
     }
 
     inOps.ApiCmd("host/zone-list?fields=cells", {
-        callback: function(err, zones) {
-
+        callback: function (err, zones) {
             if (err) {
                 return cb(err, null);
             }
@@ -1270,7 +1283,10 @@ inOpsHost.ZoneRefresh = function(cb, force) {
                         zones.items[i].cells[j].node_num = 0;
                     }
                 }
-                if (inOpsHost.zone_active && inOpsHost.zone_active.meta.id == zones.items[i].meta.id) {
+                if (
+                    inOpsHost.zone_active &&
+                    inOpsHost.zone_active.meta.id == zones.items[i].meta.id
+                ) {
                     inOpsHost.zone_active = l4i.Clone(zones.items[i]);
                 }
             }
@@ -1279,13 +1295,12 @@ inOpsHost.ZoneRefresh = function(cb, force) {
             cb(null, inOpsHost.zones);
         },
     });
-}
+};
 
-inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
+inOpsHost.node_list_refresh = function (zoneid, cellid, cb) {
     inOps.ApiCmd("host/node-list?zoneid=" + zoneid + "&cellid=" + cellid, {
         api_zone_id: zoneid,
-        callback: function(err, nodes) {
-
+        callback: function (err, nodes) {
             if (err) {
                 return cb(err, null);
             }
@@ -1303,12 +1318,10 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
             }
 
             for (var i in nodes.items) {
-
                 for (var j in inOpsHost.actions) {
-
                     if (inOpsHost.actions[j].action == nodes.items[i].operate.action) {
                         nodes.items[i]._action_display = inOpsHost.actions[j].title;
-                        break
+                        break;
                     }
                 }
 
@@ -1345,7 +1358,10 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
                     nodes.items[i].spec.platform.kernel = "";
                 }
                 // nodes.items[i].spec.platform.kernel = nodes.items[i].spec.platform.kernel.replace(/.el\d(.*?).x86_64$/g, '')
-                nodes.items[i].spec.platform.kernel = nodes.items[i].spec.platform.kernel.replace(/.x86_64$/g, '')
+                nodes.items[i].spec.platform.kernel = nodes.items[i].spec.platform.kernel.replace(
+                    /.x86_64$/g,
+                    ""
+                );
                 if (!nodes.items[i].spec.platform.arch) {
                     nodes.items[i].spec.platform.arch = "";
                 }
@@ -1379,15 +1395,15 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
             cb(null, nodes);
         },
     });
-}
+};
 
-inOpsHost.CellIndex = function() {
+inOpsHost.CellIndex = function () {
     if (!inOpsHost.zone_active) {
         return;
     }
     if (inOps.nav_cluster_cell) {
         $("#inops-cluster-nav-cell").css({
-            "display": "block"
+            display: "block",
         });
     }
 
@@ -1401,7 +1417,10 @@ inOpsHost.CellIndex = function() {
         l4iStorage.Set("inops_cluster_cell_id", cell_active_id);
     }
 
-    if (cell_active_id && (!inOpsHost.cell_active || inOpsHost.cell_active.meta.id != cell_active_id)) {
+    if (
+        cell_active_id &&
+        (!inOpsHost.cell_active || inOpsHost.cell_active.meta.id != cell_active_id)
+    ) {
         for (var i in inOpsHost.zone_active.cells) {
             if (cell_active_id == inOpsHost.zone_active.cells[i].meta.id) {
                 inOpsHost.cell_active = l4i.Clone(inOpsHost.zone_active.cells[i]);
@@ -1410,8 +1429,11 @@ inOpsHost.CellIndex = function() {
         }
     }
 
-    if (cell_active_id && inOpsHost.cell_active &&
-        cell_active_id == inOpsHost.cell_active.meta.id) {
+    if (
+        cell_active_id &&
+        inOpsHost.cell_active &&
+        cell_active_id == inOpsHost.cell_active.meta.id
+    ) {
         if (inOps.nav_cluster_cell) {
             $("#inops-cluster-nav-cell-value").text("Cell: " + inOpsHost.cell_active.meta.id);
         }
@@ -1419,9 +1441,9 @@ inOpsHost.CellIndex = function() {
     }
 
     inOpsHost.CellList();
-}
+};
 
-inOpsHost.CellList = function(zoneid) {
+inOpsHost.CellList = function (zoneid) {
     if (!inOpsHost.zone_active_fix(zoneid)) {
         return;
     }
@@ -1429,18 +1451,18 @@ inOpsHost.CellList = function(zoneid) {
     l4iStorage.Del("inops_cluster_cell_id");
 
     $("#inops-cluster-nav-host").css({
-        "display": "none"
+        display: "none",
     });
     if (inOps.nav_cluster_zone) {
         $("#inops-cluster-nav-zone").css({
-            "display": "block"
+            display: "block",
         });
         $("#inops-cluster-nav-zone-value").text("Zone: " + inOpsHost.zone_active.meta.id);
     }
 
     if (inOps.nav_cluster_cell) {
         $("#inops-cluster-nav-cell").css({
-            "display": "block"
+            display: "block",
         });
         $("#inops-cluster-nav-cell-value").text("Cells");
     }
@@ -1448,10 +1470,8 @@ inOpsHost.CellList = function(zoneid) {
     l4iStorage.Set("inops_cluster_zone_id", inOpsHost.zone_active.meta.id);
     inOpsHost.cell_active = null;
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", function(tpl) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", function (tpl) {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
@@ -1461,7 +1481,6 @@ inOpsHost.CellList = function(zoneid) {
                 inCp.OpToolsClean();
             }
 
-
             l4iTemplate.Render({
                 dstid: "inops-host-cells",
                 tplid: "inops-host-cells-tpl",
@@ -1470,10 +1489,9 @@ inOpsHost.CellList = function(zoneid) {
                     items: inOpsHost.zone_active.cells,
                 },
             });
-
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -1481,17 +1499,15 @@ inOpsHost.CellList = function(zoneid) {
             callback: ep.done("tpl"),
         });
     });
-}
+};
 
-inOpsHost.CellSet = function(zoneid, cellid) {
+inOpsHost.CellSet = function (zoneid, cellid) {
     if (!inOpsHost.zone_active) {
         return;
     }
     zoneid = inOpsHost.zone_active.meta.id;
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "cell", function(tpl, cell) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "cell", function (tpl, cell) {
             if (!cell) {
                 cell = l4i.Clone(inOpsHost.cell_def);
             }
@@ -1514,18 +1530,21 @@ inOpsHost.CellSet = function(zoneid, cellid) {
                 data: cell,
                 width: 900,
                 height: 400,
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }, {
-                    onclick: "inOpsHost.CellSetCommit()",
-                    title: "Save",
-                    style: "btn btn-primary",
-                }]
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                    {
+                        onclick: "inOpsHost.CellSetCommit()",
+                        title: "Save",
+                        style: "btn btn-primary",
+                    },
+                ],
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -1543,9 +1562,9 @@ inOpsHost.CellSet = function(zoneid, cellid) {
             });
         }
     });
-}
+};
 
-inOpsHost.CellSetCommit = function() {
+inOpsHost.CellSetCommit = function () {
     var form = $("#inops-host-cell-form"),
         alert_id = "#inops-host-cellset-alert";
 
@@ -1562,44 +1581,43 @@ inOpsHost.CellSetCommit = function() {
     inOps.ApiCmd("host/cell-set", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, cell) {
-
+        callback: function (err, cell) {
             if (err || !cell) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Failed");
+                return l4i.InnerAlert(alert_id, "alert-danger", "Failed");
             }
 
             if (!cell) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "alert-danger", "Network Connection Exception");
             }
 
             if (cell.error) {
-                return l4i.InnerAlert(alert_id, 'alert-danger', cell.error.message);
+                return l4i.InnerAlert(alert_id, "alert-danger", cell.error.message);
             }
 
             if (!cell.kind || cell.kind != "HostCell") {
-                return l4i.InnerAlert(alert_id, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "alert-danger", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alert_id, "alert-success", "Successfully Updated");
 
-            inOpsHost.ZoneRefresh(function() {
-                window.setTimeout(function() {
+            inOpsHost.ZoneRefresh(function () {
+                window.setTimeout(function () {
                     l4iModal.Close();
                     inOpsHost.CellList();
                 }, 500);
             }, true);
         },
     });
-}
+};
 
-inOpsHost.ZoneIndex = function() {
+inOpsHost.ZoneIndex = function () {
     if (!inOpsHost.zones) {
         return;
     }
     inCp.ModuleNavbarMenuRefresh("inops-host-nav-tpl");
     if (inOps.nav_cluster_zone) {
         $("#inops-cluster-nav-zone").css({
-            "display": "block"
+            display: "block",
         });
     }
 
@@ -1611,7 +1629,10 @@ inOpsHost.ZoneIndex = function() {
         l4iStorage.Set("inops_cluster_zone_id", zone_active_id);
     }
 
-    if (zone_active_id && (!inOpsHost.zone_active || inOpsHost.zone_active.meta.id != zone_active_id)) {
+    if (
+        zone_active_id &&
+        (!inOpsHost.zone_active || inOpsHost.zone_active.meta.id != zone_active_id)
+    ) {
         for (var i in inOpsHost.zones.items) {
             if (zone_active_id == inOpsHost.zones.items[i].meta.id) {
                 inOpsHost.zone_active = l4i.Clone(inOpsHost.zones.items[i]);
@@ -1620,8 +1641,11 @@ inOpsHost.ZoneIndex = function() {
         }
     }
 
-    if (zone_active_id && inOpsHost.zone_active &&
-        zone_active_id == inOpsHost.zone_active.meta.id) {
+    if (
+        zone_active_id &&
+        inOpsHost.zone_active &&
+        zone_active_id == inOpsHost.zone_active.meta.id
+    ) {
         if (inOps.nav_cluster_zone) {
             $("#inops-cluster-nav-zone-value").text("Zone: " + inOpsHost.zone_active.meta.id);
         }
@@ -1629,10 +1653,9 @@ inOpsHost.ZoneIndex = function() {
     }
 
     inOpsHost.ZoneList();
-}
+};
 
-
-inOpsHost.ZoneList = function() {
+inOpsHost.ZoneList = function () {
     if (!inOpsHost.zones) {
         return;
     }
@@ -1641,22 +1664,20 @@ inOpsHost.ZoneList = function() {
     inOpsHost.zone_active = null;
 
     $("#inops-cluster-nav-host").css({
-        "display": "none"
+        display: "none",
     });
     $("#inops-cluster-nav-cell").css({
-        "display": "none"
+        display: "none",
     });
     if (inOps.nav_cluster_zone) {
         $("#inops-cluster-nav-zone").css({
-            "display": "block"
+            display: "block",
         });
         $("#inops-cluster-nav-zone-value").text("Zones");
     }
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", function(tpl) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", function (tpl) {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
@@ -1673,7 +1694,7 @@ inOpsHost.ZoneList = function() {
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -1731,19 +1752,17 @@ inOpsHost.ZoneList = function() {
     //         callback: ep.done("tpl"),
     //     });
 
-//     inOps.ApiCmd("host/zone-list", {
-//         callback: ep.done("data"),
-//     });
-// });
-}
+    //     inOps.ApiCmd("host/zone-list", {
+    //         callback: ep.done("data"),
+    //     });
+    // });
+};
 
-inOpsHost.ZoneSet = function(zoneid) {
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
-
+inOpsHost.ZoneSet = function (zoneid) {
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
             if (!rsj) {
-                rsj = l4i.Clone(inOpsHost.zone_def)
+                rsj = l4i.Clone(inOpsHost.zone_def);
             }
 
             if (!rsj.kind || rsj.kind != "HostZone") {
@@ -1783,15 +1802,18 @@ inOpsHost.ZoneSet = function(zoneid) {
                 data: rsj,
                 width: 1200,
                 height: 900,
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }, {
-                    onclick: "inOpsHost.ZoneSetCommit()",
-                    title: "Save",
-                    style: "btn btn-primary",
-                }],
-                callback: function() {
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                    {
+                        onclick: "inOpsHost.ZoneSetCommit()",
+                        title: "Save",
+                        style: "btn btn-primary",
+                    },
+                ],
+                callback: function () {
                     if (rsj.lan_addrs.length < 1) {
                         inOpsHost.ZoneLanAddressAppend();
                     }
@@ -1805,7 +1827,7 @@ inOpsHost.ZoneSet = function(zoneid) {
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
         });
 
@@ -1823,45 +1845,45 @@ inOpsHost.ZoneSet = function(zoneid) {
             });
         }
     });
-}
+};
 
-inOpsHost.ZoneWanAddressAppend = function() {
+inOpsHost.ZoneWanAddressAppend = function () {
     l4iTemplate.Render({
         append: true,
         dstid: "inops-host-zoneset-wanaddrs",
         tplid: "inops-host-zoneset-wanaddr-tpl",
     });
-}
+};
 
-inOpsHost.ZoneWanAddressDel = function(field) {
+inOpsHost.ZoneWanAddressDel = function (field) {
     $(field).parent().parent().remove();
-}
+};
 
-inOpsHost.ZoneLanAddressAppend = function() {
+inOpsHost.ZoneLanAddressAppend = function () {
     l4iTemplate.Render({
         append: true,
         dstid: "inops-host-zoneset-lanaddrs",
         tplid: "inops-host-zoneset-lanaddr-tpl",
     });
-}
+};
 
-inOpsHost.ZoneLanAddressDel = function(field) {
+inOpsHost.ZoneLanAddressDel = function (field) {
     $(field).parent().parent().remove();
-}
+};
 
-inOpsHost.ZoneImageServiceAppend = function() {
+inOpsHost.ZoneImageServiceAppend = function () {
     l4iTemplate.Render({
         append: true,
         dstid: "inops-host-zoneset-imageservice",
         tplid: "inops-host-zoneset-imageservice-tpl",
     });
-}
+};
 
-inOpsHost.ZoneImageServiceDel = function(field) {
+inOpsHost.ZoneImageServiceDel = function (field) {
     $(field).parent().parent().remove();
-}
+};
 
-inOpsHost.ZoneSetCommit = function() {
+inOpsHost.ZoneSetCommit = function () {
     var form = $("#inops-host-zone-form"),
         alertid = "#inops-host-zoneset-alert";
 
@@ -1879,9 +1901,7 @@ inOpsHost.ZoneSetCommit = function() {
     };
 
     try {
-
-        form.find(".inops-host-zoneset-wanaddr-item").each(function() {
-
+        form.find(".inops-host-zoneset-wanaddr-item").each(function () {
             var addr = $(this).find("input[name=wan_addr]").val();
 
             if (!addr || addr.length < 7) {
@@ -1891,8 +1911,7 @@ inOpsHost.ZoneSetCommit = function() {
             req.wan_addrs.push(addr);
         });
 
-        form.find(".inops-host-zoneset-lanaddr-item").each(function() {
-
+        form.find(".inops-host-zoneset-lanaddr-item").each(function () {
             var addr = $(this).find("input[name=lan_addr]").val();
 
             if (!addr || addr.length < 7) {
@@ -1902,8 +1921,7 @@ inOpsHost.ZoneSetCommit = function() {
             req.lan_addrs.push(addr);
         });
 
-        form.find(".inops-host-zoneset-imageservice-item").each(function() {
-
+        form.find(".inops-host-zoneset-imageservice-item").each(function () {
             var driver = $(this).find("input[name=image_service_driver]").val();
             var url = $(this).find("input[name=image_service_url]").val();
 
@@ -1917,40 +1935,37 @@ inOpsHost.ZoneSetCommit = function() {
             });
         });
 
-
         if (req.lan_addrs.length < 1) {
             throw "No LAN Address Found";
         }
-
     } catch (err) {
-        return l4i.InnerAlert("#inops-host-zoneset-alert", 'alert-danger', err);
+        return l4i.InnerAlert("#inops-host-zoneset-alert", "alert-danger", err);
     }
 
     inOps.ApiCmd("host/zone-set", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alertid, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alertid, "alert-danger", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alertid, 'alert-danger', rsj.error.message);
+                return l4i.InnerAlert(alertid, "alert-danger", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "HostZone") {
-                return l4i.InnerAlert(alertid, 'alert-danger', "Network Connection Exception");
+                return l4i.InnerAlert(alertid, "alert-danger", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alertid, 'alert-success', "Successfully Updated");
+            l4i.InnerAlert(alertid, "alert-success", "Successfully Updated");
 
-            inOpsHost.ZoneRefresh(function() {
-                window.setTimeout(function() {
+            inOpsHost.ZoneRefresh(function () {
+                window.setTimeout(function () {
                     l4iModal.Close();
                     inOpsHost.ZoneList();
                 }, 500);
             }, true);
         },
     });
-}
+};

@@ -71,70 +71,80 @@ var inCp = {
     ResVolValueAttrSSD: 1 << 5,
     ByteMB: 1024 * 1024,
     ByteGB: 1024 * 1024 * 1024,
-    well_signin_html: '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/in/cp/auth/login" class="btn btn-dark">SIGN IN</a></div>',
-}
+    well_signin_html:
+        '<div>You are not logged in, or your login session has expired. Please sign in.</div><div><a href="/in/cp/auth/login" class="btn btn-dark">SIGN IN</a></div>',
+};
 
-inCp.debug_uri = function() {
+inCp.debug_uri = function () {
     if (!inCp.debug) {
         return "?_=" + inCp.version;
     }
     return "?_=" + Math.random();
-}
+};
 
-inCp.Boot = function(login_first) {
+inCp.Boot = function (login_first) {
     seajs.config({
         base: inCp.base,
         alias: {
-            ep: "~/lessui/js/eventproxy.js"
+            ep: "~/lessui/js/eventproxy.js",
         },
     });
 
-    seajs.use([
-        "~/twbs/4/css/bootstrap.css",
-        "~/jquery/jquery.js" + inCp.debug_uri(),
-        "~/lessui/js/browser-detect.js",
-        "~/fa/css/fa.css",
-    ], function() {
+    seajs.use(
+        [
+            "~/twbs/4/css/bootstrap.css",
+            "~/jquery/jquery.js" + inCp.debug_uri(),
+            "~/lessui/js/browser-detect.js",
+            "~/fa/css/fa.css",
+        ],
+        function () {
+            var browser = BrowserDetect.browser;
+            var version = BrowserDetect.version;
+            var OS = BrowserDetect.OS;
 
-        var browser = BrowserDetect.browser;
-        var version = BrowserDetect.version;
-        var OS = BrowserDetect.OS;
+            if (
+                !(
+                    (browser == "Chrome" && version >= 22) ||
+                    (browser == "Firefox" && version >= 31.0) ||
+                    (browser == "Safari" && version >= 5.0 && OS == "Mac")
+                )
+            ) {
+                $("body").load(inCp.tplbase + "error/browser.tpl");
+                return;
+            }
 
-        if (!((browser == 'Chrome' && version >= 22)
-            || (browser == 'Firefox' && version >= 31.0)
-            || (browser == 'Safari' && version >= 5.0 && OS == 'Mac'))) {
-            $('body').load(inCp.tplbase + "error/browser.tpl");
-            return;
+            if (login_first && login_first === true) {
+                var elem = $("#incp-well-status");
+                elem.removeClass("status_dark");
+                elem.addClass("info");
+                elem.html(inCp.well_signin_html);
+                return;
+            }
+
+            seajs.use(
+                [
+                    "~/lessui/css/base.css" + inCp.debug_uri(),
+                    "~/lessui/js/lessui.js" + inCp.debug_uri(),
+                    "~/cp/css/main.css" + inCp.debug_uri(),
+                    "~/cp/js/host.js" + inCp.debug_uri(),
+                    "~/cp/js/spec.js" + inCp.debug_uri(),
+                    "~/cp/js/pod.js" + inCp.debug_uri(),
+                    "~/cp/js/pod-rep.js" + inCp.debug_uri(),
+                    "~/cp/js/app.js" + inCp.debug_uri(),
+                    "~/cp/js/app-spec.js" + inCp.debug_uri(),
+                    "~/cp/js/res.js" + inCp.debug_uri(),
+                    "~/cp/js/res-domain.js" + inCp.debug_uri(),
+                    "hchart/~/hchart.js" + inCp.debug_uri(),
+                    "ips/~/ips/js/main.js" + inCp.debug_uri(),
+                    "ips/~/ips/css/main.css" + inCp.debug_uri(),
+                ],
+                inCp.load_index
+            );
         }
+    );
+};
 
-        if (login_first && login_first === true) {
-            var elem = $("#incp-well-status");
-            elem.removeClass("status_dark");
-            elem.addClass("info");
-            elem.html(inCp.well_signin_html);
-            return;
-        }
-
-        seajs.use([
-            "~/lessui/css/base.css" + inCp.debug_uri(),
-            "~/lessui/js/lessui.js" + inCp.debug_uri(),
-            "~/cp/css/main.css" + inCp.debug_uri(),
-            "~/cp/js/host.js" + inCp.debug_uri(),
-            "~/cp/js/spec.js" + inCp.debug_uri(),
-            "~/cp/js/pod.js" + inCp.debug_uri(),
-            "~/cp/js/pod-rep.js" + inCp.debug_uri(),
-            "~/cp/js/app.js" + inCp.debug_uri(),
-            "~/cp/js/app-spec.js" + inCp.debug_uri(),
-            "~/cp/js/res.js" + inCp.debug_uri(),
-            "~/cp/js/res-domain.js" + inCp.debug_uri(),
-            "hchart/~/hchart.js" + inCp.debug_uri(),
-            "ips/~/ips/js/main.js" + inCp.debug_uri(),
-            "ips/~/ips/css/main.css" + inCp.debug_uri(),
-        ], inCp.load_index);
-    });
-}
-
-inCp.load_index = function() {
+inCp.load_index = function () {
     l4i.debug = inCp.debug;
     l4i.app_version = inCp.version;
 
@@ -142,84 +152,88 @@ inCp.load_index = function() {
     inpack.option_navpf = "incp";
     hooto_chart.basepath = inCp.base + "/hchart/~/";
 
-    seajs.use(["ep"], function(EventProxy) {
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create(
+            "tpl",
+            "zones",
+            "session",
+            "syscfg",
+            "lang",
+            function (tpl, zones, session, syscfg, lang) {
+                if (lang && lang.items) {
+                    l4i.LangSync(lang.items, lang.locale);
+                }
 
-        var ep = EventProxy.create("tpl", "zones", "session", "syscfg", "lang", function(tpl, zones, session, syscfg, lang) {
+                if (!session || session.username == "") {
+                    return alert("Network Exception, Please try again later (EC:zone-list)");
+                }
+                inCp.UserSession = session;
+                inpack.UserSession = session;
 
-            if (lang && lang.items) {
-                l4i.LangSync(lang.items, lang.locale);
-            }
+                if (!zones.items || zones.items.length == 0) {
+                    return alert("Network Exception, Please try again later (EC:zone-list)");
+                }
+                inCp.Zones = zones;
 
-            if (!session || session.username == "") {
-                return alert("Network Exception, Please try again later (EC:zone-list)");
-            }
-            inCp.UserSession = session;
-            inpack.UserSession = session;
+                //
+                inCp.syscfg.zone_id = syscfg.zone_id;
+                if (syscfg.zone_master) {
+                    inCp.syscfg.zone_master = syscfg.zone_master;
+                }
+                if (syscfg.sys_configs) {
+                    inCp.syscfg.sys_configs = syscfg.sys_configs;
+                }
 
-            if (!zones.items || zones.items.length == 0) {
-                return alert("Network Exception, Please try again later (EC:zone-list)");
-            }
-            inCp.Zones = zones;
+                $("#body-content").html(tpl);
 
-            //
-            inCp.syscfg.zone_id = syscfg.zone_id;
-            if (syscfg.zone_master) {
-                inCp.syscfg.zone_master = syscfg.zone_master;
-            }
-            if (syscfg.sys_configs) {
-                inCp.syscfg.sys_configs = syscfg.sys_configs;
-            }
+                l4iTemplate.Render({
+                    dstid: "incp-topbar",
+                    tplid: "incp-topbar-tpl",
+                    data: {},
+                });
 
-            $("#body-content").html(tpl);
+                l4iTemplate.Render({
+                    dstid: "incp-footer",
+                    tplid: "incp-footer-tpl",
+                    data: {},
+                });
 
-            l4iTemplate.Render({
-                dstid: "incp-topbar",
-                tplid: "incp-topbar-tpl",
-                data: {},
-            });
+                l4iTemplate.Render({
+                    dstid: "incp-topbar-userbar",
+                    tplid: "incp-topbar-user-signed-tpl",
+                    data: inCp.UserSession,
+                    success: function () {
+                        $("#incp-topbar-userbar").hover(
+                            function () {
+                                $("#incp-topbar-user-signed-modal").fadeIn(200);
+                            },
+                            function () {}
+                        );
+                        $("#incp-topbar-user-signed-modal").hover(
+                            function () {},
+                            function () {
+                                $("#incp-topbar-user-signed-modal").fadeOut(200);
+                            }
+                        );
 
-            l4iTemplate.Render({
-                dstid: "incp-footer",
-                tplid: "incp-footer-tpl",
-                data: {},
-            });
-
-            l4iTemplate.Render({
-                dstid: "incp-topbar-userbar",
-                tplid: "incp-topbar-user-signed-tpl",
-                data: inCp.UserSession,
-                success: function() {
-
-                    $("#incp-topbar-userbar").hover(
-                        function() {
-                            $("#incp-topbar-user-signed-modal").fadeIn(200);
-                        },
-                        function() {}
-                    );
-                    $("#incp-topbar-user-signed-modal").hover(
-                        function() {},
-                        function() {
-                            $("#incp-topbar-user-signed-modal").fadeOut(200);
+                        if (inCp.UserSession.username == "sysadmin") {
+                            $("#incp-nav-ops-entry").css({
+                                display: "block",
+                            });
                         }
-                    );
+                    },
+                });
 
-                    if (inCp.UserSession.username == "sysadmin") {
-                        $("#incp-nav-ops-entry").css({
-                            "display": "block"
-                        });
-                    }
-                },
-            });
+                l4i.UrlEventRegister("app/index", inCpApp.Index, "incp-topbar-nav-menus");
+                l4i.UrlEventRegister("pod/index", inCpPod.Index, "incp-topbar-nav-menus");
+                l4i.UrlEventRegister("res/index", inCpRes.Index, "incp-topbar-nav-menus");
+                l4i.UrlEventRegister("ips/index", inpack.Index, "incp-topbar-nav-menus");
 
-            l4i.UrlEventRegister("app/index", inCpApp.Index, "incp-topbar-nav-menus");
-            l4i.UrlEventRegister("pod/index", inCpPod.Index, "incp-topbar-nav-menus");
-            l4i.UrlEventRegister("res/index", inCpRes.Index, "incp-topbar-nav-menus");
-            l4i.UrlEventRegister("ips/index", inpack.Index, "incp-topbar-nav-menus");
+                l4i.UrlEventHandler("pod/index", true);
+            }
+        );
 
-            l4i.UrlEventHandler("pod/index", true);
-        });
-
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             if (err && err == "AuthSession") {
                 inCp.AlertUserLogin();
             } else {
@@ -236,9 +250,9 @@ inCp.load_index = function() {
         });
 
         l4i.Ajax(inCp.base + "auth/session", {
-            callback: function(err, data) {
+            callback: function (err, data) {
                 if (!data || data.kind != "AuthSession") {
-                    return ep.emit('error', "AuthSession");
+                    return ep.emit("error", "AuthSession");
                 }
                 ep.emit("session", data);
             },
@@ -252,49 +266,59 @@ inCp.load_index = function() {
             callback: ep.done("tpl"),
         });
     });
-}
+};
 
+inCp.AlertUserLogin = function () {
+    l4iAlert.Open(
+        "warn",
+        "You are not logged in, or your login session has expired. Please sign in again",
+        {
+            close: false,
+            buttons: [
+                {
+                    title: "SIGN IN",
+                    href: inCp.base + "auth/login",
+                    style: "btn-outline-secondary",
+                },
+            ],
+        }
+    );
+};
 
-inCp.AlertUserLogin = function() {
-    l4iAlert.Open("warn", "You are not logged in, or your login session has expired. Please sign in again", {
-        close: false,
-        buttons: [{
-            title: "SIGN IN",
-            href: inCp.base + "auth/login",
-            style: "btn-outline-secondary",
-        }],
-    });
-}
-
-inCp.AlertAccessDenied = function() {
+inCp.AlertAccessDenied = function () {
     l4iAlert.Open("warn", "Access Denied", {
         close: false,
-        buttons: [{
-            title: "Close",
-            onclick: "l4iAlert.Close()",
-            style: "btn-outline-secondary",
-        }],
+        buttons: [
+            {
+                title: "Close",
+                onclick: "l4iAlert.Close()",
+                style: "btn-outline-secondary",
+            },
+        ],
     });
-}
+};
 
-inCp.ApiCmd = function(url, options) {
+inCp.ApiCmd = function (url, options) {
     var appcb = null;
     if (options.callback) {
         appcb = options.callback;
     }
-    options._url = url.replace(/^\/|\s+$/g, '');
+    options._url = url.replace(/^\/|\s+$/g, "");
 
     if (inCp.Zones && options.api_zone_id && inCp.zone_id && options.api_zone_id != inCp.zone_id) {
         for (var i in inCp.Zones.items) {
-            if (inCp.Zones.items[i].meta.id == options.api_zone_id &&
-                inCp.Zones.items[i].wan_api && inCp.Zones.items[i].wan_api.length > 10) {
+            if (
+                inCp.Zones.items[i].meta.id == options.api_zone_id &&
+                inCp.Zones.items[i].wan_api &&
+                inCp.Zones.items[i].wan_api.length > 10
+            ) {
                 options._zburl = "zonebound/" + options.api_zone_id + "/" + options._url;
                 break;
             }
         }
     }
 
-    options.callback = function(err, data) {
+    options.callback = function (err, data) {
         if (err == "Unauthorized") {
             return inCp.AlertUserLogin();
         }
@@ -304,42 +328,42 @@ inCp.ApiCmd = function(url, options) {
         } else if (appcb) {
             appcb(err, data);
         }
-    }
+    };
 
     if (options._zburl) {
         l4i.Ajax(inCp.api + options._zburl, options);
     } else {
         l4i.Ajax(inCp.api + options._url, options);
     }
-}
+};
 
-inCp.TplPath = function(url) {
+inCp.TplPath = function (url) {
     return inCp.tplbase + url + ".tpl";
-}
+};
 
-inCp.TplFetch = function(url, options) {
+inCp.TplFetch = function (url, options) {
     l4i.Ajax(inCp.TplPath(url), options);
-}
+};
 
-inCp.Loader = function(target, uri) {
+inCp.Loader = function (target, uri) {
     l4i.Ajax(inCp.tplbase + uri + ".tpl", {
-        callback: function(err, data) {
+        callback: function (err, data) {
             if (!err) {
                 $("#" + target).html(data);
             }
-        }
+        },
     });
-}
+};
 
-inCp.CompLoader = function(uri) {
+inCp.CompLoader = function (uri) {
     inCp.Loader("comp-content", uri);
-}
+};
 
-inCp.WorkLoader = function(uri) {
+inCp.WorkLoader = function (uri) {
     inCp.Loader("work-content", uri);
-}
+};
 
-inCp.UtilResSizeFormat = function(size, tofix) {
+inCp.UtilResSizeFormat = function (size, tofix) {
     var ms = [
         [7, "ZB"],
         [6, "EB"],
@@ -367,10 +391,9 @@ inCp.UtilResSizeFormat = function(size, tofix) {
     }
 
     return size + " B";
-}
+};
 
-inCp.ModuleNavbarMenu = function(name, items, active) {
-
+inCp.ModuleNavbarMenu = function (name, items, active) {
     if (!items || items.length < 1) {
         // $("#incp-module-navbar").remove();
         return;
@@ -379,11 +402,13 @@ inCp.ModuleNavbarMenu = function(name, items, active) {
 
     var elem = document.getElementById("incp-module-navbar-menus");
     if (!elem) {
-        $("#comp-content").html("<div id='incp-module-navbar'>\
+        $("#comp-content").html(
+            "<div id='incp-module-navbar'>\
   <ul id='incp-module-navbar-menus' class='incp-module-nav'></ul>\
   <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
 </div>\
-<div id='work-content'></div>");
+<div id='work-content'></div>"
+        );
         inCp.module_navbar_menu_active = null;
     }
 
@@ -404,21 +429,31 @@ inCp.ModuleNavbarMenu = function(name, items, active) {
             items[i].style += " active";
         }
         if (items[i].onclick) {
-            items[i]._onclick = "onclick=\"" + items[i].onclick + "\"";
+            items[i]._onclick = 'onclick="' + items[i].onclick + '"';
         } else {
             items[i]._onclick = "";
         }
         var icon = "";
         if (items[i].icon_fa) {
-            icon = "<span class=\"fa fa-" + items[i].icon_fa + "\"></span> ";
+            icon = '<span class="fa fa-' + items[i].icon_fa + '"></span> ';
         }
-        html += "<li><a class='l4i-nav-item " + items[i].style + "' href='#" + items[i].uri + "' " + items[i]._onclick + ">" + icon + items[i].name + "</a></li>";
+        html +=
+            "<li><a class='l4i-nav-item " +
+            items[i].style +
+            "' href='#" +
+            items[i].uri +
+            "' " +
+            items[i]._onclick +
+            ">" +
+            icon +
+            items[i].name +
+            "</a></li>";
     }
     $("#incp-module-navbar-menus").html(html);
     l4i.UrlEventClean("incp-module-navbar-menus");
-}
+};
 
-inCp.ModuleNavbarMenuRefresh = function(div_target, cb) {
+inCp.ModuleNavbarMenuRefresh = function (div_target, cb) {
     if (!div_target) {
         return;
     }
@@ -432,15 +467,15 @@ inCp.ModuleNavbarMenuRefresh = function(div_target, cb) {
     if (cb && typeof cb === "function") {
         cb(null);
     }
-}
+};
 
-inCp.OpToolsRefresh = function(div_target, cb) {
+inCp.OpToolsRefresh = function (div_target, cb) {
     if (!div_target) {
         return;
     }
 
     if (!cb || typeof cb !== "function") {
-        cb = function() {};
+        cb = function () {};
     }
 
     if (typeof div_target == "string" && div_target == inCp.OpToolActive) {
@@ -453,7 +488,6 @@ inCp.OpToolsRefresh = function(div_target, cb) {
 
     // $("#incp-module-navbar-optools").empty();
     if (typeof div_target == "string") {
-
         var opt = $("#comp-content").find(div_target);
         if (opt) {
             // $("#incp-module-navbar-optools").html(opt.html());
@@ -466,33 +500,27 @@ inCp.OpToolsRefresh = function(div_target, cb) {
             inCp.OpToolActive = div_target;
         }
     }
-}
+};
 
-inCp.OpToolsClean = function() {
+inCp.OpToolsClean = function () {
     $("#incp-module-navbar-optools").html("");
     inCp.OpToolActive = null;
-}
+};
 
-inCp.CodeRender = function() {
-    seajs.use([
-        "~/hl/highlight.pack.js",
-        "~/hl/styles/arta.css",
-    ], function() {
-
-        $("pre code").each(function(i, block) {
+inCp.CodeRender = function () {
+    seajs.use(["~/hl/highlight.pack.js", "~/hl/styles/arta.css"], function () {
+        $("pre code").each(function (i, block) {
             hljs.highlightBlock(block);
         });
     });
 
     return;
-    $("code[class^='language-']").each(function(i, el) {
-
+    $("code[class^='language-']").each(function (i, el) {
         var lang = el.className.substr("language-".length);
 
         var modes = [];
 
         switch (lang) {
-
             case "shell":
                 modes.push("~/cm/5/mode/" + lang + "/" + lang + ".js");
                 break;
@@ -501,31 +529,26 @@ inCp.CodeRender = function() {
                 return;
         }
 
-        seajs.use([
-            "~/cm/5/lib/codemirror.css",
-            "~/cm/5/lib/codemirror.js",
-            "~/cm/5/theme/monokai.css",
-        ],
-            function() {
-
+        seajs.use(
+            ["~/cm/5/lib/codemirror.css", "~/cm/5/lib/codemirror.js", "~/cm/5/theme/monokai.css"],
+            function () {
                 modes.push("~/cm/5/addon/runmode/runmode.js");
                 modes.push("~/cm/5/mode/clike/clike.js");
 
-                seajs.use(modes, function() {
-
+                seajs.use(modes, function () {
                     // $(el).addClass('cm-s-monokai CodeMirror'); // apply a theme class
                     CodeMirror.runMode($(el).text(), lang, $(el)[0], {
                         theme: "monokai",
                     });
                 });
-            });
+            }
+        );
     });
-}
+};
 
 inCp.codeEditorInstances = {};
 
-inCp.CodeEditor = function(id, lang, options) {
-
+inCp.CodeEditor = function (id, lang, options) {
     var elem = document.getElementById(id);
     if (!elem) {
         return;
@@ -578,46 +601,43 @@ inCp.CodeEditor = function(id, lang, options) {
         options.width = "100%";
     }
 
-    seajs.use([
-        "~/cm/5/lib/codemirror.css",
-        "~/cm/5/lib/codemirror.js",
-        "~/cm/5/theme/monokai.css",
-    ], function() {
+    seajs.use(
+        ["~/cm/5/lib/codemirror.css", "~/cm/5/lib/codemirror.js", "~/cm/5/theme/monokai.css"],
+        function () {
+            seajs.use(modes, function () {
+                inCp.codeEditorInstances[id] = CodeMirror.fromTextArea(elem, {
+                    mode: lang,
+                    lineNumbers: options.showLineNumber,
+                    theme: options.theme,
+                    lineWrapping: true,
+                    styleActiveLine: true,
+                    readOnly: options.readOnly,
+                });
 
-        seajs.use(modes, function() {
+                if (options.numberLines) {
+                    var lh = inCp.codeEditorInstances[id].defaultTextHeight() + 1;
+                    options.height = options.numberLines * lh;
+                }
 
-            inCp.codeEditorInstances[id] = CodeMirror.fromTextArea(elem, {
-                mode: lang,
-                lineNumbers: options.showLineNumber,
-                theme: options.theme,
-                lineWrapping: true,
-                styleActiveLine: true,
-                readOnly: options.readOnly,
+                if (!options.height) {
+                    options.height = 100;
+                }
+
+                inCp.codeEditorInstances[id].setSize(options.width, options.height);
             });
+        }
+    );
+};
 
-            if (options.numberLines) {
-                var lh = inCp.codeEditorInstances[id].defaultTextHeight() + 1;
-                options.height = options.numberLines * lh
-            }
-
-            if (!options.height) {
-                options.height = 100;
-            }
-
-            inCp.codeEditorInstances[id].setSize(options.width, options.height);
-        });
-    });
-}
-
-inCp.CodeEditorValue = function(id) {
+inCp.CodeEditorValue = function (id) {
     var editor = inCp.codeEditorInstances[id];
     if (!editor) {
         return null;
     }
     return editor.getValue();
-}
+};
 
-inCp.ArrayStringHas = function(ar, v) {
+inCp.ArrayStringHas = function (ar, v) {
     if (!ar || !v) {
         return false;
     }
@@ -629,9 +649,9 @@ inCp.ArrayStringHas = function(ar, v) {
     }
 
     return false;
-}
+};
 
-inCp.ArrayLabelHas = function(ar, name, value) {
+inCp.ArrayLabelHas = function (ar, name, value) {
     if (!ar || !name) {
         return false;
     }
@@ -648,7 +668,33 @@ inCp.ArrayLabelHas = function(ar, name, value) {
     }
 
     return false;
-}
+};
+
+inCp.CopyToClipboard = function (id) {
+    var textToCopy = document.getElementById(id);
+    if (!textToCopy) {
+        return;
+    }
+
+    var currentRange;
+    if (document.getSelection().rangeCount > 0) {
+        currentRange = document.getSelection().getRangeAt(0);
+        window.getSelection().removeRange(currentRange);
+    } else {
+        currentRange = false;
+    }
+
+    var CopyRange = document.createRange();
+    CopyRange.selectNode(textToCopy);
+    window.getSelection().addRange(CopyRange);
+    document.execCommand("copy");
+
+    window.getSelection().removeRange(CopyRange);
+
+    if (currentRange) {
+        window.getSelection().addRange(currentRange);
+    }
+};
 
 /*
 inCp.ArrayUint32MatchAny = function(ar, ar2)
@@ -669,7 +715,7 @@ inCp.ArrayUint32MatchAny = function(ar, ar2)
 }
 */
 
-inCp.OpActionStatusItem = function(action) {
+inCp.OpActionStatusItem = function (action) {
     var action = parseInt(action);
     for (var i in inCp.OpActionStatus) {
         if (inCp.OpActionAllow(action, inCp.OpActionStatus[i].action)) {
@@ -677,9 +723,9 @@ inCp.OpActionStatusItem = function(action) {
         }
     }
     return null;
-}
+};
 
-inCp.OpActionItem = function(op_action) {
+inCp.OpActionItem = function (op_action) {
     op_action = parseInt(op_action);
     for (var i in inCp.OpActions) {
         if (inCp.OpActionAllow(op_action, inCp.OpActionDestroy)) {
@@ -690,40 +736,41 @@ inCp.OpActionItem = function(op_action) {
         }
     }
     return null;
-}
+};
 
-inCp.OpActionTitle = function(op_action) {
+inCp.OpActionTitle = function (op_action) {
     var item = inCp.OpActionItem(op_action);
     if (item) {
         return item.title;
     }
     return "";
-}
+};
 
-inCp.OpActionAllow = function(opbase, action) {
+inCp.OpActionAllow = function (opbase, action) {
     if ((opbase & action) == action) {
         return true;
     }
     return false;
-}
+};
 
-inCp.About = function() {
-    seajs.use(["ep"], function(EventProxy) {
-        var ep = EventProxy.create("tpl", function(tpl) {
-
+inCp.About = function () {
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", function (tpl) {
             l4iModal.Open({
                 title: "System Info",
                 tplsrc: tpl,
                 width: 900,
                 height: 500,
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }],
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                ],
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("Network Connection Error, Please try again later (EC:incp-pod)");
         });
 
@@ -731,14 +778,13 @@ inCp.About = function() {
             callback: ep.done("tpl"),
         });
     });
-}
+};
 
-inCp.NavBack = function(fn) {
-
+inCp.NavBack = function (fn) {
     if (fn && typeof fn === "function") {
         inCp.nav_back = fn;
         $("#incp-navbar-back").css({
-            "display": "block"
+            display: "block",
         });
         return;
     }
@@ -747,12 +793,12 @@ inCp.NavBack = function(fn) {
         inCp.nav_back();
         inCp.nav_back = null;
         $("#incp-navbar-back").css({
-            "display": "nono"
+            display: "nono",
         });
     }
-}
+};
 
-inCp.TimeUptime = function(sec) {
+inCp.TimeUptime = function (sec) {
     var s = [];
 
     var d = parseInt(sec / 86400);
@@ -788,9 +834,9 @@ inCp.TimeUptime = function(sec) {
     s.push(s2.join(":"));
 
     return s.join(", ");
-}
+};
 
-inCp.SysConfigValue = function(group_name, item_name) {
+inCp.SysConfigValue = function (group_name, item_name) {
     for (var i in inCp.syscfg.sys_configs) {
         if (inCp.syscfg.sys_configs[i].name != group_name) {
             continue;
@@ -803,13 +849,12 @@ inCp.SysConfigValue = function(group_name, item_name) {
         break;
     }
     return null;
-}
+};
 
-inCp.SysConfigValueIf = function(group_name, item_name, if_str) {
+inCp.SysConfigValueIf = function (group_name, item_name, if_str) {
     var v = inCp.SysConfigValue(group_name, item_name);
     if (v) {
         return v;
     }
     return if_str;
-}
-
+};

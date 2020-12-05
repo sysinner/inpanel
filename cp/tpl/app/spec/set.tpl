@@ -2,24 +2,27 @@
 
 <div id="incp-app-specset" class="incp-div-light" style="box-sizing: border-box;">loading</div>
 <style>
-#incp-app-specset .btn-sm {
-  padding: 3px 10px;
-  font-size: 12px;
-  line-height: 120%;
-}
-#incp-app-specset button.icon-x20 {
-  padding: 0px;
-  width: 22px;
-  height: 22px;
-  font-size: 11px;
-  text-align: center;
-}
-#incp-app-specset th {
-  font-weight: normal;
-}
-#incp-app-specset .card-body {
-  padding: 0 10px;
-}
+  #incp-app-specset .btn-sm {
+    padding: 3px 10px;
+    font-size: 12px;
+    line-height: 120%;
+  }
+
+  #incp-app-specset button.icon-x20 {
+    padding: 0px;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    text-align: center;
+  }
+
+  #incp-app-specset th {
+    font-weight: normal;
+  }
+
+  #incp-app-specset .card-body {
+    padding: 0 10px;
+  }
 </style>
 <script id="incp-app-specset-raw-tpl" type="text/html">
 <div class="card">
@@ -389,6 +392,13 @@
   </td>
 </tr>
 
+<tr>
+  <td>Allowed Runtime Images</td>
+  <td></td>
+  <td>
+    <input type="text" class="form-control form-control-sm" name="runtime_images" value="{[=it.spec.runtime_images.join(',')]}">
+  </td>
+</tr>
 
 <tr>
   <td>Allowed Roles</td>

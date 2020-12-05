@@ -3,14 +3,14 @@ var inCpApp = {
         kind: "App",
         meta: {
             id: "",
-            name: ""
+            name: "",
         },
         spec: {
             meta: {
                 id: null,
                 name: null,
-                version: null
-            }
+                version: null,
+            },
         },
         operate: {
             pod_id: null,
@@ -29,10 +29,11 @@ var inCpApp = {
     instDeployActive: null,
     list_options: {},
     listActives: null,
-}
+};
 
-inCpApp.Index = function() {
-    var divstr = "<div id='incp-module-navbar'>\
+inCpApp.Index = function () {
+    var divstr =
+        "<div id='incp-module-navbar'>\
   <ul id='incp-module-navbar-menus' class='incp-module-nav'>\
     <li><a class='l4i-nav-item' href='#app/inst/list'>App Instances</a></li>\
     <li><a class='l4i-nav-item' href='#app/spec/list'>AppSpec Center</a></li>\
@@ -40,7 +41,6 @@ inCpApp.Index = function() {
   <ul id='incp-module-navbar-optools' class='incp-module-nav incp-nav-right'></ul>\
 </div>\
 <div id='work-content'></div>";
-
 
     $("#comp-content").html(divstr);
 
@@ -50,18 +50,19 @@ inCpApp.Index = function() {
 
     inCpApp.list_options = {};
     l4i.UrlEventHandler("app/inst/list", true);
-}
+};
 
-inCpApp.InstLaunchNew = function() {
+inCpApp.InstLaunchNew = function () {
     l4i.UrlEventHandler("app/spec/list");
-}
+};
 
-inCpApp.InstListRefresh = function(options) {
+inCpApp.InstListRefresh = function (options) {
     var uri = "?";
     if (document.getElementById("qry_text")) {
         uri += "qry_text=" + $("#qry_text").val();
     }
-    uri += "&fields=meta/id|name|user|updated,spec/meta/id|name|version,operate/action|pod_id,operate/options/name";
+    uri +=
+        "&fields=meta/id|name|user|updated,spec/meta/id|name|version,operate/action|pod_id,operate/options/name";
 
     var alert_id = "#incp-appls-alert";
 
@@ -80,10 +81,8 @@ inCpApp.InstListRefresh = function(options) {
         uri += "&filter_meta_user=all";
     }
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
             if (tpl) {
                 $("#work-content").html(tpl);
             }
@@ -94,19 +93,20 @@ inCpApp.InstListRefresh = function(options) {
                 inCp.OpToolsRefresh("#incp-appls-optools");
             }
 
-            if (!rsj || rsj.kind != "AppList"
-                || !rsj.items || rsj.items.length < 1) {
-                return l4i.InnerAlert(alert_id, 'alert-info', "Item Not Found");
+            if (!rsj || rsj.kind != "AppList" || !rsj.items || rsj.items.length < 1) {
+                return l4i.InnerAlert(alert_id, "alert-info", "Item Not Found");
             }
             $(alert_id).css({
-                "display": "node"
+                display: "node",
             });
 
             options.owner_column = false;
 
             for (var i in rsj.items) {
-
-                if (options.owner_column === false && rsj.items[i].meta.user != inCp.UserSession.username) {
+                if (
+                    options.owner_column === false &&
+                    rsj.items[i].meta.user != inCp.UserSession.username
+                ) {
                     options.owner_column = true;
                 }
                 if (!rsj.items[i].operate.pod_id || rsj.items[i].operate.pod_id.length < 8) {
@@ -132,7 +132,7 @@ inCpApp.InstListRefresh = function(options) {
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             // TODO
             alert("SpecListRefresh error, Please try again later (EC:app-speclist)");
         });
@@ -141,14 +141,13 @@ inCpApp.InstListRefresh = function(options) {
         var el = document.getElementById("incp-appls");
         if (!el || el.length < 1) {
             inCp.TplFetch("app/inst/list", {
-                callback: function(err, tpl) {
-
+                callback: function (err, tpl) {
                     if (err) {
-                        return ep.emit('error', err);
+                        return ep.emit("error", err);
                     }
 
                     ep.emit("tpl", tpl);
-                }
+                },
             });
         } else {
             ep.emit("tpl", null);
@@ -162,7 +161,7 @@ inCpApp.InstListRefresh = function(options) {
             callback: ep.done("data"),
         });
     });
-}
+};
 
 /*
 inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
@@ -211,16 +210,13 @@ inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
 }
 */
 
-
-inCpApp.OpOptInfo = function(app_id) {
+inCpApp.OpOptInfo = function (app_id) {
     var alert_id = "#incp-appinst-opopt-info-alert";
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "data", function(tpl, rsj) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "data", function (tpl, rsj) {
             if (!rsj || rsj.kind != "App") {
-                return l4i.InnerAlert(alert_id, 'alert-info', "Item Not Found");
+                return l4i.InnerAlert(alert_id, "alert-info", "Item Not Found");
             }
 
             if (!rsj.operate.options) {
@@ -233,14 +229,13 @@ inCpApp.OpOptInfo = function(app_id) {
                 height: 1000,
                 tplsrc: tpl,
                 data: rsj,
-                callback: function(err, data) {
+                callback: function (err, data) {
                     for (var i in rsj.operate.options) {
                         var opt = rsj.operate.options[i];
                         for (var j in opt.items) {
                             var type = opt.items[j].type;
 
                             if (type && type >= 300 && type <= 399) {
-
                                 var value = opt.items[j].value;
                                 var fnType = inCpAppSpec.CfgFieldTypeFetch(type);
 
@@ -258,23 +253,29 @@ inCpApp.OpOptInfo = function(app_id) {
                                 }
 
                                 if (fnType && fnType.lang) {
-                                    inCp.CodeEditor("op_fn_" + opt.name + "_" + opt.items[j].name, fnType.lang, {
-                                        numberLines: textRows,
-                                        readOnly: true,
-                                    });
+                                    inCp.CodeEditor(
+                                        "op_fn_" + opt.name + "_" + opt.items[j].name,
+                                        fnType.lang,
+                                        {
+                                            numberLines: textRows,
+                                            readOnly: true,
+                                        }
+                                    );
                                 }
                             }
                         }
                     }
                 },
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }],
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                ],
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             // TODO
             alert("SpecListRefresh error, Please try again later (EC:app-speclist)");
         });
@@ -287,13 +288,11 @@ inCpApp.OpOptInfo = function(app_id) {
             callback: ep.done("data"),
         });
     });
-}
-
+};
 
 inCpApp.instConfiguratorCallback = null;
 
-inCpApp.instConfigurator = function(cb) {
-
+inCpApp.instConfigurator = function (cb) {
     if (cb && typeof cb === "function" && !inCpApp.instConfiguratorCallback) {
         inCpApp.instConfiguratorCallback = cb;
     }
@@ -311,17 +310,17 @@ inCpApp.instConfigurator = function(cb) {
     }
 
     for (var i in inCpApp.instDeployActive.spec.depends) {
-
         if (inCpApp.instDeployActive.spec.depends[i]._setid) {
             continue;
         }
-        inCpApp.instDeployActive.spec.depends[i]._setid = inCpApp.instDeployActive.spec.depends[i].id;
+        inCpApp.instDeployActive.spec.depends[i]._setid =
+            inCpApp.instDeployActive.spec.depends[i].id;
 
         var url = "app-spec/entry?id=" + inCpApp.instDeployActive.spec.depends[i].id;
         url += "&version=" + inCpApp.instDeployActive.spec.depends[i].version;
 
         return inCp.ApiCmd(url, {
-            callback: function(err, data) {
+            callback: function (err, data) {
                 if (err) {
                     return alert(err); // TODO
                 }
@@ -335,19 +334,25 @@ inCpApp.instConfigurator = function(cb) {
         });
     }
 
-    if (inCpApp.instDeployActive.spec.dep_remotes &&
+    if (
+        inCpApp.instDeployActive.spec.dep_remotes &&
         inCpApp.instDeployActive.spec.dep_remotes.length > 0 &&
-        !inCpApp.instDeployActive.spec.dep_remotes_setid) {
+        !inCpApp.instDeployActive.spec.dep_remotes_setid
+    ) {
         inCpApp.instDeployActive.spec.dep_remotes_setid = inCpApp.instDeployActive.spec.meta.id;
         return inCpApp.instConfigDepRemotes(inCpApp.instDeployActive.spec.meta.id);
     }
 
-    if (inCpApp.instDeployActive.spec.configurator &&
-        !inCpApp.instDeployActive.spec.configurator._setid) {
+    if (
+        inCpApp.instDeployActive.spec.configurator &&
+        !inCpApp.instDeployActive.spec.configurator._setid
+    ) {
         inCpApp.instDeployActive.spec.configurator._setid = inCpApp.instDeployActive.spec.meta.id;
-        return inCpApp.instConfiguratorEntry(inCpApp.instDeployActive.spec.configurator, inCpApp.instDeployActive.spec.meta.id);
+        return inCpApp.instConfiguratorEntry(
+            inCpApp.instDeployActive.spec.configurator,
+            inCpApp.instDeployActive.spec.meta.id
+        );
     }
-
 
     for (var i in inCpApp.instDeployActive.spec.depends) {
         inCpApp.instDeployActive.spec.depends[i]._setid = null;
@@ -360,13 +365,12 @@ inCpApp.instConfigurator = function(cb) {
 
     inCpApp.instDeployActive = null;
     inCpApp.instConfiguratorCallback = null;
-}
+};
 
 inCpApp.instConfigDepRemotesActive = null;
 inCpApp.instConfigDepRemotesBinds = null;
 
-inCpApp.instConfigDepRemotes = function(spec_id) {
-
+inCpApp.instConfigDepRemotes = function (spec_id) {
     if (!inCpApp.instDeployActive.operate.services) {
         inCpApp.instDeployActive.operate.services = [];
     }
@@ -390,7 +394,9 @@ inCpApp.instConfigDepRemotes = function(spec_id) {
                 depRemotes[j]._binds.push({
                     app_id: inCpApp.instDeployActive.operate.services[i].app_id,
                     pod_id: inCpApp.instDeployActive.operate.services[i].pod_id,
-                    hash_id: l4iString.CryptoMd5(depRemotes[j].id + ":" + inCpApp.instDeployActive.operate.services[i].app_id),
+                    hash_id: l4iString.CryptoMd5(
+                        depRemotes[j].id + ":" + inCpApp.instDeployActive.operate.services[i].app_id
+                    ),
                 });
             }
         }
@@ -409,7 +415,10 @@ inCpApp.instConfigDepRemotes = function(spec_id) {
             }
             var hit = false;
             for (var k in depRemotes[j]._binds) {
-                if (depRemotes[j]._binds[k].app_id == inCpApp.instDeployActive.operate.options[i].ref.app_id) {
+                if (
+                    depRemotes[j]._binds[k].app_id ==
+                    inCpApp.instDeployActive.operate.options[i].ref.app_id
+                ) {
                     hit = true;
                     break;
                 }
@@ -420,7 +429,9 @@ inCpApp.instConfigDepRemotes = function(spec_id) {
             depRemotes[j]._binds.push({
                 app_id: inCpApp.instDeployActive.operate.options[i].ref.app_id,
                 pod_id: inCpApp.instDeployActive.operate.options[i].ref.pod_id,
-                hash_id: l4iString.CryptoMd5(depRemotes[j].id + ":" + inCpApp.instDeployActive.operate.options[i].ref.app_id),
+                hash_id: l4iString.CryptoMd5(
+                    depRemotes[j].id + ":" + inCpApp.instDeployActive.operate.options[i].ref.app_id
+                ),
             });
         }
     }
@@ -433,36 +444,35 @@ inCpApp.instConfigDepRemotes = function(spec_id) {
         width: 1600,
         height: 800,
         tpluri: inCp.TplPath("app/inst/cfg-wizard-depremotes"),
-        callback: function(err, data) {
-
+        callback: function (err, data) {
             l4iTemplate.Render({
                 dstid: "incp-appinst-cfg-wizard-depremotes",
                 tplid: "incp-appinst-cfg-wizard-depremotes-tpl",
                 data: {
                     dep_remotes: depRemotes,
-                }
+                },
             });
         },
-        buttons: [{
-            onclick: "l4iModal.Close()",
-            title: "Close",
-        }, {
-            onclick: "inCpApp.instConfigDepRemotesCommit()",
-            title: "Next",
-            style: "btn-primary",
-        }],
+        buttons: [
+            {
+                onclick: "l4iModal.Close()",
+                title: "Close",
+            },
+            {
+                onclick: "inCpApp.instConfigDepRemotesCommit()",
+                title: "Next",
+                style: "btn-primary",
+            },
+        ],
     });
-}
+};
 
-
-inCpApp.InstConfigDepRemoteSelect = function(spec_id) {
-
+inCpApp.InstConfigDepRemoteSelect = function (spec_id) {
     if (!spec_id) {
         return;
     }
 
-    inCpApp.InstConfigWizardAppBound(spec_id, function(err, select_item) {
-
+    inCpApp.InstConfigWizardAppBound(spec_id, function (err, select_item) {
         for (var i in inCpApp.instConfigDepRemotesBinds) {
             if (inCpApp.instConfigDepRemotesBinds[i].id != spec_id) {
                 continue;
@@ -472,7 +482,7 @@ inCpApp.InstConfigDepRemoteSelect = function(spec_id) {
             }
             for (var j in inCpApp.instConfigDepRemotesBinds[i]._binds) {
                 if (inCpApp.instConfigDepRemotesBinds[i]._binds[j].app_id == select_item) {
-                    return
+                    return;
                 }
             }
             inCpApp.instConfigDepRemotesBinds[i]._binds.push({
@@ -493,10 +503,9 @@ inCpApp.InstConfigDepRemoteSelect = function(spec_id) {
             },
         });
     });
-}
+};
 
-inCpApp.instConfigDepRemoteDel = function(field, spec_id, app_id) {
-
+inCpApp.instConfigDepRemoteDel = function (field, spec_id, app_id) {
     if (!inCpApp.instConfigDepRemotesActive) {
         return;
     }
@@ -504,8 +513,10 @@ inCpApp.instConfigDepRemoteDel = function(field, spec_id, app_id) {
     $(field).parent().parent().remove();
 
     for (var i in inCpApp.instConfigDepRemotesBinds) {
-        if (inCpApp.instConfigDepRemotesBinds[i].id != spec_id ||
-            !inCpApp.instConfigDepRemotesBinds[i]._binds) {
+        if (
+            inCpApp.instConfigDepRemotesBinds[i].id != spec_id ||
+            !inCpApp.instConfigDepRemotesBinds[i]._binds
+        ) {
             continue;
         }
         for (var j in inCpApp.instConfigDepRemotesBinds[i]._binds) {
@@ -516,11 +527,9 @@ inCpApp.instConfigDepRemoteDel = function(field, spec_id, app_id) {
         }
         break;
     }
-}
+};
 
-
-inCpApp.instConfigDepRemotesCommit = function() {
-
+inCpApp.instConfigDepRemotesCommit = function () {
     if (!inCpApp.instConfigDepRemotesActive) {
         return;
     }
@@ -534,13 +543,10 @@ inCpApp.instConfigDepRemotesCommit = function() {
     var req = {
         id: inCpApp.instDeployActive.meta.id,
         dep_remotes: [],
-    }
+    };
 
     try {
-
-
         if (inCpApp.instConfigDepRemotesActive == inCpApp.instDeployActive.spec.meta.id) {
-
             for (var i in inCpApp.instConfigDepRemotesBinds) {
                 if (!inCpApp.instConfigDepRemotesBinds[i]._binds) {
                     continue;
@@ -554,32 +560,29 @@ inCpApp.instConfigDepRemotesCommit = function() {
                 }
             }
         }
-
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return l4i.InnerAlert(alert_id, "error", err);
     }
-
 
     inCp.ApiCmd("app/config-rep-remotes", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppInstConfig") {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 l4i.InnerAlert(alert_id, "");
                 if (inCpApp.instConfiguratorCallback) {
                     inCpApp.instConfigurator();
@@ -587,15 +590,11 @@ inCpApp.instConfigDepRemotesCommit = function() {
             }, 300);
         },
     });
-}
+};
 
 inCpApp.instConfiguratorEntryActive = null;
-inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
-
-    if (configurator &&
-        configurator.fields &&
-        configurator.fields.length > 0) {
-
+inCpApp.instConfiguratorEntry = function (configurator, spec_id) {
+    if (configurator && configurator.fields && configurator.fields.length > 0) {
         inCpApp.instConfiguratorEntryActive = configurator;
         inCpApp.instConfiguratorEntryActive.spec_id = spec_id;
 
@@ -612,14 +611,13 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
             option = {
                 name: configurator.name,
                 items: [],
-            }
+            };
         } else if (!option.items) {
             option.items = [];
         }
 
         var editors = [];
         for (var i in configurator.fields) {
-
             var type = configurator.fields[i].type;
             var name = configurator.fields[i].name;
             var auto_fill = configurator.fields[i].auto_fill;
@@ -627,7 +625,6 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
             var textRows = 4;
 
             for (var j in option.items) {
-
                 if (option.items[j].name == name) {
                     value = option.items[j].value;
                     break;
@@ -659,7 +656,6 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
             var fnType = inCpAppSpec.CfgFieldTypeFetch(type);
 
             if (fnType && type >= 300 && type <= 399) {
-
                 if (value.length > 10) {
                     var arr = value.match(/\n/g);
                     if (arr) {
@@ -672,10 +668,10 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
                     }
                 }
                 editors.push({
-                    "name": name,
-                    "lang": fnType.lang,
-                    "line": textRows,
-                    "readOnly": readOnly,
+                    name: name,
+                    lang: fnType.lang,
+                    line: textRows,
+                    readOnly: readOnly,
                 });
                 configurator.fields[i]._textRows = textRows;
                 configurator.fields[i]._readOnly = readOnly;
@@ -709,17 +705,16 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
             width: 1600,
             height: 800,
             tpluri: inCp.TplPath("app/inst/cfg-wizard"),
-            callback: function(err, data) {
-
+            callback: function (err, data) {
                 l4iTemplate.Render({
                     dstid: "incp-appinst-cfg-wizard",
                     tplid: "incp-appinst-cfg-wizard-tpl",
                     data: {
                         name: configurator.name,
                         fields: configurator.fields,
-                    // dep_remotes: depRemotes,
+                        // dep_remotes: depRemotes,
                     },
-                    callback: function() {
+                    callback: function () {
                         for (var i in editors) {
                             var c = editors[i];
                             inCp.CodeEditor("fn_" + c.name, c.lang, {
@@ -730,34 +725,38 @@ inCpApp.instConfiguratorEntry = function(configurator, spec_id) {
                     },
                 });
             },
-            buttons: [{
-                onclick: "l4iModal.Close()",
-                title: "Close",
-            }, {
-                onclick: "inCpApp.instConfigCommit()",
-                title: "Next",
-                style: "btn-primary",
-            }],
+            buttons: [
+                {
+                    onclick: "l4iModal.Close()",
+                    title: "Close",
+                },
+                {
+                    onclick: "inCpApp.instConfigCommit()",
+                    title: "Next",
+                    style: "btn-primary",
+                },
+            ],
         });
     } else {
         inCpApp.instConfigurator();
     }
-}
+};
 
-inCpApp.InstConfigWizardAppBound = function(spec_id, cb) {
-
+inCpApp.InstConfigWizardAppBound = function (spec_id, cb) {
     var alert_id = "#incp-appinst-cfg-wizard-alert";
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
             if (!data || data.error || data.kind != "AppList") {
-                return
+                return;
             }
 
             if (!data.items || data.items.length < 1) {
-                return l4i.InnerAlert(alert_id, "error", "No Fit AppSpec (" + spec_id + ") AppInstance Found");
+                return l4i.InnerAlert(
+                    alert_id,
+                    "error",
+                    "No Fit AppSpec (" + spec_id + ") AppInstance Found"
+                );
             }
 
             l4iModal.Open({
@@ -766,11 +765,13 @@ inCpApp.InstConfigWizardAppBound = function(spec_id, cb) {
                 tplsrc: tpl,
                 data: data,
                 backEnable: true,
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }],
-                fn_selector: function(err, select_item) {
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                ],
+                fn_selector: function (err, select_item) {
                     if (cb) {
                         cb(err, select_item);
                         return l4iModal.Prev();
@@ -780,7 +781,7 @@ inCpApp.InstConfigWizardAppBound = function(spec_id, cb) {
 
                     l4iModal.Prev();
                 },
-                callback: function(err, data) {
+                callback: function (err, data) {
                     l4iTemplate.Render({
                         dstid: "incp-appls-selector",
                         tplid: "incp-appls-selector-tpl",
@@ -790,7 +791,7 @@ inCpApp.InstConfigWizardAppBound = function(spec_id, cb) {
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("error, Please try again later (EC:incp-app-cfg)");
         });
 
@@ -802,11 +803,9 @@ inCpApp.InstConfigWizardAppBound = function(spec_id, cb) {
             callback: ep.done("data"),
         });
     });
-}
+};
 
-
-inCpApp.instConfigCommit = function() {
-
+inCpApp.instConfigCommit = function () {
     if (!inCpApp.instConfiguratorEntryActive) {
         return;
     }
@@ -823,14 +822,11 @@ inCpApp.instConfigCommit = function() {
             name: inCpApp.instConfiguratorEntryActive.name,
             items: [],
         },
-    // dep_remotes: [],
-    }
-
+        // dep_remotes: [],
+    };
 
     try {
-
         for (var i in inCpApp.instConfiguratorEntryActive.fields) {
-
             var field = inCpApp.instConfiguratorEntryActive.fields[i];
             var value = null;
 
@@ -841,7 +837,6 @@ inCpApp.instConfigCommit = function() {
                     value = form.find("textarea[name=fn_" + field.name + "]").val();
                 }
             } else {
-
                 switch (field.type) {
                     case 1:
                         value = form.find("input[name=fn_" + field.name + "]").val();
@@ -878,59 +873,57 @@ inCpApp.instConfigCommit = function() {
             }
         }
         */
-
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return l4i.InnerAlert(alert_id, "error", err);
     }
 
-    if (inCpApp.instConfiguratorEntryActive.spec_id &&
-        inCpApp.instConfiguratorEntryActive.spec_id.length > 8) {
+    if (
+        inCpApp.instConfiguratorEntryActive.spec_id &&
+        inCpApp.instConfiguratorEntryActive.spec_id.length > 8
+    ) {
         req.spec_id = inCpApp.instConfiguratorEntryActive.spec_id;
     }
-
 
     inCp.ApiCmd("app/config", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppInstConfig") {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 l4i.InnerAlert(alert_id, "");
-                l4iModal.Close(function() {
+                l4iModal.Close(function () {
                     if (inCpApp.instConfiguratorCallback) {
                         inCpApp.instConfigurator();
                     }
                 });
             }, 300);
-        }
+        },
     });
-}
+};
 
 var inCpAppInstDeployActivePod = null;
-inCpApp.InstDeploy = function(id, auto_start) {
+inCpApp.InstDeploy = function (id, auto_start) {
     var tplid = "incp-appls";
     var alert_id = "#" + tplid + "-alert";
 
     inCp.ApiCmd("app/entry?id=" + id, {
         timeout: 3000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, 'error', "Failed: " + err);
+                return l4i.InnerAlert(alert_id, "error", "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -938,21 +931,21 @@ inCpApp.InstDeploy = function(id, auto_start) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'error', msg);
+                return l4i.InnerAlert(alert_id, "error", msg);
             }
 
             inCpApp.instDeployActive = rsj;
             inCpAppInstDeployActivePod = rsj.operate.pod_id;
 
             inCpApp.instConfiguratorCallback = null;
-            inCpApp.instConfigurator(function() {
+            inCpApp.instConfigurator(function () {
                 inCpApp.InstDeployCommit(id, auto_start);
             });
         },
     });
-}
+};
 
-inCpApp.InstDeployCommit = function(app_id, auto_start) {
+inCpApp.InstDeployCommit = function (app_id, auto_start) {
     var tplid = "incp-appls";
     var alert_id = "#" + tplid + "-alert";
 
@@ -964,10 +957,9 @@ inCpApp.InstDeployCommit = function(app_id, auto_start) {
     inCp.ApiCmd("pod/app-sync" + uri, {
         method: "GET",
         timeout: 10000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, 'error', "Failed: " + err);
+                return l4i.InnerAlert(alert_id, "error", "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -975,47 +967,48 @@ inCpApp.InstDeployCommit = function(app_id, auto_start) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                l4i.InnerAlert(alert_id, 'error', msg);
+                l4i.InnerAlert(alert_id, "error", msg);
                 return;
             }
 
             inCpApp.instDeployActive = null;
 
-            l4iModal.Close(function() {
-
-                var msg = l4i.T("Successfully deployed Application to Container (ID: %s)",
-                    inCpAppInstDeployActivePod);
+            l4iModal.Close(function () {
+                var msg = l4i.T(
+                    "Successfully deployed Application to Container (ID: %s)",
+                    inCpAppInstDeployActivePod
+                );
 
                 l4iModal.Open({
                     title: "Deployment",
                     width: 600,
                     height: 200,
                     tplsrc: "<div class='alert alert-success'>" + msg + "</div>",
-                    buttons: [{
-                        onclick: "l4iModal.Close()",
-                        title: "Close",
-                    }, {
-                        onclick: 'inCpApp.InstPodEntryIndex("' + inCpAppInstDeployActivePod + '")',
-                        title: "Go to Container Details",
-                        style: "btn btn-primary",
-                    }],
+                    buttons: [
+                        {
+                            onclick: "l4iModal.Close()",
+                            title: "Close",
+                        },
+                        {
+                            onclick:
+                                'inCpApp.InstPodEntryIndex("' + inCpAppInstDeployActivePod + '")',
+                            title: "Go to Container Details",
+                            style: "btn btn-primary",
+                        },
+                    ],
                 });
             });
-        }
+        },
     });
-}
+};
 
-
-
-inCpApp.InstNew = function(spec_id, version) {
+inCpApp.InstNew = function (spec_id, version) {
     if (!spec_id || spec_id.length < 4) {
         return alert("AppSpec error, Please try again later (EC:incp-appset)");
     }
 
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "spec", function(tpl, spec) {
-
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create("tpl", "spec", function (tpl, spec) {
             if (!spec || !spec.kind || spec.kind != "AppSpec") {
                 return alert("AppSpec error, Please try again later (EC:incp-appset)");
             }
@@ -1029,26 +1022,30 @@ inCpApp.InstNew = function(spec_id, version) {
                 inCpApp.instSet.spec.meta.version = version;
             }
 
+            inCpApp.instSet.spec.runtime_images = inCpApp.instSet.spec.runtime_images || [];
 
             l4iModal.Open({
                 title: "Create new App Instance",
-                width: 900,
-                height: 400,
+                width: 1000,
+                height: 500,
                 tplsrc: tpl,
                 data: inCpApp.instSet,
-                callback: function(err, data) {},
-                buttons: [{
-                    onclick: "l4iModal.Close()",
-                    title: "Close",
-                }, {
-                    onclick: "inCpApp.InstNewPodSelect()",
-                    title: "Next",
-                    style: "btn-primary",
-                }],
+                callback: function (err, data) {},
+                buttons: [
+                    {
+                        onclick: "l4iModal.Close()",
+                        title: "Close",
+                    },
+                    {
+                        onclick: "inCpApp.InstNewPodSelect()",
+                        title: "Next",
+                        style: "btn-primary",
+                    },
+                ],
             });
         });
 
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             alert("SpecSet error, Please try again later (EC:incp-appset)");
         });
 
@@ -1066,12 +1063,11 @@ inCpApp.InstNew = function(spec_id, version) {
             });
         }
     });
-}
+};
 
-inCpApp.instNewPodSelectCallback = function(err, pod_id) {
+inCpApp.instNewPodSelectCallback = function (err, pod_id) {
     inCp.ApiCmd("pod/entry?id=" + pod_id, {
-        callback: function(err, podjs) {
-
+        callback: function (err, podjs) {
             if (err) {
                 return alert(err);
             }
@@ -1086,14 +1082,14 @@ inCpApp.instNewPodSelectCallback = function(err, pod_id) {
             inCpApp.InstNewConfirm();
         },
     });
-}
+};
 
-inCpApp.InstNewPodSelect = function() {
+inCpApp.InstNewPodSelect = function () {
     var alert_id = "#incp-appnew-alert";
 
     var name = $("#incp-appnew-form").find("input[name='name']").val();
     if (!name) {
-        return l4i.InnerAlert(alert_id, "error", "Spec Name Not Found")
+        return l4i.InnerAlert(alert_id, "error", "Spec Name Not Found");
     }
 
     inCpApp.instSet.meta.name = name;
@@ -1105,30 +1101,33 @@ inCpApp.InstNewPodSelect = function() {
         height: 500,
         tpluri: inCp.TplPath("pod/inst-selector"),
         backEnable: true,
-        callback: function() {
+        callback: function () {
             inCpPod.List("incp-podls-selector", {
-                "operate_action": inCp.OpActionStart,
-                "exp_filter_app_notin": inCpApp.instSet.spec.meta.id,
-                "exp_filter_app_spec_id": inCpApp.instSet.spec.meta.id,
-                "new_options": {
-                    "open_modal": true,
-                    "app_cpu_min": (inCpApp.instSet.spec.exp_res.cpu_min / 10).toFixed(1),
-                    "app_mem_min": inCpApp.instSet.spec.exp_res.mem_min,
-                    "app_vol_min": inCpApp.instSet.spec.exp_res.vol_min,
-                    "app_new_callback": inCpApp.instNewPodSelectCallback,
-                    "app_spec_id": inCpApp.instSet.spec.meta.id,
+                operate_action: inCp.OpActionStart,
+                exp_filter_app_notin: inCpApp.instSet.spec.meta.id,
+                exp_filter_app_spec_id: inCpApp.instSet.spec.meta.id,
+                new_options: {
+                    open_modal: true,
+                    app_cpu_min: (inCpApp.instSet.spec.exp_res.cpu_min / 10).toFixed(1),
+                    app_mem_min: inCpApp.instSet.spec.exp_res.mem_min,
+                    app_vol_min: inCpApp.instSet.spec.exp_res.vol_min,
+                    app_new_callback: inCpApp.instNewPodSelectCallback,
+                    app_spec_id: inCpApp.instSet.spec.meta.id,
+                    app_runtime_images: inCpApp.instSet.spec.runtime_images,
                 },
             });
         },
         fn_selector: inCpApp.instNewPodSelectCallback,
-        buttons: [{
-            onclick: "l4iModal.Close()",
-            title: "Close",
-        }],
+        buttons: [
+            {
+                onclick: "l4iModal.Close()",
+                title: "Close",
+            },
+        ],
     });
-}
+};
 
-inCpApp.InstNewConfirm = function() {
+inCpApp.InstNewConfirm = function () {
     l4iModal.Open({
         id: "incp-appnew-confirm",
         title: "Confirm",
@@ -1137,24 +1136,26 @@ inCpApp.InstNewConfirm = function() {
         tpluri: inCp.TplPath("app/inst/new.confirm.p5"),
         data: inCpApp.instSet,
         backEnable: true,
-        buttons: [{
-            onclick: "l4iModal.Close()",
-            title: "Close",
-        }, {
-            onclick: "inCpApp.InstNewCommit()",
-            title: "Confirm and Save",
-            style: "btn-primary",
-        }],
+        buttons: [
+            {
+                onclick: "l4iModal.Close()",
+                title: "Close",
+            },
+            {
+                onclick: "inCpApp.InstNewCommit()",
+                title: "Confirm and Save",
+                style: "btn-primary",
+            },
+        ],
     });
-}
+};
 
-inCpApp.InstNewCommit = function() {
+inCpApp.InstNewCommit = function () {
     inCp.ApiCmd("app/set", {
         method: "POST",
         data: JSON.stringify(inCpApp.instSet),
         timeout: 3000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             var alertid = "#incp-appnew-cf-alert";
 
             if (err || !rsj || rsj.kind != "App") {
@@ -1164,27 +1165,26 @@ inCpApp.InstNewCommit = function() {
                 } else if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alertid, 'error', msg);
+                return l4i.InnerAlert(alertid, "error", msg);
             }
 
-            l4i.InnerAlert(alertid, 'ok', "Successful operation");
+            l4i.InnerAlert(alertid, "ok", "Successful operation");
 
             inCpApp.instSet = {};
             l4i.UrlEventHandler("app/inst/list");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 if (rsj.meta && rsj.meta.id) {
                     inCpApp.InstDeploy(rsj.meta.id, true);
                 } else {
                     l4iModal.Close();
                 }
             }, 1000);
-        }
+        },
     });
-}
+};
 
-
-inCpApp.InstSet = function(app_id, spec_id) {
+inCpApp.InstSet = function (app_id, spec_id) {
     if (!app_id) {
         return alert("No AppID Found");
     }
@@ -1204,68 +1204,75 @@ inCpApp.InstSet = function(app_id, spec_id) {
         }
     }
 
-    seajs.use(["ep"], function(EventProxy) {
+    seajs.use(["ep"], function (EventProxy) {
+        var ep = EventProxy.create(
+            "tpl",
+            "inst",
+            "roles",
+            "spec_vs",
+            function (tpl, inst, roles, spec_vs) {
+                if (!inst || inst.error || inst.kind != "App") {
+                    return l4iInner.Open("error", "App Not Found");
+                }
 
-        var ep = EventProxy.create("tpl", "inst", "roles", "spec_vs", function(tpl, inst, roles, spec_vs) {
+                if (!roles || roles.error || roles.kind != "UserRoleList") {
+                    return l4iInner.Open("error", "RoleList Not Found");
+                }
 
-            if (!inst || inst.error || inst.kind != "App") {
-                return l4iInner.Open("error", "App Not Found");
-            }
+                $("#work-content").html(tpl);
 
-            if (!roles || roles.error || roles.kind != "UserRoleList") {
-                return l4iInner.Open("error", "RoleList Not Found");
-            }
-
-            $("#work-content").html(tpl);
-
-            if (!inst.operate) {
-                inst.operate = {};
-            }
-            if (!inst.operate.res_bound_roles) {
-                inst.operate.res_bound_roles = [];
-            }
-            inst.operate._res_bound_roles = l4i.Clone(roles);
-            for (var i in inst.operate.res_bound_roles) {
-                for (var j in inst.operate._res_bound_roles.items) {
-                    if (inst.operate.res_bound_roles[i] == inst.operate._res_bound_roles.items[j].id) {
-                        inst.operate._res_bound_roles.items[j]._checked = true;
-                        break;
+                if (!inst.operate) {
+                    inst.operate = {};
+                }
+                if (!inst.operate.res_bound_roles) {
+                    inst.operate.res_bound_roles = [];
+                }
+                inst.operate._res_bound_roles = l4i.Clone(roles);
+                for (var i in inst.operate.res_bound_roles) {
+                    for (var j in inst.operate._res_bound_roles.items) {
+                        if (
+                            inst.operate.res_bound_roles[i] ==
+                            inst.operate._res_bound_roles.items[j].id
+                        ) {
+                            inst.operate._res_bound_roles.items[j]._checked = true;
+                            break;
+                        }
                     }
                 }
-            }
-            if (!inst.operate.action) {
-                inst.operate.action = inCp.OpActionStop;
-            }
+                if (!inst.operate.action) {
+                    inst.operate.action = inCp.OpActionStop;
+                }
 
-            inCpApp.instSet = inst;
-            inCpApp.instSet._op_actions = inCp.OpActions;
+                inCpApp.instSet = inst;
+                inCpApp.instSet._op_actions = inCp.OpActions;
 
-            if (spec_vs && spec_vs.items && spec_vs.items.length > 0) {
-                var hit = false;
-                for (var i in spec_vs.items) {
-                    if (spec_vs.items[i].version == inst.spec.meta.version) {
-                        hit = true;
-                        break;
+                if (spec_vs && spec_vs.items && spec_vs.items.length > 0) {
+                    var hit = false;
+                    for (var i in spec_vs.items) {
+                        if (spec_vs.items[i].version == inst.spec.meta.version) {
+                            hit = true;
+                            break;
+                        }
                     }
+                    if (!hit) {
+                        spec_vs.items.push({
+                            version: inst.spec.meta.version,
+                            created: inst.spec.meta.updated,
+                            comment: "",
+                        });
+                    }
+                    inCpApp.instSet._spec_vs = spec_vs.items;
                 }
-                if (!hit) {
-                    spec_vs.items.push({
-                        version: inst.spec.meta.version,
-                        created: inst.spec.meta.updated,
-                        comment: "",
-                    });
-                }
-                inCpApp.instSet._spec_vs = spec_vs.items;
+
+                l4iTemplate.Render({
+                    dstid: "incp-appset",
+                    tplid: "incp-appset-tpl",
+                    data: inCpApp.instSet,
+                });
             }
+        );
 
-            l4iTemplate.Render({
-                dstid: "incp-appset",
-                tplid: "incp-appset-tpl",
-                data: inCpApp.instSet,
-            });
-        });
-
-        ep.fail(function(err) {
+        ep.fail(function (err) {
             // TODO
             alert("SpecSet error, Please try again later (EC:incp-appset)");
         });
@@ -1292,16 +1299,13 @@ inCpApp.InstSet = function(app_id, spec_id) {
             callback: ep.done("inst"),
         });
     });
-}
+};
 
-inCpApp.InstSetCommit = function(options) {
-
+inCpApp.InstSetCommit = function (options) {
     options = options || {};
-
 
     var alert_id = "#incp-appset-alert";
     try {
-
         var form = $("#incp-appset");
         if (!form) {
             throw "No Form Data Found";
@@ -1310,8 +1314,7 @@ inCpApp.InstSetCommit = function(options) {
         inCpApp.instSet.meta.name = form.find("input[name=name]").val();
 
         inCpApp.instSet.operate.res_bound_roles = [];
-        form.find("input[name=res_bound_roles]:checked").each(function() {
-
+        form.find("input[name=res_bound_roles]:checked").each(function () {
             var val = parseInt($(this).val());
             if (val > 1) {
                 inCpApp.instSet.operate.res_bound_roles.push(val);
@@ -1324,20 +1327,17 @@ inCpApp.InstSetCommit = function(options) {
         }
 
         inCpApp.instSet.operate.action = parseInt(form.find("input[name=op_action]:checked").val());
-
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return l4i.InnerAlert(alert_id, "error", err);
     }
-
 
     inCp.ApiCmd("app/set", {
         method: "POST",
         data: JSON.stringify(inCpApp.instSet),
         timeout: 3000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, 'error', err);
+                return l4i.InnerAlert(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -1345,7 +1345,7 @@ inCpApp.InstSetCommit = function(options) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'error', msg);
+                return l4i.InnerAlert(alert_id, "error", msg);
             }
 
             var msg = "Successful updated";
@@ -1353,40 +1353,39 @@ inCpApp.InstSetCommit = function(options) {
                 msg += ", Next starts the deployment ...";
             }
 
+            l4i.InnerAlert(alert_id, "ok", msg);
 
-            l4i.InnerAlert(alert_id, 'ok', msg);
-
-
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 inCpApp.InstListRefresh();
                 if (options.deploy) {
                     inCpApp.InstDeploy(inCpApp.instSet.meta.id);
                 }
                 inCpApp.instSet = {};
             }, 1000);
-        }
+        },
     });
-}
+};
 
-inCpApp.InstSetCommitAndDeploy = function() {
+inCpApp.InstSetCommitAndDeploy = function () {
     inCpApp.InstSetCommit({
         deploy: true,
     });
-}
+};
 
-inCpApp.InstPodInfo = function(pod_id) {
+inCpApp.InstPodInfo = function (pod_id) {
     inCpPod.Info(pod_id, {
-        buttons: [{
-            title: "Detail",
-            onclick: "inCpApp.InstPodEntryIndex(\"" + pod_id + "\")",
-            style: "btn-success",
-        }],
+        buttons: [
+            {
+                title: "Detail",
+                onclick: 'inCpApp.InstPodEntryIndex("' + pod_id + '")',
+                style: "btn-success",
+            },
+        ],
     });
-}
+};
 
-inCpApp.InstPodEntryIndex = function(pod_id) {
+inCpApp.InstPodEntryIndex = function (pod_id) {
     l4iModal.Close();
     l4i.UrlEventActive("pod/index");
     inCpPod.EntryIndex(pod_id);
-}
-
+};

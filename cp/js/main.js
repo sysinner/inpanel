@@ -165,13 +165,17 @@ inCp.load_index = function () {
                 }
 
                 if (!session || session.username == "") {
-                    return alert("Network Exception, Please try again later (EC:zone-list)");
+                    return alert(
+                        "Network Exception, Please try again later (EC:zone-list)"
+                    );
                 }
                 inCp.UserSession = session;
                 inpack.UserSession = session;
 
                 if (!zones.items || zones.items.length == 0) {
-                    return alert("Network Exception, Please try again later (EC:zone-list)");
+                    return alert(
+                        "Network Exception, Please try again later (EC:zone-list)"
+                    );
                 }
                 inCp.Zones = zones;
 
@@ -212,7 +216,9 @@ inCp.load_index = function () {
                         $("#incp-topbar-user-signed-modal").hover(
                             function () {},
                             function () {
-                                $("#incp-topbar-user-signed-modal").fadeOut(200);
+                                $("#incp-topbar-user-signed-modal").fadeOut(
+                                    200
+                                );
                             }
                         );
 
@@ -224,10 +230,26 @@ inCp.load_index = function () {
                     },
                 });
 
-                l4i.UrlEventRegister("app/index", inCpApp.Index, "incp-topbar-nav-menus");
-                l4i.UrlEventRegister("pod/index", inCpPod.Index, "incp-topbar-nav-menus");
-                l4i.UrlEventRegister("res/index", inCpRes.Index, "incp-topbar-nav-menus");
-                l4i.UrlEventRegister("ips/index", inpack.Index, "incp-topbar-nav-menus");
+                l4i.UrlEventRegister(
+                    "app/index",
+                    inCpApp.Index,
+                    "incp-topbar-nav-menus"
+                );
+                l4i.UrlEventRegister(
+                    "pod/index",
+                    inCpPod.Index,
+                    "incp-topbar-nav-menus"
+                );
+                l4i.UrlEventRegister(
+                    "res/index",
+                    inCpRes.Index,
+                    "incp-topbar-nav-menus"
+                );
+                l4i.UrlEventRegister(
+                    "ips/index",
+                    inpack.Index,
+                    "incp-topbar-nav-menus"
+                );
 
                 l4i.UrlEventHandler("pod/index", true);
             }
@@ -237,7 +259,9 @@ inCp.load_index = function () {
             if (err && err == "AuthSession") {
                 inCp.AlertUserLogin();
             } else {
-                alert("Network Exception, Please try again later (EC:zone-list)");
+                alert(
+                    "Network Exception, Please try again later (EC:zone-list)"
+                );
             }
         });
 
@@ -305,14 +329,20 @@ inCp.ApiCmd = function (url, options) {
     }
     options._url = url.replace(/^\/|\s+$/g, "");
 
-    if (inCp.Zones && options.api_zone_id && inCp.zone_id && options.api_zone_id != inCp.zone_id) {
+    if (
+        inCp.Zones &&
+        options.api_zone_id &&
+        inCp.zone_id &&
+        options.api_zone_id != inCp.zone_id
+    ) {
         for (var i in inCp.Zones.items) {
             if (
                 inCp.Zones.items[i].meta.id == options.api_zone_id &&
                 inCp.Zones.items[i].wan_api &&
                 inCp.Zones.items[i].wan_api.length > 10
             ) {
-                options._zburl = "zonebound/" + options.api_zone_id + "/" + options._url;
+                options._zburl =
+                    "zonebound/" + options.api_zone_id + "/" + options._url;
                 break;
             }
         }
@@ -382,7 +412,11 @@ inCp.UtilResSizeFormat = function (size, tofix) {
 
     for (var i in ms) {
         if (size >= Math.pow(1024, ms[i][0])) {
-            return (size / Math.pow(1024, ms[i][0])).toFixed(tofix) + " " + ms[i][1];
+            return (
+                (size / Math.pow(1024, ms[i][0])).toFixed(tofix) +
+                " " +
+                ms[i][1]
+            );
         }
     }
 
@@ -530,7 +564,11 @@ inCp.CodeRender = function () {
         }
 
         seajs.use(
-            ["~/cm/5/lib/codemirror.css", "~/cm/5/lib/codemirror.js", "~/cm/5/theme/monokai.css"],
+            [
+                "~/cm/5/lib/codemirror.css",
+                "~/cm/5/lib/codemirror.js",
+                "~/cm/5/theme/monokai.css",
+            ],
             function () {
                 modes.push("~/cm/5/addon/runmode/runmode.js");
                 modes.push("~/cm/5/mode/clike/clike.js");
@@ -602,7 +640,11 @@ inCp.CodeEditor = function (id, lang, options) {
     }
 
     seajs.use(
-        ["~/cm/5/lib/codemirror.css", "~/cm/5/lib/codemirror.js", "~/cm/5/theme/monokai.css"],
+        [
+            "~/cm/5/lib/codemirror.css",
+            "~/cm/5/lib/codemirror.js",
+            "~/cm/5/theme/monokai.css",
+        ],
         function () {
             seajs.use(modes, function () {
                 inCp.codeEditorInstances[id] = CodeMirror.fromTextArea(elem, {
@@ -615,7 +657,8 @@ inCp.CodeEditor = function (id, lang, options) {
                 });
 
                 if (options.numberLines) {
-                    var lh = inCp.codeEditorInstances[id].defaultTextHeight() + 1;
+                    var lh =
+                        inCp.codeEditorInstances[id].defaultTextHeight() + 1;
                     options.height = options.numberLines * lh;
                 }
 
@@ -623,7 +666,10 @@ inCp.CodeEditor = function (id, lang, options) {
                     options.height = 100;
                 }
 
-                inCp.codeEditorInstances[id].setSize(options.width, options.height);
+                inCp.codeEditorInstances[id].setSize(
+                    options.width,
+                    options.height
+                );
             });
         }
     );
@@ -771,7 +817,9 @@ inCp.About = function () {
         });
 
         ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
+            alert(
+                "Network Connection Error, Please try again later (EC:incp-pod)"
+            );
         });
 
         l4i.Ajax("/in/~/about.tpl", {

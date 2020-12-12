@@ -13,6 +13,7 @@
     </tr>
     {[?]}
 
+
     {[? it.description]}
     <tr>
       <td>Description</td>
@@ -275,11 +276,11 @@
     {[?]}
 
 
-    {[? it._runtime_images && it._runtime_images.length > 0]}
+    {[? it.runtime_images && it.runtime_images.length > 0]}
     <tr>
       <td>Allowed Runtime Images</td>
       <td>
-        {[~it._runtime_images :v]}
+        {[~it.runtime_images :v]}
         <span class="badge badge-primary">{[=v]}</span>
         {[~]}
       </td>

@@ -470,19 +470,7 @@ inCpAppSpec.Info = function (id, spec, version, app_id) {
                     }
                 }
 
-                rsj._runtime_images = [];
                 rsj.runtime_images = rsj.runtime_images || [];
-                var runtime_images_prefix = ["sysinner/innerstack-"];
-                for (var i in rsj.runtime_images) {
-                    var name = rsj.runtime_images[i];
-                    for (var j in runtime_images_prefix) {
-                        if (name.startsWith(runtime_images_prefix[i])) {
-                            name = name.substr(runtime_images_prefix[j].length);
-                            break;
-                        }
-                    }
-                    rsj._runtime_images.push(name);
-                }
 
                 l4iModal.Open({
                     title: "AppSpec Information",
@@ -777,6 +765,8 @@ inCpAppSpec.Set = function (id) {
                         }
                     }
                 }
+
+                rsj.runtime_images = rsj.runtime_images ? rsj.runtime_images : [];
 
                 inCpAppSpec.setActive = rsj;
 

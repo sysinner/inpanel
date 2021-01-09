@@ -188,21 +188,9 @@ inCp.load_index = function () {
                     $("#incp-topbar-userbar").on('mouseenter', function() {
                         $("#incp-topbar-user-signed-modal").fadeIn(200);
                     });
-                    $("#incp-topbar-user-signed-modal").on("mouseenter", function() {
+                    $("#incp-topbar-user-signed-modal").on("mouseleave", function() {
                         $("#incp-topbar-user-signed-modal").fadeOut(200);
                     });
-                    // $("#incp-topbar-userbar").hover(
-                    //     function () {
-                    //         $("#incp-topbar-user-signed-modal").fadeIn(200);
-                    //     },
-                    //     function () {}
-                    // );
-                    // $("#incp-topbar-user-signed-modal").hover(
-                    //     function () {},
-                    //     function () {
-                    //         $("#incp-topbar-user-signed-modal").fadeOut(200);
-                    //     }
-                    // );
 
                     if (inCp.UserSession.username == "sysadmin") {
                         $("#incp-nav-ops-entry").css({

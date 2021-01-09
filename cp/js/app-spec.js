@@ -182,7 +182,7 @@ inCpAppSpec.listDataRefresh = function (tplid, options) {
         timeout: 3000,
         callback: function (err, rsj) {
             if (err || !rsj || rsj.kind != "AppSpecList" || !rsj.items) {
-                return l4i.InnerAlert(alert_id, "alert-info", "No more results ...");
+                return valueui.alert.InnerShow(alert_id, "alert-info", "No more results ...");
             } else {
                 $(alert_id).css({
                     display: "none",
@@ -244,7 +244,7 @@ inCpAppSpec.listDataRefresh = function (tplid, options) {
 
             inCpAppSpec.listActives = rsj.items;
 
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: tplid,
                 tplid: tplid + "-tpl",
                 data: {
@@ -273,7 +273,7 @@ inCpAppSpec.ListSelector = function (options) {
 
     if (!options.fn_selector) {
         options.fn_selector = function () {
-            l4iModal.Close();
+            valueui.modal.Close();
         };
     }
 
@@ -282,7 +282,7 @@ inCpAppSpec.ListSelector = function (options) {
         subOptions.cfg_selector = true;
     }
 
-    l4iModal.Open({
+    valueui.modal.Open({
         title: options.title,
         width: options.width,
         height: options.height,
@@ -293,7 +293,7 @@ inCpAppSpec.ListSelector = function (options) {
         },
         buttons: [
             {
-                onclick: "l4iModal.Close()",
+                onclick: "valueui.modal.Close()",
                 title: "Close",
             },
         ],
@@ -301,7 +301,7 @@ inCpAppSpec.ListSelector = function (options) {
 };
 
 inCpAppSpec.ListSelectorClick = function (id) {
-    if (l4iModal.CurOptions.fn_selector) {
+    if (valueui.modal.CurOptions.fn_selector) {
         var options = {
             id: id,
             configs: [],
@@ -310,7 +310,7 @@ inCpAppSpec.ListSelectorClick = function (id) {
         if (check && check.is(":checked")) {
             options.configs.push(check.val());
         }
-        l4iModal.CurOptions.fn_selector(null, options);
+        valueui.modal.CurOptions.fn_selector(null, options);
     }
 };
 
@@ -324,242 +324,234 @@ inCpAppSpec.ListSelectorQueryCommit = function () {
 };
 
 inCpAppSpec.Info = function (id, spec, version, app_id) {
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create(
-            "tpl",
-            "data",
-            "roles",
-            "tags",
-            function (tpl, rsj, roles, tags) {
-                if (!rsj || rsj.error || rsj.kind != "AppSpec") {
-                    return l4iAlert.Open("error", "AppSpec Not Found");
-                }
+    var ep = valueui.NewEventProxy("tpl", "data", "roles", "tags", function (tpl, rsj, roles, tags) {
+        if (!rsj || rsj.error || rsj.kind != "AppSpec") {
+            return valueui.alert.Open("error", "AppSpec Not Found");
+        }
 
-                if (!rsj.depends) {
-                    rsj.depends = [];
-                }
+        if (!rsj.depends) {
+            rsj.depends = [];
+        }
 
-                if (!rsj.dep_remotes) {
-                    rsj.dep_remotes = [];
-                }
+        if (!rsj.dep_remotes) {
+            rsj.dep_remotes = [];
+        }
 
-                if (!rsj.packages) {
-                    rsj.packages = [];
-                }
+        if (!rsj.packages) {
+            rsj.packages = [];
+        }
 
-                if (!rsj.vcs_repos) {
-                    rsj.vcs_repos = [];
-                }
+        if (!rsj.vcs_repos) {
+            rsj.vcs_repos = [];
+        }
 
-                if (!rsj.executors) {
-                    rsj.executors = [];
-                }
+        if (!rsj.executors) {
+            rsj.executors = [];
+        }
 
-                for (var i in rsj.executors) {
-                    if (!rsj.executors[i].exec_start) {
-                        rsj.executors[i].exec_start = "";
-                    }
-
-                    if (!rsj.executors[i].exec_stop) {
-                        rsj.executors[i].exec_stop = "";
-                    }
-
-                    if (!rsj.executors[i].priority) {
-                        rsj.executors[i].priority = 0;
-                    }
-
-                    if (!rsj.executors[i].plan) {
-                        rsj.executors[i].plan = {
-                            on_boot: true,
-                            on_boot_selected: "selected",
-                        };
-                    } else {
-                        if (rsj.executors[i].plan.on_boot == true) {
-                            rsj.executors[i].plan.on_boot_selected = "selected";
-                        } else if (rsj.executors[i].plan.on_tick > 0) {
-                            rsj.executors[i].plan.on_tick_selected = "selected";
-                        }
-                    }
-                }
-
-                if (!rsj.service_ports) {
-                    rsj.service_ports = [];
-                }
-
-                for (var i in rsj.service_ports) {
-                    if (!rsj.service_ports[i].name) {
-                        rsj.service_ports[i].name = "";
-                    }
-                    if (!rsj.service_ports[i].box_port) {
-                        rsj.service_ports[i].box_port = "";
-                    }
-                }
-
-                for (var i in rsj.depends) {
-                    if (!rsj.depends[i].name) {
-                        rsj.depends[i].name = "";
-                    }
-                }
-
-                for (var i in rsj.dep_remotes) {
-                    if (!rsj.dep_remotes[i].name) {
-                        rsj.dep_remotes[i].name = "";
-                    }
-                    if (!rsj.dep_remotes[i].configs) {
-                        rsj.dep_remotes[i].configs = [];
-                    }
-                }
-
-                if (!rsj.exp_deploy) {
-                    rsj.exp_deploy = {};
-                }
-                if (!rsj.exp_deploy.rep_min) {
-                    rsj.exp_deploy.rep_min = 1;
-                    rsj.exp_deploy.rep_max = 1;
-                }
-                if (!rsj.exp_deploy.failover_time) {
-                    rsj.exp_deploy.failover_time = 300;
-                }
-                if (!rsj.exp_deploy.failover_num_max) {
-                    rsj.exp_deploy.failover_num_max = 0;
-                } else if (rsj.exp_deploy.failover_num_max > 0) {
-                    rsj.exp_deploy._failover_enable = true;
-                }
-                if (!rsj.exp_deploy.failover_rate_max) {
-                    rsj.exp_deploy.failover_rate_max = 0;
-                } else if (rsj.exp_deploy.failover_rate_max > 0) {
-                    rsj.exp_deploy._failover_enable = true;
-                }
-
-                if (!rsj.exp_deploy.sys_state) {
-                    rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
-                }
-                for (var i in inCpAppSpec.deploySysStates) {
-                    if (inCpAppSpec.deploySysStates[i].value == rsj.exp_deploy.sys_state) {
-                        rsj.exp_deploy._sys_state = inCpAppSpec.deploySysStates[i].title;
-                        break;
-                    }
-                }
-                if (!rsj.exp_deploy._sys_state) {
-                    rsj.exp_deploy._sys_state = "";
-                }
-                rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
-
-                rsj._roles = [];
-                if (!rsj.roles) {
-                    rsj.roles = [];
-                }
-                for (var i in rsj.roles) {
-                    for (var j in roles.items) {
-                        if (rsj.roles[i] == roles.items[j].id) {
-                            rsj._roles.push(roles.items[j].name);
-                            break;
-                        }
-                    }
-                }
-                rsj._multi_replica_enable = inCp.syscfg.zone_master.multi_replica_enable;
-
-                rsj._type_tags = [];
-                rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
-                for (var i in rsj.type_tags) {
-                    for (var j in tags.items) {
-                        if (rsj.type_tags[i] == tags.items[j].name) {
-                            rsj._type_tags.push(tags.items[j].value);
-                            break;
-                        }
-                    }
-                }
-
-                rsj.runtime_images = rsj.runtime_images || [];
-
-                l4iModal.Open({
-                    title: "AppSpec Information",
-                    width: 1400,
-                    width_min: 1000,
-                    height: "max",
-                    tplsrc: tpl,
-                    data: rsj,
-                    buttons: [
-                        {
-                            onclick: 'inCpAppSpec.Download("' + rsj.meta.id + '")',
-                            title: "Download the AppSpec file",
-                            style: "btn-primary",
-                        },
-                        {
-                            onclick: "l4iModal.Close()",
-                            title: "Close",
-                            style: "btn-primary",
-                        },
-                    ],
-                    callback: function () {
-                        inCp.CodeRender();
-                    },
-                });
+        for (var i in rsj.executors) {
+            if (!rsj.executors[i].exec_start) {
+                rsj.executors[i].exec_start = "";
             }
-        );
 
-        ep.fail(function (err) {
-            // TODO
-            alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
-        });
+            if (!rsj.executors[i].exec_stop) {
+                rsj.executors[i].exec_stop = "";
+            }
 
-        // template
-        inCp.TplFetch("app/spec/info.p5", {
-            callback: ep.done("tpl"),
-        });
+            if (!rsj.executors[i].priority) {
+                rsj.executors[i].priority = 0;
+            }
 
-        if (inCpAppSpec.iamAppRoles) {
-            ep.emit("roles", inCpAppSpec.iamAppRoles);
-        } else {
-            l4i.Ajax(inCp.base + "auth/app-role-list", {
-                callback: function (err, data) {
-                    if (err) {
-                        return alert(err);
-                    }
-                    inCpAppSpec.iamAppRoles = data;
-                    ep.emit("roles", data);
+            if (!rsj.executors[i].plan) {
+                rsj.executors[i].plan = {
+                    on_boot: true,
+                    on_boot_selected: "selected",
+                };
+            } else {
+                if (rsj.executors[i].plan.on_boot == true) {
+                    rsj.executors[i].plan.on_boot_selected = "selected";
+                } else if (rsj.executors[i].plan.on_tick > 0) {
+                    rsj.executors[i].plan.on_tick_selected = "selected";
+                }
+            }
+        }
+
+        if (!rsj.service_ports) {
+            rsj.service_ports = [];
+        }
+
+        for (var i in rsj.service_ports) {
+            if (!rsj.service_ports[i].name) {
+                rsj.service_ports[i].name = "";
+            }
+            if (!rsj.service_ports[i].box_port) {
+                rsj.service_ports[i].box_port = "";
+            }
+        }
+
+        for (var i in rsj.depends) {
+            if (!rsj.depends[i].name) {
+                rsj.depends[i].name = "";
+            }
+        }
+
+        for (var i in rsj.dep_remotes) {
+            if (!rsj.dep_remotes[i].name) {
+                rsj.dep_remotes[i].name = "";
+            }
+            if (!rsj.dep_remotes[i].configs) {
+                rsj.dep_remotes[i].configs = [];
+            }
+        }
+
+        if (!rsj.exp_deploy) {
+            rsj.exp_deploy = {};
+        }
+        if (!rsj.exp_deploy.rep_min) {
+            rsj.exp_deploy.rep_min = 1;
+            rsj.exp_deploy.rep_max = 1;
+        }
+        if (!rsj.exp_deploy.failover_time) {
+            rsj.exp_deploy.failover_time = 300;
+        }
+        if (!rsj.exp_deploy.failover_num_max) {
+            rsj.exp_deploy.failover_num_max = 0;
+        } else if (rsj.exp_deploy.failover_num_max > 0) {
+            rsj.exp_deploy._failover_enable = true;
+        }
+        if (!rsj.exp_deploy.failover_rate_max) {
+            rsj.exp_deploy.failover_rate_max = 0;
+        } else if (rsj.exp_deploy.failover_rate_max > 0) {
+            rsj.exp_deploy._failover_enable = true;
+        }
+
+        if (!rsj.exp_deploy.sys_state) {
+            rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
+        }
+        for (var i in inCpAppSpec.deploySysStates) {
+            if (inCpAppSpec.deploySysStates[i].value == rsj.exp_deploy.sys_state) {
+                rsj.exp_deploy._sys_state = inCpAppSpec.deploySysStates[i].title;
+                break;
+            }
+        }
+        if (!rsj.exp_deploy._sys_state) {
+            rsj.exp_deploy._sys_state = "";
+        }
+        rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
+
+        rsj._roles = [];
+        if (!rsj.roles) {
+            rsj.roles = [];
+        }
+        for (var i in rsj.roles) {
+            for (var j in roles.items) {
+                if (rsj.roles[i] == roles.items[j].id) {
+                    rsj._roles.push(roles.items[j].name);
+                    break;
+                }
+            }
+        }
+        rsj._multi_replica_enable = inCp.syscfg.zone_master.multi_replica_enable;
+
+        rsj._type_tags = [];
+        rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
+        for (var i in rsj.type_tags) {
+            for (var j in tags.items) {
+                if (rsj.type_tags[i] == tags.items[j].name) {
+                    rsj._type_tags.push(tags.items[j].value);
+                    break;
+                }
+            }
+        }
+
+        rsj.runtime_images = rsj.runtime_images || [];
+
+        valueui.modal.Open({
+            title: "AppSpec Information",
+            width: 1400,
+            width_min: 1000,
+            height: "max",
+            tplsrc: tpl,
+            data: rsj,
+            buttons: [
+                {
+                    onclick: 'inCpAppSpec.Download("' + rsj.meta.id + '")',
+                    title: "Download the AppSpec file",
+                    style: "btn-primary",
                 },
-            });
-        }
-
-        if (inCpAppSpec.TypeTagList) {
-            ep.emit("tags", inCpAppSpec.TypeTagList);
-        } else {
-            inCp.ApiCmd("app-spec/type-tag-list", {
-                callback: function (err, data) {
-                    if (err) {
-                        return alert(err);
-                    }
-                    if (!data || !data.items) {
-                        return alert("network error");
-                    }
-                    inCpAppSpec.TypeTagList = data;
-                    ep.emit("tags", data);
+                {
+                    onclick: "valueui.modal.Close()",
+                    title: "Close",
+                    style: "btn-primary",
                 },
-            });
-        }
-
-        // data
-        if (spec) {
-            ep.emit("data", spec);
-        } else if (inCpAppSpec.InfoCache) {
-            ep.emit("data", inCpAppSpec.InfoCache);
-        } else if (id) {
-            var url = "app-spec/entry?id=" + id;
-            if (version) {
-                url += "&version=" + version;
-            }
-            if (app_id) {
-                url += "&app_id=" + app_id;
-            }
-
-            inCp.ApiCmd(url, {
-                callback: ep.done("data"),
-            });
-        } else {
-            ep.emit("data", "");
-        }
+            ],
+            callback: function () {
+                inCp.CodeRender();
+            },
+        });
     });
+
+    ep.fail(function (err) {
+        // TODO
+        alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
+    });
+
+    // template
+    inCp.TplFetch("app/spec/info.p5", {
+        callback: ep.done("tpl"),
+    });
+
+    if (inCpAppSpec.iamAppRoles) {
+        ep.emit("roles", inCpAppSpec.iamAppRoles);
+    } else {
+        valueui.utilx.Ajax(inCp.base + "auth/app-role-list", {
+            callback: function (err, data) {
+                if (err) {
+                    return alert(err);
+                }
+                inCpAppSpec.iamAppRoles = data;
+                ep.emit("roles", data);
+            },
+        });
+    }
+
+    if (inCpAppSpec.TypeTagList) {
+        ep.emit("tags", inCpAppSpec.TypeTagList);
+    } else {
+        inCp.ApiCmd("app-spec/type-tag-list", {
+            callback: function (err, data) {
+                if (err) {
+                    return alert(err);
+                }
+                if (!data || !data.items) {
+                    return alert("network error");
+                }
+                inCpAppSpec.TypeTagList = data;
+                ep.emit("tags", data);
+            },
+        });
+    }
+
+    // data
+    if (spec) {
+        ep.emit("data", spec);
+    } else if (inCpAppSpec.InfoCache) {
+        ep.emit("data", inCpAppSpec.InfoCache);
+    } else if (id) {
+        var url = "app-spec/entry?id=" + id;
+        if (version) {
+            url += "&version=" + version;
+        }
+        if (app_id) {
+            url += "&app_id=" + app_id;
+        }
+
+        inCp.ApiCmd(url, {
+            callback: ep.done("data"),
+        });
+    } else {
+        ep.emit("data", "");
+    }
 };
 
 inCpAppSpec.Download = function (id) {
@@ -574,37 +566,35 @@ inCpAppSpec.ItemDel = function (id) {
         return alert("No Item Found");
     }
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", function (tpl) {
-            l4iModal.Open({
-                title: "AppSpec Delete",
-                tplsrc: tpl,
-                width: 800,
-                height: 200,
-                data: {
-                    _id: id,
+    var ep = valueui.NewEventProxy("tpl", function (tpl) {
+        valueui.modal.Open({
+            title: "AppSpec Delete",
+            tplsrc: tpl,
+            width: 800,
+            height: 200,
+            data: {
+                _id: id,
+            },
+            buttons: [
+                {
+                    onclick: "valueui.modal.Close()",
+                    title: "Close",
                 },
-                buttons: [
-                    {
-                        onclick: "l4iModal.Close()",
-                        title: "Close",
-                    },
-                    {
-                        onclick: "inCpAppSpec.ItemDelCommit()",
-                        title: "Confirm to Destroy",
-                        style: "btn btn-danger",
-                    },
-                ],
-            });
+                {
+                    onclick: "inCpAppSpec.ItemDelCommit()",
+                    title: "Confirm to Destroy",
+                    style: "btn btn-danger",
+                },
+            ],
         });
+    });
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
 
-        inCp.TplFetch("app/spec/item-del", {
-            callback: ep.done("tpl"),
-        });
+    inCp.TplFetch("app/spec/item-del", {
+        callback: ep.done("tpl"),
     });
 };
 
@@ -617,235 +607,226 @@ inCpAppSpec.ItemDelCommit = function () {
         method: "GET",
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
 
             $("#app-spec-" + id + "-row").remove();
 
             window.setTimeout(function () {
-                l4iModal.Close();
+                valueui.modal.Close();
             }, 1000);
         },
     });
 };
 
 inCpAppSpec.Set = function (id) {
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create(
-            "tpl",
-            "data",
-            "roles",
-            "tags",
-            function (tpl, rsj, roles, tags) {
-                rsj = rsj || l4i.Clone(inCpAppSpec.def);
+    var ep = valueui.NewEventProxy("tpl", "data", "roles", "tags", function (tpl, rsj, roles, tags) {
+        rsj = rsj || valueui.utilx.ObjectClone(inCpAppSpec.def);
 
-                if (!rsj || rsj.error || rsj.kind != "AppSpec") {
-                    rsj = l4i.Clone(inCpAppSpec.def);
-                }
+        if (!rsj || rsj.error || rsj.kind != "AppSpec") {
+            rsj = valueui.utilx.ObjectClone(inCpAppSpec.def);
+        }
 
-                $("#work-content").html(tpl);
+        $("#work-content").html(tpl);
 
-                rsj.meta.name = rsj.meta.name ? rsj.meta.name : "";
-                rsj.meta.title = rsj.meta.title ? rsj.meta.title : "";
-                rsj.meta.subtitle = rsj.meta.subtitle ? rsj.meta.subtitle : "";
+        rsj.meta.name = rsj.meta.name ? rsj.meta.name : "";
+        rsj.meta.title = rsj.meta.title ? rsj.meta.title : "";
+        rsj.meta.subtitle = rsj.meta.subtitle ? rsj.meta.subtitle : "";
 
-                rsj.description = rsj.description ? rsj.description : "";
-                rsj.comment = rsj.comment ? rsj.comment : "";
+        rsj.description = rsj.description ? rsj.description : "";
+        rsj.comment = rsj.comment ? rsj.comment : "";
 
-                rsj.packages = rsj.packages ? rsj.packages : [];
-                rsj.executors = rsj.executors ? rsj.executors : [];
+        rsj.packages = rsj.packages ? rsj.packages : [];
+        rsj.executors = rsj.executors ? rsj.executors : [];
 
-                rsj.service_ports = rsj.service_ports ? rsj.service_ports : [];
+        rsj.service_ports = rsj.service_ports ? rsj.service_ports : [];
 
-                if (inCp.UserSession.username == "sysadmin") {
-                    rsj._host_port_enable = true;
-                }
+        if (inCp.UserSession.username == "sysadmin") {
+            rsj._host_port_enable = true;
+        }
 
-                for (var i in rsj.service_ports) {
-                    if (!rsj.service_ports[i].name) {
-                        rsj.service_ports[i].name = "";
-                    }
-                    if (!rsj.service_ports[i].box_port) {
-                        rsj.service_ports[i].box_port = "";
-                    }
-                    if (!rsj.service_ports[i].host_port) {
-                        rsj.service_ports[i].host_port = "";
-                    }
-                }
-
-                for (var i in rsj.depends) {
-                    if (!rsj.depends[i].name) {
-                        rsj.depends[i].name = "";
-                    }
-                }
-
-                for (var i in rsj.dep_remotes) {
-                    if (!rsj.dep_remotes[i].name) {
-                        rsj.dep_remotes[i].name = "";
-                    }
-                    if (!rsj.dep_remotes[i].configs) {
-                        rsj.dep_remotes[i].configs = [];
-                    }
-                }
-
-                rsj._roles = l4i.Clone(roles);
-                if (!rsj.roles) {
-                    rsj.roles = [];
-                }
-                for (var i in rsj.roles) {
-                    for (var j in rsj._roles.items) {
-                        if (rsj.roles[i] == rsj._roles.items[j].id) {
-                            rsj._roles.items[j]._checked = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!rsj.exp_res.cpu_min) {
-                    rsj.exp_res.cpu_min = 1;
-                }
-                rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
-
-                if (!rsj.exp_res.mem_min) {
-                    rsj.exp_res.mem_min = 32;
-                }
-
-                if (!rsj.exp_res.vol_min) {
-                    rsj.exp_res.vol_min = 1;
-                }
-
-                if (!rsj.exp_deploy) {
-                    rsj.exp_deploy = {};
-                }
-                if (!rsj.exp_deploy.rep_min || rsj.exp_deploy.rep_min < 1) {
-                    rsj.exp_deploy.rep_min = 1;
-                }
-                if (!rsj.exp_deploy.rep_max || rsj.exp_deploy.rep_max < 1) {
-                    rsj.exp_deploy.rep_max = 1;
-                } else if (rsj.exp_deploy.rep_max > inCpPod.OpRepMax) {
-                    rsj.exp_deploy.rep_max = inCpPod.OpRepMax;
-                }
-                if (rsj.exp_deploy.rep_min > rsj.exp_deploy.rep_max) {
-                    rsj.exp_deploy.rep_min = rsj.exp_deploy.rep_max;
-                }
-                if (!rsj.exp_deploy.failover_time) {
-                    rsj.exp_deploy.failover_time = 600;
-                }
-                if (!rsj.exp_deploy.failover_num_max) {
-                    rsj.exp_deploy.failover_num_max = 0;
-                } else if (rsj.exp_deploy.failover_num_max > 0) {
-                    rsj.exp_deploy._failover_enable = true;
-                }
-                if (!rsj.exp_deploy.failover_rate_max) {
-                    rsj.exp_deploy.failover_rate_max = 0;
-                } else if (rsj.exp_deploy.failover_rate_max > 0) {
-                    rsj.exp_deploy._failover_enable = true;
-                }
-                if (!rsj.exp_deploy.sys_state) {
-                    rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
-                }
-
-                rsj._type_tags = l4i.Clone(tags);
-                rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
-                for (var i in rsj.type_tags) {
-                    for (var j in rsj._type_tags.items) {
-                        if (rsj._type_tags.items[j].name == rsj.type_tags[i]) {
-                            rsj._type_tags.items[j]._checked = true;
-                            break;
-                        }
-                    }
-                }
-
-                rsj.runtime_images = rsj.runtime_images ? rsj.runtime_images : [];
-
-                inCpAppSpec.setActive = rsj;
-
-                l4iTemplate.Render({
-                    dstid: "incp-app-specset",
-                    tplid: "incp-app-specset-tpl",
-                    data: {
-                        actionTitle:
-                            rsj.meta.id == "" ? "New AppSpec" : "Setting (" + rsj.meta.id + ")",
-                        spec: rsj,
-                        _multi_replica_enable: inCp.syscfg.zone_master.multi_replica_enable,
-                        _deploy_sys_states: inCpAppSpec.deploySysStates,
-                        _deploy_network_modes: inCpAppSpec.deployNetworkModes,
-                    },
-                    callback: function () {
-                        inCpAppSpec.setDependRefresh();
-                        inCpAppSpec.setDepRemoteRefresh();
-                        inCpAppSpec.setPackRefresh();
-                        inCpAppSpec.setVcsRefresh();
-                        inCpAppSpec.setExecutorRefresh();
-
-                        if (rsj.service_ports.length == 0) {
-                            inCpAppSpec.SetServicePortAppend();
-                        }
-                    },
-                });
+        for (var i in rsj.service_ports) {
+            if (!rsj.service_ports[i].name) {
+                rsj.service_ports[i].name = "";
             }
-        );
+            if (!rsj.service_ports[i].box_port) {
+                rsj.service_ports[i].box_port = "";
+            }
+            if (!rsj.service_ports[i].host_port) {
+                rsj.service_ports[i].host_port = "";
+            }
+        }
 
-        ep.fail(function (err) {
-            // TODO
-            alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
+        for (var i in rsj.depends) {
+            if (!rsj.depends[i].name) {
+                rsj.depends[i].name = "";
+            }
+        }
+
+        for (var i in rsj.dep_remotes) {
+            if (!rsj.dep_remotes[i].name) {
+                rsj.dep_remotes[i].name = "";
+            }
+            if (!rsj.dep_remotes[i].configs) {
+                rsj.dep_remotes[i].configs = [];
+            }
+        }
+
+        rsj._roles = valueui.utilx.ObjectClone(roles);
+        if (!rsj.roles) {
+            rsj.roles = [];
+        }
+        for (var i in rsj.roles) {
+            for (var j in rsj._roles.items) {
+                if (rsj.roles[i] == rsj._roles.items[j].id) {
+                    rsj._roles.items[j]._checked = true;
+                    break;
+                }
+            }
+        }
+
+        if (!rsj.exp_res.cpu_min) {
+            rsj.exp_res.cpu_min = 1;
+        }
+        rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
+
+        if (!rsj.exp_res.mem_min) {
+            rsj.exp_res.mem_min = 32;
+        }
+
+        if (!rsj.exp_res.vol_min) {
+            rsj.exp_res.vol_min = 1;
+        }
+
+        if (!rsj.exp_deploy) {
+            rsj.exp_deploy = {};
+        }
+        if (!rsj.exp_deploy.rep_min || rsj.exp_deploy.rep_min < 1) {
+            rsj.exp_deploy.rep_min = 1;
+        }
+        if (!rsj.exp_deploy.rep_max || rsj.exp_deploy.rep_max < 1) {
+            rsj.exp_deploy.rep_max = 1;
+        } else if (rsj.exp_deploy.rep_max > inCpPod.OpRepMax) {
+            rsj.exp_deploy.rep_max = inCpPod.OpRepMax;
+        }
+        if (rsj.exp_deploy.rep_min > rsj.exp_deploy.rep_max) {
+            rsj.exp_deploy.rep_min = rsj.exp_deploy.rep_max;
+        }
+        if (!rsj.exp_deploy.failover_time) {
+            rsj.exp_deploy.failover_time = 600;
+        }
+        if (!rsj.exp_deploy.failover_num_max) {
+            rsj.exp_deploy.failover_num_max = 0;
+        } else if (rsj.exp_deploy.failover_num_max > 0) {
+            rsj.exp_deploy._failover_enable = true;
+        }
+        if (!rsj.exp_deploy.failover_rate_max) {
+            rsj.exp_deploy.failover_rate_max = 0;
+        } else if (rsj.exp_deploy.failover_rate_max > 0) {
+            rsj.exp_deploy._failover_enable = true;
+        }
+        if (!rsj.exp_deploy.sys_state) {
+            rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
+        }
+
+        rsj._type_tags = valueui.utilx.ObjectClone(tags);
+        rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
+        for (var i in rsj.type_tags) {
+            for (var j in rsj._type_tags.items) {
+                if (rsj._type_tags.items[j].name == rsj.type_tags[i]) {
+                    rsj._type_tags.items[j]._checked = true;
+                    break;
+                }
+            }
+        }
+
+        rsj.runtime_images = rsj.runtime_images ? rsj.runtime_images : [];
+
+        inCpAppSpec.setActive = rsj;
+
+        valueui.template.Render({
+            dstid: "incp-app-specset",
+            tplid: "incp-app-specset-tpl",
+            data: {
+                actionTitle: rsj.meta.id == "" ? "New AppSpec" : "Setting (" + rsj.meta.id + ")",
+                spec: rsj,
+                _multi_replica_enable: inCp.syscfg.zone_master.multi_replica_enable,
+                _deploy_sys_states: inCpAppSpec.deploySysStates,
+                _deploy_network_modes: inCpAppSpec.deployNetworkModes,
+            },
+            callback: function () {
+                inCpAppSpec.setDependRefresh();
+                inCpAppSpec.setDepRemoteRefresh();
+                inCpAppSpec.setPackRefresh();
+                inCpAppSpec.setVcsRefresh();
+                inCpAppSpec.setExecutorRefresh();
+
+                if (rsj.service_ports.length == 0) {
+                    inCpAppSpec.SetServicePortAppend();
+                }
+            },
         });
-
-        // template
-        inCp.TplFetch("app/spec/set", {
-            callback: ep.done("tpl"),
-        });
-
-        if (inCpAppSpec.iamAppRoles) {
-            ep.emit("roles", inCpAppSpec.iamAppRoles);
-        } else {
-            l4i.Ajax(inCp.base + "auth/app-role-list", {
-                callback: function (err, data) {
-                    if (err) {
-                        return alert(err);
-                    }
-                    inCpAppSpec.iamAppRoles = data;
-                    ep.emit("roles", data);
-                },
-            });
-        }
-
-        if (inCpAppSpec.TypeTagList) {
-            ep.emit("tags", inCpAppSpec.TypeTagList);
-        } else {
-            inCp.ApiCmd("app-spec/type-tag-list", {
-                callback: function (err, data) {
-                    if (err) {
-                        return alert(err);
-                    }
-                    if (!data || !data.items) {
-                        return alert("network error");
-                    }
-                    inCpAppSpec.TypeTagList = data;
-                    ep.emit("tags", data);
-                },
-            });
-        }
-
-        // data
-        if (!id) {
-            ep.emit("data", "");
-        } else {
-            inCp.ApiCmd("app-spec/entry?id=" + id, {
-                callback: ep.done("data"),
-            });
-        }
     });
+
+    ep.fail(function (err) {
+        // TODO
+        alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
+    });
+
+    // template
+    inCp.TplFetch("app/spec/set", {
+        callback: ep.done("tpl"),
+    });
+
+    if (inCpAppSpec.iamAppRoles) {
+        ep.emit("roles", inCpAppSpec.iamAppRoles);
+    } else {
+        valueui.utilx.Ajax(inCp.base + "auth/app-role-list", {
+            callback: function (err, data) {
+                if (err) {
+                    return alert(err);
+                }
+                inCpAppSpec.iamAppRoles = data;
+                ep.emit("roles", data);
+            },
+        });
+    }
+
+    if (inCpAppSpec.TypeTagList) {
+        ep.emit("tags", inCpAppSpec.TypeTagList);
+    } else {
+        inCp.ApiCmd("app-spec/type-tag-list", {
+            callback: function (err, data) {
+                if (err) {
+                    return alert(err);
+                }
+                if (!data || !data.items) {
+                    return alert("network error");
+                }
+                inCpAppSpec.TypeTagList = data;
+                ep.emit("tags", data);
+            },
+        });
+    }
+
+    // data
+    if (!id) {
+        ep.emit("data", "");
+    } else {
+        inCp.ApiCmd("app-spec/entry?id=" + id, {
+            callback: ep.done("data"),
+        });
+    }
 };
 
 // TODO
@@ -855,7 +836,7 @@ inCpAppSpec.SetDependSelect = function () {
         width: 1000,
         height: 600,
         fn_selector: function (err, options) {
-            l4iModal.Close();
+            valueui.modal.Close();
             inCpAppSpec.setDependEntry(options);
         },
     });
@@ -875,7 +856,7 @@ inCpAppSpec.setDependEntry = function (opt) {
         timeout: 10000,
         callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, "error", err);
+                return valueui.alert.InnerShow(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -883,7 +864,7 @@ inCpAppSpec.setDependEntry = function (opt) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, "error", msg);
+                return valueui.alert.InnerShow(alert_id, "error", msg);
             }
 
             if (!inCpAppSpec.setActive.depends) {
@@ -945,7 +926,7 @@ inCpAppSpec.setDependRefresh = function () {
         display: display,
     });
 
-    l4iTemplate.Render({
+    valueui.template.Render({
         dstid: "incp-app-specset-depls",
         tplid: "incp-app-specset-depls-tpl",
         data: {
@@ -961,7 +942,7 @@ inCpAppSpec.SetDepRemoteSelect = function () {
         height: 600,
         cfg_selector: true,
         fn_selector: function (err, options) {
-            l4iModal.Close();
+            valueui.modal.Close();
             inCpAppSpec.setDepRemoteEntry(options);
         },
     });
@@ -985,7 +966,7 @@ inCpAppSpec.setDepRemoteEntry = function (opt) {
         timeout: 10000,
         callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, "error", err);
+                return valueui.alert.InnerShow(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -993,7 +974,7 @@ inCpAppSpec.setDepRemoteEntry = function (opt) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, "error", msg);
+                return valueui.alert.InnerShow(alert_id, "error", msg);
             }
 
             if (!inCpAppSpec.setActive.dep_remotes) {
@@ -1057,7 +1038,7 @@ inCpAppSpec.setDepRemoteRefresh = function () {
         display: display,
     });
 
-    l4iTemplate.Render({
+    valueui.template.Render({
         dstid: "incp-app-specset-depremotes",
         tplid: "incp-app-specset-depremotes-tpl",
         data: {
@@ -1068,20 +1049,20 @@ inCpAppSpec.setDepRemoteRefresh = function () {
 
 // TODO
 inCpAppSpec.SetPackSelect = function () {
-    l4iModal.Open({
+    valueui.modal.Open({
         title: "Select a dependent Package",
         width: 900,
         height: 600,
         tpluri: inCp.base + "/ips/~/ips/tpl/pkginfo/selector.html",
         fn_selector: function (err, rsp) {
-            l4iModal.Close();
+            valueui.modal.Close();
             inCpAppSpec.setPackInfo({
                 id: rsp,
             });
         },
         buttons: [
             {
-                onclick: "l4iModal.Close()",
+                onclick: "valueui.modal.Close()",
                 title: "Close",
             },
         ],
@@ -1105,11 +1086,11 @@ inCpAppSpec.setPackInfo = function (opt) {
 
     var alert_id = "#incp-app-specset-alert";
 
-    l4i.Ajax("/ips/v1/pkg/entry?" + req, {
+    valueui.utilx.Ajax("/ips/v1/pkg/entry?" + req, {
         timeout: 10000,
         callback: function (err, rsj) {
             if (err) {
-                return l4i.InnerAlert(alert_id, "error", err);
+                return valueui.alert.InnerShow(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "Pack") {
@@ -1117,7 +1098,7 @@ inCpAppSpec.setPackInfo = function (opt) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, "error", msg);
+                return valueui.alert.InnerShow(alert_id, "error", msg);
             }
 
             if (!inCpAppSpec.setActive.packages) {
@@ -1202,7 +1183,7 @@ inCpAppSpec.setPackRefresh = function () {
         display: display,
     });
 
-    l4iTemplate.Render({
+    valueui.template.Render({
         dstid: "incp-app-specset-ipmls",
         tplid: "incp-app-specset-ipmls-tpl",
         data: {
@@ -1224,7 +1205,7 @@ inCpAppSpec.SetVcsSet = function (dir) {
         }
     }
     if (!item) {
-        item = l4i.Clone(inCpAppSpec.vcsDef);
+        item = valueui.utilx.ObjectClone(inCpAppSpec.vcsDef);
         modal_title = "Import from Git Repo";
     }
     if (!item.hook_exec_restart) {
@@ -1240,7 +1221,7 @@ inCpAppSpec.SetVcsSet = function (dir) {
         item.branch = "";
     }
 
-    l4iModal.Open({
+    valueui.modal.Open({
         title: modal_title,
         width: 1000,
         height: 600,
@@ -1248,7 +1229,7 @@ inCpAppSpec.SetVcsSet = function (dir) {
         data: item,
         buttons: [
             {
-                onclick: "l4iModal.Close()",
+                onclick: "valueui.modal.Close()",
                 title: "Cancel",
             },
             {
@@ -1352,11 +1333,11 @@ inCpAppSpec.SetVcsSetCommit = function () {
             inCpAppSpec.setActive.vcs_repos.push(vcsItem);
         }
     } catch (err) {
-        return l4i.InnerAlert(alert_id, "error", err);
+        return valueui.alert.InnerShow(alert_id, "error", err);
     }
 
     inCpAppSpec.setVcsRefresh();
-    l4iModal.Close();
+    valueui.modal.Close();
 };
 
 inCpAppSpec.setVcsRefresh = function () {
@@ -1384,7 +1365,7 @@ inCpAppSpec.setVcsRefresh = function () {
         }
     }
 
-    l4iTemplate.Render({
+    valueui.template.Render({
         dstid: "incp-app-specset-vcsls",
         tplid: "incp-app-specset-vcsls-tpl",
         data: {
@@ -1425,10 +1406,10 @@ inCpAppSpec.SetExecutorSet = function (name) {
     }
 
     if (!executor) {
-        executor = l4i.Clone(inCpAppSpec.executorDef);
+        executor = valueui.utilx.ObjectClone(inCpAppSpec.executorDef);
     }
 
-    l4iModal.Open({
+    valueui.modal.Open({
         title: title,
         width: 1200,
         min_width: 960,
@@ -1448,7 +1429,7 @@ inCpAppSpec.SetExecutorSet = function (name) {
         },
         buttons: [
             {
-                onclick: "l4iModal.Close()",
+                onclick: "valueui.modal.Close()",
                 title: "Cancel",
             },
             {
@@ -1513,12 +1494,12 @@ inCpAppSpec.SetExecutorSave = function () {
             inCpAppSpec.setActive.executors.push(executor);
         }
     } catch (err) {
-        return l4i.InnerAlert(alert_id, "error", err);
+        return valueui.alert.InnerShow(alert_id, "error", err);
     }
 
     inCpAppSpec.setExecutorRefresh();
 
-    l4iModal.Close();
+    valueui.modal.Close();
 };
 
 inCpAppSpec.SetExecutorRemove = function (name) {
@@ -1542,7 +1523,7 @@ inCpAppSpec.SetServicePortAppend = function () {
         data._host_port_enable = true;
     }
 
-    l4iTemplate.Render({
+    valueui.template.Render({
         append: true,
         dstid: "incp-app-specset-serviceports",
         tplid: "incp-app-specset-serviceport-tpl",
@@ -1596,7 +1577,7 @@ inCpAppSpec.setExecutorRefresh = function () {
         }
     }
 
-    l4iTemplate.Render({
+    valueui.template.Render({
         dstid: "incp-app-specset-executorls",
         tplid: "incp-app-specset-executorls-tpl",
         data: inCpAppSpec.setActive.executors,
@@ -1779,7 +1760,7 @@ inCpAppSpec.SetCommit = function () {
         inCpAppSpec.setActive.exp_deploy.failover_num_max = fail_num_max;
         inCpAppSpec.setActive.exp_deploy.failover_rate_max = fail_rate_max;
     } catch (err) {
-        return l4iModal.FootAlert("error", "valid fail : " + err, 3000, footer_id);
+        return valueui.modal.FootAlert("error", "valid fail : " + err, 3000, footer_id);
     }
 
     inCp.ApiCmd("app-spec/set", {
@@ -1788,7 +1769,7 @@ inCpAppSpec.SetCommit = function () {
         timeout: 3000,
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4iModal.FootAlert("error", "network error", 3000, footer_id);
+                return valueui.modal.FootAlert("error", "network error", 3000, footer_id);
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -1796,10 +1777,10 @@ inCpAppSpec.SetCommit = function () {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4iModal.FootAlert("error", msg, 3000, footer_id);
+                return valueui.modal.FootAlert("error", msg, 3000, footer_id);
             }
 
-            l4iModal.FootAlert("ok", "Successful operation", 3000, footer_id);
+            valueui.modal.FootAlert("ok", "Successful operation", 3000, footer_id);
 
             window.setTimeout(function () {
                 inCpAppSpec.ListRefresh();
@@ -1821,42 +1802,40 @@ inCpAppSpec.SetRaw = function (id) {
         formset.meta_id = "";
     }
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("data", function (data) {
-            formset.spec_text = data;
+    var ep = valueui.NewEventProxy("data", function (data) {
+        formset.spec_text = data;
 
-            l4iTemplate.Render({
-                dstid: "incp-app-specset",
-                tplid: "incp-app-specset-raw-tpl",
-                data: formset,
-                callback: function () {
-                    var bh = $(window).height();
-                    var pp = $("#incp-app-specset").position();
-                    var height = bh - pp.top - 250;
-                    if (height < 200) {
-                        height = 200;
-                    }
+        valueui.template.Render({
+            dstid: "incp-app-specset",
+            tplid: "incp-app-specset-raw-tpl",
+            data: formset,
+            callback: function () {
+                var bh = $(window).height();
+                var pp = $("#incp-app-specset").position();
+                var height = bh - pp.top - 250;
+                if (height < 200) {
+                    height = 200;
+                }
 
-                    inCp.CodeEditor("incp-app-specset-spectext", "toml", {
-                        height: height,
-                    });
-                },
-            });
+                inCp.CodeEditor("incp-app-specset-spectext", "toml", {
+                    height: height,
+                });
+            },
         });
-
-        ep.fail(function (err) {
-            // TODO
-            alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
-        });
-
-        if (!id) {
-            ep.emit("data", "");
-        } else {
-            inCp.ApiCmd("app-spec/entry?ct=toml&id=" + id, {
-                callback: ep.done("data"),
-            });
-        }
     });
+
+    ep.fail(function (err) {
+        // TODO
+        alert("AppSpecSet error, Please try again later (EC:incp-app-specset)");
+    });
+
+    if (!id) {
+        ep.emit("data", "");
+    } else {
+        inCp.ApiCmd("app-spec/entry?ct=toml&id=" + id, {
+            callback: ep.done("data"),
+        });
+    }
 };
 
 inCpAppSpec.SetRawCommit = function () {
@@ -1876,7 +1855,7 @@ inCpAppSpec.SetRawCommit = function () {
 
         setActive = txt;
     } catch (err) {
-        return l4i.InnerAlert(alert_id, "error", err);
+        return valueui.alert.InnerShow(alert_id, "error", err);
     }
 
     inCp.ApiCmd("app-spec/set", {
@@ -1885,7 +1864,7 @@ inCpAppSpec.SetRawCommit = function () {
         timeout: 3000,
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Failed");
+                return valueui.alert.InnerShow(alert_id, "error", "Failed");
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -1893,10 +1872,10 @@ inCpAppSpec.SetRawCommit = function () {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, "error", msg);
+                return valueui.alert.InnerShow(alert_id, "error", msg);
             }
 
-            l4i.InnerAlert(alert_id, "ok", "Successful operation");
+            valueui.alert.InnerShow(alert_id, "ok", "Successful operation");
             window.setTimeout(function () {
                 inCpAppSpec.ListRefresh();
             }, 1000);
@@ -1906,96 +1885,94 @@ inCpAppSpec.SetRawCommit = function () {
 
 //
 inCpAppSpec.CfgSet = function (spec_id) {
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
-            var alert_id = "#incp-appspec-cfg-fieldlist-alert";
+    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+        var alert_id = "#incp-appspec-cfg-fieldlist-alert";
 
-            if (!data || data.error || !data.kind || data.kind != "AppSpec") {
-                if (data.error) {
-                    return alert(data.error.message);
-                }
-
-                return alert("AppSpec Not Found");
+        if (!data || data.error || !data.kind || data.kind != "AppSpec") {
+            if (data.error) {
+                return alert(data.error.message);
             }
 
-            if (!data.configurator) {
-                data.configurator = {
-                    name: "",
-                    fields: [],
-                };
+            return alert("AppSpec Not Found");
+        }
+
+        if (!data.configurator) {
+            data.configurator = {
+                name: "",
+                fields: [],
+            };
+        }
+
+        if (!data.configurator.fields) {
+            data.configurator.fields = [];
+        }
+
+        for (var j in data.configurator.fields) {
+            if (!data.configurator.fields[j].default) {
+                data.configurator.fields[j].default = "";
             }
-
-            if (!data.configurator.fields) {
-                data.configurator.fields = [];
+            if (!data.configurator.fields[j].auto_fill) {
+                data.configurator.fields[j].auto_fill = "";
             }
-
-            for (var j in data.configurator.fields) {
-                if (!data.configurator.fields[j].default) {
-                    data.configurator.fields[j].default = "";
-                }
-                if (!data.configurator.fields[j].auto_fill) {
-                    data.configurator.fields[j].auto_fill = "";
-                }
-                if (!data.configurator.fields[j].prompt) {
-                    data.configurator.fields[j].prompt = "";
-                }
-                if (!data.configurator.fields[j].validates) {
-                    data.configurator.fields[j].validates = [];
-                }
-                for (var k in data.configurator.fields[j].validates) {
-                    if (!data.configurator.fields[j].validates[k].value) {
-                        data.configurator.fields[j].validates[k].value = "";
-                    }
+            if (!data.configurator.fields[j].prompt) {
+                data.configurator.fields[j].prompt = "";
+            }
+            if (!data.configurator.fields[j].validates) {
+                data.configurator.fields[j].validates = [];
+            }
+            for (var k in data.configurator.fields[j].validates) {
+                if (!data.configurator.fields[j].validates[k].value) {
+                    data.configurator.fields[j].validates[k].value = "";
                 }
             }
+        }
 
-            inCpAppSpec.active = l4i.Clone(data);
+        inCpAppSpec.active = valueui.utilx.ObjectClone(data);
 
-            var btns = [
-                {
-                    title: "Cancel",
-                    onclick: "l4iModal.Close()",
-                },
-            ];
-            if (inCp.UserSession.username == data.meta.user) {
-                /**
+        var btns = [
+            {
+                title: "Cancel",
+                onclick: "valueui.modal.Close()",
+            },
+        ];
+        if (inCp.UserSession.username == data.meta.user) {
+            /**
                         btns.push({
                             title: "New Field",
                             onclick: 'inCpAppSpec.CfgFieldSet()',
                             style: "btn-primary",
                         });
                 */
-                btns.push({
-                    title: "Save",
-                    onclick: "inCpAppSpec.CfgSetCommit()",
-                    style: "btn-primary",
-                });
-            }
-
-            l4iModal.Open({
-                id: "incp-appspec-cfg-fieldlist-modal",
-                title: "Configurator",
-                tplsrc: tpl,
-                width: 1200,
-                height: 800,
-                buttons: btns,
-                callback: function () {
-                    inCpAppSpec.cfgFieldListRefresh();
-                },
+            btns.push({
+                title: "Save",
+                onclick: "inCpAppSpec.CfgSetCommit()",
+                style: "btn-primary",
             });
-        });
+        }
 
-        ep.fail(function (err) {
-            alert("ApiCmd error, Please try again later (EC:001)");
+        valueui.modal.Open({
+            id: "incp-appspec-cfg-fieldlist-modal",
+            title: "Configurator",
+            tplsrc: tpl,
+            width: 1200,
+            height: 800,
+            buttons: btns,
+            callback: function () {
+                inCpAppSpec.cfgFieldListRefresh();
+            },
         });
+    });
 
-        inCp.TplFetch("app/spec/cfg-fieldlist", {
-            callback: ep.done("tpl"),
-        });
+    ep.fail(function (err) {
+        alert("ApiCmd error, Please try again later (EC:001)");
+    });
 
-        inCp.ApiCmd("app-spec/entry?id=" + spec_id, {
-            callback: ep.done("data"),
-        });
+    inCp.TplFetch("app/spec/cfg-fieldlist", {
+        callback: ep.done("tpl"),
+    });
+
+    inCp.ApiCmd("app-spec/entry?id=" + spec_id, {
+        callback: ep.done("data"),
     });
 };
 
@@ -2018,7 +1995,7 @@ inCpAppSpec.cfgFieldListRefresh = function () {
 
     inCpAppSpec.active._cfgFieldTypes = inCpAppSpec.cfgFieldTypes;
     inCpAppSpec.active._cfgFieldAutoFills = inCpAppSpec.cfgFieldAutoFills;
-    l4iTemplate.Render({
+    valueui.template.Render({
         dstid: "incp-appspec-cfg-fieldlist",
         tplid: "incp-appspec-cfg-fieldlist-tpl",
         data: inCpAppSpec.active,
@@ -2054,7 +2031,7 @@ inCpAppSpec.CfgSetCommit = function () {
         }
         inCpAppSpec.active.configurator.name = name;
     } catch (err) {
-        return l4i.InnerAlert(alert_id, "error", err);
+        return valueui.alert.InnerShow(alert_id, "error", err);
     }
 
     var req = {
@@ -2069,22 +2046,22 @@ inCpAppSpec.CfgSetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             inCpAppSpec.active = null;
-            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                l4iModal.Close();
+                valueui.modal.Close();
                 inCpAppSpec.ListRefresh();
             }, 500);
         },
@@ -2104,13 +2081,13 @@ inCpAppSpec.CfgFieldSet = function (name) {
     if (name) {
         for (var i in inCpAppSpec.active.configurator.fields) {
             if (inCpAppSpec.active.configurator.fields[i].name == name) {
-                field = l4i.Clone(inCpAppSpec.active.configurator.fields[i]);
+                field = valueui.utilx.ObjectClone(inCpAppSpec.active.configurator.fields[i]);
                 break;
             }
         }
     }
     if (!field) {
-        field = l4i.Clone(inCpAppSpec.cfgFieldDef);
+        field = valueui.utilx.ObjectClone(inCpAppSpec.cfgFieldDef);
     }
     if (!field.description) {
         field.description = "";
@@ -2118,14 +2095,14 @@ inCpAppSpec.CfgFieldSet = function (name) {
     field._cfgFieldTypes = inCpAppSpec.cfgFieldTypes;
     field._cfgFieldAutoFills = inCpAppSpec.cfgFieldAutoFills;
 
-    l4iModal.Open({
+    valueui.modal.Open({
         id: "incp-appspec-cfgfieldset-modal",
         title: "Setting Field",
         tpluri: inCp.TplPath("app/spec/cfg-fieldset"),
         buttons: [
             {
                 title: "Cancel",
-                onclick: "l4iModal.Close()",
+                onclick: "valueui.modal.Close()",
             },
             {
                 title: "Delete",
@@ -2142,7 +2119,7 @@ inCpAppSpec.CfgFieldSet = function (name) {
                 return;
             }
 
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: "incp-appspec-cfg-fieldset-form",
                 tplid: "incp-appspec-cfg-fieldset-tpl",
                 data: field,
@@ -2153,7 +2130,7 @@ inCpAppSpec.CfgFieldSet = function (name) {
 };
 
 inCpAppSpec.CfgFieldSetValidatorNew = function () {
-    l4iTemplate.Render({
+    valueui.template.Render({
         append: true,
         dstid: "incp-app-specset-cfgfield-validators",
         tplid: "incp-app-specset-cfgfield-validator-tpl",
@@ -2207,7 +2184,7 @@ inCpAppSpec.CfgFieldSetCommit = function () {
             });
         });
     } catch (err) {
-        return l4i.InnerAlert(alert_id, "error", err);
+        return valueui.alert.InnerShow(alert_id, "error", err);
     }
 
     var fields = [];
@@ -2221,7 +2198,7 @@ inCpAppSpec.CfgFieldSetCommit = function () {
         }
 
         if (field && inCpAppSpec.active.configurator.fields[i].name == field.name) {
-            fields.push(l4i.Clone(field));
+            fields.push(valueui.utilx.ObjectClone(field));
             field = null;
         } else {
             fields.push(inCpAppSpec.active.configurator.fields[i]);
@@ -2233,7 +2210,7 @@ inCpAppSpec.CfgFieldSetCommit = function () {
     }
     if (!inCpAppSpec.active.configurator.name || inCpAppSpec.active.configurator.name.length < 1) {
         inCpAppSpec.active.configurator.fields = fields;
-        l4iModal.Prev(inCpAppSpec.cfgFieldListRefresh);
+        valueui.modal.Prev(inCpAppSpec.cfgFieldListRefresh);
         return;
     }
     var req = {
@@ -2251,22 +2228,22 @@ inCpAppSpec.CfgFieldSetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
                 inCpAppSpec.active.configurator.fields = fields;
-                l4iModal.Prev(inCpAppSpec.cfgFieldListRefresh);
+                valueui.modal.Prev(inCpAppSpec.cfgFieldListRefresh);
             }, 500);
         },
     });
@@ -2287,7 +2264,7 @@ inCpAppSpec.CfgFieldDelCommit = function () {
             throw "Invalid Name";
         }
     } catch (err) {
-        return l4i.InnerAlert(alert_id, "error", err);
+        return valueui.alert.InnerShow(alert_id, "error", err);
     }
 
     var fields = [];
@@ -2303,14 +2280,14 @@ inCpAppSpec.CfgFieldDelCommit = function () {
 
     for (var i in inCpAppSpec.active.configurator.fields) {
         if (inCpAppSpec.active.configurator.fields[i].name == field.name) {
-            req.configurator.fields.push(l4i.Clone(field));
+            req.configurator.fields.push(valueui.utilx.ObjectClone(field));
         } else {
             fields.push(inCpAppSpec.active.configurator.fields[i]);
         }
     }
 
     if (req.configurator.fields.length == 0) {
-        return l4i.InnerAlert(alert_id, "error", "No field name Found");
+        return valueui.alert.InnerShow(alert_id, "error", "No field name Found");
     }
 
     inCp.ApiCmd("app-spec/cfg-field-del", {
@@ -2318,22 +2295,22 @@ inCpAppSpec.CfgFieldDelCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
                 inCpAppSpec.active.configurator.fields = fields;
-                l4iModal.Prev(inCpAppSpec.cfgFieldListRefresh);
+                valueui.modal.Prev(inCpAppSpec.cfgFieldListRefresh);
             }, 500);
         },
     });

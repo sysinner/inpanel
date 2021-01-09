@@ -754,38 +754,47 @@ pre code {
 
 .incp-card-frame-p00 {
   flex: 0 0 100%;
+  width: 100%;
 }
 
 .incp-card-frame-p60 {
   flex: 0 0 60%;
+  width: 60%;
 }
 
 .incp-card-frame-p50 {
   flex: 0 0 50%;
+  width: 50%;
 }
 
 .incp-card-frame-p40 {
   flex: 0 0 40%;
+  width: 40%;
 }
 
 .incp-card-frame-p33 {
   flex: 0 0 33.3%;
+  width: 33.3%;
 }
 
 .incp-card-frame-p25 {
   flex: 0 0 25%;
+  width: 25%;
 }
 
 .incp-card-frame-p20 {
   flex: 0 0 20%;
+  width: 20%;
 }
 
 .incp-card-frame-p10 {
   flex: 0 0 10%;
+  width: 10%;
 }
 
 .incp-card-frame-c6 {
   flex: 0 0 50%;
+  width: 50%;
 }
 
 .incp-card-item {

@@ -17,7 +17,7 @@
 
 
 <script id="incp-resdomain-deploy-wizard-tpl" type="text/html">
-<div class="l4i-form-group">
+<div class="valueui-form-group">
   <label>Bound App Instance</label>
   <div>
     <a href="#res-domain/deploy/app-select" onclick="inCpResDomain.DeploySelectApp()"

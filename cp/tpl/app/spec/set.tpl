@@ -147,7 +147,7 @@
     </button>
   </td>
   <td>
-    <div id="incp-app-specset-ipmls-msg" class="badge badge-secondary">no package yet ...</div>
+    <div id="incp-app-specset-ipmls-msg" class="badge bg-secondary">no package yet ...</div>
     <div id="incp-app-specset-ipmls"></div>
   </td>
 </tr>
@@ -163,7 +163,7 @@
     </button>
   </td>
   <td>
-    <div id="incp-app-specset-vcsls-msg" class="badge badge-secondary">no repo yet ...</div>
+    <div id="incp-app-specset-vcsls-msg" class="badge bg-secondary">no repo yet ...</div>
     <div id="incp-app-specset-vcsls"></div>
   </td>
 </tr>
@@ -178,7 +178,7 @@
     </button>
   </td>
   <td>
-    <div id="incp-app-specset-depls-msg" class="badge badge-secondary">no AppSpec yet ...</div>
+    <div id="incp-app-specset-depls-msg" class="badge bg-secondary">no AppSpec yet ...</div>
     <div id="incp-app-specset-depls"></div>
   </td>
 </tr>
@@ -193,7 +193,7 @@
     </button>
   </td>
   <td>
-    <div id="incp-app-specset-depremotes-msg" class="badge badge-secondary">no AppSpec yet ...</div>
+    <div id="incp-app-specset-depremotes-msg" class="badge bg-secondary">no AppSpec yet ...</div>
     <div id="incp-app-specset-depremotes"></div>
   </td>
 </tr>
@@ -208,7 +208,7 @@
     </button>
   </td>
   <td>
-    <div id="incp-app-specset-executorls-msg" class="badge badge-secondary">no executor yet ...</div>
+    <div id="incp-app-specset-executorls-msg" class="badge bg-secondary">no executor yet ...</div>
     <div id="incp-app-specset-executorls"></div>
   </td>
 </tr>

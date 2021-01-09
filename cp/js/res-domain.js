@@ -43,9 +43,8 @@ inCpResDomain.List = function() {
 
     var options = {};
 
-    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
+        var ep = valueui.NewEventProxy("tpl", "data", function(tpl, data) {
 
             if (tpl) {
                 $("#work-content").html(tpl);
@@ -57,10 +56,10 @@ inCpResDomain.List = function() {
             if (data.error || !data.kind || data.kind != "ResourceList") {
 
                 if (data.error) {
-                    return l4i.InnerAlert(alert_id, 'error', data.error.message);
+                    return valueui.alert.InnerShow(alert_id, 'error', data.error.message);
                 }
 
-                return l4i.InnerAlert(alert_id, 'error', "Items Not Found");
+                return valueui.alert.InnerShow(alert_id, 'error', "Items Not Found");
             }
 
             if (!data.items) {
@@ -97,7 +96,7 @@ inCpResDomain.List = function() {
 
             $(alert_id).hide();
 
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: "incp-resdomain-list-box",
                 tplid: "incp-resdomain-list-tpl",
                 data: data,
@@ -120,7 +119,6 @@ inCpResDomain.List = function() {
         inCp.ApiCmd("resource/list" + uri, {
             callback: ep.done("data"),
         });
-    });
 }
 
 inCpResDomain.New = function(options) {
@@ -134,7 +132,7 @@ inCpResDomain.New = function(options) {
         }
     }
 
-    l4iModal.Open({
+    valueui.modal.Open({
         title: "Domain Add",
         // dstid: "incp-mod-domain-new",
         tplid: "incp-mod-domain-new-tpl",
@@ -146,7 +144,7 @@ inCpResDomain.New = function(options) {
         },
         buttons: [{
             title: "Cancel",
-            onclick: "l4iModal.Close()",
+            onclick: "valueui.modal.Close()",
         }, {
             title: "Save",
             onclick: 'inCpResDomain.NewCommit()',
@@ -181,21 +179,21 @@ inCpResDomain.NewCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "Resource") {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
-                l4iModal.Close();
+                valueui.modal.Close();
                 inCpResDomain.List();
             }, 500);
         }
@@ -203,9 +201,8 @@ inCpResDomain.NewCommit = function() {
 }
 
 inCpResDomain.Set = function(name) {
-    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
+        var ep = valueui.NewEventProxy("tpl", "data", function(tpl, data) {
 
             // if (tpl) {
             //     $("#work-content").html(tpl);
@@ -216,10 +213,10 @@ inCpResDomain.Set = function(name) {
             if (!data || data.error || !data.kind || data.kind != "Resource") {
 
                 if (data.error) {
-                    return l4i.InnerAlert(alert_id, 'error', data.error.message);
+                    return valueui.alert.InnerShow(alert_id, 'error', data.error.message);
                 }
 
-                return l4i.InnerAlert(alert_id, 'error', "Item Not Found");
+                return valueui.alert.InnerShow(alert_id, 'error', "Item Not Found");
             }
 
             if (!data.action) {
@@ -235,7 +232,7 @@ inCpResDomain.Set = function(name) {
 
             data._name = data.meta.name.substr("domain/".length);
 
-            l4iModal.Open({
+            valueui.modal.Open({
                 title: "Domain Set",
                 tplsrc: tpl,
                 width: 900,
@@ -243,7 +240,7 @@ inCpResDomain.Set = function(name) {
                 data: data,
                 buttons: [{
                     title: "Cancel",
-                    onclick: "l4iModal.Close()",
+                    onclick: "valueui.modal.Close()",
                 }, {
                     title: "Save",
                     onclick: 'inCpResDomain.SetCommit()',
@@ -263,7 +260,6 @@ inCpResDomain.Set = function(name) {
         inCp.ApiCmd("resource/domain?name=" + name, {
             callback: ep.done("data"),
         });
-    });
 }
 
 inCpResDomain.SetCommit = function() {
@@ -302,21 +298,21 @@ inCpResDomain.SetCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "Resource") {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, 'error', "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
-                l4iModal.Close();
+                valueui.modal.Close();
                 inCpResDomain.List();
             }, 500);
         }
@@ -325,9 +321,8 @@ inCpResDomain.SetCommit = function() {
 
 
 inCpResDomain.BoundList = function(name) {
-    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "data", function(tpl, data) {
+        var ep = valueui.NewEventProxy("tpl", "data", function(tpl, data) {
 
             var alert_id = "#incp-resdomain-boundlist-alert";
 
@@ -335,11 +330,11 @@ inCpResDomain.BoundList = function(name) {
 
                 if (data.error) {
                     return alert(data.error.message);
-                // return l4i.InnerAlert(alert_id, 'error', data.error.message);
+                // return valueui.alert.InnerShow(alert_id, 'error', data.error.message);
                 }
 
                 return alert("Resource Not Found");
-            // return l4i.InnerAlert(alert_id, 'error', "Item Not Found");
+            // return valueui.alert.InnerShow(alert_id, 'error', "Item Not Found");
             }
 
             if (!data.action) {
@@ -385,12 +380,12 @@ inCpResDomain.BoundList = function(name) {
             }
 
             data._name = data.meta.name.substr("domain/".length);
-            inCpResDomain.inst_active = l4i.Clone(data);
+            inCpResDomain.inst_active = valueui.utilx.ObjectClone(data);
 
             data._actions = inCpResDomain.op_actions;
             data._types = inCpResDomain.bound_types;
 
-            l4iModal.Open({
+            valueui.modal.Open({
                 id: "incp-resdomain-boundlist-modal",
                 title: "Domain Bounds",
                 tplsrc: tpl,
@@ -398,7 +393,7 @@ inCpResDomain.BoundList = function(name) {
                 height: 600,
                 buttons: [{
                     title: "Cancel",
-                    onclick: "l4iModal.Close()",
+                    onclick: "valueui.modal.Close()",
                 }, {
                     title: "Binding New",
                     onclick: 'inCpResDomain.BoundSet()',
@@ -407,10 +402,10 @@ inCpResDomain.BoundList = function(name) {
                 success: function() {
 
                     if (data.bounds.length == 0) {
-                        return l4i.InnerAlert(alert_id, 'alert-info', "No Resource Bound");
+                        return valueui.alert.InnerShow(alert_id, 'alert-info', "No Resource Bound");
                     }
 
-                    l4iTemplate.Render({
+                    valueui.template.Render({
                         dstid: "incp-resdomain-boundlist",
                         tplid: "incp-resdomain-boundlist-tpl",
                         data: data,
@@ -430,7 +425,6 @@ inCpResDomain.BoundList = function(name) {
         inCp.ApiCmd("resource/domain?name=" + name, {
             callback: ep.done("data"),
         });
-    });
 }
 
 
@@ -444,13 +438,13 @@ inCpResDomain.BoundSet = function(name) {
 
         for (var i in inCpResDomain.inst_active.bounds) {
             if (inCpResDomain.inst_active.bounds[i].name == name) {
-                bound = l4i.Clone(inCpResDomain.inst_active.bounds[i]);
+                bound = valueui.utilx.ObjectClone(inCpResDomain.inst_active.bounds[i]);
                 break;
             }
         }
     }
     if (!bound) {
-        bound = l4i.Clone(inCpResDomain.boundset_def);
+        bound = valueui.utilx.ObjectClone(inCpResDomain.boundset_def);
     }
     if (!bound.value) {
         bound.value = "pod:";
@@ -502,7 +496,7 @@ inCpResDomain.BoundSet = function(name) {
 
     inCpResDomain.inst_active_bound = bound;
 
-    l4iModal.Open({
+    valueui.modal.Open({
         id: "incp-resdomain-boundset-modal",
         title: "Binding",
         tpluri: inCp.TplPath("res/domain-bound-set"),
@@ -514,7 +508,7 @@ inCpResDomain.BoundSet = function(name) {
         },
         buttons: [{
             title: "Cancel",
-            onclick: "l4iModal.Close()",
+            onclick: "valueui.modal.Close()",
         }, {
             title: "Save",
             onclick: 'inCpResDomain.BoundSetCommit()',
@@ -609,7 +603,7 @@ inCpResDomain.BoundSetCommit = function() {
         });
 
     } catch (err) {
-        return l4i.InnerAlert(alert_id, 'error', err);
+        return valueui.alert.InnerShow(alert_id, 'error', err);
     }
 
     inCp.ApiCmd("resource/domain-bound", {
@@ -618,22 +612,22 @@ inCpResDomain.BoundSetCommit = function() {
         callback: function(err, rsj) {
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, 'error', "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, 'error', rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, 'error', rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "Resource") {
-                return l4i.InnerAlert(alert_id, 'error', "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, 'error', "Network Connection Exception");
             }
 
             inCpResDomain.inst_active = null;
-            l4i.InnerAlert(alert_id, 'ok', "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, 'ok', "Successfully Updated");
 
             window.setTimeout(function() {
-                l4iModal.Close();
+                valueui.modal.Close();
                 inCpResDomain.List();
             }, 500);
         }
@@ -662,14 +656,14 @@ inCpResDomain.Deploy = function(name) {
 }
 
 inCpResDomain.DeployWizard = function(name) {
-    l4iModal.Open({
+    valueui.modal.Open({
         id: "incp-resdomain-deploy",
         title: "Resource Domain Deploy Wizard",
         width: 900,
         height: 300,
         tpluri: inCp.TplPath("res/domain-deploy"),
         callback: function(err, data) {
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: "incp-resdomain-deploy-wizard",
                 tplid: "incp-resdomain-deploy-wizard-tpl",
                 data: {
@@ -678,7 +672,7 @@ inCpResDomain.DeployWizard = function(name) {
             });
         },
         buttons: [{
-            onclick: "l4iModal.Close()",
+            onclick: "valueui.modal.Close()",
             title: "Close",
         }, {
             onclick: "inCpResDomain.DeployCommit()",
@@ -693,15 +687,14 @@ inCpResDomain.DeploySelectApp = function(name) {
         return;
     }
 
-    seajs.use(["ep"], function(EventProxy) {
 
-        var ep = EventProxy.create("tpl", "inst", function(tpl, inst) {
+        var ep = valueui.NewEventProxy("tpl", "inst", function(tpl, inst) {
 
             if (!inst || !inst.kind || inst.kind != "AppList") {
                 return alert("AppInst error, Please try again later (EC:incp-appset)");
             }
 
-            l4iModal.Open({
+            valueui.modal.Open({
                 title: "Select a App to Deploy",
                 width: 900,
                 height: 400,
@@ -710,7 +703,7 @@ inCpResDomain.DeploySelectApp = function(name) {
                     if (err) {
                         return;
                     }
-                    l4iTemplate.Render({
+                    valueui.template.Render({
                         dstid: "incp-appls-selector",
                         tplid: "incp-appls-selector-tpl",
                         data: inst,
@@ -724,7 +717,7 @@ inCpResDomain.DeploySelectApp = function(name) {
                     inCpResDomain.DeployCommit();
                 },
                 buttons: [{
-                    onclick: "l4iModal.Close()",
+                    onclick: "valueui.modal.Close()",
                     title: "Close",
                 }],
             });
@@ -742,7 +735,6 @@ inCpResDomain.DeploySelectApp = function(name) {
         inCp.ApiCmd("app/list-op-res?res_type=domain", {
             callback: ep.done("inst"),
         });
-    });
 }
 
 inCpResDomain.DeployCommit = function() {
@@ -766,10 +758,10 @@ inCpResDomain.DeployCommit = function() {
         timeout: 3000,
         callback: function(err, rsj) {
 
-            l4iModal.Close();
+            valueui.modal.Close();
 
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, 'error', "Failed");
+                return valueui.alert.InnerShow(alert_id, 'error', "Failed");
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -777,10 +769,10 @@ inCpResDomain.DeployCommit = function() {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'error', msg);
+                return valueui.alert.InnerShow(alert_id, 'error', msg);
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successful operation");
+            valueui.alert.InnerShow(alert_id, 'ok', "Successful operation");
 
             window.setTimeout(function() {
                 inCpResDomain.inst_active = null;

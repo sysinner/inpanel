@@ -221,8 +221,7 @@ inCpPod.List = function (tplid, options) {
         options = inCpPod.list_options;
     }
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", "data", function (tpl, data) {
+        var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
             if (!options.ops_mode) {
                 inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus, "pod/instance");
             }
@@ -239,7 +238,7 @@ inCpPod.List = function (tplid, options) {
             }
 
             if (data.error) {
-                return l4i.InnerAlert(alert_id, "error", data.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", data.error.message);
             }
 
             if (data.user_transfers && data.user_transfers.length > 0) {
@@ -268,12 +267,12 @@ inCpPod.List = function (tplid, options) {
             data.items = items;
 
             if (data.items.length < 1) {
-                return l4i.InnerAlert(alert_id, "alert-info", "No Item Found Yet ...");
+                return valueui.alert.InnerShow(alert_id, "alert-info", "No Item Found Yet ...");
             }
 
             inCpPod.list = data.items;
 
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: tplid,
                 tplid: tplid + "-tpl",
                 data: data,
@@ -303,7 +302,6 @@ inCpPod.List = function (tplid, options) {
         options.callback = ep.done("data");
         options.fields = ["spec/box", "operate/replica_cap", "operate/status"];
         inCpPod.ListRefresh(options);
-    });
 };
 
 /*
@@ -329,7 +327,7 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
         callback: function(err, rsj) {
 
             if (err) {
-                return l4i.InnerAlert(alert_id, 'error', "Failed: " + err);
+                return valueui.alert.InnerShow(alert_id, 'error', "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "PodInstance") {
@@ -337,7 +335,7 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return l4i.InnerAlert(alert_id, 'error', msg);
+                return valueui.alert.InnerShow(alert_id, 'error', msg);
             }
 
             if (op_action == 2) {
@@ -346,7 +344,7 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
                 $(obj).removeClass("button-success");
             }
 
-            l4i.InnerAlert(alert_id, 'ok', "Successful updated");
+            valueui.alert.InnerShow(alert_id, 'ok', "Successful updated");
         }
     });
 }
@@ -360,18 +358,17 @@ inCpPod.New = function (options) {
     }
     var alert_id = "#incp-podnew-alert";
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", "zones", "plans", function (tpl, zones, plans) {
+        var ep = valueui.NewEventProxy("tpl", "zones", "plans", function (tpl, zones, plans) {
             if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
             inCpPod.syszones = zones;
 
             if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            var pod = l4i.Clone(inCpPod.def);
+            var pod = valueui.utilx.ObjectClone(inCpPod.def);
             for (var i in plans.items) {
                 for (var j in plans.items[i].res_computes) {
                     plans.items[i].res_computes[j]._cpu_limit = (
@@ -396,7 +393,7 @@ inCpPod.New = function (options) {
             }
 
             if (!pod._plan_selected) {
-                return l4i.InnerAlert(alert_id, "error", "No SpecPodPlan Found");
+                return valueui.alert.InnerShow(alert_id, "error", "No SpecPodPlan Found");
             }
 
             //
@@ -412,7 +409,7 @@ inCpPod.New = function (options) {
             // inCpPod.zones = zones;
 
             var fnfre = function () {
-                l4iTemplate.Render({
+                valueui.template.Render({
                     dstid: "incp-podnew-plans",
                     tplid: "incp-podnew-plans-tpl",
                     data: {
@@ -425,14 +422,14 @@ inCpPod.New = function (options) {
             inCpPod.itemNewOptions = options;
             // console.log(options);
             if (options.open_modal) {
-                l4iModal.Open({
+                valueui.modal.Open({
                     id: "pod-new",
                     tplsrc: tpl,
                     title: "Create new Pod Instance",
                     width: "max",
                     height: "max",
                     callback: function () {
-                        l4iTemplate.Render({
+                        valueui.template.Render({
                             dstid: "incp-podnew-form",
                             tplid: "incp-podnew-modal",
                             data: {
@@ -445,7 +442,7 @@ inCpPod.New = function (options) {
                     },
                     buttons: [
                         {
-                            onclick: "l4iModal.Close()",
+                            onclick: "valueui.modal.Close()",
                             title: "Close",
                         },
                         {
@@ -456,11 +453,11 @@ inCpPod.New = function (options) {
                     ],
                 });
             } else {
-                l4iTemplate.Render({
+                valueui.template.Render({
                     dstid: "work-content",
                     tplsrc: tpl,
                     callback: function () {
-                        l4iTemplate.Render({
+                        valueui.template.Render({
                             dstid: "incp-podnew-form",
                             tplid: "incp-podnew-inner",
                             data: {
@@ -491,7 +488,7 @@ inCpPod.New = function (options) {
         inCp.ApiCmd("host/zone-list?fields=cells", {
             callback: ep.done("zones"),
         });
-    });
+
 };
 
 inCpPod.NewOptionResFit = function (v) {
@@ -566,7 +563,7 @@ inCpPod.NewRefreshPlan = function () {
         }
 
         if (!inCpPod.plan._res_volume) {
-            return l4i.InnerAlert(alert_id, "error", "No SpecPodPlan/Volume Found");
+            return valueui.alert.InnerShow(alert_id, "error", "No SpecPodPlan/Volume Found");
         }
 
         //
@@ -601,7 +598,7 @@ inCpPod.NewRefreshPlan = function () {
                         }
 
                         inCpPod.plan._zones.push({
-                            id: l4iString.CryptoMd5(name),
+                            id: valueui.utilx.CryptoMd5(name),
                             name: name,
                             zone: inCpPod.plan.zones[i].name,
                             cell: inCpPod.plan.zones[i].cells[k],
@@ -623,7 +620,7 @@ inCpPod.NewRefreshPlan = function () {
 
         //
         if (!inCpPod.plan._zone_selected) {
-            return l4i.InnerAlert(alert_id, "error", "No SpecZone Found");
+            return valueui.alert.InnerShow(alert_id, "error", "No SpecZone Found");
         }
 
         //
@@ -662,7 +659,7 @@ inCpPod.NewRefreshPlan = function () {
 
         $(".incp-podnew-resource-selector-row").remove();
 
-        l4iTemplate.Render({
+        valueui.template.Render({
             dstid: "incp-podnew-plan-row",
             tplid: "incp-podnew-resource-selector-tpl",
             data: inCpPod.plan,
@@ -680,7 +677,7 @@ inCpPod.NewPlanClusterChange = function (zn) {
     }
 
     $("#incp-podnew-zones").find(".incp-form-box-selector-item.selected").removeClass("selected");
-    $("#incp-podnew-zone-id-" + l4iString.CryptoMd5(zn)).addClass("selected");
+    $("#incp-podnew-zone-id-" + valueui.utilx.CryptoMd5(zn)).addClass("selected");
 
     inCpPod.plan._zone_selected = zn;
     inCpPod.HookAccountChargeRefresh();
@@ -696,7 +693,7 @@ inCpPod.NewPlanResComputeChange = function (res_compute_id) {
             continue;
         }
         if (!inCpPod.NewOptionResFit(inCpPod.plan.res_computes[i])) {
-            return l4i.InnerAlert(
+            return valueui.alert.InnerShow(
                 "#incp-podnew-alert",
                 "error",
                 "this Resource Spec can not fit the Application Resource Requirements, please try another Spec or change the Pod Plan"
@@ -715,7 +712,7 @@ inCpPod.NewPlanResComputeChange = function (res_compute_id) {
 };
 
 inCpPod.NewPlanImageChange = function (image_id) {
-    var image_id_enc = l4iString.CryptoMd5(image_id);
+    var image_id_enc = valueui.utilx.CryptoMd5(image_id);
     if (!inCpPod.plan || inCpPod.plan.image_selected == image_id) {
         // return;
     }
@@ -749,7 +746,7 @@ inCpPod.NewPlanVolChange = function (ref_id) {
 
     $("#incp-podnew-resource-value").val(v);
     $("#incp-podnew-resource-hint").text(
-        l4i.T("Range: %d ~ %d GB", inCpPod.plan._res_volume.request, inCpPod.plan._res_volume.limit)
+        valueui.lang.T("Range: %d ~ %d GB", inCpPod.plan._res_volume.request, inCpPod.plan._res_volume.limit)
     );
 
     inCpPod.HookAccountChargeRefresh();
@@ -793,10 +790,10 @@ inCpPod.HookAccountChargeRefresh = function () {
             var cas = [];
             for (var i in data.items) {
                 if (data.items[i].cycle_time == 3600) {
-                    cas.push(l4i.T("%0.2f / Hour", data.items[i].cycle_amount));
+                    cas.push(valueui.lang.T("%0.2f / Hour", data.items[i].cycle_amount));
                     inCpPod.HookAccountChargeRefreshCache = data.items[i].cycle_amount;
                 } else if (data.items[i].cycle_time == 86400) {
-                    cas.push(l4i.T("%0.2f / Day", data.items[i].cycle_amount));
+                    cas.push(valueui.lang.T("%0.2f / Day", data.items[i].cycle_amount));
                 }
             }
             if (cas.length > 0) {
@@ -819,12 +816,12 @@ inCpPod.NewCommit = function () {
     }
 
     if (!inCpPod.plan.res_compute_selected) {
-        return l4i.InnerAlert(alert_id, "error", "Resource Option Not Set");
+        return valueui.alert.InnerShow(alert_id, "error", "Resource Option Not Set");
     }
 
     if (inCpPod.itemNewOptions.app_vol_min && inCpPod.itemNewOptions.app_vol_min > 0) {
         if (vol_size < inCpPod.itemNewOptions.app_vol_min) {
-            return l4i.InnerAlert(
+            return valueui.alert.InnerShow(
                 alert_id,
                 "error",
                 "this System Storage requires at least " +
@@ -853,7 +850,7 @@ inCpPod.NewCommit = function () {
     };
 
     if (!set.name || set.name == "") {
-        return l4i.InnerAlert(alert_id, "error", "Name Not Found");
+        return valueui.alert.InnerShow(alert_id, "error", "Name Not Found");
     }
 
     //
@@ -869,26 +866,26 @@ inCpPod.NewCommit = function () {
         data: JSON.stringify(set),
         callback: function (err, rsj) {
             if (inCpPod.itemNewOptions.open_modal) {
-                l4iModal.ScrollTop();
+                valueui.modal.ScrollTop();
             }
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
             window.setTimeout(function () {
                 if (inCpPod.itemNewOptions.app_new_callback) {
                     inCpPod.itemNewOptions.app_new_callback(null, rsj.pod);
                 } else {
-                    l4iModal.Close();
+                    valueui.modal.Close();
                     if (inCpPod.itemNewOptions.callback) {
                         inCpPod.itemNewOptions.callback(null);
                     } else if (!inCpPod.itemNewOptions.open_modal) {
@@ -906,8 +903,7 @@ inCpPod.NewCommit = function () {
 
 inCpPod.Info = function (pod_id, options) {
     options = options || {};
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", "pod", function (tpl, pod) {
+        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
             if (!pod.operate.replicas) {
                 pod.operate.replicas = [];
             }
@@ -937,7 +933,7 @@ inCpPod.Info = function (pod_id, options) {
 
             var btns = [
                 {
-                    onclick: "l4iModal.Close()",
+                    onclick: "valueui.modal.Close()",
                     title: "Close",
                 },
             ];
@@ -947,7 +943,7 @@ inCpPod.Info = function (pod_id, options) {
                 }
             }
 
-            l4iModal.Open({
+            valueui.modal.Open({
                 id: "incp-pod-item-info",
                 title: "Pod Instance Information",
                 tplsrc: tpl,
@@ -969,7 +965,6 @@ inCpPod.Info = function (pod_id, options) {
         inCp.TplFetch("pod/info", {
             callback: ep.done("tpl"),
         });
-    });
 };
 
 inCpPod.SetInfo = function (pod_id) {
@@ -980,8 +975,7 @@ inCpPod.SetInfo = function (pod_id) {
         return alert("No Pod Found");
     }
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", "pod", function (tpl, pod) {
+        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
             var actions = [];
             for (var i in inCp.OpActions) {
                 actions.push({
@@ -1018,7 +1012,7 @@ inCpPod.SetInfo = function (pod_id) {
             spec_summary += ", RAM: " + pod.spec._mem_limit + " MB";
             spec_summary += ", Storage: " + pod.spec.vol_sys.size + " GB";
 
-            l4iModal.Open({
+            valueui.modal.Open({
                 title: "Pod Instance Setup",
                 tplsrc: tpl,
                 width: 1000,
@@ -1026,14 +1020,14 @@ inCpPod.SetInfo = function (pod_id) {
                 data: {
                     pod: pod,
                     _op_actions: actions,
-                    _op_sys_states: l4i.Clone(inCpPod.opSysStates),
+                    _op_sys_states: valueui.utilx.ObjectClone(inCpPod.opSysStates),
                     _spec_summary: spec_summary,
                     _op_rep_min: rep_min,
                     _op_rep_max: rep_max,
                 },
                 buttons: [
                     {
-                        onclick: "l4iModal.Close()",
+                        onclick: "valueui.modal.Close()",
                         title: "Close",
                     },
                     {
@@ -1060,7 +1054,6 @@ inCpPod.SetInfo = function (pod_id) {
         inCp.TplFetch("pod/set-info", {
             callback: ep.done("tpl"),
         });
-    });
 };
 
 inCpPod.SetInfoCommit = function () {
@@ -1089,7 +1082,7 @@ inCpPod.SetInfoCommit = function () {
     }
 
     if (inCp.OpActionAllow(set.operate.action, inCp.OpActionDestroy)) {
-        return l4iModal.Close(function () {
+        return valueui.modal.Close(function () {
             inCpPod.EntryDel(pod_id);
         });
     }
@@ -1101,25 +1094,25 @@ inCpPod.SetInfoCommit = function () {
         data: JSON.stringify(set),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4iModal.FootAlert("ok", "Successfully Updated");
+            valueui.modal.FootAlert("ok", "Successfully Updated");
 
             if (set.operate.replica_cap > 0 && inCpPod.itemActive && inCpPod.itemActive.operate) {
                 inCpPod.itemActive.operate.replica_cap = set.operate.replica_cap;
             }
 
             window.setTimeout(function () {
-                l4iModal.Close();
+                valueui.modal.Close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
                     inCpPod.List(null, null);
@@ -1137,9 +1130,8 @@ inCpPod.UserTransferView = function (pod_id) {
         return alert("No Pod Found");
     }
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", "pod", function (tpl, pod) {
-            l4iModal.Open({
+        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
+            valueui.modal.Open({
                 id: "pod-user-transfer",
                 title: "Transfer Ownership",
                 tplsrc: tpl,
@@ -1149,7 +1141,7 @@ inCpPod.UserTransferView = function (pod_id) {
                 },
                 buttons: [
                     {
-                        onclick: "l4iModal.Close()",
+                        onclick: "valueui.modal.Close()",
                         title: "Close",
                     },
                     {
@@ -1172,7 +1164,6 @@ inCpPod.UserTransferView = function (pod_id) {
         inCp.TplFetch("pod/user-transfer", {
             callback: ep.done("tpl"),
         });
-    });
 };
 
 inCpPod.UserTransferCommit = function () {
@@ -1191,24 +1182,24 @@ inCpPod.UserTransferCommit = function () {
         data: JSON.stringify(set),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4iModal.FootAlert(
+            valueui.modal.FootAlert(
                 "ok",
-                l4i.T("Successfully Updated") + ", " + l4i.T("msg-transter-ownership-confirm")
+                valueui.lang.T("Successfully Updated") + ", " + valueui.lang.T("msg-transter-ownership-confirm")
             );
 
             window.setTimeout(function () {
-                l4iModal.Close();
+                valueui.modal.Close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
                     inCpPod.List(null, null);
@@ -1223,9 +1214,8 @@ inCpPod.UserTransferPerform = function () {
         return alert("No Transfer Found");
     }
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", function (tpl) {
-            l4iModal.Open({
+        var ep = valueui.NewEventProxy("tpl", function (tpl) {
+            valueui.modal.Open({
                 title: "Transfer Ownership Requests",
                 tplsrc: tpl,
                 width: 900,
@@ -1235,7 +1225,7 @@ inCpPod.UserTransferPerform = function () {
                 },
                 buttons: [
                     {
-                        onclick: "l4iModal.Close()",
+                        onclick: "valueui.modal.Close()",
                         title: "Close",
                     },
                     {
@@ -1254,7 +1244,6 @@ inCpPod.UserTransferPerform = function () {
         inCp.TplFetch("pod/user-transfer-perform", {
             callback: ep.done("tpl"),
         });
-    });
 };
 
 inCpPod.UserTransferPerformCommit = function () {
@@ -1277,7 +1266,7 @@ inCpPod.UserTransferPerformCommit = function () {
             throw "No Item Seleced";
         }
     } catch (err) {
-        return l4i.InnerAlert(alert_id, "error", err);
+        return valueui.alert.InnerShow(alert_id, "error", err);
     }
 
     $(alert_id).hide();
@@ -1287,21 +1276,21 @@ inCpPod.UserTransferPerformCommit = function () {
         // data: JSON.stringify(set),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4iModal.FootAlert("ok", l4i.T("Successfully Updated"));
+            valueui.modal.FootAlert("ok", valueui.lang.T("Successfully Updated"));
 
             window.setTimeout(function () {
-                l4iModal.Close();
+                valueui.modal.Close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
                     inCpPod.List(null, null);
@@ -1319,14 +1308,13 @@ inCpPod.EntryDel = function (pod_id) {
         return alert("No Pod Found");
     }
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", "pod", function (tpl, pod) {
+        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
             if (!pod.apps) {
                 pod.apps = [];
             }
 
             // This will result in permanent data loss.
-            l4iModal.Open({
+            valueui.modal.Open({
                 title: "Pod Destroy",
                 tplsrc: tpl,
                 width: 800,
@@ -1334,7 +1322,7 @@ inCpPod.EntryDel = function (pod_id) {
                 data: pod,
                 buttons: [
                     {
-                        onclick: "l4iModal.Close()",
+                        onclick: "valueui.modal.Close()",
                         title: "Close",
                     },
                     {
@@ -1357,7 +1345,6 @@ inCpPod.EntryDel = function (pod_id) {
         inCp.TplFetch("pod/entry-del", {
             callback: ep.done("tpl"),
         });
-    });
 };
 
 inCpPod.EntryDelCommit = function () {
@@ -1369,21 +1356,21 @@ inCpPod.EntryDelCommit = function () {
         method: "GET",
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                l4iModal.Close();
+                valueui.modal.Close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
                     inCpPod.List(null, null);
@@ -1396,23 +1383,22 @@ inCpPod.EntryDelCommit = function () {
 inCpPod.Set = function (pod_id) {
     var alert_id = "#incp-podset-alert";
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create(
+        var ep = valueui.NewEventProxy(
             "tpl",
             "zones",
             "specs",
             "pod",
             function (tpl, zones, specs, pod) {
                 if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                    return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                    return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
                 }
 
                 if (!specs || !specs.kind || specs.kind != "PodSpecList") {
-                    return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                    return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
                 }
 
                 if (!pod.kind || pod.kind != "Pod") {
-                    return l4i.InnerAlert(alert_id, "error", "Pod Not Found");
+                    return valueui.alert.InnerShow(alert_id, "error", "Pod Not Found");
                 }
 
                 pod._zones = zones;
@@ -1421,14 +1407,14 @@ inCpPod.Set = function (pod_id) {
 
                 inCpPod.specs = specs;
 
-                l4iModal.Open({
+                valueui.modal.Open({
                     title: "Pod Instance Setting",
                     tplsrc: tpl,
                     width: 900,
                     height: 600,
                     buttons: [
                         {
-                            onclick: "l4iModal.Close()",
+                            onclick: "valueui.modal.Close()",
                             title: "Close",
                         },
                         {
@@ -1438,7 +1424,7 @@ inCpPod.Set = function (pod_id) {
                         },
                     ],
                     success: function () {
-                        l4iTemplate.Render({
+                        valueui.template.Render({
                             dstid: "incp-podset",
                             tplid: "incp-podset-tpl",
                             data: pod,
@@ -1477,7 +1463,6 @@ inCpPod.Set = function (pod_id) {
         inCp.ApiCmd("pod/entry?id=" + pod_id, {
             callback: ep.done("pod"),
         });
-    });
 };
 
 inCpPod.SetCommit = function () {
@@ -1511,21 +1496,21 @@ inCpPod.SetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "Pod") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                l4iModal.Close();
+                valueui.modal.Close();
                 inCpPod.List(null, null);
             }, 500);
         },
@@ -1576,21 +1561,21 @@ inCpPod.EntryIndex = function (pod_id, nav_target) {
     if (pod_id) {
         inCpPod.itemActiveId = pod_id;
     }
-    l4i.UrlEventActive("pod/index");
+    valueui.url.EventActive("pod/index");
 
     inCp.ModuleNavbarMenu("cp/pod/entry", inCpPod.entry_nav_menus);
 
-    l4i.UrlEventClean("incp-module-navbar-menus");
-    l4i.UrlEventRegister("pod/entry/overview", inCpPod.EntryOverview, "incp-module-navbar-menus");
-    l4i.UrlEventRegister("pod/entry/stats", inCpPod.EntryStats, "incp-module-navbar-menus");
+    valueui.url.EventClean("incp-module-navbar-menus");
+    valueui.url.EventRegister("pod/entry/overview", inCpPod.EntryOverview, "incp-module-navbar-menus");
+    valueui.url.EventRegister("pod/entry/stats", inCpPod.EntryStats, "incp-module-navbar-menus");
 
     switch (nav_target) {
         case "stats":
-            l4i.UrlEventHandler("pod/entry/stats", false);
+            valueui.url.EventHandler("pod/entry/stats", false);
             break;
 
         default:
-            l4i.UrlEventHandler("pod/entry/overview", false);
+            valueui.url.EventHandler("pod/entry/overview", false);
             break;
     }
 };
@@ -1604,8 +1589,7 @@ inCpPod.EntryOverview = function () {
         }
     }
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", "pod", function (tpl, pod) {
+        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
             if (!pod.operate.failover) {
                 pod.operate.failover = {};
             }
@@ -1655,7 +1639,7 @@ inCpPod.EntryOverview = function () {
             pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
 
             if (pod.payment && pod.payment.cycle_amount && pod.operate.replica_cap) {
-                pod.payment._cycle_amount = l4i.T(
+                pod.payment._cycle_amount = valueui.lang.T(
                     "%.2f / Hour",
                     pod.payment.cycle_amount * pod.operate.replica_cap
                 );
@@ -1663,7 +1647,7 @@ inCpPod.EntryOverview = function () {
                 if (!pod.payment) {
                     pod.payment = {};
                 }
-                pod.payment._cycle_amount = l4i.T(
+                pod.payment._cycle_amount = valueui.lang.T(
                     "%.2f / Hour",
                     inCpPod.HookAccountChargeRefreshCache * pod.operate.replica_cap
                 );
@@ -1671,12 +1655,12 @@ inCpPod.EntryOverview = function () {
 
             for (var i in inCpPod.opSysStates) {
                 if (inCpPod.opSysStates[i].value == pod.operate.exp_sys_state) {
-                    pod.operate._exp_sys_state_title = l4i.T(inCpPod.opSysStates[i].title);
+                    pod.operate._exp_sys_state_title = valueui.lang.T(inCpPod.opSysStates[i].title);
                     break;
                 }
             }
             if (!pod.operate._exp_sys_state_title) {
-                pod.operate._exp_sys_state_title = l4i.T("Stateful");
+                pod.operate._exp_sys_state_title = valueui.lang.T("Stateful");
             }
 
             inCp.OpToolsClean();
@@ -1684,7 +1668,7 @@ inCpPod.EntryOverview = function () {
 
             inCpPod.itemActive = pod;
 
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: "incp-podentry-overview",
                 tplid: "incp-podentry-overview-info-tpl",
                 data: pod,
@@ -1712,7 +1696,6 @@ inCpPod.EntryOverview = function () {
         inCp.TplFetch("pod/entry-overview", {
             callback: ep.done("tpl"),
         });
-    });
 };
 
 inCpPod.EntryRepOpLogActive = function (rep_id) {
@@ -1722,7 +1705,7 @@ inCpPod.EntryRepOpLogActive = function (rep_id) {
     // $(this).addClass("active");
     if (inCpPod.itemStatusActive) {
         inCpPod.itemStatusActive._rep_oplog_active_id = rep_id;
-        l4iTemplate.Render({
+        valueui.template.Render({
             dstid: "incp-podentry-sidebar",
             tplid: "incp-podentry-overview-oplog-tpl",
             data: inCpPod.itemStatusActive,
@@ -1761,7 +1744,7 @@ inCpPod.entryAutoRefresh = function () {
                         box: {},
                     });
                 }
-                l4iTemplate.Render({
+                valueui.template.Render({
                     dstid: "incp-podentry-overview",
                     tplid: "incp-podentry-overview-info-tpl",
                     data: inCpPod.itemActive,
@@ -1784,10 +1767,10 @@ inCpPod.entryAutoRefresh = function () {
                     );
                     if (elrep) {
                         elrep.innerHTML =
-                            '<span class="badge badge-' +
+                            '<span class="badge bg-' +
                             item.style +
                             '">' +
-                            l4i.T(item.title) +
+                            valueui.lang.T(item.title) +
                             "</span>";
                     }
                 }
@@ -1852,9 +1835,9 @@ inCpPod.entryAutoRefresh = function () {
             }
             data._rep_oplog_active_id = inCpPod.itemActive._rep_oplog_active_id;
 
-            inCpPod.itemStatusActive = l4i.Clone(data);
+            inCpPod.itemStatusActive = valueui.utilx.ObjectClone(data);
 
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: "incp-podentry-sidebar",
                 tplid: "incp-podentry-overview-oplog-tpl",
                 data: inCpPod.itemStatusActive,
@@ -1991,8 +1974,7 @@ inCpPod.EntryStats = function (time_past, rep_id) {
     }
 
     stats_url += "&qry=" + btoa(JSON.stringify(stats_query));
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", "pod", "stats", function (tpl, pod, stats) {
+        var ep = valueui.NewEventProxy("tpl", "pod", "stats", function (tpl, pod, stats) {
             if (tpl) {
                 $("#work-content").html(tpl);
                 $(".incp-podentry-stats-item").css({
@@ -2022,57 +2004,57 @@ inCpPod.EntryStats = function (time_past, rep_id) {
             }
 
             //
-            var stats_cpu = l4i.Clone(inCpPod.hchart_def);
-            stats_cpu.options.title = l4i.T("CPU Usage (Percentage / %s)", tc_title);
+            var stats_cpu = valueui.utilx.ObjectClone(inCpPod.hchart_def);
+            stats_cpu.options.title = valueui.lang.T("CPU Usage (Percentage / %s)", tc_title);
             /**
                 max = inCpPod.entryStatsFeedMaxValue(stats, "cpu/us");
                 if (max > 1000000000) {
-                    stats_cpu.options.title = l4i.T("CPU (Seconds / %s)", tc_title);
+                    stats_cpu.options.title = valueui.lang.T("CPU (Seconds / %s)", tc_title);
                     stats_cpu._fix = 1000000000;
                 } else if (max > 1000000) {
-                    stats_cpu.options.title = l4i.T("CPU (Millisecond / %s)", tc_title);
+                    stats_cpu.options.title = valueui.lang.T("CPU (Millisecond / %s)", tc_title);
                     stats_cpu._fix = 1000000;
                 } else if (max > 1000) {
-                    stats_cpu.options.title = l4i.T("CPU (Microsecond / %s)", tc_title);
+                    stats_cpu.options.title = valueui.lang.T("CPU (Microsecond / %s)", tc_title);
                     stats_cpu._fix = 1000;
                 } else {
-                    stats_cpu.options.title = l4i.T("CPU (Nanosecond / %s)", tc_title);
+                    stats_cpu.options.title = valueui.lang.T("CPU (Nanosecond / %s)", tc_title);
                 }
             */
 
             //
-            var stats_ram = l4i.Clone(inCpPod.hchart_def);
-            stats_ram.options.title = l4i.T("Memory Usage (MB)");
+            var stats_ram = valueui.utilx.ObjectClone(inCpPod.hchart_def);
+            stats_ram.options.title = valueui.lang.T("Memory Usage (MB)");
             stats_ram._fix = 1024 * 1024;
 
             //
-            var stats_net = l4i.Clone(inCpPod.hchart_def);
+            var stats_net = valueui.utilx.ObjectClone(inCpPod.hchart_def);
             max = inCpPod.entryStatsFeedMaxValue(stats, "net/rs,net/ws");
             if (max > 1024 * 1024) {
-                stats_net.options.title = l4i.T("Network Bytes (MB / %s)", tc_title);
+                stats_net.options.title = valueui.lang.T("Network Bytes (MB / %s)", tc_title);
                 stats_net._fix = 1024 * 1024;
             } else if (max > 1024) {
-                stats_net.options.title = l4i.T("Network Bytes (KB / %s)", tc_title);
+                stats_net.options.title = valueui.lang.T("Network Bytes (KB / %s)", tc_title);
                 stats_net._fix = 1024;
             } else {
-                stats_net.options.title = l4i.T("Network Bytes (Bytes / %s)", tc_title);
+                stats_net.options.title = valueui.lang.T("Network Bytes (Bytes / %s)", tc_title);
             }
 
             //
-            var stats_fsn = l4i.Clone(inCpPod.hchart_def);
-            stats_fsn.options.title = l4i.T("Storage IO (Number / %s)", tc_title);
+            var stats_fsn = valueui.utilx.ObjectClone(inCpPod.hchart_def);
+            stats_fsn.options.title = valueui.lang.T("Storage IO (Number / %s)", tc_title);
 
             //
-            var stats_fss = l4i.Clone(inCpPod.hchart_def);
+            var stats_fss = valueui.utilx.ObjectClone(inCpPod.hchart_def);
             max = inCpPod.entryStatsFeedMaxValue(stats, "fs/rs,fs/ws");
             if (max > 1024 * 1024) {
-                stats_fss.options.title = l4i.T("Storage IO Bytes (MB / %s)", tc_title);
+                stats_fss.options.title = valueui.lang.T("Storage IO Bytes (MB / %s)", tc_title);
                 stats_fss._fix = 1024 * 1024;
             } else if (max > 1024) {
-                stats_fss.options.title = l4i.T("Storage IO Bytes (KB / %s)", tc_title);
+                stats_fss.options.title = valueui.lang.T("Storage IO Bytes (KB / %s)", tc_title);
                 stats_fss._fix = 1024;
             } else {
-                stats_fss.options.title = l4i.T("Storage IO Bytes (Bytes / %s)", tc_title);
+                stats_fss.options.title = valueui.lang.T("Storage IO Bytes (Bytes / %s)", tc_title);
             }
 
             for (var i in stats.items) {
@@ -2117,8 +2099,10 @@ inCpPod.EntryStats = function (time_past, rep_id) {
                 for (var j in v.items) {
                     var v2 = v.items[j];
 
-                    var t = new Date(v2.time * 1000);
-                    labels.push(t.l4iTimeFormat(tfmt));
+                    // var t = new Date(v2.time * 1000);
+                    // labels.push(t.l4iTimeFormat(tfmt));
+                    labels.push(valueui.utilx.UnixTimeFormat(v2.time, tfmt));
+                    
 
                     if (!v2.value) {
                         v2.value = 0;
@@ -2211,7 +2195,7 @@ inCpPod.EntryStats = function (time_past, rep_id) {
                 },
             ];
 
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: "incp-podentry-stats-list",
                 tplid: "incp-podentry-stats-item-tpl",
                 data: {
@@ -2247,7 +2231,6 @@ inCpPod.EntryStats = function (time_past, rep_id) {
         inCp.TplFetch("pod/entry-stats", {
             callback: ep.done("tpl"),
         });
-    });
 };
 
 inCpPod.EntryAccess = function (pod_id) {
@@ -2258,11 +2241,10 @@ inCpPod.EntryAccess = function (pod_id) {
         return alert("No Pod Found");
     }
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create("tpl", "pod", function (tpl, pod) {
+        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
             var actions = [];
             if (!pod.operate.access) {
-                pod.operate.access = l4i.Clone(inCpPod.itemOperateAccessDef);
+                pod.operate.access = valueui.utilx.ObjectClone(inCpPod.itemOperateAccessDef);
             }
             if (!pod.operate.access.ssh_key) {
                 pod.operate.access.ssh_key = "";
@@ -2272,7 +2254,7 @@ inCpPod.EntryAccess = function (pod_id) {
             } else if (pod.operate.access.ssh_pwd.length > 0) {
                 pod.operate.access.ssh_pwd = "********";
             }
-            l4iModal.Open({
+            valueui.modal.Open({
                 title: "Remote Access",
                 tplsrc: tpl,
                 width: 900,
@@ -2280,7 +2262,7 @@ inCpPod.EntryAccess = function (pod_id) {
                 data: pod,
                 buttons: [
                     {
-                        onclick: "l4iModal.Close()",
+                        onclick: "valueui.modal.Close()",
                         title: "Close",
                     },
                     {
@@ -2306,7 +2288,6 @@ inCpPod.EntryAccess = function (pod_id) {
         inCp.TplFetch("pod/entry-access", {
             callback: ep.done("tpl"),
         });
-    });
 };
 
 inCpPod.EntryAccessSshRefresh = function () {
@@ -2357,21 +2338,21 @@ inCpPod.EntryAccessSetCommit = function () {
         data: JSON.stringify(set),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                l4iModal.Close();
+                valueui.modal.Close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
                     inCpPod.List(null, {
@@ -2395,28 +2376,27 @@ inCpPod.SpecSet = function (pod_id) {
 
     var alert_id = "#incp-podnew-alert";
 
-    seajs.use(["ep"], function (EventProxy) {
-        var ep = EventProxy.create(
+        var ep = valueui.NewEventProxy(
             "tpl",
             "pod",
             "zones",
             "plans",
             function (tpl, pod, zones, plans) {
                 if (!pod || !pod.kind || pod.kind != "Pod" || !pod.spec.box) {
-                    return l4iAlert.Open("error", "No Pod Found");
+                    return valueui.alert.Open("error", "No Pod Found");
                 }
 
                 if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                    return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                    return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
                 }
                 inCpPod.syszones = zones;
 
                 if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
-                    return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                    return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
                 }
 
                 if (!pod.spec.vol_sys) {
-                    return l4iAlert.Open("error", "Invalid Pod Spec");
+                    return valueui.alert.Open("error", "Invalid Pod Spec");
                 }
 
                 var spec_res_id = pod.spec.box.resources.ref.id,
@@ -2457,7 +2437,7 @@ inCpPod.SpecSet = function (pod_id) {
                     }
                 }
                 if (_plans.length < 1) {
-                    return l4iAlert.Open("error", "no available spec found");
+                    return valueui.alert.Open("error", "no available spec found");
                 }
                 plans.items = _plans;
 
@@ -2483,7 +2463,7 @@ inCpPod.SpecSet = function (pod_id) {
                         continue;
                     }
                     if (options.app_runtime_images.length == 0) {
-                        options.app_runtime_images = l4i.Clone(pod.apps[i].spec.runtime_images);
+                        options.app_runtime_images = valueui.utilx.ObjectClone(pod.apps[i].spec.runtime_images);
                     } else {
                         var app_runtime_images_merges = [];
                         for (var j in pod.apps[i].spec.runtime_images) {
@@ -2503,7 +2483,7 @@ inCpPod.SpecSet = function (pod_id) {
                 inCpPod.itemNewOptions = options;
 
                 var fnfre = function () {
-                    l4iTemplate.Render({
+                    valueui.template.Render({
                         dstid: "incp-podnew-plans",
                         tplid: "incp-podnew-plans-tpl",
                         data: {
@@ -2516,7 +2496,7 @@ inCpPod.SpecSet = function (pod_id) {
                 };
                 // console.log(options);
 
-                l4iModal.Open({
+                valueui.modal.Open({
                     id: "podset-planset",
                     tplsrc: tpl,
                     title: "Setting Pod Spec",
@@ -2524,7 +2504,7 @@ inCpPod.SpecSet = function (pod_id) {
                     min_width: 900,
                     height: 900,
                     callback: function () {
-                        l4iTemplate.Render({
+                        valueui.template.Render({
                             dstid: "incp-podnew-form",
                             tplid: "incp-podnew-modal",
                             data: {
@@ -2537,7 +2517,7 @@ inCpPod.SpecSet = function (pod_id) {
                     },
                     buttons: [
                         {
-                            onclick: "l4iModal.Close()",
+                            onclick: "valueui.modal.Close()",
                             title: "Close",
                         },
                         {
@@ -2570,7 +2550,6 @@ inCpPod.SpecSet = function (pod_id) {
         inCp.ApiCmd("host/zone-list?fields=cells", {
             callback: ep.done("zones"),
         });
-    });
 };
 
 inCpPod.SpecSetCommit = function () {
@@ -2578,11 +2557,11 @@ inCpPod.SpecSetCommit = function () {
         url = "",
         vol_size = parseInt($("#incp-podnew-resource-value").val());
     if (vol_size <= 0) {
-        return l4i.InnerAlert(alert_id, "error", "System Storage Not Set");
+        return valueui.alert.InnerShow(alert_id, "error", "System Storage Not Set");
     }
 
     if (!inCpPod.plan.res_compute_selected) {
-        return l4i.InnerAlert(alert_id, "error", "Resource Option Not Set");
+        return valueui.alert.InnerShow(alert_id, "error", "Resource Option Not Set");
     }
 
     if (vol_size < 1) {
@@ -2614,22 +2593,22 @@ inCpPod.SpecSetCommit = function () {
         method: "POST",
         data: JSON.stringify(set),
         callback: function (err, rsj) {
-            l4iModal.ScrollTop();
+            valueui.modal.ScrollTop();
             if (err || !rsj) {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return l4i.InnerAlert(alert_id, "error", rsj.error.message);
+                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return l4i.InnerAlert(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            l4i.InnerAlert(alert_id, "ok", "Successfully Updated");
+            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
             window.setTimeout(function () {
-                l4iModal.Close();
+                valueui.modal.Close();
                 if (rsj.pod && rsj.pod.length > 8) {
                     inCpPod.EntryIndex(rsj.pod);
                 } else {

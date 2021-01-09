@@ -33,7 +33,7 @@
       </td>
       <td class="incp-font-fixspace">{[=v.operate.app_id]}</td>
       <td>{[=v.action]}</td>
-      <td>{[=l4i.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
+      <td>{[=valueui.utilx.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
       <td align="right">
         <button class="btn btn-sm btn-outline-primary" onclick="inCpResDomain.Deploy('{[=v._name]}')">
           <span class="fa fa-cloud-upload-alt"></span>

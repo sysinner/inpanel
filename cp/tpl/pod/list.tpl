@@ -54,8 +54,8 @@
     <td class="incp-ctn-hover">
       {[~inCp.OpActions :v2]}
       {[? inCp.OpActionAllow(v.operate.action, v2.action)]}
-      <span class="badge badge-{[=v2.style]}">
-      {[=l4i.T(v2.title)]}
+      <span class="badge bg-{[=v2.style]}">
+      {[=valueui.lang.T(v2.title)]}
       </span>
       {[?]}
       {[~]}

@@ -1,5 +1,5 @@
 <div id="incp-appnew-form">
-  <div class="l4i-form-group">
+  <div class="valueui-form-group">
     <label>Create new Pod to Bound</label>
     <div>
       <button class="btn btn-outline-primary" style="width:100%;font-weight:bold;" onclick="_incp_podls_selector_new()">
@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <div class="l4i-form-group">
+  <div class="valueui-form-group">
     <label>Select exsiting Pod to Bound</label>
     <div>
       <table class="table table-hover">
@@ -57,8 +57,8 @@ function _incp_podls_selector_new()
 
 function _incp_podls_selector_pod(id)
 {
-    if (l4iModal.CurOptions.fn_selector) {
-        l4iModal.CurOptions.fn_selector(null, id);
+    if (valueui.modal.CurOptions.fn_selector) {
+        valueui.modal.CurOptions.fn_selector(null, id);
     }
 }
 </script>

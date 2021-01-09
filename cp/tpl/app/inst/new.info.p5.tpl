@@ -24,7 +24,7 @@
         <td>Runtime Images</td>
         <td>
           {[~it.spec.runtime_images :v]}
-          <span class="badge badge-dark">{[=v]}</span>
+          <span class="badge bg-dark">{[=v]}</span>
           {[~]}
         </td>
       </tr>

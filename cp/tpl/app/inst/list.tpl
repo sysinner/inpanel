@@ -38,7 +38,7 @@
    {[}]}
   </td>
   <td>
-    <span class="badge badge-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionStart)) {]}success{[} else {]}default{[}]}">
+    <span class="badge bg-{[if (inCp.OpActionAllow(v.operate.action, inCp.OpActionStart)) {]}success{[} else {]}default{[}]}">
       {[=inCp.OpActionTitle(v.operate.action)]}
     </span>
   </td>

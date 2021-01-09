@@ -31,7 +31,7 @@
 <tr>
   <td>{[=v.meta.id]}</td>
   <td>{[=v.meta.user]}</td>
-  <td>{[=l4i.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
+  <td>{[=valueui.utilx.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="btn btn-default btn-sm" onclick="incp_app_specls_selector_on('{[=v.meta.id]}')">Select</button>
   </td>
@@ -47,8 +47,8 @@ $("#incp-app-specls-s6r-qry").submit(function(event) {
 });
 
 function incp_app_specls_selector_on(id) {
-    if (l4iModal.CurOptions.fn_selector) {
-        l4iModal.CurOptions.fn_selector(null, id);
+    if (valueui.modal.CurOptions.fn_selector) {
+        valueui.modal.CurOptions.fn_selector(null, id);
     }
 }
 

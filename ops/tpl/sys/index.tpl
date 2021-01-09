@@ -5,6 +5,6 @@
 <div id="work-content" class="_incp-div-light">loading</div>
 
 <script id="inops-sys-nav-tpl" type="text/html">
-<li><a class="l4i-nav-item active" href="#sys/config">System Settings</a></li>
+<li><a class="valueui-nav-item active" href="#sys/config">System Settings</a></li>
 </script>
 

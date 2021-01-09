@@ -43,7 +43,7 @@
   <td></td>
   <td></td>
   <td>
-    <button class="btn btn-primary" onclick="inOpsSys.ConfigGroupCommit()">{[=l4i.T("Save")]}</button>
+    <button class="btn btn-primary" onclick="inOpsSys.ConfigGroupCommit()">{[=valueui.lang.T("Save")]}</button>
   </td>
 </tr>
 

@@ -19,14 +19,14 @@
       </li>
     </ul>
     <ul class="incp-nav incp-topbar-nav" id="incp-topbar-nav-menus">
-      <li><a class="l4i-nav-item" href="#pod/index">Pods</a></li>
-      <li><a class="l4i-nav-item" href="#app/index">Applications</a></li>
-      <li><a class="l4i-nav-item" href="#ips/index">Packages</a></li>
-      <li><a class="l4i-nav-item" href="#res/index">Modules</a></li>
+      <li><a class="valueui-nav-item" href="#pod/index">Pods</a></li>
+      <li><a class="valueui-nav-item" href="#app/index">Applications</a></li>
+      <li><a class="valueui-nav-item" href="#ips/index">Packages</a></li>
+      <li><a class="valueui-nav-item" href="#res/index">Modules</a></li>
     </ul>
     <ul class="incp-nav incp-nav-right" id="incp-topbar-userbar"></ul>
     <ul class="incp-nav incp-nav-right">
-      <li><a class="l4i-nav-item" href="/in/ops" id="incp-nav-ops-entry" style="display:none">Management</a></li>
+      <li><a class="valueui-nav-item" href="/in/ops" id="incp-nav-ops-entry" style="display:none">Management</a></li>
     </ul>
   </div>
 </script>
@@ -35,7 +35,7 @@
   <div class="incp-items incp-fontsize-x0090" style="text-align:center">
     <span class="incp-item"><span class="fa fa-award"></span> Powered by <a href="https://www.sysinner.com" target="_blank">InnerStack</a></span>
     <span class="incp-item"><span class="fa fa-bug"></span> <a href="https://github.com/sysinner/innerstack/issues" target="_blank">Bug Report</a></span>
-    <span class="incp-item"><span class="fa fa-info-circle"></span> <a class="l4i-nav-item" href="#about" onclick="inCp.About()">About</a></span>
+    <span class="incp-item"><span class="fa fa-info-circle"></span> <a class="valueui-nav-item" href="#about" onclick="inCp.About()">About</a></span>
   </div>
 </script>
 

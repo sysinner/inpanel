@@ -35,7 +35,7 @@
         <div style="line-height: 1.20rem">{[=log.message]}</div>
       </td>
       <td style="width:200px; text-align:right;">
-        {[=l4i.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}
+        {[=valueui.utilx.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}
       </td>
     </tr>
     {[~]}
@@ -87,7 +87,7 @@
         <div style="line-height: 1.20rem">{[=log.message]}</div>
       </td>
       <td style="width:200px; text-align:right;">
-        {[=l4i.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}
+        {[=valueui.utilx.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}
       </td>
     </tr>
     {[~]}
@@ -129,7 +129,7 @@
         <div style="line-height: 1.20rem">{[=log.message]}</div>
       </td>
       <td style="width:200px; text-align:right;">
-        {[=l4i.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}
+        {[=valueui.utilx.UnixMillisecondFormat(log.updated, "Y-m-d H:i:s")]}
       </td>
     </tr>
     {[~]}
@@ -313,7 +313,7 @@
               <td>
                 {[? v.spec.service_ports && v.spec.service_ports.length > 0]}
                 {[~v.spec.service_ports :ssp]}
-                <span class="badge badge-dark">{[=ssp.box_port]} ({[=ssp.name]})</span>
+                <span class="badge bg-dark">{[=ssp.box_port]} ({[=ssp.name]})</span>
                 {[~]}
                 {[??]}
                 0
@@ -325,7 +325,7 @@
                   style="width:40px">{[=v.operate.options.length]}</button>
                 {[?]}
               </td>
-              <td align="right">{[=l4i.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
+              <td align="right">{[=valueui.utilx.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
             </tr>
             {[~]}
           </tbody>

@@ -21,7 +21,7 @@
   <td>{[=v.meta.name]}</td>
   <td>{[=v._zones.join(", ")]}</td>
   <td>{[=v.status]}</td>
-  <td>{[=l4i.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
+  <td>{[=valueui.utilx.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
   <td align="right">
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsPod.SpecPlanSet('{[=v.meta.id]}')">

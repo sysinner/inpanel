@@ -50,7 +50,7 @@
 
 {[if (it._dep_remotes && it.dep_remotes.length > 0) {]}
 {[~ it.dep_remotes :v]}
-<div class="l4i-form-group">
+<div class="valueui-form-group">
   <label>Remotely dependent to AppSpec : {[=v.name]}</label>
   <div>
     <a href="#app/inst/cfg/bound/select" onclick="inCpApp.InstConfigWizardAppBound('{[=v.id]}')"

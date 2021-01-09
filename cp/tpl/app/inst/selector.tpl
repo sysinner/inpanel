@@ -29,8 +29,8 @@
 
 function _incp_appls_selector_app(app_id)
 {
-    if (l4iModal.CurOptions.fn_selector) {
-        l4iModal.CurOptions.fn_selector(null, app_id);
+    if (valueui.modal.CurOptions.fn_selector) {
+        valueui.modal.CurOptions.fn_selector(null, app_id);
     }
 }
 

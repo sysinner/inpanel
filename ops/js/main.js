@@ -9,86 +9,79 @@ var inOps = {
     ooActions: [
         {
             action: 1 << 1,
-            title: "Enable"
+            title: "Enable",
         },
         {
             action: 1 << 3,
-            title: "Disable"
+            title: "Disable",
         },
     ],
-}
+};
 
-inOps.debug_uri = function() {
+inOps.debug_uri = function () {
     if (!inOps.debug) {
         return "?_=" + inOps.version;
     }
     return "?_=" + Math.random();
-}
+};
 
-inOps.Boot = function(login_first) {
-    seajs.config({
-        base: inOps.base,
-        alias: {
-            ep: "~/lessui/js/eventproxy.js"
-        },
-    });
+inOps.Boot = function (login_first) {
+    if (
+        !(
+            ($.browser.chrome === true &&
+                valueui.utilx.VersionCompare($.browser.version, "22.0") > 0) ||
+            ($.browser.firefox === true &&
+                valueui.utilx.VersionCompare($.browser.version, "31.0") > 0) ||
+            ($.browser.safari === true &&
+                valueui.utilx.VersionCompare($.browser.version, "5.0") > 0)
+        )
+    ) {
+        $("body").load(inCp.tplbase + "error/browser.tpl");
+        return;
+    }
 
-    seajs.use([
-        "~/twbs/4/css/bootstrap.css",
-        "~/jquery/jquery.js" + inOps.debug_uri(),
-        "~/cp/js/main.js" + inOps.debug_uri(),
-        "~/lessui/js/browser-detect.js",
-        "~/fa/css/fa.css",
-    ], function() {
+    if (login_first && login_first === true) {
+        var elem = $("#incp-well-status");
+        elem.removeClass("status_dark");
+        elem.addClass("info");
+        elem.html(inCp.well_signin_html);
+        return;
+    }
 
-        var browser = BrowserDetect.browser;
-        var version = BrowserDetect.version;
-        var OS = BrowserDetect.OS;
+    valueui.Use(
+        [
+            "in/cp/js/main.js",
+            "in/cp/css/base.css",
+            "in/cp/css/main.css",
+            "in/fa/css/fa.css",
+            "in/cp/js/pod.js",
+            "in/cp/js/pod-rep.js",
+            "in/cp/js/app.js",
+            "in/cp/js/app-spec.js",
+            "in/ops/css/base.css",
+            "in/ops/js/host.js",
+            "in/ops/js/pod.js",
+            "in/ops/js/app.js",
+            "in/ops/js/sys.js",
+            "in/ops/css/base.css",
+            "hchart/hchart.js",
+        ],
+        inOps.load_index
+    );
+};
 
-        if (!((browser == 'Chrome' && version >= 22)
-            || (browser == 'Firefox' && version >= 31.0)
-            || (browser == 'Safari' && version >= 5.0 && OS == 'Mac'))) {
-            $('body').load(inOps.base + "~/cp/tpl/error/browser.tpl");
-            return;
-        }
+inOps.load_index = function () {
+    // l4i.debug = inOps.debug;
+    // l4i.app_version = inOps.version;
 
-        if (login_first && login_first === true) {
-            var elem = $("#incp-well-status");
-            elem.removeClass("status_dark");
-            elem.addClass("info");
-            elem.html(inCp.well_signin_html);
-            return;
-        }
+    hooto_chart.basepath = inCp.base + "~/hchart/";
 
-        seajs.use([
-            "~/lessui/css/base.css" + inOps.debug_uri(),
-            "~/lessui/js/lessui.js" + inOps.debug_uri(),
-            "~/cp/css/main.css" + inOps.debug_uri(),
-            "~/cp/js/pod.js" + inOps.debug_uri(),
-            "~/cp/js/pod-rep.js" + inOps.debug_uri(),
-            "~/cp/js/app.js" + inOps.debug_uri(),
-            "~/cp/js/app-spec.js" + inOps.debug_uri(),
-            "~/ops/css/base.css" + inOps.debug_uri(),
-            "~/ops/js/host.js" + inOps.debug_uri(),
-            "~/ops/js/pod.js" + inOps.debug_uri(),
-            "~/ops/js/app.js" + inOps.debug_uri(),
-            "~/ops/js/sys.js" + inOps.debug_uri(),
-            "hchart/~/hchart.js" + inCp.debug_uri(),
-        ], inOps.load_index);
-    });
-}
-
-
-inOps.load_index = function() {
-    l4i.debug = inOps.debug;
-    l4i.app_version = inOps.version;
-
-    hooto_chart.basepath = inOps.base + "/hchart/~/";
-
-    seajs.use(["ep"], function(EventProxy) {
-
-        var ep = EventProxy.create("tpl", "zones", "session", "syscfg", function(tpl, zones, session, syscfg) {
-
+    var ep = valueui.NewEventProxy(
+        "tpl",
+        "zones",
+        "session",
+        "syscfg",
+        function (tpl, zones, session, syscfg) {
             if (!session || session.username == "") {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
@@ -114,82 +107,79 @@ inOps.load_index = function() {
                 inCp.syscfg.sys_configs = syscfg.sys_configs;
             }
 
-            $("#body-content").html(tpl);
+            $("#valueui-body").html(tpl);
 
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: "incp-topbar",
                 tplid: "incp-topbar-tpl",
                 data: {},
             });
 
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: "incp-footer",
                 tplid: "incp-footer-tpl",
                 data: {},
             });
 
-
-            l4iTemplate.Render({
+            valueui.template.Render({
                 dstid: "incp-topbar-userbar",
                 tplid: "incp-topbar-user-signed-tpl",
                 data: inOps.UserSession,
-                success: function() {
-
+                success: function () {
                     $("#incp-topbar-userbar").hover(
-                        function() {
+                        function () {
                             $("#incp-topbar-user-signed-modal").fadeIn(200);
                         },
-                        function() {}
+                        function () {}
                     );
                     $("#incp-topbar-user-signed-modal").hover(
-                        function() {},
-                        function() {
+                        function () {},
+                        function () {
                             $("#incp-topbar-user-signed-modal").fadeOut(200);
                         }
                     );
                 },
             });
 
-            l4i.UrlEventRegister("host/index", inOpsHost.Index, "inops-topbar-nav-menus");
-            l4i.UrlEventRegister("pod/index", inOpsPod.Index, "inops-topbar-nav-menus");
-            l4i.UrlEventRegister("app/index", inOpsApp.Index, "inops-topbar-nav-menus");
-            l4i.UrlEventRegister("sys/index", inOpsSys.Index, "inops-topbar-nav-menus");
-            l4i.UrlEventHandler("host/index", true);
-        });
+            valueui.url.EventRegister("host/index", inOpsHost.Index, "inops-topbar-nav-menus");
+            valueui.url.EventRegister("pod/index", inOpsPod.Index, "inops-topbar-nav-menus");
+            valueui.url.EventRegister("app/index", inOpsApp.Index, "inops-topbar-nav-menus");
+            valueui.url.EventRegister("sys/index", inOpsSys.Index, "inops-topbar-nav-menus");
+            valueui.url.EventHandler("host/index", true);
+        }
+    );
 
-        ep.fail(function(err) {
-            if (err && err == "AuthSession") {
-                inCp.AlertUserLogin();
-            } else {
-                alert("Network Exception, Please try again later (EC:zone-list)");
-            }
-        });
-
-        inCp.ApiCmd("host/zone-list", {
-            callback: ep.done("zones"),
-        });
-
-        inCp.ApiCmd("sys/cfg", {
-            callback: ep.done("syscfg"),
-        });
-
-        l4i.Ajax(inCp.base + "auth/session", {
-            callback: function(err, data) {
-                if (!data || data.kind != "AuthSession") {
-                    return ep.emit('error', "AuthSession");
-                }
-                ep.emit("session", data);
-            },
-        });
-
-        inOps.TplFetch("index/index", {
-            callback: ep.done("tpl"),
-        });
+    ep.fail(function (err) {
+        if (err && err == "AuthSession") {
+            inCp.AlertUserLogin();
+        } else {
+            alert("Network Exception, Please try again later (EC:zone-list)");
+        }
     });
 
-}
+    inCp.ApiCmd("host/zone-list", {
+        callback: ep.done("zones"),
+    });
 
-inOps.ApiCmd = function(url, options) {
+    inCp.ApiCmd("sys/cfg", {
+        callback: ep.done("syscfg"),
+    });
+
+    valueui.utilx.Ajax(inCp.base + "auth/session", {
+        callback: function (err, data) {
+            if (!data || data.kind != "AuthSession") {
+                return ep.emit("error", "AuthSession");
+            }
+            ep.emit("session", data);
+        },
+    });
+
+    inOps.TplFetch("index/index", {
+        callback: ep.done("tpl"),
+    });
+};
+
+inOps.ApiCmd = function (url, options) {
     var appcb = null;
     if (options.callback) {
         appcb = options.callback;
@@ -197,43 +187,46 @@ inOps.ApiCmd = function(url, options) {
 
     if (inCp.Zones && options.api_zone_id && inCp.zone_id && options.api_zone_id != inCp.zone_id) {
         for (var i in inCp.Zones.items) {
-            if (inCp.Zones.items[i].meta.id == options.api_zone_id &&
-                inCp.Zones.items[i].wan_api && inCp.Zones.items[i].wan_api.length > 10) {
+            if (
+                inCp.Zones.items[i].meta.id == options.api_zone_id &&
+                inCp.Zones.items[i].wan_api &&
+                inCp.Zones.items[i].wan_api.length > 10
+            ) {
                 url = "zonebound/" + options.api_zone_id + "/" + url;
                 break;
             }
         }
     }
 
-    options.callback = function(err, data) {
+    options.callback = function (err, data) {
         if (err == "Unauthorized") {
             return inCp.AlertUserLogin();
         }
         if (appcb) {
             appcb(err, data);
         }
-    }
-    url = url.replace(/^\/|\s+$/g, '');
+    };
+    url = url.replace(/^\/|\s+$/g, "");
 
-    l4i.Ajax(inOps.api + url, options);
-}
+    valueui.utilx.Ajax(inOps.api + url, options);
+};
 
-inOps.TplFetch = function(url, options) {
-    l4i.Ajax(inOps.basetpl + url + ".tpl", options);
-}
+inOps.TplFetch = function (url, options) {
+    valueui.utilx.Ajax(inOps.basetpl + url + ".tpl", options);
+};
 
-inOps.Loader = function(target, uri) {
-    l4i.Ajax(inOps.basetpl + uri + ".tpl", {
-        callback: function(err, data) {
+inOps.Loader = function (target, uri) {
+    valueui.utilx.Ajax(inOps.basetpl + uri + ".tpl", {
+        callback: function (err, data) {
             $("#" + target).html(data);
-        }
+        },
     });
-}
+};
 
-inOps.CompLoader = function(uri) {
+inOps.CompLoader = function (uri) {
     inOps.Loader("comp-content", uri);
-}
+};
 
-inOps.WorkLoader = function(uri) {
+inOps.WorkLoader = function (uri) {
     inOps.Loader("work-content", uri);
-}
+};

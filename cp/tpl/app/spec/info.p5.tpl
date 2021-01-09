@@ -281,7 +281,7 @@
       <td>Allowed Runtime Images</td>
       <td>
         {[~it.runtime_images :v]}
-        <span class="badge badge-primary">{[=v]}</span>
+        <span class="badge bg-primary">{[=v]}</span>
         {[~]}
       </td>
     </tr>
@@ -293,7 +293,7 @@
       <td>Allowed Roles</td>
       <td>
         {[~it._roles :v]}
-        <span class="badge badge-primary">{[=v]}</span>
+        <span class="badge bg-primary">{[=v]}</span>
         {[~]}
       </td>
     </tr>
@@ -304,7 +304,7 @@
       <td>Type Tags</td>
       <td>
         {[~it._type_tags :v]}
-        <span class="badge badge-primary">{[=v]}</span>
+        <span class="badge bg-primary">{[=v]}</span>
         {[~]}
       </td>
     </tr>

@@ -5,7 +5,7 @@
 <div id='work-content'></div>
 
 <script id="inops-host-nav-tpl" type="text/html">
-<li id="inops-cluster-nav-zone" style="display:none"><a id="inops-cluster-nav-zone-value" class="l4i-nav-item inops-cluster-nav-item arrow_next" href="#cluster/zone" onclick="inOpsHost.ZoneList()">Zone</a></li>
-<li id="inops-cluster-nav-cell" style="display:none"><a id="inops-cluster-nav-cell-value" class="l4i-nav-item inops-cluster-nav-item arrow_next" href="#cluster/cell" onclick="inOpsHost.CellList()">Cell</a></li>
-<li id="inops-cluster-nav-host" style="display:none"><a id="inops-cluster-nav-host-value" class="l4i-nav-item active" href="#cluster/host">Host</a></li>
+<li id="inops-cluster-nav-zone" style="display:none"><a id="inops-cluster-nav-zone-value" class="valueui-nav-item inops-cluster-nav-item arrow_next" href="#cluster/zone" onclick="inOpsHost.ZoneList()">Zone</a></li>
+<li id="inops-cluster-nav-cell" style="display:none"><a id="inops-cluster-nav-cell-value" class="valueui-nav-item inops-cluster-nav-item arrow_next" href="#cluster/cell" onclick="inOpsHost.CellList()">Cell</a></li>
+<li id="inops-cluster-nav-host" style="display:none"><a id="inops-cluster-nav-host-value" class="valueui-nav-item active" href="#cluster/host">Host</a></li>
 </script>

@@ -45,7 +45,7 @@
   </td>
   <td>
   {[? !it.configurator.fields || it.configurator.fields.length == 0]}
-    <div class="badge badge-secondary">no Feild Setup yet ...</div>
+    <div class="badge bg-secondary">no Feild Setup yet ...</div>
   {[??]}
     <table class="table-hover">
     <thead>

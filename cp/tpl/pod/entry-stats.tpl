@@ -11,12 +11,12 @@
   </ul>
   <ul class="incp-nav incp-nav-item-underline">
     <li>
-      <a href="#" class="l4i-nav-item {[? it._pod_rep_id == -1]}active{[?]}"
+      <a href="#" class="valueui-nav-item {[? it._pod_rep_id == -1]}active{[?]}"
         onclick="inCpPod.EntryStats(null, -1)">All</a>
     </li>
     {[~it.pod.operate.replicas :v]}
     <li>
-      <a href="#" class="l4i-nav-item {[? v.rep_id == it._pod_rep_id]}active{[?]}"
+      <a href="#" class="valueui-nav-item {[? v.rep_id == it._pod_rep_id]}active{[?]}"
         onclick="inCpPod.EntryStats(null, {[=v.rep_id]})">{[=v.rep_id]}</a>
     </li>
     {[~]}
@@ -40,22 +40,22 @@
 <script type="text/html" id="incp-podentry-optools-stats">
 <li>the Last</li>
 <li>
-  <a href="#" value="3600" onclick="inCpPod.EntryStatsButton(this)" class="l4i-nav-item hover">
+  <a href="#" value="3600" onclick="inCpPod.EntryStatsButton(this)" class="valueui-nav-item hover">
     Hour
   </a>
 </li>
 <li>
-  <a href="#" value="86400" onclick="inCpPod.EntryStatsButton(this)" class="l4i-nav-item">
+  <a href="#" value="86400" onclick="inCpPod.EntryStatsButton(this)" class="valueui-nav-item">
     24 Hours
   </a>
 </li>
 <li>
-  <a href="#" value="259200" onclick="inCpPod.EntryStatsButton(this)" class="l4i-nav-item">
+  <a href="#" value="259200" onclick="inCpPod.EntryStatsButton(this)" class="valueui-nav-item">
     3 Days
   </a>
 </li>
 <li>
-  <a href="#" value="864000" onclick="inCpPod.EntryStatsButton(this)" class="l4i-nav-item">
+  <a href="#" value="864000" onclick="inCpPod.EntryStatsButton(this)" class="valueui-nav-item">
     10 Days
   </a>
 </li>

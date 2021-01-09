@@ -24,7 +24,7 @@
       </div>
       <div class="incp-card-frame incp-card-frame-p25 incp-card-body-inline-item">
         <div class="name">Joined</div>
-        <div class="value">{[=l4i.UnixMillisecondFormat(it.meta.created, "Y-m-d")]}</div>
+        <div class="value">{[=valueui.utilx.UnixMillisecondFormat(it.meta.created, "Y-m-d")]}</div>
       </div>
       <div class="incp-card-frame incp-card-frame-p25 incp-card-body-inline-item">
         <div class="name">OS - Kernel</div>

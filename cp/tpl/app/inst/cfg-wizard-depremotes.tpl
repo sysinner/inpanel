@@ -18,7 +18,7 @@
 
 <script id="incp-appinst-cfg-wizard-depremotes-tpl" type="text/html">
 {[? it.dep_remotes && it.dep_remotes.length > 0]}
-<div class="l4i-form-group">
+<div class="valueui-form-group">
   <label>Remotely dependent to AppSpec</label>
   <div class="iincp-formtable">
     <table class="incp-formtable">

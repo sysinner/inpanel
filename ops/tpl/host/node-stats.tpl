@@ -19,27 +19,27 @@
 <script type="text/html" id="inops-node-optools-stats">
 <li>the Last</li>
 <li>
-  <a href="#" value="3600" onclick="inOpsHost.NodeStatsButton(this)" class="l4i-nav-item">
+  <a href="#" value="3600" onclick="inOpsHost.NodeStatsButton(this)" class="valueui-nav-item">
     Hour
   </a>
 </li>
 <li>
-  <a href="#" value="86400" onclick="inOpsHost.NodeStatsButton(this)" class="l4i-nav-item hover">
+  <a href="#" value="86400" onclick="inOpsHost.NodeStatsButton(this)" class="valueui-nav-item hover">
     24 Hours
   </a>
 </li>
 <li>
-  <a href="#" value="259200" onclick="inOpsHost.NodeStatsButton(this)" class="l4i-nav-item">
+  <a href="#" value="259200" onclick="inOpsHost.NodeStatsButton(this)" class="valueui-nav-item">
     3 Days
   </a>
 </li>
 <li>
-  <a href="#" value="864000" onclick="inOpsHost.NodeStatsButton(this)" class="l4i-nav-item">
+  <a href="#" value="864000" onclick="inOpsHost.NodeStatsButton(this)" class="valueui-nav-item">
     10 Days
   </a>
 </li>
 <li>
-  <a href="#" value="2592000" onclick="inOpsHost.NodeStatsButton(this)" class="l4i-nav-item">
+  <a href="#" value="2592000" onclick="inOpsHost.NodeStatsButton(this)" class="valueui-nav-item">
     30 Days
   </a>
 </li>

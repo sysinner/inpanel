@@ -35,7 +35,7 @@
 <tr>
   <td>{[=v.meta.id]}</td>
   <td>{[=v.meta.user]}</td>
-  <td>{[=valueui.utilx.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
+  <td>{[=valueui.utilx.unixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
   {[? it.options.cfg_selector]}
   <td>
   {[? v.configurator && v.configurator.name]}

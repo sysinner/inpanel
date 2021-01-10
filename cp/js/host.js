@@ -4,9 +4,9 @@ var inCpHost = {
 }
 
 inCpHost.ZoneRefresh = function(cb) {
-    var zoneid = valueui.session.Get("incp_host_zoneid");
+    var zoneid = valueui.session.get("incp_host_zoneid");
     if (!zoneid) {
-        zoneid = valueui.storage.Get("incp_host_zoneid");
+        zoneid = valueui.storage.get("incp_host_zoneid");
     }
 
     if (inCpHost.zones) {
@@ -18,8 +18,8 @@ inCpHost.ZoneRefresh = function(cb) {
                 break
             }
 
-            valueui.session.Set("incp_host_zoneid", zoneid);
-            valueui.storage.Set("incp_host_zoneid", zoneid);
+            valueui.session.set("incp_host_zoneid", zoneid);
+            valueui.storage.set("incp_host_zoneid", zoneid);
         }
 
         inCpHost.zones._zoneid = zoneid;
@@ -55,8 +55,8 @@ inCpHost.ZoneRefresh = function(cb) {
                     break
                 }
 
-                valueui.session.Set("incp_host_zoneid", zoneid);
-                valueui.storage.Set("incp_host_zoneid", zoneid);
+                valueui.session.set("incp_host_zoneid", zoneid);
+                valueui.storage.set("incp_host_zoneid", zoneid);
             }
 
             inCpHost.zones._zoneid = zoneid;

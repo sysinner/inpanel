@@ -60,19 +60,19 @@ var inOpsPod = {
 inOpsPod.Index = function () {
     inCp.ModuleNavbarMenu("ops/pod/list", inOpsPod.list_nav_menus);
 
-    valueui.url.EventRegister("pod/list", inOpsPod.List, "incp-module-navbar-menus");
-    valueui.url.EventRegister(
+    valueui.url.eventRegister("pod/list", inOpsPod.List, "incp-module-navbar-menus");
+    valueui.url.eventRegister(
         "pod-spec/plan-list",
         inOpsPod.SpecPlanList,
         "incp-module-navbar-menus"
     );
-    valueui.url.EventRegister(
+    valueui.url.eventRegister(
         "pod-spec/image-list",
         inOpsPod.SpecPlanImageList,
         "incp-module-navbar-menus"
     );
 
-    valueui.url.EventHandler("pod/list", true);
+    valueui.url.eventHandler("pod/list", true);
 };
 
 inOpsPod.List = function () {
@@ -89,7 +89,7 @@ inOpsPod.SpecPlanList = function () {
     var alert_id = "#" + tplid + "-alert";
     var uri = "";
 
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         if (tpl) {
             $("#work-content").html(tpl);
         }
@@ -97,10 +97,10 @@ inOpsPod.SpecPlanList = function () {
 
         if (!data || data.error || !data.kind || data.kind != "PodSpecPlanList") {
             if (data.error) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", data.error.message);
+                return valueui.alert.innerShow(alert_id, "alert-danger", data.error.message);
             }
 
-            return valueui.alert.InnerShow(alert_id, "alert-danger", "Items Not Found");
+            return valueui.alert.innerShow(alert_id, "alert-danger", "Items Not Found");
         }
 
         if (!data.items) {
@@ -115,10 +115,10 @@ inOpsPod.SpecPlanList = function () {
         }
 
         if (data.items.length < 1) {
-            return valueui.alert.InnerShow(alert_id, "alert-info", "No Item Found Yet ...");
+            return valueui.alert.innerShow(alert_id, "alert-info", "No Item Found Yet ...");
         }
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: tplid,
             tplid: tplid + "-tpl",
             data: data,
@@ -142,7 +142,7 @@ inOpsPod.SpecPlanList = function () {
 };
 
 inOpsPod.SpecPlanSet = function (name) {
-    var ep = valueui.NewEventProxy(
+    var ep = valueui.newEventProxy(
         "tpl",
         "plan",
         "zones",
@@ -151,7 +151,7 @@ inOpsPod.SpecPlanSet = function (name) {
         "resvolumes",
         function (tpl, plan, zones, rescomputes, images, resvolumes) {
             if (!plan || !plan.kind || plan.kind != "PodSpecPlan") {
-                plan = valueui.utilx.ObjectClone(inOpsPod.specPlanDef);
+                plan = valueui.utilx.objectClone(inOpsPod.specPlanDef);
             }
 
             if (zones.error && zones.error.code == "AccessDenied") {
@@ -186,7 +186,7 @@ inOpsPod.SpecPlanSet = function (name) {
                 plan.annotations = [];
             }
 
-            plan._statuses = valueui.utilx.ObjectClone(inOpsPod.spec_status_def);
+            plan._statuses = valueui.utilx.objectClone(inOpsPod.spec_status_def);
             for (var i in plan._statuses) {
                 if (plan._statuses[i].name == plan.status) {
                     plan._statuses[i]._selected = true;
@@ -263,7 +263,7 @@ inOpsPod.SpecPlanSet = function (name) {
             inOpsPod.planset_active._images = images;
             inOpsPod.planset_active._resvolumes = resvolumes;
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "inops-podspec-planset",
                 tplid: "inops-podspec-planset-tpl",
                 data: plan,
@@ -305,7 +305,7 @@ inOpsPod.SpecPlanSet = function (name) {
 };
 
 inOpsPod.SpecPlanSetAnnotationAppend = function () {
-    valueui.template.Render({
+    valueui.template.render({
         append: true,
         dstid: "inops-podspec-planset-annotations",
         tplid: "inops-podspec-planset-annotation-tpl",
@@ -317,7 +317,7 @@ inOpsPod.SpecPlanSetAnnotationDel = function (field) {
 };
 
 inOpsPod.SpecPlanSetLabelAppend = function () {
-    valueui.template.Render({
+    valueui.template.render({
         append: true,
         dstid: "inops-podspec-planset-labels",
         tplid: "inops-podspec-planset-label-tpl",
@@ -376,7 +376,7 @@ inOpsPod.SpecPlanSetBoxImageChange = function (image_id) {
     if (!inOpsPod.planset_active || !inOpsPod.planset_active._images) {
         return;
     }
-    var image_id_enc = valueui.utilx.CryptoMd5(image_id);
+    var image_id_enc = valueui.utilx.cryptoMd5(image_id);
     for (var i in inOpsPod.planset_active._images.items) {
         if (image_id != inOpsPod.planset_active._images.items[i].meta.id) {
             continue;
@@ -500,7 +500,7 @@ inOpsPod.SpecPlanSetCommit = function () {
             }
         }
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "alert-danger", err);
+        return valueui.alert.innerShow(alert_id, "alert-danger", err);
     }
 
     inOps.ApiCmd("pod-spec/plan-set", {
@@ -509,7 +509,7 @@ inOpsPod.SpecPlanSetCommit = function () {
         timeout: 3000,
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", "Failed");
+                return valueui.alert.innerShow(alert_id, "alert-danger", "Failed");
             }
 
             if (!rsj || rsj.kind != "PodSpecPlan") {
@@ -517,10 +517,10 @@ inOpsPod.SpecPlanSetCommit = function () {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.alert.InnerShow(alert_id, "alert-danger", msg);
+                return valueui.alert.innerShow(alert_id, "alert-danger", msg);
             }
 
-            valueui.alert.InnerShow(alert_id, "alert-success", "Successful operation");
+            valueui.alert.innerShow(alert_id, "alert-success", "Successful operation");
 
             window.setTimeout(function () {
                 inOpsPod.SpecPlanList();
@@ -534,7 +534,7 @@ inOpsPod.SpecPlanImageList = function () {
     var alert_id = "#" + tplid + "-alert";
     var uri = "";
 
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         if (tpl) {
             $("#work-content").html(tpl);
         }
@@ -542,10 +542,10 @@ inOpsPod.SpecPlanImageList = function () {
 
         if (!data || data.error || !data.kind || data.kind != "PodSpecBoxImageList") {
             if (data.error) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", data.error.message);
+                return valueui.alert.innerShow(alert_id, "alert-danger", data.error.message);
             }
 
-            return valueui.alert.InnerShow(alert_id, "alert-danger", "Items Not Found");
+            return valueui.alert.innerShow(alert_id, "alert-danger", "Items Not Found");
         }
 
         if (!data.items) {
@@ -555,19 +555,19 @@ inOpsPod.SpecPlanImageList = function () {
         }
 
         if (data.items.length < 1) {
-            return valueui.alert.InnerShow(alert_id, "alert-info", "No Item Found Yet ...");
+            return valueui.alert.innerShow(alert_id, "alert-info", "No Item Found Yet ...");
         }
 
         inOpsPod.image_actives = data.items;
         console.log(data.items);
         console.log(inOps.ooActions);
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: tplid,
             tplid: tplid + "-tpl",
             data: {
                 items: data.items,
-                actions: valueui.utilx.ObjectClone(inOps.ooActions),
+                actions: valueui.utilx.objectClone(inOps.ooActions),
             },
             callback: function (err) {
                 //
@@ -602,25 +602,25 @@ inOpsPod.SpecPlanImageSet = function (id) {
         image = inOpsPod.image_def;
     }
 
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         var title = "Image Settings";
         if (data.meta.id == "") {
             title = "New Image";
         }
         inOpsPod.image_active = data;
 
-        valueui.modal.Open({
+        valueui.modal.open({
             title: title,
             tplsrc: tpl,
             width: 900,
             height: 600,
             data: {
                 image: data,
-                actions: valueui.utilx.ObjectClone(inOps.ooActions),
+                actions: valueui.utilx.objectClone(inOps.ooActions),
             },
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -674,7 +674,7 @@ inOpsPod.SpecPlanImageSetCommit = function () {
         req.os_dist = form.find("input[name=os_dist]").val();
         req.arch = form.find("input[name=arch]").val();
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "alert-danger", err);
+        return valueui.alert.innerShow(alert_id, "alert-danger", err);
     }
 
     inOps.ApiCmd("pod-spec/box-image-set", {
@@ -683,7 +683,7 @@ inOpsPod.SpecPlanImageSetCommit = function () {
         timeout: 3000,
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", "Failed");
+                return valueui.alert.innerShow(alert_id, "alert-danger", "Failed");
             }
 
             if (!rsj || rsj.kind != "PodSpecBoxImage") {
@@ -691,14 +691,14 @@ inOpsPod.SpecPlanImageSetCommit = function () {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.alert.InnerShow(alert_id, "alert-danger", msg);
+                return valueui.alert.innerShow(alert_id, "alert-danger", msg);
             }
 
-            valueui.alert.InnerShow(alert_id, "alert-success", "Successful operation");
+            valueui.alert.innerShow(alert_id, "alert-success", "Successful operation");
 
             window.setTimeout(function () {
                 inOpsPod.SpecPlanImageList();
-                valueui.modal.Close();
+                valueui.modal.close();
             }, 1000);
         },
     });

@@ -182,7 +182,7 @@ inCpAppSpec.listDataRefresh = function (tplid, options) {
         timeout: 3000,
         callback: function (err, rsj) {
             if (err || !rsj || rsj.kind != "AppSpecList" || !rsj.items) {
-                return valueui.alert.InnerShow(alert_id, "alert-info", "No more results ...");
+                return valueui.alert.innerShow(alert_id, "alert-info", "No more results ...");
             } else {
                 $(alert_id).css({
                     display: "none",
@@ -244,7 +244,7 @@ inCpAppSpec.listDataRefresh = function (tplid, options) {
 
             inCpAppSpec.listActives = rsj.items;
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: tplid,
                 tplid: tplid + "-tpl",
                 data: {
@@ -273,7 +273,7 @@ inCpAppSpec.ListSelector = function (options) {
 
     if (!options.fn_selector) {
         options.fn_selector = function () {
-            valueui.modal.Close();
+            valueui.modal.close();
         };
     }
 
@@ -282,7 +282,7 @@ inCpAppSpec.ListSelector = function (options) {
         subOptions.cfg_selector = true;
     }
 
-    valueui.modal.Open({
+    valueui.modal.open({
         title: options.title,
         width: options.width,
         height: options.height,
@@ -293,7 +293,7 @@ inCpAppSpec.ListSelector = function (options) {
         },
         buttons: [
             {
-                onclick: "valueui.modal.Close()",
+                onclick: "valueui.modal.close()",
                 title: "Close",
             },
         ],
@@ -324,9 +324,9 @@ inCpAppSpec.ListSelectorQueryCommit = function () {
 };
 
 inCpAppSpec.Info = function (id, spec, version, app_id) {
-    var ep = valueui.NewEventProxy("tpl", "data", "roles", "tags", function (tpl, rsj, roles, tags) {
+    var ep = valueui.newEventProxy("tpl", "data", "roles", "tags", function (tpl, rsj, roles, tags) {
         if (!rsj || rsj.error || rsj.kind != "AppSpec") {
-            return valueui.alert.Open("error", "AppSpec Not Found");
+            return valueui.alert.open("error", "AppSpec Not Found");
         }
 
         if (!rsj.depends) {
@@ -466,7 +466,7 @@ inCpAppSpec.Info = function (id, spec, version, app_id) {
 
         rsj.runtime_images = rsj.runtime_images || [];
 
-        valueui.modal.Open({
+        valueui.modal.open({
             title: "AppSpec Information",
             width: 1400,
             width_min: 1000,
@@ -480,7 +480,7 @@ inCpAppSpec.Info = function (id, spec, version, app_id) {
                     style: "btn-primary",
                 },
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                     style: "btn-primary",
                 },
@@ -504,7 +504,7 @@ inCpAppSpec.Info = function (id, spec, version, app_id) {
     if (inCpAppSpec.iamAppRoles) {
         ep.emit("roles", inCpAppSpec.iamAppRoles);
     } else {
-        valueui.utilx.Ajax(inCp.base + "auth/app-role-list", {
+        valueui.utilx.ajax(inCp.base + "auth/app-role-list", {
             callback: function (err, data) {
                 if (err) {
                     return alert(err);
@@ -566,8 +566,8 @@ inCpAppSpec.ItemDel = function (id) {
         return alert("No Item Found");
     }
 
-    var ep = valueui.NewEventProxy("tpl", function (tpl) {
-        valueui.modal.Open({
+    var ep = valueui.newEventProxy("tpl", function (tpl) {
+        valueui.modal.open({
             title: "AppSpec Delete",
             tplsrc: tpl,
             width: 800,
@@ -577,7 +577,7 @@ inCpAppSpec.ItemDel = function (id) {
             },
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -607,34 +607,34 @@ inCpAppSpec.ItemDelCommit = function () {
         method: "GET",
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             $("#app-spec-" + id + "-row").remove();
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
             }, 1000);
         },
     });
 };
 
 inCpAppSpec.Set = function (id) {
-    var ep = valueui.NewEventProxy("tpl", "data", "roles", "tags", function (tpl, rsj, roles, tags) {
-        rsj = rsj || valueui.utilx.ObjectClone(inCpAppSpec.def);
+    var ep = valueui.newEventProxy("tpl", "data", "roles", "tags", function (tpl, rsj, roles, tags) {
+        rsj = rsj || valueui.utilx.objectClone(inCpAppSpec.def);
 
         if (!rsj || rsj.error || rsj.kind != "AppSpec") {
-            rsj = valueui.utilx.ObjectClone(inCpAppSpec.def);
+            rsj = valueui.utilx.objectClone(inCpAppSpec.def);
         }
 
         $("#work-content").html(tpl);
@@ -682,7 +682,7 @@ inCpAppSpec.Set = function (id) {
             }
         }
 
-        rsj._roles = valueui.utilx.ObjectClone(roles);
+        rsj._roles = valueui.utilx.objectClone(roles);
         if (!rsj.roles) {
             rsj.roles = [];
         }
@@ -739,7 +739,7 @@ inCpAppSpec.Set = function (id) {
             rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
         }
 
-        rsj._type_tags = valueui.utilx.ObjectClone(tags);
+        rsj._type_tags = valueui.utilx.objectClone(tags);
         rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
         for (var i in rsj.type_tags) {
             for (var j in rsj._type_tags.items) {
@@ -754,7 +754,7 @@ inCpAppSpec.Set = function (id) {
 
         inCpAppSpec.setActive = rsj;
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "incp-app-specset",
             tplid: "incp-app-specset-tpl",
             data: {
@@ -791,7 +791,7 @@ inCpAppSpec.Set = function (id) {
     if (inCpAppSpec.iamAppRoles) {
         ep.emit("roles", inCpAppSpec.iamAppRoles);
     } else {
-        valueui.utilx.Ajax(inCp.base + "auth/app-role-list", {
+        valueui.utilx.ajax(inCp.base + "auth/app-role-list", {
             callback: function (err, data) {
                 if (err) {
                     return alert(err);
@@ -836,7 +836,7 @@ inCpAppSpec.SetDependSelect = function () {
         width: 1000,
         height: 600,
         fn_selector: function (err, options) {
-            valueui.modal.Close();
+            valueui.modal.close();
             inCpAppSpec.setDependEntry(options);
         },
     });
@@ -856,7 +856,7 @@ inCpAppSpec.setDependEntry = function (opt) {
         timeout: 10000,
         callback: function (err, rsj) {
             if (err) {
-                return valueui.alert.InnerShow(alert_id, "error", err);
+                return valueui.alert.innerShow(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -864,7 +864,7 @@ inCpAppSpec.setDependEntry = function (opt) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.alert.InnerShow(alert_id, "error", msg);
+                return valueui.alert.innerShow(alert_id, "error", msg);
             }
 
             if (!inCpAppSpec.setActive.depends) {
@@ -926,7 +926,7 @@ inCpAppSpec.setDependRefresh = function () {
         display: display,
     });
 
-    valueui.template.Render({
+    valueui.template.render({
         dstid: "incp-app-specset-depls",
         tplid: "incp-app-specset-depls-tpl",
         data: {
@@ -942,7 +942,7 @@ inCpAppSpec.SetDepRemoteSelect = function () {
         height: 600,
         cfg_selector: true,
         fn_selector: function (err, options) {
-            valueui.modal.Close();
+            valueui.modal.close();
             inCpAppSpec.setDepRemoteEntry(options);
         },
     });
@@ -966,7 +966,7 @@ inCpAppSpec.setDepRemoteEntry = function (opt) {
         timeout: 10000,
         callback: function (err, rsj) {
             if (err) {
-                return valueui.alert.InnerShow(alert_id, "error", err);
+                return valueui.alert.innerShow(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -974,7 +974,7 @@ inCpAppSpec.setDepRemoteEntry = function (opt) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.alert.InnerShow(alert_id, "error", msg);
+                return valueui.alert.innerShow(alert_id, "error", msg);
             }
 
             if (!inCpAppSpec.setActive.dep_remotes) {
@@ -1038,7 +1038,7 @@ inCpAppSpec.setDepRemoteRefresh = function () {
         display: display,
     });
 
-    valueui.template.Render({
+    valueui.template.render({
         dstid: "incp-app-specset-depremotes",
         tplid: "incp-app-specset-depremotes-tpl",
         data: {
@@ -1049,20 +1049,20 @@ inCpAppSpec.setDepRemoteRefresh = function () {
 
 // TODO
 inCpAppSpec.SetPackSelect = function () {
-    valueui.modal.Open({
+    valueui.modal.open({
         title: "Select a dependent Package",
         width: 900,
         height: 600,
         tpluri: inCp.base + "/ips/~/ips/tpl/pkginfo/selector.html",
         fn_selector: function (err, rsp) {
-            valueui.modal.Close();
+            valueui.modal.close();
             inCpAppSpec.setPackInfo({
                 id: rsp,
             });
         },
         buttons: [
             {
-                onclick: "valueui.modal.Close()",
+                onclick: "valueui.modal.close()",
                 title: "Close",
             },
         ],
@@ -1086,11 +1086,11 @@ inCpAppSpec.setPackInfo = function (opt) {
 
     var alert_id = "#incp-app-specset-alert";
 
-    valueui.utilx.Ajax("/ips/v1/pkg/entry?" + req, {
+    valueui.utilx.ajax("/ips/v1/pkg/entry?" + req, {
         timeout: 10000,
         callback: function (err, rsj) {
             if (err) {
-                return valueui.alert.InnerShow(alert_id, "error", err);
+                return valueui.alert.innerShow(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "Pack") {
@@ -1098,7 +1098,7 @@ inCpAppSpec.setPackInfo = function (opt) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.alert.InnerShow(alert_id, "error", msg);
+                return valueui.alert.innerShow(alert_id, "error", msg);
             }
 
             if (!inCpAppSpec.setActive.packages) {
@@ -1183,7 +1183,7 @@ inCpAppSpec.setPackRefresh = function () {
         display: display,
     });
 
-    valueui.template.Render({
+    valueui.template.render({
         dstid: "incp-app-specset-ipmls",
         tplid: "incp-app-specset-ipmls-tpl",
         data: {
@@ -1205,7 +1205,7 @@ inCpAppSpec.SetVcsSet = function (dir) {
         }
     }
     if (!item) {
-        item = valueui.utilx.ObjectClone(inCpAppSpec.vcsDef);
+        item = valueui.utilx.objectClone(inCpAppSpec.vcsDef);
         modal_title = "Import from Git Repo";
     }
     if (!item.hook_exec_restart) {
@@ -1221,7 +1221,7 @@ inCpAppSpec.SetVcsSet = function (dir) {
         item.branch = "";
     }
 
-    valueui.modal.Open({
+    valueui.modal.open({
         title: modal_title,
         width: 1000,
         height: 600,
@@ -1229,7 +1229,7 @@ inCpAppSpec.SetVcsSet = function (dir) {
         data: item,
         buttons: [
             {
-                onclick: "valueui.modal.Close()",
+                onclick: "valueui.modal.close()",
                 title: "Cancel",
             },
             {
@@ -1333,11 +1333,11 @@ inCpAppSpec.SetVcsSetCommit = function () {
             inCpAppSpec.setActive.vcs_repos.push(vcsItem);
         }
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     inCpAppSpec.setVcsRefresh();
-    valueui.modal.Close();
+    valueui.modal.close();
 };
 
 inCpAppSpec.setVcsRefresh = function () {
@@ -1365,7 +1365,7 @@ inCpAppSpec.setVcsRefresh = function () {
         }
     }
 
-    valueui.template.Render({
+    valueui.template.render({
         dstid: "incp-app-specset-vcsls",
         tplid: "incp-app-specset-vcsls-tpl",
         data: {
@@ -1406,10 +1406,10 @@ inCpAppSpec.SetExecutorSet = function (name) {
     }
 
     if (!executor) {
-        executor = valueui.utilx.ObjectClone(inCpAppSpec.executorDef);
+        executor = valueui.utilx.objectClone(inCpAppSpec.executorDef);
     }
 
-    valueui.modal.Open({
+    valueui.modal.open({
         title: title,
         width: 1200,
         min_width: 960,
@@ -1429,7 +1429,7 @@ inCpAppSpec.SetExecutorSet = function (name) {
         },
         buttons: [
             {
-                onclick: "valueui.modal.Close()",
+                onclick: "valueui.modal.close()",
                 title: "Cancel",
             },
             {
@@ -1494,12 +1494,12 @@ inCpAppSpec.SetExecutorSave = function () {
             inCpAppSpec.setActive.executors.push(executor);
         }
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     inCpAppSpec.setExecutorRefresh();
 
-    valueui.modal.Close();
+    valueui.modal.close();
 };
 
 inCpAppSpec.SetExecutorRemove = function (name) {
@@ -1523,7 +1523,7 @@ inCpAppSpec.SetServicePortAppend = function () {
         data._host_port_enable = true;
     }
 
-    valueui.template.Render({
+    valueui.template.render({
         append: true,
         dstid: "incp-app-specset-serviceports",
         tplid: "incp-app-specset-serviceport-tpl",
@@ -1577,7 +1577,7 @@ inCpAppSpec.setExecutorRefresh = function () {
         }
     }
 
-    valueui.template.Render({
+    valueui.template.render({
         dstid: "incp-app-specset-executorls",
         tplid: "incp-app-specset-executorls-tpl",
         data: inCpAppSpec.setActive.executors,
@@ -1760,7 +1760,7 @@ inCpAppSpec.SetCommit = function () {
         inCpAppSpec.setActive.exp_deploy.failover_num_max = fail_num_max;
         inCpAppSpec.setActive.exp_deploy.failover_rate_max = fail_rate_max;
     } catch (err) {
-        return valueui.modal.FootAlert("error", "valid fail : " + err, 3000, footer_id);
+        return valueui.modal.footAlert("error", "valid fail : " + err, 3000, footer_id);
     }
 
     inCp.ApiCmd("app-spec/set", {
@@ -1769,7 +1769,7 @@ inCpAppSpec.SetCommit = function () {
         timeout: 3000,
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.modal.FootAlert("error", "network error", 3000, footer_id);
+                return valueui.modal.footAlert("error", "network error", 3000, footer_id);
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -1777,10 +1777,10 @@ inCpAppSpec.SetCommit = function () {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.modal.FootAlert("error", msg, 3000, footer_id);
+                return valueui.modal.footAlert("error", msg, 3000, footer_id);
             }
 
-            valueui.modal.FootAlert("ok", "Successful operation", 3000, footer_id);
+            valueui.modal.footAlert("ok", "Successful operation", 3000, footer_id);
 
             window.setTimeout(function () {
                 inCpAppSpec.ListRefresh();
@@ -1802,10 +1802,10 @@ inCpAppSpec.SetRaw = function (id) {
         formset.meta_id = "";
     }
 
-    var ep = valueui.NewEventProxy("data", function (data) {
+    var ep = valueui.newEventProxy("data", function (data) {
         formset.spec_text = data;
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "incp-app-specset",
             tplid: "incp-app-specset-raw-tpl",
             data: formset,
@@ -1855,7 +1855,7 @@ inCpAppSpec.SetRawCommit = function () {
 
         setActive = txt;
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     inCp.ApiCmd("app-spec/set", {
@@ -1864,7 +1864,7 @@ inCpAppSpec.SetRawCommit = function () {
         timeout: 3000,
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Failed");
+                return valueui.alert.innerShow(alert_id, "error", "Failed");
             }
 
             if (!rsj || rsj.kind != "AppSpec") {
@@ -1872,10 +1872,10 @@ inCpAppSpec.SetRawCommit = function () {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.alert.InnerShow(alert_id, "error", msg);
+                return valueui.alert.innerShow(alert_id, "error", msg);
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successful operation");
+            valueui.alert.innerShow(alert_id, "ok", "Successful operation");
             window.setTimeout(function () {
                 inCpAppSpec.ListRefresh();
             }, 1000);
@@ -1885,7 +1885,7 @@ inCpAppSpec.SetRawCommit = function () {
 
 //
 inCpAppSpec.CfgSet = function (spec_id) {
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         var alert_id = "#incp-appspec-cfg-fieldlist-alert";
 
         if (!data || data.error || !data.kind || data.kind != "AppSpec") {
@@ -1927,12 +1927,12 @@ inCpAppSpec.CfgSet = function (spec_id) {
             }
         }
 
-        inCpAppSpec.active = valueui.utilx.ObjectClone(data);
+        inCpAppSpec.active = valueui.utilx.objectClone(data);
 
         var btns = [
             {
                 title: "Cancel",
-                onclick: "valueui.modal.Close()",
+                onclick: "valueui.modal.close()",
             },
         ];
         if (inCp.UserSession.username == data.meta.user) {
@@ -1950,7 +1950,7 @@ inCpAppSpec.CfgSet = function (spec_id) {
             });
         }
 
-        valueui.modal.Open({
+        valueui.modal.open({
             id: "incp-appspec-cfg-fieldlist-modal",
             title: "Configurator",
             tplsrc: tpl,
@@ -1995,7 +1995,7 @@ inCpAppSpec.cfgFieldListRefresh = function () {
 
     inCpAppSpec.active._cfgFieldTypes = inCpAppSpec.cfgFieldTypes;
     inCpAppSpec.active._cfgFieldAutoFills = inCpAppSpec.cfgFieldAutoFills;
-    valueui.template.Render({
+    valueui.template.render({
         dstid: "incp-appspec-cfg-fieldlist",
         tplid: "incp-appspec-cfg-fieldlist-tpl",
         data: inCpAppSpec.active,
@@ -2031,7 +2031,7 @@ inCpAppSpec.CfgSetCommit = function () {
         }
         inCpAppSpec.active.configurator.name = name;
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     var req = {
@@ -2046,22 +2046,22 @@ inCpAppSpec.CfgSetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             inCpAppSpec.active = null;
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 inCpAppSpec.ListRefresh();
             }, 500);
         },
@@ -2081,13 +2081,13 @@ inCpAppSpec.CfgFieldSet = function (name) {
     if (name) {
         for (var i in inCpAppSpec.active.configurator.fields) {
             if (inCpAppSpec.active.configurator.fields[i].name == name) {
-                field = valueui.utilx.ObjectClone(inCpAppSpec.active.configurator.fields[i]);
+                field = valueui.utilx.objectClone(inCpAppSpec.active.configurator.fields[i]);
                 break;
             }
         }
     }
     if (!field) {
-        field = valueui.utilx.ObjectClone(inCpAppSpec.cfgFieldDef);
+        field = valueui.utilx.objectClone(inCpAppSpec.cfgFieldDef);
     }
     if (!field.description) {
         field.description = "";
@@ -2095,14 +2095,14 @@ inCpAppSpec.CfgFieldSet = function (name) {
     field._cfgFieldTypes = inCpAppSpec.cfgFieldTypes;
     field._cfgFieldAutoFills = inCpAppSpec.cfgFieldAutoFills;
 
-    valueui.modal.Open({
+    valueui.modal.open({
         id: "incp-appspec-cfgfieldset-modal",
         title: "Setting Field",
         tpluri: inCp.TplPath("app/spec/cfg-fieldset"),
         buttons: [
             {
                 title: "Cancel",
-                onclick: "valueui.modal.Close()",
+                onclick: "valueui.modal.close()",
             },
             {
                 title: "Delete",
@@ -2119,7 +2119,7 @@ inCpAppSpec.CfgFieldSet = function (name) {
                 return;
             }
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-appspec-cfg-fieldset-form",
                 tplid: "incp-appspec-cfg-fieldset-tpl",
                 data: field,
@@ -2130,7 +2130,7 @@ inCpAppSpec.CfgFieldSet = function (name) {
 };
 
 inCpAppSpec.CfgFieldSetValidatorNew = function () {
-    valueui.template.Render({
+    valueui.template.render({
         append: true,
         dstid: "incp-app-specset-cfgfield-validators",
         tplid: "incp-app-specset-cfgfield-validator-tpl",
@@ -2184,7 +2184,7 @@ inCpAppSpec.CfgFieldSetCommit = function () {
             });
         });
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     var fields = [];
@@ -2198,7 +2198,7 @@ inCpAppSpec.CfgFieldSetCommit = function () {
         }
 
         if (field && inCpAppSpec.active.configurator.fields[i].name == field.name) {
-            fields.push(valueui.utilx.ObjectClone(field));
+            fields.push(valueui.utilx.objectClone(field));
             field = null;
         } else {
             fields.push(inCpAppSpec.active.configurator.fields[i]);
@@ -2210,7 +2210,7 @@ inCpAppSpec.CfgFieldSetCommit = function () {
     }
     if (!inCpAppSpec.active.configurator.name || inCpAppSpec.active.configurator.name.length < 1) {
         inCpAppSpec.active.configurator.fields = fields;
-        valueui.modal.Prev(inCpAppSpec.cfgFieldListRefresh);
+        valueui.modal.prev(inCpAppSpec.cfgFieldListRefresh);
         return;
     }
     var req = {
@@ -2228,22 +2228,22 @@ inCpAppSpec.CfgFieldSetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
                 inCpAppSpec.active.configurator.fields = fields;
-                valueui.modal.Prev(inCpAppSpec.cfgFieldListRefresh);
+                valueui.modal.prev(inCpAppSpec.cfgFieldListRefresh);
             }, 500);
         },
     });
@@ -2264,7 +2264,7 @@ inCpAppSpec.CfgFieldDelCommit = function () {
             throw "Invalid Name";
         }
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     var fields = [];
@@ -2280,14 +2280,14 @@ inCpAppSpec.CfgFieldDelCommit = function () {
 
     for (var i in inCpAppSpec.active.configurator.fields) {
         if (inCpAppSpec.active.configurator.fields[i].name == field.name) {
-            req.configurator.fields.push(valueui.utilx.ObjectClone(field));
+            req.configurator.fields.push(valueui.utilx.objectClone(field));
         } else {
             fields.push(inCpAppSpec.active.configurator.fields[i]);
         }
     }
 
     if (req.configurator.fields.length == 0) {
-        return valueui.alert.InnerShow(alert_id, "error", "No field name Found");
+        return valueui.alert.innerShow(alert_id, "error", "No field name Found");
     }
 
     inCp.ApiCmd("app-spec/cfg-field-del", {
@@ -2295,22 +2295,22 @@ inCpAppSpec.CfgFieldDelCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppSpec") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
                 inCpAppSpec.active.configurator.fields = fields;
-                valueui.modal.Prev(inCpAppSpec.cfgFieldListRefresh);
+                valueui.modal.prev(inCpAppSpec.cfgFieldListRefresh);
             }, 500);
         },
     });

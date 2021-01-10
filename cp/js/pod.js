@@ -221,7 +221,7 @@ inCpPod.List = function (tplid, options) {
         options = inCpPod.list_options;
     }
 
-        var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+        var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
             if (!options.ops_mode) {
                 inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus, "pod/instance");
             }
@@ -238,7 +238,7 @@ inCpPod.List = function (tplid, options) {
             }
 
             if (data.error) {
-                return valueui.alert.InnerShow(alert_id, "error", data.error.message);
+                return valueui.alert.innerShow(alert_id, "error", data.error.message);
             }
 
             if (data.user_transfers && data.user_transfers.length > 0) {
@@ -267,12 +267,12 @@ inCpPod.List = function (tplid, options) {
             data.items = items;
 
             if (data.items.length < 1) {
-                return valueui.alert.InnerShow(alert_id, "alert-info", "No Item Found Yet ...");
+                return valueui.alert.innerShow(alert_id, "alert-info", "No Item Found Yet ...");
             }
 
             inCpPod.list = data.items;
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: tplid,
                 tplid: tplid + "-tpl",
                 data: data,
@@ -327,7 +327,7 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
         callback: function(err, rsj) {
 
             if (err) {
-                return valueui.alert.InnerShow(alert_id, 'error', "Failed: " + err);
+                return valueui.alert.innerShow(alert_id, 'error', "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "PodInstance") {
@@ -335,7 +335,7 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.alert.InnerShow(alert_id, 'error', msg);
+                return valueui.alert.innerShow(alert_id, 'error', msg);
             }
 
             if (op_action == 2) {
@@ -344,7 +344,7 @@ inCpPod.ListOpActionChange = function(pod_id, obj, tplid) {
                 $(obj).removeClass("button-success");
             }
 
-            valueui.alert.InnerShow(alert_id, 'ok', "Successful updated");
+            valueui.alert.innerShow(alert_id, 'ok', "Successful updated");
         }
     });
 }
@@ -358,17 +358,17 @@ inCpPod.New = function (options) {
     }
     var alert_id = "#incp-podnew-alert";
 
-        var ep = valueui.NewEventProxy("tpl", "zones", "plans", function (tpl, zones, plans) {
+        var ep = valueui.newEventProxy("tpl", "zones", "plans", function (tpl, zones, plans) {
             if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
             inCpPod.syszones = zones;
 
             if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            var pod = valueui.utilx.ObjectClone(inCpPod.def);
+            var pod = valueui.utilx.objectClone(inCpPod.def);
             for (var i in plans.items) {
                 for (var j in plans.items[i].res_computes) {
                     plans.items[i].res_computes[j]._cpu_limit = (
@@ -393,7 +393,7 @@ inCpPod.New = function (options) {
             }
 
             if (!pod._plan_selected) {
-                return valueui.alert.InnerShow(alert_id, "error", "No SpecPodPlan Found");
+                return valueui.alert.innerShow(alert_id, "error", "No SpecPodPlan Found");
             }
 
             //
@@ -409,7 +409,7 @@ inCpPod.New = function (options) {
             // inCpPod.zones = zones;
 
             var fnfre = function () {
-                valueui.template.Render({
+                valueui.template.render({
                     dstid: "incp-podnew-plans",
                     tplid: "incp-podnew-plans-tpl",
                     data: {
@@ -422,14 +422,14 @@ inCpPod.New = function (options) {
             inCpPod.itemNewOptions = options;
             // console.log(options);
             if (options.open_modal) {
-                valueui.modal.Open({
+                valueui.modal.open({
                     id: "pod-new",
                     tplsrc: tpl,
                     title: "Create new Pod Instance",
                     width: "max",
                     height: "max",
                     callback: function () {
-                        valueui.template.Render({
+                        valueui.template.render({
                             dstid: "incp-podnew-form",
                             tplid: "incp-podnew-modal",
                             data: {
@@ -442,7 +442,7 @@ inCpPod.New = function (options) {
                     },
                     buttons: [
                         {
-                            onclick: "valueui.modal.Close()",
+                            onclick: "valueui.modal.close()",
                             title: "Close",
                         },
                         {
@@ -453,11 +453,11 @@ inCpPod.New = function (options) {
                     ],
                 });
             } else {
-                valueui.template.Render({
+                valueui.template.render({
                     dstid: "work-content",
                     tplsrc: tpl,
                     callback: function () {
-                        valueui.template.Render({
+                        valueui.template.render({
                             dstid: "incp-podnew-form",
                             tplid: "incp-podnew-inner",
                             data: {
@@ -563,7 +563,7 @@ inCpPod.NewRefreshPlan = function () {
         }
 
         if (!inCpPod.plan._res_volume) {
-            return valueui.alert.InnerShow(alert_id, "error", "No SpecPodPlan/Volume Found");
+            return valueui.alert.innerShow(alert_id, "error", "No SpecPodPlan/Volume Found");
         }
 
         //
@@ -598,7 +598,7 @@ inCpPod.NewRefreshPlan = function () {
                         }
 
                         inCpPod.plan._zones.push({
-                            id: valueui.utilx.CryptoMd5(name),
+                            id: valueui.utilx.cryptoMd5(name),
                             name: name,
                             zone: inCpPod.plan.zones[i].name,
                             cell: inCpPod.plan.zones[i].cells[k],
@@ -620,7 +620,7 @@ inCpPod.NewRefreshPlan = function () {
 
         //
         if (!inCpPod.plan._zone_selected) {
-            return valueui.alert.InnerShow(alert_id, "error", "No SpecZone Found");
+            return valueui.alert.innerShow(alert_id, "error", "No SpecZone Found");
         }
 
         //
@@ -659,7 +659,7 @@ inCpPod.NewRefreshPlan = function () {
 
         $(".incp-podnew-resource-selector-row").remove();
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "incp-podnew-plan-row",
             tplid: "incp-podnew-resource-selector-tpl",
             data: inCpPod.plan,
@@ -677,7 +677,7 @@ inCpPod.NewPlanClusterChange = function (zn) {
     }
 
     $("#incp-podnew-zones").find(".incp-form-box-selector-item.selected").removeClass("selected");
-    $("#incp-podnew-zone-id-" + valueui.utilx.CryptoMd5(zn)).addClass("selected");
+    $("#incp-podnew-zone-id-" + valueui.utilx.cryptoMd5(zn)).addClass("selected");
 
     inCpPod.plan._zone_selected = zn;
     inCpPod.HookAccountChargeRefresh();
@@ -693,7 +693,7 @@ inCpPod.NewPlanResComputeChange = function (res_compute_id) {
             continue;
         }
         if (!inCpPod.NewOptionResFit(inCpPod.plan.res_computes[i])) {
-            return valueui.alert.InnerShow(
+            return valueui.alert.innerShow(
                 "#incp-podnew-alert",
                 "error",
                 "this Resource Spec can not fit the Application Resource Requirements, please try another Spec or change the Pod Plan"
@@ -712,7 +712,7 @@ inCpPod.NewPlanResComputeChange = function (res_compute_id) {
 };
 
 inCpPod.NewPlanImageChange = function (image_id) {
-    var image_id_enc = valueui.utilx.CryptoMd5(image_id);
+    var image_id_enc = valueui.utilx.cryptoMd5(image_id);
     if (!inCpPod.plan || inCpPod.plan.image_selected == image_id) {
         // return;
     }
@@ -816,12 +816,12 @@ inCpPod.NewCommit = function () {
     }
 
     if (!inCpPod.plan.res_compute_selected) {
-        return valueui.alert.InnerShow(alert_id, "error", "Resource Option Not Set");
+        return valueui.alert.innerShow(alert_id, "error", "Resource Option Not Set");
     }
 
     if (inCpPod.itemNewOptions.app_vol_min && inCpPod.itemNewOptions.app_vol_min > 0) {
         if (vol_size < inCpPod.itemNewOptions.app_vol_min) {
-            return valueui.alert.InnerShow(
+            return valueui.alert.innerShow(
                 alert_id,
                 "error",
                 "this System Storage requires at least " +
@@ -850,7 +850,7 @@ inCpPod.NewCommit = function () {
     };
 
     if (!set.name || set.name == "") {
-        return valueui.alert.InnerShow(alert_id, "error", "Name Not Found");
+        return valueui.alert.innerShow(alert_id, "error", "Name Not Found");
     }
 
     //
@@ -866,26 +866,26 @@ inCpPod.NewCommit = function () {
         data: JSON.stringify(set),
         callback: function (err, rsj) {
             if (inCpPod.itemNewOptions.open_modal) {
-                valueui.modal.ScrollTop();
+                valueui.modal.scrollTop();
             }
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
             window.setTimeout(function () {
                 if (inCpPod.itemNewOptions.app_new_callback) {
                     inCpPod.itemNewOptions.app_new_callback(null, rsj.pod);
                 } else {
-                    valueui.modal.Close();
+                    valueui.modal.close();
                     if (inCpPod.itemNewOptions.callback) {
                         inCpPod.itemNewOptions.callback(null);
                     } else if (!inCpPod.itemNewOptions.open_modal) {
@@ -903,7 +903,7 @@ inCpPod.NewCommit = function () {
 
 inCpPod.Info = function (pod_id, options) {
     options = options || {};
-        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
+        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
             if (!pod.operate.replicas) {
                 pod.operate.replicas = [];
             }
@@ -933,7 +933,7 @@ inCpPod.Info = function (pod_id, options) {
 
             var btns = [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
             ];
@@ -943,7 +943,7 @@ inCpPod.Info = function (pod_id, options) {
                 }
             }
 
-            valueui.modal.Open({
+            valueui.modal.open({
                 id: "incp-pod-item-info",
                 title: "Pod Instance Information",
                 tplsrc: tpl,
@@ -975,7 +975,7 @@ inCpPod.SetInfo = function (pod_id) {
         return alert("No Pod Found");
     }
 
-        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
+        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
             var actions = [];
             for (var i in inCp.OpActions) {
                 actions.push({
@@ -1012,7 +1012,7 @@ inCpPod.SetInfo = function (pod_id) {
             spec_summary += ", RAM: " + pod.spec._mem_limit + " MB";
             spec_summary += ", Storage: " + pod.spec.vol_sys.size + " GB";
 
-            valueui.modal.Open({
+            valueui.modal.open({
                 title: "Pod Instance Setup",
                 tplsrc: tpl,
                 width: 1000,
@@ -1020,14 +1020,14 @@ inCpPod.SetInfo = function (pod_id) {
                 data: {
                     pod: pod,
                     _op_actions: actions,
-                    _op_sys_states: valueui.utilx.ObjectClone(inCpPod.opSysStates),
+                    _op_sys_states: valueui.utilx.objectClone(inCpPod.opSysStates),
                     _spec_summary: spec_summary,
                     _op_rep_min: rep_min,
                     _op_rep_max: rep_max,
                 },
                 buttons: [
                     {
-                        onclick: "valueui.modal.Close()",
+                        onclick: "valueui.modal.close()",
                         title: "Close",
                     },
                     {
@@ -1082,7 +1082,7 @@ inCpPod.SetInfoCommit = function () {
     }
 
     if (inCp.OpActionAllow(set.operate.action, inCp.OpActionDestroy)) {
-        return valueui.modal.Close(function () {
+        return valueui.modal.close(function () {
             inCpPod.EntryDel(pod_id);
         });
     }
@@ -1094,25 +1094,25 @@ inCpPod.SetInfoCommit = function () {
         data: JSON.stringify(set),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.modal.FootAlert("ok", "Successfully Updated");
+            valueui.modal.footAlert("ok", "Successfully Updated");
 
             if (set.operate.replica_cap > 0 && inCpPod.itemActive && inCpPod.itemActive.operate) {
                 inCpPod.itemActive.operate.replica_cap = set.operate.replica_cap;
             }
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
                     inCpPod.List(null, null);
@@ -1130,8 +1130,8 @@ inCpPod.UserTransferView = function (pod_id) {
         return alert("No Pod Found");
     }
 
-        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
-            valueui.modal.Open({
+        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
+            valueui.modal.open({
                 id: "pod-user-transfer",
                 title: "Transfer Ownership",
                 tplsrc: tpl,
@@ -1141,7 +1141,7 @@ inCpPod.UserTransferView = function (pod_id) {
                 },
                 buttons: [
                     {
-                        onclick: "valueui.modal.Close()",
+                        onclick: "valueui.modal.close()",
                         title: "Close",
                     },
                     {
@@ -1182,24 +1182,24 @@ inCpPod.UserTransferCommit = function () {
         data: JSON.stringify(set),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.modal.FootAlert(
+            valueui.modal.footAlert(
                 "ok",
                 valueui.lang.T("Successfully Updated") + ", " + valueui.lang.T("msg-transter-ownership-confirm")
             );
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
                     inCpPod.List(null, null);
@@ -1214,8 +1214,8 @@ inCpPod.UserTransferPerform = function () {
         return alert("No Transfer Found");
     }
 
-        var ep = valueui.NewEventProxy("tpl", function (tpl) {
-            valueui.modal.Open({
+        var ep = valueui.newEventProxy("tpl", function (tpl) {
+            valueui.modal.open({
                 title: "Transfer Ownership Requests",
                 tplsrc: tpl,
                 width: 900,
@@ -1225,7 +1225,7 @@ inCpPod.UserTransferPerform = function () {
                 },
                 buttons: [
                     {
-                        onclick: "valueui.modal.Close()",
+                        onclick: "valueui.modal.close()",
                         title: "Close",
                     },
                     {
@@ -1266,7 +1266,7 @@ inCpPod.UserTransferPerformCommit = function () {
             throw "No Item Seleced";
         }
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     $(alert_id).hide();
@@ -1276,21 +1276,21 @@ inCpPod.UserTransferPerformCommit = function () {
         // data: JSON.stringify(set),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.modal.FootAlert("ok", valueui.lang.T("Successfully Updated"));
+            valueui.modal.footAlert("ok", valueui.lang.T("Successfully Updated"));
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
                     inCpPod.List(null, null);
@@ -1308,13 +1308,13 @@ inCpPod.EntryDel = function (pod_id) {
         return alert("No Pod Found");
     }
 
-        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
+        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
             if (!pod.apps) {
                 pod.apps = [];
             }
 
             // This will result in permanent data loss.
-            valueui.modal.Open({
+            valueui.modal.open({
                 title: "Pod Destroy",
                 tplsrc: tpl,
                 width: 800,
@@ -1322,7 +1322,7 @@ inCpPod.EntryDel = function (pod_id) {
                 data: pod,
                 buttons: [
                     {
-                        onclick: "valueui.modal.Close()",
+                        onclick: "valueui.modal.close()",
                         title: "Close",
                     },
                     {
@@ -1356,21 +1356,21 @@ inCpPod.EntryDelCommit = function () {
         method: "GET",
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
                     inCpPod.List(null, null);
@@ -1383,22 +1383,22 @@ inCpPod.EntryDelCommit = function () {
 inCpPod.Set = function (pod_id) {
     var alert_id = "#incp-podset-alert";
 
-        var ep = valueui.NewEventProxy(
+        var ep = valueui.newEventProxy(
             "tpl",
             "zones",
             "specs",
             "pod",
             function (tpl, zones, specs, pod) {
                 if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                    return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                    return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
                 }
 
                 if (!specs || !specs.kind || specs.kind != "PodSpecList") {
-                    return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                    return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
                 }
 
                 if (!pod.kind || pod.kind != "Pod") {
-                    return valueui.alert.InnerShow(alert_id, "error", "Pod Not Found");
+                    return valueui.alert.innerShow(alert_id, "error", "Pod Not Found");
                 }
 
                 pod._zones = zones;
@@ -1407,14 +1407,14 @@ inCpPod.Set = function (pod_id) {
 
                 inCpPod.specs = specs;
 
-                valueui.modal.Open({
+                valueui.modal.open({
                     title: "Pod Instance Setting",
                     tplsrc: tpl,
                     width: 900,
                     height: 600,
                     buttons: [
                         {
-                            onclick: "valueui.modal.Close()",
+                            onclick: "valueui.modal.close()",
                             title: "Close",
                         },
                         {
@@ -1424,7 +1424,7 @@ inCpPod.Set = function (pod_id) {
                         },
                     ],
                     success: function () {
-                        valueui.template.Render({
+                        valueui.template.render({
                             dstid: "incp-podset",
                             tplid: "incp-podset-tpl",
                             data: pod,
@@ -1496,21 +1496,21 @@ inCpPod.SetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "Pod") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 inCpPod.List(null, null);
             }, 500);
         },
@@ -1561,21 +1561,21 @@ inCpPod.EntryIndex = function (pod_id, nav_target) {
     if (pod_id) {
         inCpPod.itemActiveId = pod_id;
     }
-    valueui.url.EventActive("pod/index");
+    valueui.url.eventActive("pod/index");
 
     inCp.ModuleNavbarMenu("cp/pod/entry", inCpPod.entry_nav_menus);
 
-    valueui.url.EventClean("incp-module-navbar-menus");
-    valueui.url.EventRegister("pod/entry/overview", inCpPod.EntryOverview, "incp-module-navbar-menus");
-    valueui.url.EventRegister("pod/entry/stats", inCpPod.EntryStats, "incp-module-navbar-menus");
+    valueui.url.eventClean("incp-module-navbar-menus");
+    valueui.url.eventRegister("pod/entry/overview", inCpPod.EntryOverview, "incp-module-navbar-menus");
+    valueui.url.eventRegister("pod/entry/stats", inCpPod.EntryStats, "incp-module-navbar-menus");
 
     switch (nav_target) {
         case "stats":
-            valueui.url.EventHandler("pod/entry/stats", false);
+            valueui.url.eventHandler("pod/entry/stats", false);
             break;
 
         default:
-            valueui.url.EventHandler("pod/entry/overview", false);
+            valueui.url.eventHandler("pod/entry/overview", false);
             break;
     }
 };
@@ -1589,7 +1589,7 @@ inCpPod.EntryOverview = function () {
         }
     }
 
-        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
+        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
             if (!pod.operate.failover) {
                 pod.operate.failover = {};
             }
@@ -1668,7 +1668,7 @@ inCpPod.EntryOverview = function () {
 
             inCpPod.itemActive = pod;
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-podentry-overview",
                 tplid: "incp-podentry-overview-info-tpl",
                 data: pod,
@@ -1705,7 +1705,7 @@ inCpPod.EntryRepOpLogActive = function (rep_id) {
     // $(this).addClass("active");
     if (inCpPod.itemStatusActive) {
         inCpPod.itemStatusActive._rep_oplog_active_id = rep_id;
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "incp-podentry-sidebar",
             tplid: "incp-podentry-overview-oplog-tpl",
             data: inCpPod.itemStatusActive,
@@ -1744,7 +1744,7 @@ inCpPod.entryAutoRefresh = function () {
                         box: {},
                     });
                 }
-                valueui.template.Render({
+                valueui.template.render({
                     dstid: "incp-podentry-overview",
                     tplid: "incp-podentry-overview-info-tpl",
                     data: inCpPod.itemActive,
@@ -1835,9 +1835,9 @@ inCpPod.entryAutoRefresh = function () {
             }
             data._rep_oplog_active_id = inCpPod.itemActive._rep_oplog_active_id;
 
-            inCpPod.itemStatusActive = valueui.utilx.ObjectClone(data);
+            inCpPod.itemStatusActive = valueui.utilx.objectClone(data);
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-podentry-sidebar",
                 tplid: "incp-podentry-overview-oplog-tpl",
                 data: inCpPod.itemStatusActive,
@@ -1974,7 +1974,7 @@ inCpPod.EntryStats = function (time_past, rep_id) {
     }
 
     stats_url += "&qry=" + btoa(JSON.stringify(stats_query));
-        var ep = valueui.NewEventProxy("tpl", "pod", "stats", function (tpl, pod, stats) {
+        var ep = valueui.newEventProxy("tpl", "pod", "stats", function (tpl, pod, stats) {
             if (tpl) {
                 $("#work-content").html(tpl);
                 $(".incp-podentry-stats-item").css({
@@ -2004,7 +2004,7 @@ inCpPod.EntryStats = function (time_past, rep_id) {
             }
 
             //
-            var stats_cpu = valueui.utilx.ObjectClone(inCpPod.hchart_def);
+            var stats_cpu = valueui.utilx.objectClone(inCpPod.hchart_def);
             stats_cpu.options.title = valueui.lang.T("CPU Usage (Percentage / %s)", tc_title);
             /**
                 max = inCpPod.entryStatsFeedMaxValue(stats, "cpu/us");
@@ -2023,12 +2023,12 @@ inCpPod.EntryStats = function (time_past, rep_id) {
             */
 
             //
-            var stats_ram = valueui.utilx.ObjectClone(inCpPod.hchart_def);
+            var stats_ram = valueui.utilx.objectClone(inCpPod.hchart_def);
             stats_ram.options.title = valueui.lang.T("Memory Usage (MB)");
             stats_ram._fix = 1024 * 1024;
 
             //
-            var stats_net = valueui.utilx.ObjectClone(inCpPod.hchart_def);
+            var stats_net = valueui.utilx.objectClone(inCpPod.hchart_def);
             max = inCpPod.entryStatsFeedMaxValue(stats, "net/rs,net/ws");
             if (max > 1024 * 1024) {
                 stats_net.options.title = valueui.lang.T("Network Bytes (MB / %s)", tc_title);
@@ -2041,11 +2041,11 @@ inCpPod.EntryStats = function (time_past, rep_id) {
             }
 
             //
-            var stats_fsn = valueui.utilx.ObjectClone(inCpPod.hchart_def);
+            var stats_fsn = valueui.utilx.objectClone(inCpPod.hchart_def);
             stats_fsn.options.title = valueui.lang.T("Storage IO (Number / %s)", tc_title);
 
             //
-            var stats_fss = valueui.utilx.ObjectClone(inCpPod.hchart_def);
+            var stats_fss = valueui.utilx.objectClone(inCpPod.hchart_def);
             max = inCpPod.entryStatsFeedMaxValue(stats, "fs/rs,fs/ws");
             if (max > 1024 * 1024) {
                 stats_fss.options.title = valueui.lang.T("Storage IO Bytes (MB / %s)", tc_title);
@@ -2101,7 +2101,7 @@ inCpPod.EntryStats = function (time_past, rep_id) {
 
                     // var t = new Date(v2.time * 1000);
                     // labels.push(t.l4iTimeFormat(tfmt));
-                    labels.push(valueui.utilx.UnixTimeFormat(v2.time, tfmt));
+                    labels.push(valueui.utilx.unixTimeFormat(v2.time, tfmt));
                     
 
                     if (!v2.value) {
@@ -2195,7 +2195,7 @@ inCpPod.EntryStats = function (time_past, rep_id) {
                 },
             ];
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-podentry-stats-list",
                 tplid: "incp-podentry-stats-item-tpl",
                 data: {
@@ -2241,10 +2241,10 @@ inCpPod.EntryAccess = function (pod_id) {
         return alert("No Pod Found");
     }
 
-        var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
+        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
             var actions = [];
             if (!pod.operate.access) {
-                pod.operate.access = valueui.utilx.ObjectClone(inCpPod.itemOperateAccessDef);
+                pod.operate.access = valueui.utilx.objectClone(inCpPod.itemOperateAccessDef);
             }
             if (!pod.operate.access.ssh_key) {
                 pod.operate.access.ssh_key = "";
@@ -2254,7 +2254,7 @@ inCpPod.EntryAccess = function (pod_id) {
             } else if (pod.operate.access.ssh_pwd.length > 0) {
                 pod.operate.access.ssh_pwd = "********";
             }
-            valueui.modal.Open({
+            valueui.modal.open({
                 title: "Remote Access",
                 tplsrc: tpl,
                 width: 900,
@@ -2262,7 +2262,7 @@ inCpPod.EntryAccess = function (pod_id) {
                 data: pod,
                 buttons: [
                     {
-                        onclick: "valueui.modal.Close()",
+                        onclick: "valueui.modal.close()",
                         title: "Close",
                     },
                     {
@@ -2338,21 +2338,21 @@ inCpPod.EntryAccessSetCommit = function () {
         data: JSON.stringify(set),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
                     inCpPod.List(null, {
@@ -2376,27 +2376,27 @@ inCpPod.SpecSet = function (pod_id) {
 
     var alert_id = "#incp-podnew-alert";
 
-        var ep = valueui.NewEventProxy(
+        var ep = valueui.newEventProxy(
             "tpl",
             "pod",
             "zones",
             "plans",
             function (tpl, pod, zones, plans) {
                 if (!pod || !pod.kind || pod.kind != "Pod" || !pod.spec.box) {
-                    return valueui.alert.Open("error", "No Pod Found");
+                    return valueui.alert.open("error", "No Pod Found");
                 }
 
                 if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                    return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                    return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
                 }
                 inCpPod.syszones = zones;
 
                 if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
-                    return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                    return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
                 }
 
                 if (!pod.spec.vol_sys) {
-                    return valueui.alert.Open("error", "Invalid Pod Spec");
+                    return valueui.alert.open("error", "Invalid Pod Spec");
                 }
 
                 var spec_res_id = pod.spec.box.resources.ref.id,
@@ -2437,7 +2437,7 @@ inCpPod.SpecSet = function (pod_id) {
                     }
                 }
                 if (_plans.length < 1) {
-                    return valueui.alert.Open("error", "no available spec found");
+                    return valueui.alert.open("error", "no available spec found");
                 }
                 plans.items = _plans;
 
@@ -2463,7 +2463,7 @@ inCpPod.SpecSet = function (pod_id) {
                         continue;
                     }
                     if (options.app_runtime_images.length == 0) {
-                        options.app_runtime_images = valueui.utilx.ObjectClone(pod.apps[i].spec.runtime_images);
+                        options.app_runtime_images = valueui.utilx.objectClone(pod.apps[i].spec.runtime_images);
                     } else {
                         var app_runtime_images_merges = [];
                         for (var j in pod.apps[i].spec.runtime_images) {
@@ -2483,7 +2483,7 @@ inCpPod.SpecSet = function (pod_id) {
                 inCpPod.itemNewOptions = options;
 
                 var fnfre = function () {
-                    valueui.template.Render({
+                    valueui.template.render({
                         dstid: "incp-podnew-plans",
                         tplid: "incp-podnew-plans-tpl",
                         data: {
@@ -2496,7 +2496,7 @@ inCpPod.SpecSet = function (pod_id) {
                 };
                 // console.log(options);
 
-                valueui.modal.Open({
+                valueui.modal.open({
                     id: "podset-planset",
                     tplsrc: tpl,
                     title: "Setting Pod Spec",
@@ -2504,7 +2504,7 @@ inCpPod.SpecSet = function (pod_id) {
                     min_width: 900,
                     height: 900,
                     callback: function () {
-                        valueui.template.Render({
+                        valueui.template.render({
                             dstid: "incp-podnew-form",
                             tplid: "incp-podnew-modal",
                             data: {
@@ -2517,7 +2517,7 @@ inCpPod.SpecSet = function (pod_id) {
                     },
                     buttons: [
                         {
-                            onclick: "valueui.modal.Close()",
+                            onclick: "valueui.modal.close()",
                             title: "Close",
                         },
                         {
@@ -2557,11 +2557,11 @@ inCpPod.SpecSetCommit = function () {
         url = "",
         vol_size = parseInt($("#incp-podnew-resource-value").val());
     if (vol_size <= 0) {
-        return valueui.alert.InnerShow(alert_id, "error", "System Storage Not Set");
+        return valueui.alert.innerShow(alert_id, "error", "System Storage Not Set");
     }
 
     if (!inCpPod.plan.res_compute_selected) {
-        return valueui.alert.InnerShow(alert_id, "error", "Resource Option Not Set");
+        return valueui.alert.innerShow(alert_id, "error", "Resource Option Not Set");
     }
 
     if (vol_size < 1) {
@@ -2593,22 +2593,22 @@ inCpPod.SpecSetCommit = function () {
         method: "POST",
         data: JSON.stringify(set),
         callback: function (err, rsj) {
-            valueui.modal.ScrollTop();
+            valueui.modal.scrollTop();
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 if (rsj.pod && rsj.pod.length > 8) {
                     inCpPod.EntryIndex(rsj.pod);
                 } else {

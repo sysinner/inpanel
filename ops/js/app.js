@@ -9,9 +9,9 @@ var inOpsApp = {
 inOpsApp.Index = function() {
     inCp.ModuleNavbarMenu("ops/app/list", inOpsApp.list_nav_menus);
 
-    valueui.url.EventRegister("app/list", inOpsApp.List, "incp-module-navbar-menus");
+    valueui.url.eventRegister("app/list", inOpsApp.List, "incp-module-navbar-menus");
 
-    valueui.url.EventHandler("app/list", true);
+    valueui.url.eventHandler("app/list", true);
 }
 
 inOpsApp.List = function() {

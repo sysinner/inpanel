@@ -27,7 +27,7 @@
       </div>
       <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
         <div class="name">Created</div>
-        <div class="value">{[=valueui.utilx.UnixMillisecondFormat(it.meta.created, "Y-m-d")]}</div>
+        <div class="value">{[=valueui.utilx.unixMillisecondFormat(it.meta.created, "Y-m-d")]}</div>
       </div>
     </div>
   </td>
@@ -94,7 +94,7 @@
             0
           {[?]}
         </td>
-        <td>{[=valueui.utilx.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
+        <td>{[=valueui.utilx.unixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
       </tr>
       {[~]}
     </tbody>

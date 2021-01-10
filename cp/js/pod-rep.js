@@ -1,24 +1,24 @@
 var inCpPodRep = {};
 
 inCpPodRep.Set = function (podId, repId, options) {
-    var ep = valueui.NewEventProxy("tpl", "pod", function (tpl, pod) {
+    var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
         if (!pod.kind || pod.kind != "Pod") {
-            return; // valueui.modal.FootAlert('error', "Pod Not Found");
+            return; // valueui.modal.footAlert('error', "Pod Not Found");
         }
 
-        valueui.modal.Open({
+        valueui.modal.open({
             title: "Pod Replica Setting",
             tplsrc: tpl,
             data: {
                 _pod_id: podId,
                 _rep_id: repId,
-                // _op_actions: valueui.utilx.ObjectClone(inCp.OpActions),
+                // _op_actions: valueui.utilx.objectClone(inCp.OpActions),
             },
             width: 900,
             height: 400,
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -63,7 +63,7 @@ inCpPodRep.SetCommit = function () {
             req.replica.action = inCp.OpActionMigrate;
         }
     } catch (err) {
-        return valueui.modal.FootAlert("error", err, 3000);
+        return valueui.modal.footAlert("error", err, 3000);
     }
 
     inCp.ApiCmd("pod-rep/set", {
@@ -71,21 +71,21 @@ inCpPodRep.SetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.modal.FootAlert("error", "Network Connection Exception", 3000);
+                return valueui.modal.footAlert("error", "Network Connection Exception", 3000);
             }
 
             if (rsj.error) {
-                return valueui.modal.FootAlert("error", rsj.error.message, 3000);
+                return valueui.modal.footAlert("error", rsj.error.message, 3000);
             }
 
             if (!rsj.kind || rsj.kind != "PodRep") {
-                return valueui.modal.FootAlert("error", "Network Connection Exception", 3000);
+                return valueui.modal.footAlert("error", "Network Connection Exception", 3000);
             }
 
-            valueui.modal.FootAlert("ok", "Successfully Updated");
+            valueui.modal.footAlert("ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
             }, 1000);
         },
     });
@@ -98,7 +98,7 @@ inCpPodRep.FailoverConfirm = function (podId, repId) {
         rep_id: repId,
     };
 
-    valueui.modal.Open({
+    valueui.modal.open({
         title: "Pod Replica Failover Confirm",
         tplsrc:
             "<div class='alert alert-danger'>This current replica is not available, the system will create a replica on the new host. This operation is risky (may lose data), do you confirm to continue?</div>",
@@ -106,7 +106,7 @@ inCpPodRep.FailoverConfirm = function (podId, repId) {
         height: 300,
         buttons: [
             {
-                onclick: "valueui.modal.Close()",
+                onclick: "valueui.modal.close()",
                 title: "Close",
             },
             {
@@ -134,22 +134,22 @@ inCpPodRep.FailoverCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.modal.FootAlert("error", "Network Connection Exception", 3000);
+                return valueui.modal.footAlert("error", "Network Connection Exception", 3000);
             }
 
             if (rsj.error) {
-                return valueui.modal.FootAlert("error", rsj.error.message, 3000);
+                return valueui.modal.footAlert("error", rsj.error.message, 3000);
             }
 
             if (!rsj.kind || rsj.kind != "PodRep") {
-                return valueui.modal.FootAlert("error", "Network Connection Exception", 3000);
+                return valueui.modal.footAlert("error", "Network Connection Exception", 3000);
             }
 
-            valueui.modal.FootAlert("ok", "Successfully Updated");
+            valueui.modal.footAlert("ok", "Successfully Updated");
 
             window.setTimeout(function () {
                 inCpPodRep.failoverConfirmActive = {};
-                valueui.modal.Close();
+                valueui.modal.close();
             }, 1000);
         },
     });

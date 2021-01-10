@@ -1,10 +1,10 @@
 var inOpsSys = {};
 
 inOpsSys.Index = function () {
-    var ep = valueui.NewEventProxy("tpl", function (tpl) {
+    var ep = valueui.newEventProxy("tpl", function (tpl) {
         // $("#comp-content").html(tpl);
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "comp-content",
             tplsrc: tpl,
             callback: function () {
@@ -27,7 +27,7 @@ inOpsSys.Index = function () {
 };
 
 inOpsSys.ConfigIndex = function () {
-    var ep = valueui.NewEventProxy("tpl", "groups", function (tpl, groups) {
+    var ep = valueui.newEventProxy("tpl", "groups", function (tpl, groups) {
         $("#work-content").html(tpl);
 
         if (!groups.items) {
@@ -40,7 +40,7 @@ inOpsSys.ConfigIndex = function () {
             }
         }
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "inops-sys-config-nav",
             tplid: "inops-sys-config-nav-tpl",
             data: {
@@ -78,9 +78,9 @@ inOpsSys.ConfigGroup = function (name) {
 
     var alertId = "#inops-sys-configset-alert";
 
-    var ep = valueui.NewEventProxy("data", function (data) {
+    var ep = valueui.newEventProxy("data", function (data) {
         if (!data || data.kind != "SysConfigWizard") {
-            return valueui.alert.InnerShow(alertId, "alert-info", "Item Not Found");
+            return valueui.alert.innerShow(alertId, "alert-info", "Item Not Found");
         }
 
         if (!data.option.items) {
@@ -88,7 +88,7 @@ inOpsSys.ConfigGroup = function (name) {
         }
 
         if (data.configurator.name != data.option.name) {
-            return valueui.alert.InnerShow(alertId, "alert-info", "Item Not Found");
+            return valueui.alert.innerShow(alertId, "alert-info", "Item Not Found");
         }
 
         for (var k in data.configurator.fields) {
@@ -114,7 +114,7 @@ inOpsSys.ConfigGroup = function (name) {
             data.configurator.fields[k]._value = value;
         }
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "inops-sys-config-form",
             tplid: "inops-sys-config-wizard-tpl",
             data: data,
@@ -149,7 +149,7 @@ inOpsSys.ConfigGroupCommit = function () {
             });
         });
     } catch (err) {
-        valueui.alert.InnerShow(alertId, "error", err);
+        valueui.alert.innerShow(alertId, "error", err);
         return;
     }
 
@@ -159,13 +159,13 @@ inOpsSys.ConfigGroupCommit = function () {
         callback: function (err, data) {
             if (!data || !data.kind || data.kind != "SysConfig") {
                 if (data.error) {
-                    return valueui.alert.InnerShow(alertId, "error", data.error.message);
+                    return valueui.alert.innerShow(alertId, "error", data.error.message);
                 }
 
-                return valueui.alert.InnerShow(alertId, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alertId, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alertId, "ok", "Successful updated");
+            valueui.alert.innerShow(alertId, "ok", "Successful updated");
         },
     });
 };

@@ -36,7 +36,7 @@
     {[~]}
   </td>
   <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
-  <td>{[=valueui.utilx.UnixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
+  <td>{[=valueui.utilx.unixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
   <td>
     <button class="btn btn-sm btn-outline-primary"
       onclick="inOpsHost.CellList('{[=v.meta.id]}')">

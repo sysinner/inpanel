@@ -86,11 +86,11 @@ inCp.Boot = function (login_first) {
     if (
         !(
             ($.browser.chrome === true &&
-                valueui.utilx.VersionCompare($.browser.version, "22.0") > 0) ||
+                valueui.utilx.versionCompare($.browser.version, "22.0") > 0) ||
             ($.browser.firefox === true &&
-                valueui.utilx.VersionCompare($.browser.version, "31.0") > 0) ||
+                valueui.utilx.versionCompare($.browser.version, "31.0") > 0) ||
             ($.browser.safari === true &&
-                valueui.utilx.VersionCompare($.browser.version, "5.0") > 0)
+                valueui.utilx.versionCompare($.browser.version, "5.0") > 0)
         )
     ) {
         $("body").load(inCp.tplbase + "error/browser.tpl");
@@ -105,7 +105,7 @@ inCp.Boot = function (login_first) {
         return;
     }
 
-    valueui.Use(
+    valueui.use(
         [
             "in/cp/css/base.css",
             "in/fa/css/fa.css",
@@ -135,7 +135,7 @@ inCp.load_index = function () {
     inpack.option_navpf = "incp";
     hooto_chart.basepath = inCp.base + "~/hchart/";
 
-    var ep = valueui.NewEventProxy(
+    var ep = valueui.newEventProxy(
         "tpl",
         "zones",
         "session",
@@ -143,7 +143,7 @@ inCp.load_index = function () {
         "lang",
         function (tpl, zones, session, syscfg, lang) {
             if (lang && lang.items) {
-                valueui.lang.Sync(lang.items, lang.locale);
+                valueui.lang.sync(lang.items, lang.locale);
             }
 
             if (!session || session.username == "") {
@@ -168,19 +168,19 @@ inCp.load_index = function () {
 
             $("#valueui-body").html(tpl);
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-topbar",
                 tplid: "incp-topbar-tpl",
                 data: {},
             });
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-footer",
                 tplid: "incp-footer-tpl",
                 data: {},
             });
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-topbar-userbar",
                 tplid: "incp-topbar-user-signed-tpl",
                 data: inCp.UserSession,
@@ -200,12 +200,12 @@ inCp.load_index = function () {
                 },
             });
 
-            valueui.url.EventRegister("app/index", inCpApp.Index, "incp-topbar-nav-menus");
-            valueui.url.EventRegister("pod/index", inCpPod.Index, "incp-topbar-nav-menus");
-            valueui.url.EventRegister("res/index", inCpRes.Index, "incp-topbar-nav-menus");
-            valueui.url.EventRegister("ips/index", inpack.Index, "incp-topbar-nav-menus");
+            valueui.url.eventRegister("app/index", inCpApp.Index, "incp-topbar-nav-menus");
+            valueui.url.eventRegister("pod/index", inCpPod.Index, "incp-topbar-nav-menus");
+            valueui.url.eventRegister("res/index", inCpRes.Index, "incp-topbar-nav-menus");
+            valueui.url.eventRegister("ips/index", inpack.Index, "incp-topbar-nav-menus");
 
-            valueui.url.EventHandler("pod/index", true);
+            valueui.url.eventHandler("pod/index", true);
         }
     );
 
@@ -225,7 +225,7 @@ inCp.load_index = function () {
         callback: ep.done("syscfg"),
     });
 
-    valueui.utilx.Ajax(inCp.base + "auth/session", {
+    valueui.utilx.ajax(inCp.base + "auth/session", {
         callback: function (err, data) {
             if (!data || data.kind != "AuthSession") {
                 return ep.emit("error", "AuthSession");
@@ -234,7 +234,7 @@ inCp.load_index = function () {
         },
     });
 
-    valueui.utilx.Ajax(inCp.base + "langsrv/locale", {
+    valueui.utilx.ajax(inCp.base + "langsrv/locale", {
         callback: ep.done("lang"),
     });
 
@@ -244,7 +244,7 @@ inCp.load_index = function () {
 };
 
 inCp.AlertUserLogin = function () {
-    valueui.alert.Open(
+    valueui.alert.open(
         "warn",
         "You are not logged in, or your login session has expired. Please sign in again",
         {
@@ -261,12 +261,12 @@ inCp.AlertUserLogin = function () {
 };
 
 inCp.AlertAccessDenied = function () {
-    valueui.alert.Open("warn", "Access Denied", {
+    valueui.alert.open("warn", "Access Denied", {
         close: false,
         buttons: [
             {
                 title: "Close",
-                onclick: "valueui.alert.Close()",
+                onclick: "valueui.alert.close()",
                 style: "btn-outline-secondary",
             },
         ],
@@ -279,7 +279,6 @@ inCp.ApiCmd = function (url, options) {
         appcb = options.callback;
     }
     options._url = url.replace(/^\/|\s+$/g, "");
-    console.log(options._url);
 
     if (inCp.Zones && options.api_zone_id && inCp.zone_id && options.api_zone_id != inCp.zone_id) {
         for (var i in inCp.Zones.items) {
@@ -300,16 +299,16 @@ inCp.ApiCmd = function (url, options) {
         }
         if (err && options._zburl) {
             options._zburl = null;
-            valueui.utilx.Ajax(inCp.api + options._url, options);
+            valueui.utilx.ajax(inCp.api + options._url, options);
         } else if (appcb) {
             appcb(err, data);
         }
     };
 
     if (options._zburl) {
-        valueui.utilx.Ajax(inCp.api + options._zburl, options);
+        valueui.utilx.ajax(inCp.api + options._zburl, options);
     } else {
-        valueui.utilx.Ajax(inCp.api + options._url, options);
+        valueui.utilx.ajax(inCp.api + options._url, options);
     }
 };
 
@@ -318,11 +317,11 @@ inCp.TplPath = function (url) {
 };
 
 inCp.TplFetch = function (url, options) {
-    valueui.utilx.Ajax(inCp.TplPath(url), options);
+    valueui.utilx.ajax(inCp.TplPath(url), options);
 };
 
 inCp.Loader = function (target, uri) {
-    valueui.utilx.Ajax(inCp.tplbase + uri + ".tpl", {
+    valueui.utilx.ajax(inCp.tplbase + uri + ".tpl", {
         callback: function (err, data) {
             if (!err) {
                 $("#" + target).html(data);
@@ -374,7 +373,7 @@ inCp.ModuleNavbarMenu = function (name, items, active) {
         // $("#incp-module-navbar").remove();
         return;
     }
-    items = valueui.utilx.ObjectClone(items);
+    items = valueui.utilx.objectClone(items);
 
     var elem = document.getElementById("incp-module-navbar-menus");
     if (!elem) {
@@ -426,7 +425,7 @@ inCp.ModuleNavbarMenu = function (name, items, active) {
             "</a></li>";
     }
     $("#incp-module-navbar-menus").html(html);
-    valueui.url.EventClean("incp-module-navbar-menus");
+    valueui.url.eventClean("incp-module-navbar-menus");
 };
 
 inCp.ModuleNavbarMenuRefresh = function (div_target, cb) {
@@ -467,7 +466,7 @@ inCp.OpToolsRefresh = function (div_target, cb) {
         var opt = $("#comp-content").find(div_target);
         if (opt) {
             // $("#incp-module-navbar-optools").html(opt.html());
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-module-navbar-optools",
                 tplsrc: opt.html(),
                 data: {},
@@ -484,7 +483,7 @@ inCp.OpToolsClean = function () {
 };
 
 inCp.CodeRender = function () {
-    valueui.Use(["in/hl/highlight.pack.js", "in/hl/styles/arta.css"], function () {
+    valueui.use(["in/hl/highlight.pack.js", "in/hl/styles/arta.css"], function () {
         $("pre code").each(function (i, block) {
             hljs.highlightBlock(block);
         });
@@ -505,13 +504,13 @@ inCp.CodeRender = function () {
                 return;
         }
 
-        seajs.use(
+        valueui.use(
             ["in/cm/5/lib/codemirror.css", "in/cm/5/lib/codemirror.js", "in/cm/5/theme/monokai.css"],
             function () {
                 modes.push("in/cm/5/addon/runmode/runmode.js");
                 modes.push("in/cm/5/mode/clike/clike.js");
 
-                seajs.use(modes, function () {
+                valueui.use(modes, function () {
                     // $(el).addClass('cm-s-monokai CodeMirror'); // apply a theme class
                     CodeMirror.runMode($(el).text(), lang, $(el)[0], {
                         theme: "monokai",
@@ -577,10 +576,10 @@ inCp.CodeEditor = function (id, lang, options) {
         options.width = "100%";
     }
 
-    seajs.use(
+    valueui.use(
         ["in/cm/5/lib/codemirror.css", "in/cm/5/lib/codemirror.js", "in/cm/5/theme/monokai.css"],
         function () {
-            seajs.use(modes, function () {
+            valueui.use(modes, function () {
                 inCp.codeEditorInstances[id] = CodeMirror.fromTextArea(elem, {
                     mode: lang,
                     lineNumbers: options.showLineNumber,
@@ -730,15 +729,15 @@ inCp.OpActionAllow = function (opbase, action) {
 };
 
 inCp.About = function () {
-    var ep = valueui.NewEventProxy("tpl", function (tpl) {
-        valueui.modal.Open({
+    var ep = valueui.newEventProxy("tpl", function (tpl) {
+        valueui.modal.open({
             title: "System Info",
             tplsrc: tpl,
             width: 900,
             height: 500,
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
             ],
@@ -749,7 +748,7 @@ inCp.About = function () {
         alert("Network Connection Error, Please try again later (EC:incp-pod)");
     });
 
-    valueui.utilx.Ajax("/in/~/about.tpl", {
+    valueui.utilx.ajax("/in/~/about.tpl", {
         callback: ep.done("tpl"),
     });
 };

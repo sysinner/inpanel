@@ -44,16 +44,16 @@ inCpApp.Index = function () {
 
     $("#comp-content").html(divstr);
 
-    valueui.url.EventClean("incp-module-navbar-menus");
-    valueui.url.EventRegister("app/inst/list", inCpApp.InstListRefresh, "incp-module-navbar-menus");
-    valueui.url.EventRegister("app/spec/list", inCpAppSpec.ListRefresh, "incp-module-navbar-menus");
+    valueui.url.eventClean("incp-module-navbar-menus");
+    valueui.url.eventRegister("app/inst/list", inCpApp.InstListRefresh, "incp-module-navbar-menus");
+    valueui.url.eventRegister("app/spec/list", inCpAppSpec.ListRefresh, "incp-module-navbar-menus");
 
     inCpApp.list_options = {};
-    valueui.url.EventHandler("app/inst/list", true);
+    valueui.url.eventHandler("app/inst/list", true);
 };
 
 inCpApp.InstLaunchNew = function () {
-    valueui.url.EventHandler("app/spec/list");
+    valueui.url.eventHandler("app/spec/list");
 };
 
 inCpApp.InstListRefresh = function (options) {
@@ -81,7 +81,7 @@ inCpApp.InstListRefresh = function (options) {
         uri += "&filter_meta_user=all";
     }
 
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, rsj) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, rsj) {
         if (tpl) {
             $("#work-content").html(tpl);
         }
@@ -93,7 +93,7 @@ inCpApp.InstListRefresh = function (options) {
         }
 
         if (!rsj || rsj.kind != "AppList" || !rsj.items || rsj.items.length < 1) {
-            return valueui.alert.InnerShow(alert_id, "alert-info", "Item Not Found");
+            return valueui.alert.innerShow(alert_id, "alert-info", "Item Not Found");
         }
         $(alert_id).css({
             display: "node",
@@ -120,7 +120,7 @@ inCpApp.InstListRefresh = function (options) {
         }
         inCpApp.listActives = rsj;
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "incp-appls",
             tplid: "incp-appls-tpl",
             data: {
@@ -184,7 +184,7 @@ inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
         callback: function(err, rsj) {
 
             if (err) {
-                return valueui.alert.InnerShow(alert_id, 'error', "Failed: " + err);
+                return valueui.alert.innerShow(alert_id, 'error', "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -192,7 +192,7 @@ inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                valueui.alert.InnerShow(alert_id, 'error', msg);
+                valueui.alert.innerShow(alert_id, 'error', msg);
                 return;
             }
 
@@ -202,7 +202,7 @@ inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
                 $(obj).removeClass("button-success");
             }
 
-            valueui.alert.InnerShow(alert_id, 'ok', "Successful updated");
+            valueui.alert.innerShow(alert_id, 'ok', "Successful updated");
         }
     });
 }
@@ -211,16 +211,16 @@ inCpApp.InstListOpActionChange = function(app_id, obj, tplid) {
 inCpApp.OpOptInfo = function (app_id) {
     var alert_id = "#incp-appinst-opopt-info-alert";
 
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, rsj) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, rsj) {
         if (!rsj || rsj.kind != "App") {
-            return valueui.alert.InnerShow(alert_id, "alert-info", "Item Not Found");
+            return valueui.alert.innerShow(alert_id, "alert-info", "Item Not Found");
         }
 
         if (!rsj.operate.options) {
             rsj.operate.options = [];
         }
 
-        valueui.modal.Open({
+        valueui.modal.open({
             title: "App Options",
             width: 1600,
             height: 1000,
@@ -265,7 +265,7 @@ inCpApp.OpOptInfo = function (app_id) {
             },
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
             ],
@@ -321,7 +321,7 @@ inCpApp.instConfigurator = function (cb) {
                     return alert(err); // TODO
                 }
                 if (data.error) {
-                    return valueui.alert.Open("error", data.error.message);
+                    return valueui.alert.open("error", data.error.message);
                 }
                 if (data && data.meta.id == inCpApp.instDeployActive.spec.depends[i].id) {
                     return inCpApp.instConfiguratorEntry(data.configurator, data.meta.id);
@@ -390,7 +390,7 @@ inCpApp.instConfigDepRemotes = function (spec_id) {
                 depRemotes[j]._binds.push({
                     app_id: inCpApp.instDeployActive.operate.services[i].app_id,
                     pod_id: inCpApp.instDeployActive.operate.services[i].pod_id,
-                    hash_id: valueui.utilx.CryptoMd5(
+                    hash_id: valueui.utilx.cryptoMd5(
                         depRemotes[j].id + ":" + inCpApp.instDeployActive.operate.services[i].app_id
                     ),
                 });
@@ -425,23 +425,23 @@ inCpApp.instConfigDepRemotes = function (spec_id) {
             depRemotes[j]._binds.push({
                 app_id: inCpApp.instDeployActive.operate.options[i].ref.app_id,
                 pod_id: inCpApp.instDeployActive.operate.options[i].ref.pod_id,
-                hash_id: valueui.utilx.CryptoMd5(
+                hash_id: valueui.utilx.cryptoMd5(
                     depRemotes[j].id + ":" + inCpApp.instDeployActive.operate.options[i].ref.app_id
                 ),
             });
         }
     }
 
-    inCpApp.instConfigDepRemotesBinds = valueui.utilx.ObjectClone(depRemotes);
+    inCpApp.instConfigDepRemotesBinds = valueui.utilx.objectClone(depRemotes);
 
-    valueui.modal.Open({
+    valueui.modal.open({
         id: "incp-appinst-cfgwizard-depremotes",
         title: "App Configuration Wizard with remote depends",
         width: 1600,
         height: 800,
         tpluri: inCp.TplPath("app/inst/cfg-wizard-depremotes"),
         callback: function (err, data) {
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-appinst-cfg-wizard-depremotes",
                 tplid: "incp-appinst-cfg-wizard-depremotes-tpl",
                 data: {
@@ -451,7 +451,7 @@ inCpApp.instConfigDepRemotes = function (spec_id) {
         },
         buttons: [
             {
-                onclick: "valueui.modal.Close()",
+                onclick: "valueui.modal.close()",
                 title: "Close",
             },
             {
@@ -487,7 +487,7 @@ inCpApp.InstConfigDepRemoteSelect = function (spec_id) {
             });
         }
 
-        valueui.template.Render({
+        valueui.template.render({
             append: true,
             dstid: "incp-appinst-cfg-wizard-depremotes-binds-" + spec_id,
             tplid: "incp-appinst-cfg-wizard-depremotes-binds-item-tpl",
@@ -495,7 +495,7 @@ inCpApp.InstConfigDepRemoteSelect = function (spec_id) {
                 spec_id: spec_id,
                 app_id: select_item,
                 pod_id: "new selected",
-                hash_id: valueui.utilx.CryptoMd5(spec_id + ":" + select_item),
+                hash_id: valueui.utilx.cryptoMd5(spec_id + ":" + select_item),
             },
         });
     });
@@ -557,7 +557,7 @@ inCpApp.instConfigDepRemotesCommit = function () {
             }
         }
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     inCp.ApiCmd("app/config-rep-remotes", {
@@ -565,21 +565,21 @@ inCpApp.instConfigDepRemotesCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppInstConfig") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.alert.InnerShow(alert_id, "");
+                valueui.alert.innerShow(alert_id, "");
                 if (inCpApp.instConfiguratorCallback) {
                     inCpApp.instConfigurator();
                 }
@@ -695,14 +695,14 @@ inCpApp.instConfiguratorEntry = function (configurator, spec_id) {
         }
         */
 
-        valueui.modal.Open({
+        valueui.modal.open({
             id: "incp-appinst-cfgwizard",
             title: "App Configuration Wizard : " + configurator.name,
             width: 1600,
             height: 800,
             tpluri: inCp.TplPath("app/inst/cfg-wizard"),
             callback: function (err, data) {
-                valueui.template.Render({
+                valueui.template.render({
                     dstid: "incp-appinst-cfg-wizard",
                     tplid: "incp-appinst-cfg-wizard-tpl",
                     data: {
@@ -723,7 +723,7 @@ inCpApp.instConfiguratorEntry = function (configurator, spec_id) {
             },
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -741,20 +741,20 @@ inCpApp.instConfiguratorEntry = function (configurator, spec_id) {
 inCpApp.InstConfigWizardAppBound = function (spec_id, cb) {
     var alert_id = "#incp-appinst-cfg-wizard-alert";
 
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         if (!data || data.error || data.kind != "AppList") {
             return;
         }
 
         if (!data.items || data.items.length < 1) {
-            return valueui.alert.InnerShow(
+            return valueui.alert.innerShow(
                 alert_id,
                 "error",
                 "No Fit AppSpec (" + spec_id + ") AppInstance Found"
             );
         }
 
-        valueui.modal.Open({
+        valueui.modal.open({
             id: "incp-appinst-cfgbound-selector",
             title: "App Instances",
             tplsrc: tpl,
@@ -762,22 +762,22 @@ inCpApp.InstConfigWizardAppBound = function (spec_id, cb) {
             backEnable: true,
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
             ],
             fn_selector: function (err, select_item) {
                 if (cb) {
                     cb(err, select_item);
-                    return valueui.modal.Prev();
+                    return valueui.modal.prev();
                 }
                 $("#incp-appinst-cfgfield-" + spec_id).val(select_item);
                 $("#incp-appinst-cfgfield-" + spec_id + "-dp").text(select_item);
 
-                valueui.modal.Prev();
+                valueui.modal.prev();
             },
             callback: function (err, data) {
-                valueui.template.Render({
+                valueui.template.render({
                     dstid: "incp-appls-selector",
                     tplid: "incp-appls-selector-tpl",
                     data: data,
@@ -868,7 +868,7 @@ inCpApp.instConfigCommit = function () {
         }
         */
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     if (
@@ -883,22 +883,22 @@ inCpApp.instConfigCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "AppInstConfig") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.alert.InnerShow(alert_id, "");
-                valueui.modal.Close(function () {
+                valueui.alert.innerShow(alert_id, "");
+                valueui.modal.close(function () {
                     if (inCpApp.instConfiguratorCallback) {
                         inCpApp.instConfigurator();
                     }
@@ -917,7 +917,7 @@ inCpApp.InstDeploy = function (id, auto_start) {
         timeout: 3000,
         callback: function (err, rsj) {
             if (err) {
-                return valueui.alert.InnerShow(alert_id, "error", "Failed: " + err);
+                return valueui.alert.innerShow(alert_id, "error", "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -925,7 +925,7 @@ inCpApp.InstDeploy = function (id, auto_start) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.alert.InnerShow(alert_id, "error", msg);
+                return valueui.alert.innerShow(alert_id, "error", msg);
             }
 
             inCpApp.instDeployActive = rsj;
@@ -953,7 +953,7 @@ inCpApp.InstDeployCommit = function (app_id, auto_start) {
         timeout: 10000,
         callback: function (err, rsj) {
             if (err) {
-                return valueui.alert.InnerShow(alert_id, "error", "Failed: " + err);
+                return valueui.alert.innerShow(alert_id, "error", "Failed: " + err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -961,26 +961,26 @@ inCpApp.InstDeployCommit = function (app_id, auto_start) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                valueui.alert.InnerShow(alert_id, "error", msg);
+                valueui.alert.innerShow(alert_id, "error", msg);
                 return;
             }
 
             inCpApp.instDeployActive = null;
 
-            valueui.modal.Close(function () {
+            valueui.modal.close(function () {
                 var msg = valueui.lang.T(
                     "Successfully deployed Application to Container (ID: %s)",
                     inCpAppInstDeployActivePod
                 );
 
-                valueui.modal.Open({
+                valueui.modal.open({
                     title: "Deployment",
                     width: 600,
                     height: 200,
                     tplsrc: "<div class='alert alert-success'>" + msg + "</div>",
                     buttons: [
                         {
-                            onclick: "valueui.modal.Close()",
+                            onclick: "valueui.modal.close()",
                             title: "Close",
                         },
                         {
@@ -1001,12 +1001,12 @@ inCpApp.InstNew = function (spec_id, version) {
         return alert("AppSpec error, Please try again later (EC:incp-appset)");
     }
 
-    var ep = valueui.NewEventProxy("tpl", "spec", function (tpl, spec) {
+    var ep = valueui.newEventProxy("tpl", "spec", function (tpl, spec) {
         if (!spec || !spec.kind || spec.kind != "AppSpec") {
             return alert("AppSpec error, Please try again later (EC:incp-appset)");
         }
 
-        inCpApp.instSet = valueui.utilx.ObjectClone(inCpApp.instDef);
+        inCpApp.instSet = valueui.utilx.objectClone(inCpApp.instDef);
 
         spec.exp_res._cpu_min = (spec.exp_res.cpu_min / 10).toFixed(1);
         inCpApp.instSet.spec = spec;
@@ -1017,7 +1017,7 @@ inCpApp.InstNew = function (spec_id, version) {
 
         inCpApp.instSet.spec.runtime_images = inCpApp.instSet.spec.runtime_images || [];
 
-        valueui.modal.Open({
+        valueui.modal.open({
             title: "Create new App Instance",
             width: 1000,
             height: 500,
@@ -1026,7 +1026,7 @@ inCpApp.InstNew = function (spec_id, version) {
             callback: function (err, data) {},
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -1081,12 +1081,12 @@ inCpApp.InstNewPodSelect = function () {
 
     var name = $("#incp-appnew-form").find("input[name='name']").val();
     if (!name) {
-        return valueui.alert.InnerShow(alert_id, "error", "Spec Name Not Found");
+        return valueui.alert.innerShow(alert_id, "error", "Spec Name Not Found");
     }
 
     inCpApp.instSet.meta.name = name;
 
-    valueui.modal.Open({
+    valueui.modal.open({
         id: "incp-appnew-oppod",
         title: "Bind App to Pod", // Select a Pod to Bound",
         width: 900,
@@ -1112,7 +1112,7 @@ inCpApp.InstNewPodSelect = function () {
         fn_selector: inCpApp.instNewPodSelectCallback,
         buttons: [
             {
-                onclick: "valueui.modal.Close()",
+                onclick: "valueui.modal.close()",
                 title: "Close",
             },
         ],
@@ -1120,7 +1120,7 @@ inCpApp.InstNewPodSelect = function () {
 };
 
 inCpApp.InstNewConfirm = function () {
-    valueui.modal.Open({
+    valueui.modal.open({
         id: "incp-appnew-confirm",
         title: "Confirm",
         width: 900,
@@ -1130,7 +1130,7 @@ inCpApp.InstNewConfirm = function () {
         backEnable: true,
         buttons: [
             {
-                onclick: "valueui.modal.Close()",
+                onclick: "valueui.modal.close()",
                 title: "Close",
             },
             {
@@ -1157,19 +1157,19 @@ inCpApp.InstNewCommit = function () {
                 } else if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.alert.InnerShow(alertid, "error", msg);
+                return valueui.alert.innerShow(alertid, "error", msg);
             }
 
-            valueui.alert.InnerShow(alertid, "ok", "Successful operation");
+            valueui.alert.innerShow(alertid, "ok", "Successful operation");
 
             inCpApp.instSet = {};
-            valueui.url.EventHandler("app/inst/list");
+            valueui.url.eventHandler("app/inst/list");
 
             window.setTimeout(function () {
                 if (rsj.meta && rsj.meta.id) {
                     inCpApp.InstDeploy(rsj.meta.id, true);
                 } else {
-                    valueui.modal.Close();
+                    valueui.modal.close();
                 }
             }, 1000);
         },
@@ -1196,18 +1196,18 @@ inCpApp.InstSet = function (app_id, spec_id) {
         }
     }
 
-    var ep = valueui.NewEventProxy(
+    var ep = valueui.newEventProxy(
         "tpl",
         "inst",
         "roles",
         "spec_vs",
         function (tpl, inst, roles, spec_vs) {
             if (!inst || inst.error || inst.kind != "App") {
-                return valueui.alert.Open("error", "App Not Found");
+                return valueui.alert.open("error", "App Not Found");
             }
 
             if (!roles || roles.error || roles.kind != "UserRoleList") {
-                return valueui.alert.Open("error", "RoleList Not Found");
+                return valueui.alert.open("error", "RoleList Not Found");
             }
 
             $("#work-content").html(tpl);
@@ -1218,7 +1218,7 @@ inCpApp.InstSet = function (app_id, spec_id) {
             if (!inst.operate.res_bound_roles) {
                 inst.operate.res_bound_roles = [];
             }
-            inst.operate._res_bound_roles = valueui.utilx.ObjectClone(roles);
+            inst.operate._res_bound_roles = valueui.utilx.objectClone(roles);
             for (var i in inst.operate.res_bound_roles) {
                 for (var j in inst.operate._res_bound_roles.items) {
                     if (
@@ -1254,7 +1254,7 @@ inCpApp.InstSet = function (app_id, spec_id) {
                 inCpApp.instSet._spec_vs = spec_vs.items;
             }
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-appset",
                 tplid: "incp-appset-tpl",
                 data: inCpApp.instSet,
@@ -1272,7 +1272,7 @@ inCpApp.InstSet = function (app_id, spec_id) {
         callback: ep.done("tpl"),
     });
 
-    valueui.utilx.Ajax(inCp.base + "auth/app-role-list", {
+    valueui.utilx.ajax(inCp.base + "auth/app-role-list", {
         callback: ep.done("roles"),
     });
 
@@ -1317,7 +1317,7 @@ inCpApp.InstSetCommit = function (options) {
 
         inCpApp.instSet.operate.action = parseInt(form.find("input[name=op_action]:checked").val());
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     inCp.ApiCmd("app/set", {
@@ -1326,7 +1326,7 @@ inCpApp.InstSetCommit = function (options) {
         timeout: 3000,
         callback: function (err, rsj) {
             if (err) {
-                return valueui.alert.InnerShow(alert_id, "error", err);
+                return valueui.alert.innerShow(alert_id, "error", err);
             }
 
             if (!rsj || rsj.kind != "App") {
@@ -1334,7 +1334,7 @@ inCpApp.InstSetCommit = function (options) {
                 if (rsj.error) {
                     msg = rsj.error.message;
                 }
-                return valueui.alert.InnerShow(alert_id, "error", msg);
+                return valueui.alert.innerShow(alert_id, "error", msg);
             }
 
             var msg = "Successful updated";
@@ -1342,7 +1342,7 @@ inCpApp.InstSetCommit = function (options) {
                 msg += ", Next starts the deployment ...";
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", msg);
+            valueui.alert.innerShow(alert_id, "ok", msg);
 
             window.setTimeout(function () {
                 inCpApp.InstListRefresh();
@@ -1374,7 +1374,7 @@ inCpApp.InstPodInfo = function (pod_id) {
 };
 
 inCpApp.InstPodEntryIndex = function (pod_id) {
-    valueui.modal.Close();
-    valueui.url.EventActive("pod/index");
+    valueui.modal.close();
+    valueui.url.eventActive("pod/index");
     inCpPod.EntryIndex(pod_id);
 };

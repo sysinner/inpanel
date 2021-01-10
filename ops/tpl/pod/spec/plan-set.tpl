@@ -162,7 +162,7 @@
   <td class="incp-form-box-selector">
     {[~it._images.items :v]}
     <div class="incp-form-box-selector-item {[if (v._selected) { ]}selected{[ } ]}" 
-      id="inops-podspec-planset-box-image-id-{[=valueui.utilx.CryptoMd5(v.meta.id)]}"
+      id="inops-podspec-planset-box-image-id-{[=valueui.utilx.cryptoMd5(v.meta.id)]}"
       onclick="inOpsPod.SpecPlanSetBoxImageChange('{[=v.meta.id]}')">
       <div>{[? v.meta.name]}{[=v.meta.name]} / {[?]}{[=v.driver]}</div>
       <div>{[=v.meta.id]}</div>

@@ -96,13 +96,13 @@ inOpsHost.ActionTitle = function (action) {
 };
 
 inOpsHost.NavInit = function () {
-    // valueui.url.EventRegister("host/index", inOpsHost.Index);
+    // valueui.url.eventRegister("host/index", inOpsHost.Index);
 };
 
 inOpsHost.Index = function () {
-    var ep = valueui.NewEventProxy("zones", "tpl", function (zones, tpl) {
+    var ep = valueui.newEventProxy("zones", "tpl", function (zones, tpl) {
         if (!zones || !zones.items) {
-            return valueui.alert.Open("error", "Zone Not Found");
+            return valueui.alert.open("error", "Zone Not Found");
         }
         $("#comp-content").html(tpl);
         // inCp.ModuleNavbarMenuRefresh("inops-host-nav-tpl");
@@ -137,7 +137,7 @@ inOpsHost.zone_active_fix = function (zoneid) {
         ) {
             for (var i in inOpsHost.zones.items) {
                 if (zoneid == inOpsHost.zones.items[i].meta.id) {
-                    inOpsHost.zone_active = valueui.utilx.ObjectClone(inOpsHost.zones.items[i]);
+                    inOpsHost.zone_active = valueui.utilx.objectClone(inOpsHost.zones.items[i]);
                     break;
                 }
             }
@@ -161,7 +161,7 @@ inOpsHost.cell_active_fix = function (zoneid, cellid) {
         ) {
             for (var i in inOpsHost.zone_active.cells) {
                 if (cellid == inOpsHost.zone_active.cells[i].meta.id) {
-                    inOpsHost.cell_active = valueui.utilx.ObjectClone(
+                    inOpsHost.cell_active = valueui.utilx.objectClone(
                         inOpsHost.zone_active.cells[i]
                     );
                     break;
@@ -185,7 +185,7 @@ inOpsHost.NodeList = function (zoneid, cellid) {
         return;
     }
 
-    valueui.storage.Set("inops_cluster_cell_id", inOpsHost.cell_active.meta.id);
+    valueui.storage.set("inops_cluster_cell_id", inOpsHost.cell_active.meta.id);
 
     var uri = "";
     if (document.getElementById("inops_hostls_qry")) {
@@ -207,7 +207,7 @@ inOpsHost.NodeList = function (zoneid, cellid) {
         $("#inops-cluster-nav-cell-value").text("Cell: " + inOpsHost.cell_active.meta.id);
     }
 
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         if (tpl) {
             $("#work-content").html(tpl);
         }
@@ -241,7 +241,7 @@ inOpsHost.NodeList = function (zoneid, cellid) {
             }
         }
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "inops-host-nodes",
             tplid: "inops-host-nodes-tpl",
             data: data,
@@ -277,14 +277,14 @@ inOpsHost.NodeOpPortUsedInfo = function (z, c, node_id) {
             s = inOpsHost.nodes.items[i].operate.port_used.join(", ");
         }
 
-        return valueui.modal.Open({
+        return valueui.modal.open({
             title: "Network Port already assigned",
             tplsrc: s,
             width: 700,
             height: 350,
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
             ],
@@ -308,8 +308,8 @@ inOpsHost.NodePodList = function (z, c, node_id) {
 
     var alert_id = "#inops-host-podls-selector-alert";
 
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
-        valueui.modal.Open({
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
+        valueui.modal.open({
             id: "inops-host-pod-list",
             title: "Pod List",
             tplsrc: tpl,
@@ -317,12 +317,12 @@ inOpsHost.NodePodList = function (z, c, node_id) {
             height: 800,
             callback: function () {
                 if (data.error) {
-                    return valueui.alert.InnerShow(alert_id, "error", data.error.message);
+                    return valueui.alert.innerShow(alert_id, "error", data.error.message);
                 }
                 if (data.items.length < 1) {
-                    return valueui.alert.InnerShow(alert_id, "alert-info", "No Item Found Yet ...");
+                    return valueui.alert.innerShow(alert_id, "alert-info", "No Item Found Yet ...");
                 }
-                valueui.template.Render({
+                valueui.template.render({
                     dstid: "inops-host-podls-selector",
                     tplid: "inops-host-podls-selector-tpl",
                     data: data,
@@ -330,7 +330,7 @@ inOpsHost.NodePodList = function (z, c, node_id) {
             },
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
             ],
@@ -360,11 +360,11 @@ inOpsHost.NodePodInfo = function (pod_id) {
 
 inOpsHost.NodeSet = function (zoneid, cellid, nodeid) {
     if (!zoneid) {
-        zoneid = valueui.storage.Get("inops_cluster_zone_id");
+        zoneid = valueui.storage.get("inops_cluster_zone_id");
     }
 
     if (!cellid) {
-        cellid = valueui.storage.Get("inops_cluster_cell_id");
+        cellid = valueui.storage.get("inops_cluster_cell_id");
     }
 
     if (!nodeid) {
@@ -376,9 +376,9 @@ inOpsHost.NodeSet = function (zoneid, cellid, nodeid) {
 
     var alert_id = "#inops-host-nodeset-alert";
 
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, rsj) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, rsj) {
         if (!rsj || !rsj.kind || rsj.kind != "HostNode") {
-            return valueui.alert.InnerShow(
+            return valueui.alert.innerShow(
                 alert_id,
                 "alert-danger",
                 "Network Connection Exception"
@@ -412,7 +412,7 @@ inOpsHost.NodeSet = function (zoneid, cellid, nodeid) {
             });
         }
 
-        valueui.modal.Open({
+        valueui.modal.open({
             title: "Host Setting",
             tplsrc: tpl,
             data: rsj,
@@ -420,7 +420,7 @@ inOpsHost.NodeSet = function (zoneid, cellid, nodeid) {
             height: 350,
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -472,11 +472,11 @@ inOpsHost.NodeSetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", err);
+                return valueui.alert.innerShow(alert_id, "alert-danger", err);
             }
 
             if (!rsj) {
-                return valueui.alert.InnerShow(
+                return valueui.alert.innerShow(
                     alert_id,
                     "alert-danger",
                     "Network Connection Exception"
@@ -484,21 +484,21 @@ inOpsHost.NodeSetCommit = function () {
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "alert-danger", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "HostNode") {
-                return valueui.alert.InnerShow(
+                return valueui.alert.innerShow(
                     alert_id,
                     "alert-danger",
                     "Network Connection Exception"
                 );
             }
 
-            valueui.alert.InnerShow(alert_id, "alert-success", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "alert-success", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 var el = document.getElementById("inops-host-nodes");
                 if (el) {
                     inOpsHost.NodeList();
@@ -514,11 +514,11 @@ inOpsHost.NodeSetCommit = function () {
 
 inOpsHost.NodeSecretKeySet = function (zoneid, cellid, nodeid) {
     if (!zoneid) {
-        zoneid = valueui.storage.Get("inops_cluster_zone_id");
+        zoneid = valueui.storage.get("inops_cluster_zone_id");
     }
 
     if (!cellid) {
-        cellid = valueui.storage.Get("inops_cluster_cell_id");
+        cellid = valueui.storage.get("inops_cluster_cell_id");
     }
 
     if (!nodeid) {
@@ -530,8 +530,8 @@ inOpsHost.NodeSecretKeySet = function (zoneid, cellid, nodeid) {
 
     var alert_id = "#inops-host-node-secretkey-set-alert";
 
-    var ep = valueui.NewEventProxy("tpl", function (tpl) {
-        valueui.modal.Open({
+    var ep = valueui.newEventProxy("tpl", function (tpl) {
+        valueui.modal.open({
             title: "Reset Secret Key",
             tplsrc: tpl,
             data: {
@@ -542,7 +542,7 @@ inOpsHost.NodeSecretKeySet = function (zoneid, cellid, nodeid) {
             height: 300,
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -579,11 +579,11 @@ inOpsHost.NodeSecretKeySetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", err);
+                return valueui.alert.innerShow(alert_id, "alert-danger", err);
             }
 
             if (!rsj) {
-                return valueui.alert.InnerShow(
+                return valueui.alert.innerShow(
                     alert_id,
                     "alert-danger",
                     "Network Connection Exception"
@@ -591,21 +591,21 @@ inOpsHost.NodeSecretKeySetCommit = function () {
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "alert-danger", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "HostNode") {
-                return valueui.alert.InnerShow(
+                return valueui.alert.innerShow(
                     alert_id,
                     "alert-danger",
                     "Network Connection Exception"
                 );
             }
 
-            valueui.alert.InnerShow(alert_id, "alert-success", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "alert-success", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 var el = document.getElementById("inops-host-nodes");
                 if (el) {
                     inOpsHost.NodeList();
@@ -617,11 +617,11 @@ inOpsHost.NodeSecretKeySetCommit = function () {
 
 inOpsHost.NodeNew = function (zoneid, cellid) {
     if (!zoneid) {
-        zoneid = valueui.storage.Get("inops_cluster_zone_id");
+        zoneid = valueui.storage.get("inops_cluster_zone_id");
     }
 
     if (!cellid) {
-        cellid = valueui.storage.Get("inops_cluster_cell_id");
+        cellid = valueui.storage.get("inops_cluster_cell_id");
     }
 
     inOps.TplFetch("host/node-new", {
@@ -640,7 +640,7 @@ inOpsHost.NodeNew = function (zoneid, cellid) {
                 });
             }
 
-            valueui.modal.Open({
+            valueui.modal.open({
                 title: "New Host",
                 tplsrc: tpl,
                 width: 900,
@@ -658,7 +658,7 @@ inOpsHost.NodeNew = function (zoneid, cellid) {
                 },
                 buttons: [
                     {
-                        onclick: "valueui.modal.Close()",
+                        onclick: "valueui.modal.close()",
                         title: "Close",
                     },
                     {
@@ -691,7 +691,7 @@ inOpsHost.NodeNewCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(
+                return valueui.alert.innerShow(
                     alert_id,
                     "alert-danger",
                     "Network Connection Exception"
@@ -699,21 +699,21 @@ inOpsHost.NodeNewCommit = function () {
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "alert-danger", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "HostNode") {
-                return valueui.alert.InnerShow(
+                return valueui.alert.innerShow(
                     alert_id,
                     "alert-danger",
                     "Network Connection Exception"
                 );
             }
 
-            valueui.alert.InnerShow(alert_id, "alert-success", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "alert-success", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 inOpsHost.NodeList();
             }, 500);
         },
@@ -748,7 +748,7 @@ inOpsHost.entry_nav_menus = [
 
 inOpsHost.Node = function (zone_id, host_id, nav_target) {
     if (!zone_id) {
-        zone_id = valueui.storage.Get("inops_cluster_zone_id");
+        zone_id = valueui.storage.get("inops_cluster_zone_id");
     }
 
     if (!host_id) {
@@ -760,26 +760,26 @@ inOpsHost.Node = function (zone_id, host_id, nav_target) {
 
     inCp.ModuleNavbarMenu("ops/host/entry", inOpsHost.entry_nav_menus);
 
-    valueui.url.EventRegister(
+    valueui.url.eventRegister(
         "host/node/overview",
         inOpsHost.NodeOverview,
         "incp-module-navbar-menus"
     );
-    valueui.url.EventRegister("host/node/stats", inOpsHost.NodeStats, "incp-module-navbar-menus");
+    valueui.url.eventRegister("host/node/stats", inOpsHost.NodeStats, "incp-module-navbar-menus");
 
     switch (nav_target) {
         case "stats":
-            valueui.url.EventHandler("host/node/stats", false);
+            valueui.url.eventHandler("host/node/stats", false);
             break;
 
         default:
-            valueui.url.EventHandler("host/node/overview", false);
+            valueui.url.eventHandler("host/node/overview", false);
             break;
     }
 };
 
 inOpsHost.NodeOverview = function () {
-    var ep = valueui.NewEventProxy("tpl", "node", function (tpl, node) {
+    var ep = valueui.newEventProxy("tpl", "node", function (tpl, node) {
         if (!node.spec.platform) {
             node.spec.platform = {};
         }
@@ -848,7 +848,7 @@ inOpsHost.NodeOverview = function () {
 
         node._actions = inOpsHost.actions;
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "inops-host-node-overview",
             tplid: "inops-host-node-overview-info-tpl",
             data: node,
@@ -915,7 +915,7 @@ inOpsHost.NodeStats = function (time_past) {
         inOpsHost.node_active_past = 30 * 86400;
     }
 
-    var zoneid = valueui.storage.Get("inops_cluster_zone_id");
+    var zoneid = valueui.storage.get("inops_cluster_zone_id");
 
     var stats_url = "id=" + inOpsHost.node_active_id;
     var stats_query = {
@@ -996,7 +996,7 @@ inOpsHost.NodeStats = function (time_past) {
     }
 
     stats_url += "&qry=" + btoa(JSON.stringify(stats_query));
-    var ep = valueui.NewEventProxy("tpl", "node", "stats", function (tpl, node, stats) {
+    var ep = valueui.newEventProxy("tpl", "node", "stats", function (tpl, node, stats) {
         if (tpl) {
             $("#work-content").html(tpl);
             $(".incp-podentry-stats-item").css({
@@ -1026,7 +1026,7 @@ inOpsHost.NodeStats = function (time_past) {
         }
 
         //
-        var stats_cpu = valueui.utilx.ObjectClone(inOpsHost.hchart_def);
+        var stats_cpu = valueui.utilx.objectClone(inOpsHost.hchart_def);
         stats_cpu.options.title = valueui.lang.T("CPU Usage (Percentage / %s)", tc_title);
         /**
                 max = inOpsHost.nodeStatsFeedMaxValue(stats, "cpu/user");
@@ -1045,12 +1045,12 @@ inOpsHost.NodeStats = function (time_past) {
             */
 
         //
-        var stats_ram = valueui.utilx.ObjectClone(inOpsHost.hchart_def);
+        var stats_ram = valueui.utilx.objectClone(inOpsHost.hchart_def);
         stats_ram.options.title = valueui.lang.T("Memory Usage (MB)");
         stats_ram._fix = 1024 * 1024;
 
         //
-        var stats_net = valueui.utilx.ObjectClone(inOpsHost.hchart_def);
+        var stats_net = valueui.utilx.objectClone(inOpsHost.hchart_def);
         max = inOpsHost.nodeStatsFeedMaxValue(stats, "net/rs,net/ws");
         if (max > 1024 * 1024) {
             stats_net.options.title = valueui.lang.T("Network Bytes (MB / %s)", tc_title);
@@ -1063,11 +1063,11 @@ inOpsHost.NodeStats = function (time_past) {
         }
 
         //
-        var stats_fsn = valueui.utilx.ObjectClone(inOpsHost.hchart_def);
+        var stats_fsn = valueui.utilx.objectClone(inOpsHost.hchart_def);
         stats_fsn.options.title = valueui.lang.T("Storage IO / %s", tc_title);
 
         //
-        var stats_fss = valueui.utilx.ObjectClone(inOpsHost.hchart_def);
+        var stats_fss = valueui.utilx.objectClone(inOpsHost.hchart_def);
         max = inOpsHost.nodeStatsFeedMaxValue(stats, "fs/sp/rs,fs/sp/ws");
         if (max > 1024 * 1024) {
             stats_fss.options.title = valueui.lang.T("Storage IO Bytes (MB / %s)", tc_title);
@@ -1124,7 +1124,7 @@ inOpsHost.NodeStats = function (time_past) {
 
                 // var t = new Date(v2.time * 1000);
                 // labels.push(t.l4iTimeFormat(tfmt));
-                labels.push(valueui.utilx.UnixTimeFormat(v2.time));
+                labels.push(valueui.utilx.unixTimeFormat(v2.time));
 
                 if (!v2.value) {
                     v2.value = 0;
@@ -1223,7 +1223,7 @@ inOpsHost.NodeStats = function (time_past) {
             },
         ];
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "inops-node-stats-list",
             tplid: "inops-node-stats-item-tpl",
             data: {
@@ -1305,7 +1305,7 @@ inOpsHost.ZoneRefresh = function (cb, force) {
                     inOpsHost.zone_active &&
                     inOpsHost.zone_active.meta.id == zones.items[i].meta.id
                 ) {
-                    inOpsHost.zone_active = valueui.utilx.ObjectClone(zones.items[i]);
+                    inOpsHost.zone_active = valueui.utilx.objectClone(zones.items[i]);
                 }
             }
 
@@ -1425,14 +1425,14 @@ inOpsHost.CellIndex = function () {
         });
     }
 
-    valueui.storage.Set("inops_cluster_zone_id", inOpsHost.zone_active.meta.id);
-    var cell_active_id = valueui.storage.Get("inops_cluster_cell_id");
+    valueui.storage.set("inops_cluster_zone_id", inOpsHost.zone_active.meta.id);
+    var cell_active_id = valueui.storage.get("inops_cluster_cell_id");
     inOpsHost.cell_active = null;
 
     if (!inOps.nav_cluster_cell && !cell_active_id && inOpsHost.zone_active.cells.length > 0) {
-        inOpsHost.cell_active = valueui.utilx.ObjectClone(inOpsHost.zone_active.cells[0]);
+        inOpsHost.cell_active = valueui.utilx.objectClone(inOpsHost.zone_active.cells[0]);
         cell_active_id = inOpsHost.cell_active.meta.id;
-        valueui.storage.Set("inops_cluster_cell_id", cell_active_id);
+        valueui.storage.set("inops_cluster_cell_id", cell_active_id);
     }
 
     if (
@@ -1441,7 +1441,7 @@ inOpsHost.CellIndex = function () {
     ) {
         for (var i in inOpsHost.zone_active.cells) {
             if (cell_active_id == inOpsHost.zone_active.cells[i].meta.id) {
-                inOpsHost.cell_active = valueui.utilx.ObjectClone(inOpsHost.zone_active.cells[i]);
+                inOpsHost.cell_active = valueui.utilx.objectClone(inOpsHost.zone_active.cells[i]);
                 break;
             }
         }
@@ -1466,7 +1466,7 @@ inOpsHost.CellList = function (zoneid) {
         return;
     }
 
-    valueui.storage.Del("inops_cluster_cell_id");
+    valueui.storage.del("inops_cluster_cell_id");
 
     $("#inops-cluster-nav-host").css({
         display: "none",
@@ -1485,10 +1485,10 @@ inOpsHost.CellList = function (zoneid) {
         $("#inops-cluster-nav-cell-value").text("Cells");
     }
 
-    valueui.storage.Set("inops_cluster_zone_id", inOpsHost.zone_active.meta.id);
+    valueui.storage.set("inops_cluster_zone_id", inOpsHost.zone_active.meta.id);
     inOpsHost.cell_active = null;
 
-    var ep = valueui.NewEventProxy("tpl", function (tpl) {
+    var ep = valueui.newEventProxy("tpl", function (tpl) {
         if (tpl) {
             $("#work-content").html(tpl);
         }
@@ -1498,7 +1498,7 @@ inOpsHost.CellList = function (zoneid) {
             inCp.OpToolsClean();
         }
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "inops-host-cells",
             tplid: "inops-host-cells-tpl",
             data: {
@@ -1522,13 +1522,13 @@ inOpsHost.CellSet = function (zoneid, cellid) {
         return;
     }
     zoneid = inOpsHost.zone_active.meta.id;
-    var ep = valueui.NewEventProxy("tpl", "cell", function (tpl, cell) {
+    var ep = valueui.newEventProxy("tpl", "cell", function (tpl, cell) {
         if (!cell) {
-            cell = valueui.utilx.ObjectClone(inOpsHost.cell_def);
+            cell = valueui.utilx.objectClone(inOpsHost.cell_def);
         }
 
         if (!cell.kind || cell.kind != "HostCell") {
-            cell = valueui.utilx.ObjectClone(inOpsHost.cell_def);
+            cell = valueui.utilx.objectClone(inOpsHost.cell_def);
         }
 
         cell.zone_id = zoneid;
@@ -1539,7 +1539,7 @@ inOpsHost.CellSet = function (zoneid, cellid) {
             cell.description = "";
         }
 
-        valueui.modal.Open({
+        valueui.modal.open({
             title: "Cell Setting",
             tplsrc: tpl,
             data: cell,
@@ -1547,7 +1547,7 @@ inOpsHost.CellSet = function (zoneid, cellid) {
             height: 400,
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -1597,11 +1597,11 @@ inOpsHost.CellSetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, cell) {
             if (err || !cell) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", "Failed");
+                return valueui.alert.innerShow(alert_id, "alert-danger", "Failed");
             }
 
             if (!cell) {
-                return valueui.alert.InnerShow(
+                return valueui.alert.innerShow(
                     alert_id,
                     "alert-danger",
                     "Network Connection Exception"
@@ -1609,22 +1609,22 @@ inOpsHost.CellSetCommit = function () {
             }
 
             if (cell.error) {
-                return valueui.alert.InnerShow(alert_id, "alert-danger", cell.error.message);
+                return valueui.alert.innerShow(alert_id, "alert-danger", cell.error.message);
             }
 
             if (!cell.kind || cell.kind != "HostCell") {
-                return valueui.alert.InnerShow(
+                return valueui.alert.innerShow(
                     alert_id,
                     "alert-danger",
                     "Network Connection Exception"
                 );
             }
 
-            valueui.alert.InnerShow(alert_id, "alert-success", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "alert-success", "Successfully Updated");
 
             inOpsHost.ZoneRefresh(function () {
                 window.setTimeout(function () {
-                    valueui.modal.Close();
+                    valueui.modal.close();
                     inOpsHost.CellList();
                 }, 500);
             }, true);
@@ -1643,12 +1643,12 @@ inOpsHost.ZoneIndex = function () {
         });
     }
 
-    var zone_active_id = valueui.storage.Get("inops_cluster_zone_id");
+    var zone_active_id = valueui.storage.get("inops_cluster_zone_id");
 
     if (!inOps.nav_cluster_zone && !zone_active_id && inOpsHost.zones.items.length > 0) {
         zone_active_id = inOpsHost.zones.items[0].meta.id;
-        inOpsHost.zone_active = valueui.utilx.ObjectClone(inOpsHost.zones.items[0]);
-        valueui.storage.Set("inops_cluster_zone_id", zone_active_id);
+        inOpsHost.zone_active = valueui.utilx.objectClone(inOpsHost.zones.items[0]);
+        valueui.storage.set("inops_cluster_zone_id", zone_active_id);
     }
 
     if (
@@ -1657,7 +1657,7 @@ inOpsHost.ZoneIndex = function () {
     ) {
         for (var i in inOpsHost.zones.items) {
             if (zone_active_id == inOpsHost.zones.items[i].meta.id) {
-                inOpsHost.zone_active = valueui.utilx.ObjectClone(inOpsHost.zones.items[i]);
+                inOpsHost.zone_active = valueui.utilx.objectClone(inOpsHost.zones.items[i]);
                 break;
             }
         }
@@ -1682,7 +1682,7 @@ inOpsHost.ZoneList = function () {
         return;
     }
 
-    valueui.storage.Del("inops_cluster_zone_id");
+    valueui.storage.del("inops_cluster_zone_id");
     inOpsHost.zone_active = null;
 
     $("#inops-cluster-nav-host").css({
@@ -1698,7 +1698,7 @@ inOpsHost.ZoneList = function () {
         $("#inops-cluster-nav-zone-value").text("Zones");
     }
 
-    var ep = valueui.NewEventProxy("tpl", function (tpl) {
+    var ep = valueui.newEventProxy("tpl", function (tpl) {
         if (tpl) {
             $("#work-content").html(tpl);
         }
@@ -1708,7 +1708,7 @@ inOpsHost.ZoneList = function () {
             inCp.OpToolsClean();
         }
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "inops-host-zones",
             tplid: "inops-host-zones-tpl",
             data: inOpsHost.zones,
@@ -1724,16 +1724,16 @@ inOpsHost.ZoneList = function () {
     });
 
     // var alert_id = "#inops-host-zones-alert";
-    // seajs.use(["ep"], function(EventProxy) {
+    // valueui.use(["ep"], function(EventProxy) {
 
-    //     var ep = valueui.NewEventProxy("tpl", "data", function(tpl, rsj) {
+    //     var ep = valueui.newEventProxy("tpl", "data", function(tpl, rsj) {
 
     //         if (tpl) {
     //             $("#work-content").html(tpl);
     //         }
 
     //         if (!rsj || !rsj.kind || rsj.kind != "HostZoneList") {
-    //             return valueui.alert.InnerShow(alert_id, 'alert-danger', "Item Not Found");
+    //             return valueui.alert.innerShow(alert_id, 'alert-danger', "Item Not Found");
     //         }
 
     //         if (!rsj.items) {
@@ -1757,7 +1757,7 @@ inOpsHost.ZoneList = function () {
     //             }
     //         }
 
-    //         valueui.template.Render({
+    //         valueui.template.render({
     //             dstid: "inops-host-zones",
     //             tplid: "inops-host-zones-tpl",
     //             data: rsj,
@@ -1779,13 +1779,13 @@ inOpsHost.ZoneList = function () {
 };
 
 inOpsHost.ZoneSet = function (zoneid) {
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, rsj) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, rsj) {
         if (!rsj) {
-            rsj = valueui.utilx.ObjectClone(inOpsHost.zone_def);
+            rsj = valueui.utilx.objectClone(inOpsHost.zone_def);
         }
 
         if (!rsj.kind || rsj.kind != "HostZone") {
-            rsj = valueui.utilx.ObjectClone(inOpsHost.zone_def);
+            rsj = valueui.utilx.objectClone(inOpsHost.zone_def);
         }
 
         var title = "Zone Setting";
@@ -1815,7 +1815,7 @@ inOpsHost.ZoneSet = function (zoneid) {
 
         rsj._actions = inOpsHost.actions;
 
-        valueui.modal.Open({
+        valueui.modal.open({
             title: title,
             tplsrc: tpl,
             data: rsj,
@@ -1823,7 +1823,7 @@ inOpsHost.ZoneSet = function (zoneid) {
             height: 900,
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -1866,7 +1866,7 @@ inOpsHost.ZoneSet = function (zoneid) {
 };
 
 inOpsHost.ZoneWanAddressAppend = function () {
-    valueui.template.Render({
+    valueui.template.render({
         append: true,
         dstid: "inops-host-zoneset-wanaddrs",
         tplid: "inops-host-zoneset-wanaddr-tpl",
@@ -1878,7 +1878,7 @@ inOpsHost.ZoneWanAddressDel = function (field) {
 };
 
 inOpsHost.ZoneLanAddressAppend = function () {
-    valueui.template.Render({
+    valueui.template.render({
         append: true,
         dstid: "inops-host-zoneset-lanaddrs",
         tplid: "inops-host-zoneset-lanaddr-tpl",
@@ -1890,7 +1890,7 @@ inOpsHost.ZoneLanAddressDel = function (field) {
 };
 
 inOpsHost.ZoneImageServiceAppend = function () {
-    valueui.template.Render({
+    valueui.template.render({
         append: true,
         dstid: "inops-host-zoneset-imageservice",
         tplid: "inops-host-zoneset-imageservice-tpl",
@@ -1957,7 +1957,7 @@ inOpsHost.ZoneSetCommit = function () {
             throw "No LAN Address Found";
         }
     } catch (err) {
-        return valueui.alert.InnerShow("#inops-host-zoneset-alert", "alert-danger", err);
+        return valueui.alert.innerShow("#inops-host-zoneset-alert", "alert-danger", err);
     }
 
     inOps.ApiCmd("host/zone-set", {
@@ -1965,7 +1965,7 @@ inOpsHost.ZoneSetCommit = function () {
         data: JSON.stringify(req),
         callback: function (err, rsj) {
             if (err || !rsj) {
-                return valueui.alert.InnerShow(
+                return valueui.alert.innerShow(
                     alertid,
                     "alert-danger",
                     "Network Connection Exception"
@@ -1973,22 +1973,22 @@ inOpsHost.ZoneSetCommit = function () {
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alertid, "alert-danger", rsj.error.message);
+                return valueui.alert.innerShow(alertid, "alert-danger", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "HostZone") {
-                return valueui.alert.InnerShow(
+                return valueui.alert.innerShow(
                     alertid,
                     "alert-danger",
                     "Network Connection Exception"
                 );
             }
 
-            valueui.alert.InnerShow(alertid, "alert-success", "Successfully Updated");
+            valueui.alert.innerShow(alertid, "alert-success", "Successfully Updated");
 
             inOpsHost.ZoneRefresh(function () {
                 window.setTimeout(function () {
-                    valueui.modal.Close();
+                    valueui.modal.close();
                     inOpsHost.ZoneList();
                 }, 500);
             }, true);

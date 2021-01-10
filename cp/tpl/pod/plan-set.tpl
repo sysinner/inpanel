@@ -75,7 +75,7 @@
     {[? it._options.app_runtime_images && it._options.app_runtime_images.length > 0]}
     {[~it._options.app_runtime_images :ref_id]}
     <div class="incp-form-box-selector-item" 
-      id="incp-podnew-image-id-{[=valueui.utilx.CryptoMd5(ref_id)]}"
+      id="incp-podnew-image-id-{[=valueui.utilx.cryptoMd5(ref_id)]}"
       onclick="inCpPod.NewPlanImageChange('{[=ref_id]}')">
       <div>{[=ref_id]}</div>
     </div>
@@ -83,7 +83,7 @@
     {[??]}
     {[~it.images :v]}
     <div class="incp-form-box-selector-item {[if (v.ref_id == it.image_selected) { ]}selected{[ } ]}" 
-      id="incp-podnew-image-id-{[=valueui.utilx.CryptoMd5(v.ref_id)]}"
+      id="incp-podnew-image-id-{[=valueui.utilx.cryptoMd5(v.ref_id)]}"
       onclick="inCpPod.NewPlanImageChange('{[=v.ref_id]}')">
       <div>{[? v.ref_title]}{[=v.ref_title]} / {[?]}{[=v.driver]}</div>
       <div>{[=v.ref_id]}</div>

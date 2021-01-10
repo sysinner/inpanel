@@ -73,13 +73,13 @@ inCpSpec.Index = function () {
 };
 
 inCpSpec.ImageList = function () {
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         if (tpl) {
             $("#work-content-spec").html(tpl);
         }
 
         if (data === undefined || data.kind != "BoxImageList") {
-            return valueui.alert.InnerShow("#mix-spec-image-alert", "error", "Item Not Found");
+            return valueui.alert.innerShow("#mix-spec-image-alert", "error", "Item Not Found");
         }
 
         if (!data.items) {
@@ -88,7 +88,7 @@ inCpSpec.ImageList = function () {
 
         $("#mix-spec-images-alert").hide();
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "mix-spec-images",
             tplid: "mix-spec-images-tpl",
             data: data,
@@ -109,25 +109,25 @@ inCpSpec.ImageList = function () {
 };
 
 inCpSpec.ImageSetForm = function (imageid) {
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, rsj) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, rsj) {
         if (!rsj) {
-            rsj = valueui.utilx.ObjectClone(inCpSpec.boxImageDef);
+            rsj = valueui.utilx.objectClone(inCpSpec.boxImageDef);
         }
 
         if (!rsj.kind || rsj.kind != "BoxImage") {
-            rsj = valueui.utilx.ObjectClone(inCpSpec.boxImageDef);
+            rsj = valueui.utilx.objectClone(inCpSpec.boxImageDef);
         }
 
         rsj._statusls = inCpSpec.statusls;
         rsj._specs = inCpSpec.boxImageSpecs;
 
-        valueui.modal.Open({
+        valueui.modal.open({
             title: "Box Image Spec Setting",
             tplsrc: tpl,
             data: rsj,
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -180,38 +180,38 @@ inCpSpec.ImageSetCommit = function () {
         data: JSON.stringify(req),
         success: function (rsj) {
             if (!rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "BoxImage") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 inCpSpec.ImageList();
             }, 500);
         },
         error: function (xhr, textStatus, error) {
-            valueui.alert.InnerShow(alert_id, "error", textStatus + " " + xhr.responseText);
+            valueui.alert.innerShow(alert_id, "error", textStatus + " " + xhr.responseText);
         },
     });
 };
 
 inCpSpec.QuotaList = function () {
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         if (tpl) {
             $("#work-content-spec").html(tpl);
         }
 
         if (data === undefined || data.kind != "BoxQuotaList") {
-            return valueui.alert.InnerShow("#mix-spec-quotas-alert", "error", "Item Not Found");
+            return valueui.alert.innerShow("#mix-spec-quotas-alert", "error", "Item Not Found");
         }
 
         if (!data.items) {
@@ -220,7 +220,7 @@ inCpSpec.QuotaList = function () {
 
         $("#mix-spec-quotas-alert").hide();
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "mix-spec-quotas",
             tplid: "mix-spec-quotas-tpl",
             data: data,
@@ -241,18 +241,18 @@ inCpSpec.QuotaList = function () {
 };
 
 inCpSpec.QuotaSetForm = function (quotaid) {
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, rsj) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, rsj) {
         if (!rsj) {
-            rsj = valueui.utilx.ObjectClone(inCpSpec.boxQuotaDef);
+            rsj = valueui.utilx.objectClone(inCpSpec.boxQuotaDef);
         }
 
         if (!rsj.kind || rsj.kind != "BoxQuota") {
-            rsj = valueui.utilx.ObjectClone(inCpSpec.boxQuotaDef);
+            rsj = valueui.utilx.objectClone(inCpSpec.boxQuotaDef);
         }
 
         rsj._statusls = inCpSpec.statusls;
 
-        valueui.modal.Open({
+        valueui.modal.open({
             title: "Box Quota Spec Setting",
             tplsrc: tpl,
             data: rsj,
@@ -260,7 +260,7 @@ inCpSpec.QuotaSetForm = function (quotaid) {
             height: 500,
             buttons: [
                 {
-                    onclick: "valueui.modal.Close()",
+                    onclick: "valueui.modal.close()",
                     title: "Close",
                 },
                 {
@@ -311,39 +311,39 @@ inCpSpec.QuotaSetCommit = function () {
         data: JSON.stringify(req),
         success: function (rsj) {
             if (!rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "BoxQuota") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 inCpSpec.QuotaList();
             }, 500);
         },
         error: function (xhr, textStatus, error) {
-            valueui.alert.InnerShow(alert_id, "error", textStatus + " " + xhr.responseText);
+            valueui.alert.innerShow(alert_id, "error", textStatus + " " + xhr.responseText);
         },
     });
 };
 
 //
 inCpSpec.PodList = function () {
-    var ep = valueui.NewEventProxy("tpl", "data", function (tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         if (tpl) {
             $("#work-content-spec").html(tpl);
         }
 
         if (data === undefined || data.kind != "PodSpecList") {
-            return valueui.alert.InnerShow("#mix-spec-pods-alert", "error", "Item Not Found");
+            return valueui.alert.innerShow("#mix-spec-pods-alert", "error", "Item Not Found");
         }
 
         if (!data.items) {
@@ -354,7 +354,7 @@ inCpSpec.PodList = function () {
 
         // console.log(data);
 
-        valueui.template.Render({
+        valueui.template.render({
             dstid: "mix-spec-pods",
             tplid: "mix-spec-pods-tpl",
             data: data,
@@ -375,18 +375,18 @@ inCpSpec.PodList = function () {
 };
 
 inCpSpec.PodSetForm = function (podid) {
-    var ep = valueui.NewEventProxy(
+    var ep = valueui.newEventProxy(
         "tpl",
         "images",
         "quotas",
         "data",
         function (tpl, images, quotas, rsj) {
             if (!rsj) {
-                rsj = valueui.utilx.ObjectClone(inCpSpec.podDef);
+                rsj = valueui.utilx.objectClone(inCpSpec.podDef);
             }
 
             if (!rsj.kind || rsj.kind != "PodSpec") {
-                rsj = valueui.utilx.ObjectClone(inCpSpec.podDef);
+                rsj = valueui.utilx.objectClone(inCpSpec.podDef);
             }
 
             inCpSpec._boxQuotas = quotas;
@@ -398,7 +398,7 @@ inCpSpec.PodSetForm = function (podid) {
 
             // console.log(rsj);
 
-            valueui.modal.Open({
+            valueui.modal.open({
                 title: "Pod Spec Setting",
                 tplsrc: tpl,
                 // data   : rsj,
@@ -406,7 +406,7 @@ inCpSpec.PodSetForm = function (podid) {
                 height: 600,
                 buttons: [
                     {
-                        onclick: "valueui.modal.Close()",
+                        onclick: "valueui.modal.close()",
                         title: "Close",
                     },
                     {
@@ -416,7 +416,7 @@ inCpSpec.PodSetForm = function (podid) {
                     },
                 ],
                 success: function () {
-                    valueui.template.Render({
+                    valueui.template.render({
                         dstid: "mix-spec-podset",
                         tplid: "mix-spec-podset-tpl",
                         data: rsj,
@@ -465,7 +465,7 @@ inCpSpec.PodSetForm = function (podid) {
 };
 
 inCpSpec.PodSetLabelAppend = function () {
-    valueui.template.Render({
+    valueui.template.render({
         append: true,
         dstid: "mix-spec-podset-labels",
         tplid: "mix-spec-podset-label-tpl",
@@ -478,9 +478,9 @@ inCpSpec.PodSetLabelDel = function (field) {
 
 inCpSpec.PodSetBoxAppend = function (box) {
     if (!box) {
-        box = valueui.utilx.ObjectClone(inCpSpec.boxSpecDef);
-        box.resource = valueui.utilx.ObjectClone(inCpSpec.boxQuotaDef);
-        box.image = valueui.utilx.ObjectClone(inCpSpec.boxImageDef);
+        box = valueui.utilx.objectClone(inCpSpec.boxSpecDef);
+        box.resource = valueui.utilx.objectClone(inCpSpec.boxQuotaDef);
+        box.image = valueui.utilx.objectClone(inCpSpec.boxImageDef);
     }
 
     box._images = inCpSpec._boxImages;
@@ -488,7 +488,7 @@ inCpSpec.PodSetBoxAppend = function (box) {
 
     box._rowid = Math.random().toString(16).slice(2);
 
-    valueui.template.Render({
+    valueui.template.render({
         append: true,
         dstid: "mix-spec-podset-box",
         tplid: "mix-spec-podset-box-tpl",
@@ -506,7 +506,7 @@ inCpSpec.PodSetBoxDel = function (rowid) {
 };
 
 inCpSpec.PodSetBoxPortAppend = function (rowid) {
-    valueui.template.Render({
+    valueui.template.render({
         append: true,
         dstid: "mix-spec-podset-box-ports-" + rowid,
         tplid: "mix-spec-podset-box-port-tpl",
@@ -532,7 +532,7 @@ inCpSpec.PodSetCommit = function () {
     };
 
     if (!inCpSpec.keyreg.test(req.meta.name)) {
-        return valueui.alert.InnerShow(alert_id, "error", "Invalid Pod Name");
+        return valueui.alert.innerShow(alert_id, "error", "Invalid Pod Name");
     }
 
     try {
@@ -596,7 +596,7 @@ inCpSpec.PodSetCommit = function () {
             req.box = box;
         });
     } catch (err) {
-        return valueui.alert.InnerShow(alert_id, "error", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     // console.log(req);
@@ -608,26 +608,26 @@ inCpSpec.PodSetCommit = function () {
         data: JSON.stringify(req),
         success: function (rsj) {
             if (!rsj) {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
             if (rsj.error) {
-                return valueui.alert.InnerShow(alert_id, "error", rsj.error.message);
+                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
             }
 
             if (!rsj.kind || rsj.kind != "PodSpec") {
-                return valueui.alert.InnerShow(alert_id, "error", "Network Connection Exception");
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
 
-            valueui.alert.InnerShow(alert_id, "ok", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
-                valueui.modal.Close();
+                valueui.modal.close();
                 inCpSpec.PodList();
             }, 500);
         },
         error: function (xhr, textStatus, error) {
-            valueui.alert.InnerShow(alert_id, "error", textStatus + " " + xhr.responseText);
+            valueui.alert.innerShow(alert_id, "error", textStatus + " " + xhr.responseText);
         },
     });
 };

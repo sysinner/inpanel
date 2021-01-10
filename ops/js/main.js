@@ -29,11 +29,11 @@ inOps.Boot = function (login_first) {
     if (
         !(
             ($.browser.chrome === true &&
-                valueui.utilx.VersionCompare($.browser.version, "22.0") > 0) ||
+                valueui.utilx.versionCompare($.browser.version, "22.0") > 0) ||
             ($.browser.firefox === true &&
-                valueui.utilx.VersionCompare($.browser.version, "31.0") > 0) ||
+                valueui.utilx.versionCompare($.browser.version, "31.0") > 0) ||
             ($.browser.safari === true &&
-                valueui.utilx.VersionCompare($.browser.version, "5.0") > 0)
+                valueui.utilx.versionCompare($.browser.version, "5.0") > 0)
         )
     ) {
         $("body").load(inCp.tplbase + "error/browser.tpl");
@@ -48,7 +48,7 @@ inOps.Boot = function (login_first) {
         return;
     }
 
-    valueui.Use(
+    valueui.use(
         [
             "in/cp/js/main.js",
             "in/cp/css/base.css",
@@ -76,7 +76,7 @@ inOps.load_index = function () {
 
     hooto_chart.basepath = inCp.base + "~/hchart/";
 
-    var ep = valueui.NewEventProxy(
+    var ep = valueui.newEventProxy(
         "tpl",
         "zones",
         "session",
@@ -109,19 +109,19 @@ inOps.load_index = function () {
 
             $("#valueui-body").html(tpl);
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-topbar",
                 tplid: "incp-topbar-tpl",
                 data: {},
             });
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-footer",
                 tplid: "incp-footer-tpl",
                 data: {},
             });
 
-            valueui.template.Render({
+            valueui.template.render({
                 dstid: "incp-topbar-userbar",
                 tplid: "incp-topbar-user-signed-tpl",
                 data: inOps.UserSession,
@@ -141,11 +141,11 @@ inOps.load_index = function () {
                 },
             });
 
-            valueui.url.EventRegister("host/index", inOpsHost.Index, "inops-topbar-nav-menus");
-            valueui.url.EventRegister("pod/index", inOpsPod.Index, "inops-topbar-nav-menus");
-            valueui.url.EventRegister("app/index", inOpsApp.Index, "inops-topbar-nav-menus");
-            valueui.url.EventRegister("sys/index", inOpsSys.Index, "inops-topbar-nav-menus");
-            valueui.url.EventHandler("host/index", true);
+            valueui.url.eventRegister("host/index", inOpsHost.Index, "inops-topbar-nav-menus");
+            valueui.url.eventRegister("pod/index", inOpsPod.Index, "inops-topbar-nav-menus");
+            valueui.url.eventRegister("app/index", inOpsApp.Index, "inops-topbar-nav-menus");
+            valueui.url.eventRegister("sys/index", inOpsSys.Index, "inops-topbar-nav-menus");
+            valueui.url.eventHandler("host/index", true);
         }
     );
 
@@ -165,7 +165,7 @@ inOps.load_index = function () {
         callback: ep.done("syscfg"),
     });
 
-    valueui.utilx.Ajax(inCp.base + "auth/session", {
+    valueui.utilx.ajax(inCp.base + "auth/session", {
         callback: function (err, data) {
             if (!data || data.kind != "AuthSession") {
                 return ep.emit("error", "AuthSession");
@@ -208,15 +208,15 @@ inOps.ApiCmd = function (url, options) {
     };
     url = url.replace(/^\/|\s+$/g, "");
 
-    valueui.utilx.Ajax(inOps.api + url, options);
+    valueui.utilx.ajax(inOps.api + url, options);
 };
 
 inOps.TplFetch = function (url, options) {
-    valueui.utilx.Ajax(inOps.basetpl + url + ".tpl", options);
+    valueui.utilx.ajax(inOps.basetpl + url + ".tpl", options);
 };
 
 inOps.Loader = function (target, uri) {
-    valueui.utilx.Ajax(inOps.basetpl + uri + ".tpl", {
+    valueui.utilx.ajax(inOps.basetpl + uri + ".tpl", {
         callback: function (err, data) {
             $("#" + target).html(data);
         },

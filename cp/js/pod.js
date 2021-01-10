@@ -221,87 +221,87 @@ inCpPod.List = function (tplid, options) {
         options = inCpPod.list_options;
     }
 
-        var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
-            if (!options.ops_mode) {
-                inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus, "pod/instance");
-            }
-
-            if (tpl) {
-                $("#work-content").html(tpl);
-            }
-
-            inCp.OpToolActive = null;
-            if (options.ops_mode) {
-                inCp.OpToolsClean();
-            } else {
-                inCp.OpToolsRefresh("#" + tplid + "-optools");
-            }
-
-            if (data.error) {
-                return valueui.alert.innerShow(alert_id, "error", data.error.message);
-            }
-
-            if (data.user_transfers && data.user_transfers.length > 0) {
-                inCpPod.userTransfers = data.user_transfers;
-                return inCpPod.UserTransferPerform();
-            }
-
-            data.items = data.items || [];
-
-            var items = [];
-            for (var i in data.items) {
-                if (options.new_options) {
-                    if (
-                        options.new_options.app_runtime_images &&
-                        !inCp.ArrayStringHas(
-                            options.new_options.app_runtime_images,
-                            data.items[i].spec.box.image.ref.id
-                        )
-                    ) {
-                        consoelg.log("list skip " + data.items[i].spec.box.image.ref.id);
-                        continue;
-                    }
-                }
-                items.push(data.items[i]);
-            }
-            data.items = items;
-
-            if (data.items.length < 1) {
-                return valueui.alert.innerShow(alert_id, "alert-info", "No Item Found Yet ...");
-            }
-
-            inCpPod.list = data.items;
-
-            valueui.template.render({
-                dstid: tplid,
-                tplid: tplid + "-tpl",
-                data: data,
-            });
-        });
-
-        ep.fail(function (err) {
-            alert("ListRefresh error, Please try again later (EC:001)");
-        });
-
-        // template
-        var el = document.getElementById(tplid);
-        if (!el || el.length < 1) {
-            inCp.TplFetch("pod/list", {
-                callback: function (err, tpl) {
-                    if (err) {
-                        return ep.emit("error", err);
-                    }
-
-                    ep.emit("tpl", tpl);
-                },
-            });
-        } else {
-            ep.emit("tpl", null);
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
+        if (!options.ops_mode) {
+            inCp.ModuleNavbarMenu("cp/pod/list", inCpPod.list_nav_menus, "pod/instance");
         }
 
-        options.callback = ep.done("data");
-        options.fields = ["spec/box", "operate/replica_cap", "operate/status"];
-        inCpPod.ListRefresh(options);
+        if (tpl) {
+            $("#work-content").html(tpl);
+        }
+
+        inCp.OpToolActive = null;
+        if (options.ops_mode) {
+            inCp.OpToolsClean();
+        } else {
+            inCp.OpToolsRefresh("#" + tplid + "-optools");
+        }
+
+        if (data.error) {
+            return valueui.alert.innerShow(alert_id, "error", data.error.message);
+        }
+
+        if (data.user_transfers && data.user_transfers.length > 0) {
+            inCpPod.userTransfers = data.user_transfers;
+            return inCpPod.UserTransferPerform();
+        }
+
+        data.items = data.items || [];
+
+        var items = [];
+        for (var i in data.items) {
+            if (options.new_options) {
+                if (
+                    options.new_options.app_runtime_images &&
+                    !inCp.ArrayStringHas(
+                        options.new_options.app_runtime_images,
+                        data.items[i].spec.box.image.ref.id
+                    )
+                ) {
+                    consoelg.log("list skip " + data.items[i].spec.box.image.ref.id);
+                    continue;
+                }
+            }
+            items.push(data.items[i]);
+        }
+        data.items = items;
+
+        if (data.items.length < 1) {
+            return valueui.alert.innerShow(alert_id, "alert-info", "No Item Found Yet ...");
+        }
+
+        inCpPod.list = data.items;
+
+        valueui.template.render({
+            dstid: tplid,
+            tplid: tplid + "-tpl",
+            data: data,
+        });
+    });
+
+    ep.fail(function (err) {
+        alert("ListRefresh error, Please try again later (EC:001)");
+    });
+
+    // template
+    var el = document.getElementById(tplid);
+    if (!el || el.length < 1) {
+        inCp.TplFetch("pod/list", {
+            callback: function (err, tpl) {
+                if (err) {
+                    return ep.emit("error", err);
+                }
+
+                ep.emit("tpl", tpl);
+            },
+        });
+    } else {
+        ep.emit("tpl", null);
+    }
+
+    options.callback = ep.done("data");
+    options.fields = ["spec/box", "operate/replica_cap", "operate/status"];
+    inCpPod.ListRefresh(options);
 };
 
 /*
@@ -358,137 +358,136 @@ inCpPod.New = function (options) {
     }
     var alert_id = "#incp-podnew-alert";
 
-        var ep = valueui.newEventProxy("tpl", "zones", "plans", function (tpl, zones, plans) {
-            if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-            inCpPod.syszones = zones;
+    var ep = valueui.newEventProxy("tpl", "zones", "plans", function (tpl, zones, plans) {
+        if (!zones || !zones.kind || zones.kind != "HostZoneList") {
+            return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+        }
+        inCpPod.syszones = zones;
 
-            if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
+        if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
+            return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+        }
 
-            var pod = valueui.utilx.objectClone(inCpPod.def);
-            for (var i in plans.items) {
-                for (var j in plans.items[i].res_computes) {
-                    plans.items[i].res_computes[j]._cpu_limit = (
-                        plans.items[i].res_computes[j].cpu_limit / 10
-                    ).toFixed(1);
-                    if (plans.items[i].res_computes[j].mem_limit >= 1024) {
-                        plans.items[i].res_computes[j]._mem_limit =
-                            plans.items[i].res_computes[j].mem_limit / 1024 + " GB";
-                    } else {
-                        plans.items[i].res_computes[j]._mem_limit =
-                            plans.items[i].res_computes[j].mem_limit + " MB";
-                    }
+        var pod = valueui.utilx.objectClone(inCpPod.def);
+        for (var i in plans.items) {
+            for (var j in plans.items[i].res_computes) {
+                plans.items[i].res_computes[j]._cpu_limit = (
+                    plans.items[i].res_computes[j].cpu_limit / 10
+                ).toFixed(1);
+                if (plans.items[i].res_computes[j].mem_limit >= 1024) {
+                    plans.items[i].res_computes[j]._mem_limit =
+                        plans.items[i].res_computes[j].mem_limit / 1024 + " GB";
+                } else {
+                    plans.items[i].res_computes[j]._mem_limit =
+                        plans.items[i].res_computes[j].mem_limit + " MB";
                 }
             }
+        }
 
-            pod._plans = plans;
-            pod._plan_selected = null;
+        pod._plans = plans;
+        pod._plan_selected = null;
 
-            for (var i in pod._plans.items) {
-                pod._plan_selected = pod._plans.items[i].meta.id;
-                break;
+        for (var i in pod._plans.items) {
+            pod._plan_selected = pod._plans.items[i].meta.id;
+            break;
+        }
+
+        if (!pod._plan_selected) {
+            return valueui.alert.innerShow(alert_id, "error", "No SpecPodPlan Found");
+        }
+
+        //
+        if (inCp.UserSession.groups && inCp.UserSession.groups.length > 0) {
+            options.user_groups = [inCp.UserSession.username];
+            for (var i in inCp.UserSession.groups) {
+                options.user_groups.push(inCp.UserSession.groups[i]);
             }
+        }
 
-            if (!pod._plan_selected) {
-                return valueui.alert.innerShow(alert_id, "error", "No SpecPodPlan Found");
-            }
+        inCpPod.plans = plans;
+        inCpPod.planSelected = pod._plan_selected;
+        // inCpPod.zones = zones;
 
-            //
-            if (inCp.UserSession.groups && inCp.UserSession.groups.length > 0) {
-                options.user_groups = [inCp.UserSession.username];
-                for (var i in inCp.UserSession.groups) {
-                    options.user_groups.push(inCp.UserSession.groups[i]);
-                }
-            }
-
-            inCpPod.plans = plans;
-            inCpPod.planSelected = pod._plan_selected;
-            // inCpPod.zones = zones;
-
-            var fnfre = function () {
-                valueui.template.render({
-                    dstid: "incp-podnew-plans",
-                    tplid: "incp-podnew-plans-tpl",
-                    data: {
-                        items: inCpPod.plans.items,
-                        _plan_selected: inCpPod.planSelected,
-                    },
-                });
-                inCpPod.NewRefreshPlan();
-            };
-            inCpPod.itemNewOptions = options;
-            // console.log(options);
-            if (options.open_modal) {
-                valueui.modal.open({
-                    id: "pod-new",
-                    tplsrc: tpl,
-                    title: "Create new Pod Instance",
-                    width: "max",
-                    height: "max",
-                    callback: function () {
-                        valueui.template.render({
-                            dstid: "incp-podnew-form",
-                            tplid: "incp-podnew-modal",
-                            data: {
-                                items: inCpPod.plans.items,
-                                _plan_selected: inCpPod.planSelected,
-                                _options: options,
-                            },
-                            callback: fnfre,
-                        });
-                    },
-                    buttons: [
-                        {
-                            onclick: "valueui.modal.close()",
-                            title: "Close",
+        var fnfre = function () {
+            valueui.template.render({
+                dstid: "incp-podnew-plans",
+                tplid: "incp-podnew-plans-tpl",
+                data: {
+                    items: inCpPod.plans.items,
+                    _plan_selected: inCpPod.planSelected,
+                },
+            });
+            inCpPod.NewRefreshPlan();
+        };
+        inCpPod.itemNewOptions = options;
+        // console.log(options);
+        if (options.open_modal) {
+            valueui.modal.open({
+                id: "pod-new",
+                tplsrc: tpl,
+                title: "Create new Pod Instance",
+                width: "max",
+                height: "max",
+                callback: function () {
+                    valueui.template.render({
+                        dstid: "incp-podnew-form",
+                        tplid: "incp-podnew-modal",
+                        data: {
+                            items: inCpPod.plans.items,
+                            _plan_selected: inCpPod.planSelected,
+                            _options: options,
                         },
-                        {
-                            onclick: "inCpPod.NewCommit()",
-                            title: "Save",
-                            style: "btn btn-primary",
-                        },
-                    ],
-                });
-            } else {
-                valueui.template.render({
-                    dstid: "work-content",
-                    tplsrc: tpl,
-                    callback: function () {
-                        valueui.template.render({
-                            dstid: "incp-podnew-form",
-                            tplid: "incp-podnew-inner",
-                            data: {
-                                items: inCpPod.plans.items,
-                                _plan_selected: inCpPod.planSelected,
-                                _options: options,
-                            },
-                            callback: fnfre,
-                        });
+                        callback: fnfre,
+                    });
+                },
+                buttons: [
+                    {
+                        onclick: "valueui.modal.close()",
+                        title: "Close",
                     },
-                });
-            }
-        });
+                    {
+                        onclick: "inCpPod.NewCommit()",
+                        title: "Save",
+                        style: "btn btn-primary",
+                    },
+                ],
+            });
+        } else {
+            valueui.template.render({
+                dstid: "work-content",
+                tplsrc: tpl,
+                callback: function () {
+                    valueui.template.render({
+                        dstid: "incp-podnew-form",
+                        tplid: "incp-podnew-inner",
+                        data: {
+                            items: inCpPod.plans.items,
+                            _plan_selected: inCpPod.planSelected,
+                            _options: options,
+                        },
+                        callback: fnfre,
+                    });
+                },
+            });
+        }
+    });
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
 
-        // template
-        inCp.TplFetch("pod/new", {
-            callback: ep.done("tpl"),
-        });
+    // template
+    inCp.TplFetch("pod/new", {
+        callback: ep.done("tpl"),
+    });
 
-        inCp.ApiCmd("pod-spec/plan-list", {
-            callback: ep.done("plans"),
-        });
+    inCp.ApiCmd("pod-spec/plan-list", {
+        callback: ep.done("plans"),
+    });
 
-        inCp.ApiCmd("host/zone-list?fields=cells", {
-            callback: ep.done("zones"),
-        });
-
+    inCp.ApiCmd("host/zone-list?fields=cells", {
+        callback: ep.done("zones"),
+    });
 };
 
 inCpPod.NewOptionResFit = function (v) {
@@ -746,7 +745,11 @@ inCpPod.NewPlanVolChange = function (ref_id) {
 
     $("#incp-podnew-resource-value").val(v);
     $("#incp-podnew-resource-hint").text(
-        valueui.lang.T("Range: %d ~ %d GB", inCpPod.plan._res_volume.request, inCpPod.plan._res_volume.limit)
+        valueui.lang.T(
+            "Range: %d ~ %d GB",
+            inCpPod.plan._res_volume.request,
+            inCpPod.plan._res_volume.limit
+        )
     );
 
     inCpPod.HookAccountChargeRefresh();
@@ -903,68 +906,68 @@ inCpPod.NewCommit = function () {
 
 inCpPod.Info = function (pod_id, options) {
     options = options || {};
-        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
-            if (!pod.operate.replicas) {
-                pod.operate.replicas = [];
+    var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
+        if (!pod.operate.replicas) {
+            pod.operate.replicas = [];
+        }
+        for (var i in pod.operate.replicas) {
+            if (!pod.operate.replicas[i].ports) {
+                pod.operate.replicas[i].ports = [];
             }
-            for (var i in pod.operate.replicas) {
-                if (!pod.operate.replicas[i].ports) {
-                    pod.operate.replicas[i].ports = [];
-                }
-                if (!pod.operate.replicas[i].rep_id) {
-                    pod.operate.replicas[i].rep_id = 0;
-                }
-                for (var j in pod.operate.replicas[i].ports) {
-                    if (!pod.operate.replicas[i].ports[j].host_port) {
-                        pod.operate.replicas[i].ports[j].host_port = 0;
-                    }
-                    if (!pod.operate.replicas[i].ports[j].lan_addr) {
-                        pod.operate.replicas[i].ports[j].lan_addr = "127.0.0.1";
-                    }
-                    if (!pod.operate.replicas[i].ports[j].wan_addr) {
-                        pod.operate.replicas[i].ports[j].wan_addr =
-                            pod.operate.replicas[i].ports[j].lan_addr;
-                    }
-                }
+            if (!pod.operate.replicas[i].rep_id) {
+                pod.operate.replicas[i].rep_id = 0;
             }
-            pod.spec._box_image_driver = pod.spec.box.image.driver;
-            pod.spec._cpu_limit = pod.spec.box.resources.cpu_limit;
-            pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
-
-            var btns = [
-                {
-                    onclick: "valueui.modal.close()",
-                    title: "Close",
-                },
-            ];
-            if (options.buttons) {
-                for (var i in options.buttons) {
-                    btns.push(options.buttons[i]);
+            for (var j in pod.operate.replicas[i].ports) {
+                if (!pod.operate.replicas[i].ports[j].host_port) {
+                    pod.operate.replicas[i].ports[j].host_port = 0;
+                }
+                if (!pod.operate.replicas[i].ports[j].lan_addr) {
+                    pod.operate.replicas[i].ports[j].lan_addr = "127.0.0.1";
+                }
+                if (!pod.operate.replicas[i].ports[j].wan_addr) {
+                    pod.operate.replicas[i].ports[j].wan_addr =
+                        pod.operate.replicas[i].ports[j].lan_addr;
                 }
             }
+        }
+        pod.spec._box_image_driver = pod.spec.box.image.driver;
+        pod.spec._cpu_limit = pod.spec.box.resources.cpu_limit;
+        pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
 
-            valueui.modal.open({
-                id: "incp-pod-item-info",
-                title: "Pod Instance Information",
-                tplsrc: tpl,
-                width: 1200,
-                height: 800,
-                data: pod,
-                buttons: btns,
-            });
-        });
+        var btns = [
+            {
+                onclick: "valueui.modal.close()",
+                title: "Close",
+            },
+        ];
+        if (options.buttons) {
+            for (var i in options.buttons) {
+                btns.push(options.buttons[i]);
+            }
+        }
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
+        valueui.modal.open({
+            id: "incp-pod-item-info",
+            title: "Pod Instance Information",
+            tplsrc: tpl,
+            width: 1200,
+            height: 800,
+            data: pod,
+            buttons: btns,
         });
+    });
 
-        inCp.ApiCmd("pod/entry?id=" + pod_id, {
-            callback: ep.done("pod"),
-        });
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
 
-        inCp.TplFetch("pod/info", {
-            callback: ep.done("tpl"),
-        });
+    inCp.ApiCmd("pod/entry?id=" + pod_id, {
+        callback: ep.done("pod"),
+    });
+
+    inCp.TplFetch("pod/info", {
+        callback: ep.done("tpl"),
+    });
 };
 
 inCpPod.SetInfo = function (pod_id) {
@@ -975,85 +978,85 @@ inCpPod.SetInfo = function (pod_id) {
         return alert("No Pod Found");
     }
 
-        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
-            var actions = [];
-            for (var i in inCp.OpActions) {
-                actions.push({
-                    action: inCp.OpActions[i].action,
-                    title: inCp.OpActions[i].title,
-                    active: inCp.OpActionAllow(pod.operate.action, inCp.OpActions[i].action),
-                });
-            }
-
-            pod.spec._cpu_limit = 0;
-            pod.spec._mem_limit = 0;
-            pod.spec._cpu_limit += pod.spec.box.resources.cpu_limit;
-            pod.spec._mem_limit += pod.spec.box.resources.mem_limit;
-
-            if (!pod.operate.exp_sys_state) {
-                pod.operate.exp_sys_state = inCpPod.opSysStateful;
-            }
-
-            var rep_min = inCpPod.OpRepMin,
-                rep_max = inCpPod.OpRepMax;
-            for (var i in pod.apps) {
-                if (rep_min < pod.apps[i].spec.exp_deploy.rep_min) {
-                    rep_min = pod.apps[i].spec.exp_deploy.rep_min;
-                }
-                if (rep_max > pod.apps[i].spec.exp_deploy.rep_max) {
-                    rep_max = pod.apps[i].spec.exp_deploy.rep_max;
-                }
-            }
-
-            pod.spec._cpu_limit = (pod.spec.box.resources.cpu_limit / 10).toFixed(1);
-
-            var spec_summary = "ID: " + pod.spec.ref.id;
-            spec_summary += ", CPU: " + pod.spec._cpu_limit;
-            spec_summary += ", RAM: " + pod.spec._mem_limit + " MB";
-            spec_summary += ", Storage: " + pod.spec.vol_sys.size + " GB";
-
-            valueui.modal.open({
-                title: "Pod Instance Setup",
-                tplsrc: tpl,
-                width: 1000,
-                height: 450,
-                data: {
-                    pod: pod,
-                    _op_actions: actions,
-                    _op_sys_states: valueui.utilx.objectClone(inCpPod.opSysStates),
-                    _spec_summary: spec_summary,
-                    _op_rep_min: rep_min,
-                    _op_rep_max: rep_max,
-                },
-                buttons: [
-                    {
-                        onclick: "valueui.modal.close()",
-                        title: "Close",
-                    },
-                    {
-                        onclick: "inCpPod.UserTransferView()",
-                        title: "Transfer Ownership",
-                    },
-                    {
-                        onclick: "inCpPod.SetInfoCommit()",
-                        title: "Save",
-                        style: "btn btn-primary",
-                    },
-                ],
+    var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
+        var actions = [];
+        for (var i in inCp.OpActions) {
+            actions.push({
+                action: inCp.OpActions[i].action,
+                title: inCp.OpActions[i].title,
+                active: inCp.OpActionAllow(pod.operate.action, inCp.OpActions[i].action),
             });
-        });
+        }
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+        pod.spec._cpu_limit = 0;
+        pod.spec._mem_limit = 0;
+        pod.spec._cpu_limit += pod.spec.box.resources.cpu_limit;
+        pod.spec._mem_limit += pod.spec.box.resources.mem_limit;
 
-        inCp.ApiCmd("pod/entry?id=" + pod_id, {
-            callback: ep.done("pod"),
-        });
+        if (!pod.operate.exp_sys_state) {
+            pod.operate.exp_sys_state = inCpPod.opSysStateful;
+        }
 
-        inCp.TplFetch("pod/set-info", {
-            callback: ep.done("tpl"),
+        var rep_min = inCpPod.OpRepMin,
+            rep_max = inCpPod.OpRepMax;
+        for (var i in pod.apps) {
+            if (rep_min < pod.apps[i].spec.exp_deploy.rep_min) {
+                rep_min = pod.apps[i].spec.exp_deploy.rep_min;
+            }
+            if (rep_max > pod.apps[i].spec.exp_deploy.rep_max) {
+                rep_max = pod.apps[i].spec.exp_deploy.rep_max;
+            }
+        }
+
+        pod.spec._cpu_limit = (pod.spec.box.resources.cpu_limit / 10).toFixed(1);
+
+        var spec_summary = "ID: " + pod.spec.ref.id;
+        spec_summary += ", CPU: " + pod.spec._cpu_limit;
+        spec_summary += ", RAM: " + pod.spec._mem_limit + " MB";
+        spec_summary += ", Storage: " + pod.spec.vol_sys.size + " GB";
+
+        valueui.modal.open({
+            title: "Pod Instance Setup",
+            tplsrc: tpl,
+            width: 1000,
+            height: 450,
+            data: {
+                pod: pod,
+                _op_actions: actions,
+                _op_sys_states: valueui.utilx.objectClone(inCpPod.opSysStates),
+                _spec_summary: spec_summary,
+                _op_rep_min: rep_min,
+                _op_rep_max: rep_max,
+            },
+            buttons: [
+                {
+                    onclick: "valueui.modal.close()",
+                    title: "Close",
+                },
+                {
+                    onclick: "inCpPod.UserTransferView()",
+                    title: "Transfer Ownership",
+                },
+                {
+                    onclick: "inCpPod.SetInfoCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
+                },
+            ],
         });
+    });
+
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
+
+    inCp.ApiCmd("pod/entry?id=" + pod_id, {
+        callback: ep.done("pod"),
+    });
+
+    inCp.TplFetch("pod/set-info", {
+        callback: ep.done("tpl"),
+    });
 };
 
 inCpPod.SetInfoCommit = function () {
@@ -1130,40 +1133,40 @@ inCpPod.UserTransferView = function (pod_id) {
         return alert("No Pod Found");
     }
 
-        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
-            valueui.modal.open({
-                id: "pod-user-transfer",
-                title: "Transfer Ownership",
-                tplsrc: tpl,
-                height: 450,
-                data: {
-                    pod: pod,
+    var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
+        valueui.modal.open({
+            id: "pod-user-transfer",
+            title: "Transfer Ownership",
+            tplsrc: tpl,
+            height: 450,
+            data: {
+                pod: pod,
+            },
+            buttons: [
+                {
+                    onclick: "valueui.modal.close()",
+                    title: "Close",
                 },
-                buttons: [
-                    {
-                        onclick: "valueui.modal.close()",
-                        title: "Close",
-                    },
-                    {
-                        onclick: "inCpPod.UserTransferCommit()",
-                        title: "Perform Transfer",
-                        style: "btn btn-primary",
-                    },
-                ],
-            });
+                {
+                    onclick: "inCpPod.UserTransferCommit()",
+                    title: "Perform Transfer",
+                    style: "btn btn-primary",
+                },
+            ],
         });
+    });
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
 
-        inCp.ApiCmd("pod/entry?id=" + pod_id, {
-            callback: ep.done("pod"),
-        });
+    inCp.ApiCmd("pod/entry?id=" + pod_id, {
+        callback: ep.done("pod"),
+    });
 
-        inCp.TplFetch("pod/user-transfer", {
-            callback: ep.done("tpl"),
-        });
+    inCp.TplFetch("pod/user-transfer", {
+        callback: ep.done("tpl"),
+    });
 };
 
 inCpPod.UserTransferCommit = function () {
@@ -1195,7 +1198,9 @@ inCpPod.UserTransferCommit = function () {
 
             valueui.modal.footAlert(
                 "ok",
-                valueui.lang.T("Successfully Updated") + ", " + valueui.lang.T("msg-transter-ownership-confirm")
+                valueui.lang.T("Successfully Updated") +
+                    ", " +
+                    valueui.lang.T("msg-transter-ownership-confirm")
             );
 
             window.setTimeout(function () {
@@ -1214,36 +1219,36 @@ inCpPod.UserTransferPerform = function () {
         return alert("No Transfer Found");
     }
 
-        var ep = valueui.newEventProxy("tpl", function (tpl) {
-            valueui.modal.open({
-                title: "Transfer Ownership Requests",
-                tplsrc: tpl,
-                width: 900,
-                height: 450,
-                data: {
-                    items: inCpPod.userTransfers,
+    var ep = valueui.newEventProxy("tpl", function (tpl) {
+        valueui.modal.open({
+            title: "Transfer Ownership Requests",
+            tplsrc: tpl,
+            width: 900,
+            height: 450,
+            data: {
+                items: inCpPod.userTransfers,
+            },
+            buttons: [
+                {
+                    onclick: "valueui.modal.close()",
+                    title: "Close",
                 },
-                buttons: [
-                    {
-                        onclick: "valueui.modal.close()",
-                        title: "Close",
-                    },
-                    {
-                        onclick: "inCpPod.UserTransferPerformCommit()",
-                        title: "Perform Transfer",
-                        style: "btn btn-primary",
-                    },
-                ],
-            });
+                {
+                    onclick: "inCpPod.UserTransferPerformCommit()",
+                    title: "Perform Transfer",
+                    style: "btn btn-primary",
+                },
+            ],
         });
+    });
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
 
-        inCp.TplFetch("pod/user-transfer-perform", {
-            callback: ep.done("tpl"),
-        });
+    inCp.TplFetch("pod/user-transfer-perform", {
+        callback: ep.done("tpl"),
+    });
 };
 
 inCpPod.UserTransferPerformCommit = function () {
@@ -1308,43 +1313,43 @@ inCpPod.EntryDel = function (pod_id) {
         return alert("No Pod Found");
     }
 
-        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
-            if (!pod.apps) {
-                pod.apps = [];
-            }
+    var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
+        if (!pod.apps) {
+            pod.apps = [];
+        }
 
-            // This will result in permanent data loss.
-            valueui.modal.open({
-                title: "Pod Destroy",
-                tplsrc: tpl,
-                width: 800,
-                height: 300,
-                data: pod,
-                buttons: [
-                    {
-                        onclick: "valueui.modal.close()",
-                        title: "Close",
-                    },
-                    {
-                        onclick: "inCpPod.EntryDelCommit()",
-                        title: "Confirm to Destroy",
-                        style: "btn btn-danger",
-                    },
-                ],
-            });
+        // This will result in permanent data loss.
+        valueui.modal.open({
+            title: "Pod Destroy",
+            tplsrc: tpl,
+            width: 800,
+            height: 300,
+            data: pod,
+            buttons: [
+                {
+                    onclick: "valueui.modal.close()",
+                    title: "Close",
+                },
+                {
+                    onclick: "inCpPod.EntryDelCommit()",
+                    title: "Confirm to Destroy",
+                    style: "btn btn-danger",
+                },
+            ],
         });
+    });
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
 
-        inCp.ApiCmd("pod/entry?id=" + pod_id, {
-            callback: ep.done("pod"),
-        });
+    inCp.ApiCmd("pod/entry?id=" + pod_id, {
+        callback: ep.done("pod"),
+    });
 
-        inCp.TplFetch("pod/entry-del", {
-            callback: ep.done("tpl"),
-        });
+    inCp.TplFetch("pod/entry-del", {
+        callback: ep.done("tpl"),
+    });
 };
 
 inCpPod.EntryDelCommit = function () {
@@ -1383,86 +1388,86 @@ inCpPod.EntryDelCommit = function () {
 inCpPod.Set = function (pod_id) {
     var alert_id = "#incp-podset-alert";
 
-        var ep = valueui.newEventProxy(
-            "tpl",
-            "zones",
-            "specs",
-            "pod",
-            function (tpl, zones, specs, pod) {
-                if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                    return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-                }
-
-                if (!specs || !specs.kind || specs.kind != "PodSpecList") {
-                    return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-                }
-
-                if (!pod.kind || pod.kind != "Pod") {
-                    return valueui.alert.innerShow(alert_id, "error", "Pod Not Found");
-                }
-
-                pod._zones = zones;
-                pod._specs = specs;
-                pod._statusls = inCpPod.statussetls;
-
-                inCpPod.specs = specs;
-
-                valueui.modal.open({
-                    title: "Pod Instance Setting",
-                    tplsrc: tpl,
-                    width: 900,
-                    height: 600,
-                    buttons: [
-                        {
-                            onclick: "valueui.modal.close()",
-                            title: "Close",
-                        },
-                        {
-                            onclick: "inCpPod.SetCommit()",
-                            title: "Save",
-                            style: "btn btn-primary",
-                        },
-                    ],
-                    success: function () {
-                        valueui.template.render({
-                            dstid: "incp-podset",
-                            tplid: "incp-podset-tpl",
-                            data: pod,
-                            success: function () {
-                                if (pod.spec.meta.id != "") {
-                                    inCpPod.SetSpecRefresh(pod.spec.meta.id);
-                                } else {
-                                    for (var i in inCpPod.specs.items) {
-                                        inCpPod.SetSpecRefresh(inCpPod.specs.items[i].meta.id);
-
-                                        break;
-                                    }
-                                }
-                            },
-                        });
-                    },
-                });
+    var ep = valueui.newEventProxy(
+        "tpl",
+        "zones",
+        "specs",
+        "pod",
+        function (tpl, zones, specs, pod) {
+            if (!zones || !zones.kind || zones.kind != "HostZoneList") {
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
             }
-        );
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+            if (!specs || !specs.kind || specs.kind != "PodSpecList") {
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            }
 
-        // template
-        inCp.TplFetch("pod/set", {
-            callback: ep.done("tpl"),
-        });
+            if (!pod.kind || pod.kind != "Pod") {
+                return valueui.alert.innerShow(alert_id, "error", "Pod Not Found");
+            }
 
-        inCp.ApiCmd("spec/pod-list", {
-            callback: ep.done("specs"),
-        });
+            pod._zones = zones;
+            pod._specs = specs;
+            pod._statusls = inCpPod.statussetls;
 
-        inCpHost.ZoneRefresh(ep.done("zones"));
+            inCpPod.specs = specs;
 
-        inCp.ApiCmd("pod/entry?id=" + pod_id, {
-            callback: ep.done("pod"),
-        });
+            valueui.modal.open({
+                title: "Pod Instance Setting",
+                tplsrc: tpl,
+                width: 900,
+                height: 600,
+                buttons: [
+                    {
+                        onclick: "valueui.modal.close()",
+                        title: "Close",
+                    },
+                    {
+                        onclick: "inCpPod.SetCommit()",
+                        title: "Save",
+                        style: "btn btn-primary",
+                    },
+                ],
+                success: function () {
+                    valueui.template.render({
+                        dstid: "incp-podset",
+                        tplid: "incp-podset-tpl",
+                        data: pod,
+                        success: function () {
+                            if (pod.spec.meta.id != "") {
+                                inCpPod.SetSpecRefresh(pod.spec.meta.id);
+                            } else {
+                                for (var i in inCpPod.specs.items) {
+                                    inCpPod.SetSpecRefresh(inCpPod.specs.items[i].meta.id);
+
+                                    break;
+                                }
+                            }
+                        },
+                    });
+                },
+            });
+        }
+    );
+
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
+
+    // template
+    inCp.TplFetch("pod/set", {
+        callback: ep.done("tpl"),
+    });
+
+    inCp.ApiCmd("spec/pod-list", {
+        callback: ep.done("specs"),
+    });
+
+    inCpHost.ZoneRefresh(ep.done("zones"));
+
+    inCp.ApiCmd("pod/entry?id=" + pod_id, {
+        callback: ep.done("pod"),
+    });
 };
 
 inCpPod.SetCommit = function () {
@@ -1566,7 +1571,11 @@ inCpPod.EntryIndex = function (pod_id, nav_target) {
     inCp.ModuleNavbarMenu("cp/pod/entry", inCpPod.entry_nav_menus);
 
     valueui.url.eventClean("incp-module-navbar-menus");
-    valueui.url.eventRegister("pod/entry/overview", inCpPod.EntryOverview, "incp-module-navbar-menus");
+    valueui.url.eventRegister(
+        "pod/entry/overview",
+        inCpPod.EntryOverview,
+        "incp-module-navbar-menus"
+    );
     valueui.url.eventRegister("pod/entry/stats", inCpPod.EntryStats, "incp-module-navbar-menus");
 
     switch (nav_target) {
@@ -1589,113 +1598,113 @@ inCpPod.EntryOverview = function () {
         }
     }
 
-        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
-            if (!pod.operate.failover) {
-                pod.operate.failover = {};
+    var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
+        if (!pod.operate.failover) {
+            pod.operate.failover = {};
+        }
+        if (!pod.operate.failover.reps) {
+            pod.operate.failover.reps = [];
+        }
+        for (var i in pod.operate.failover.reps) {
+            if (!pod.operate.failover.reps[i].rep_id) {
+                pod.operate.failover.reps[i].rep_id = 0;
             }
-            if (!pod.operate.failover.reps) {
-                pod.operate.failover.reps = [];
-            }
-            for (var i in pod.operate.failover.reps) {
-                if (!pod.operate.failover.reps[i].rep_id) {
-                    pod.operate.failover.reps[i].rep_id = 0;
-                }
-            }
-            if (!pod.operate.exp_failovers) {
-                pod.operate.exp_failovers = [];
-            }
+        }
+        if (!pod.operate.exp_failovers) {
+            pod.operate.exp_failovers = [];
+        }
 
-            if (!pod.operate.replicas) {
-                pod.operate.replicas = [];
+        if (!pod.operate.replicas) {
+            pod.operate.replicas = [];
+        }
+        for (var i in pod.operate.replicas) {
+            if (!pod.operate.replicas[i].ports) {
+                pod.operate.replicas[i].ports = [];
             }
-            for (var i in pod.operate.replicas) {
-                if (!pod.operate.replicas[i].ports) {
-                    pod.operate.replicas[i].ports = [];
+            if (!pod.operate.replicas[i].rep_id) {
+                pod.operate.replicas[i].rep_id = 0;
+            }
+            for (var j in pod.operate.replicas[i].ports) {
+                if (!pod.operate.replicas[i].ports[j].host_port) {
+                    pod.operate.replicas[i].ports[j].host_port = 0;
                 }
-                if (!pod.operate.replicas[i].rep_id) {
-                    pod.operate.replicas[i].rep_id = 0;
+                if (!pod.operate.replicas[i].ports[j].lan_addr) {
+                    pod.operate.replicas[i].ports[j].lan_addr = "127.0.0.1";
                 }
-                for (var j in pod.operate.replicas[i].ports) {
-                    if (!pod.operate.replicas[i].ports[j].host_port) {
-                        pod.operate.replicas[i].ports[j].host_port = 0;
-                    }
-                    if (!pod.operate.replicas[i].ports[j].lan_addr) {
-                        pod.operate.replicas[i].ports[j].lan_addr = "127.0.0.1";
-                    }
-                    if (!pod.operate.replicas[i].ports[j].wan_addr) {
-                        pod.operate.replicas[i].ports[j].wan_addr =
-                            pod.operate.replicas[i].ports[j].lan_addr;
-                    }
-                }
-                for (var j in pod.operate.failover.reps) {
-                    if (pod.operate.replicas[i].rep_id == pod.operate.failover.reps[j].rep_id) {
-                        pod.operate.replicas[i]._failover_enable = true;
-                        break;
-                    }
+                if (!pod.operate.replicas[i].ports[j].wan_addr) {
+                    pod.operate.replicas[i].ports[j].wan_addr =
+                        pod.operate.replicas[i].ports[j].lan_addr;
                 }
             }
-            pod.spec._box_image_driver = pod.spec.box.image.driver;
-            pod.spec._cpu_limit = pod.spec.box.resources.cpu_limit;
-            pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
-
-            if (pod.payment && pod.payment.cycle_amount && pod.operate.replica_cap) {
-                pod.payment._cycle_amount = valueui.lang.T(
-                    "%.2f / Hour",
-                    pod.payment.cycle_amount * pod.operate.replica_cap
-                );
-            } else if (inCpPod.HookAccountChargeRefreshCache > 0) {
-                if (!pod.payment) {
-                    pod.payment = {};
-                }
-                pod.payment._cycle_amount = valueui.lang.T(
-                    "%.2f / Hour",
-                    inCpPod.HookAccountChargeRefreshCache * pod.operate.replica_cap
-                );
-            }
-
-            for (var i in inCpPod.opSysStates) {
-                if (inCpPod.opSysStates[i].value == pod.operate.exp_sys_state) {
-                    pod.operate._exp_sys_state_title = valueui.lang.T(inCpPod.opSysStates[i].title);
+            for (var j in pod.operate.failover.reps) {
+                if (pod.operate.replicas[i].rep_id == pod.operate.failover.reps[j].rep_id) {
+                    pod.operate.replicas[i]._failover_enable = true;
                     break;
                 }
             }
-            if (!pod.operate._exp_sys_state_title) {
-                pod.operate._exp_sys_state_title = valueui.lang.T("Stateful");
+        }
+        pod.spec._box_image_driver = pod.spec.box.image.driver;
+        pod.spec._cpu_limit = pod.spec.box.resources.cpu_limit;
+        pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
+
+        if (pod.payment && pod.payment.cycle_amount && pod.operate.replica_cap) {
+            pod.payment._cycle_amount = valueui.lang.T(
+                "%.2f / Hour",
+                pod.payment.cycle_amount * pod.operate.replica_cap
+            );
+        } else if (inCpPod.HookAccountChargeRefreshCache > 0) {
+            if (!pod.payment) {
+                pod.payment = {};
             }
+            pod.payment._cycle_amount = valueui.lang.T(
+                "%.2f / Hour",
+                inCpPod.HookAccountChargeRefreshCache * pod.operate.replica_cap
+            );
+        }
 
-            inCp.OpToolsClean();
-            $("#work-content").html(tpl);
+        for (var i in inCpPod.opSysStates) {
+            if (inCpPod.opSysStates[i].value == pod.operate.exp_sys_state) {
+                pod.operate._exp_sys_state_title = valueui.lang.T(inCpPod.opSysStates[i].title);
+                break;
+            }
+        }
+        if (!pod.operate._exp_sys_state_title) {
+            pod.operate._exp_sys_state_title = valueui.lang.T("Stateful");
+        }
 
-            inCpPod.itemActive = pod;
+        inCp.OpToolsClean();
+        $("#work-content").html(tpl);
 
-            valueui.template.render({
-                dstid: "incp-podentry-overview",
-                tplid: "incp-podentry-overview-info-tpl",
-                data: pod,
-            });
+        inCpPod.itemActive = pod;
 
-            setTimeout(inCpPod.entryAutoRefresh, 500);
+        valueui.template.render({
+            dstid: "incp-podentry-overview",
+            tplid: "incp-podentry-overview-info-tpl",
+            data: pod,
         });
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+        setTimeout(inCpPod.entryAutoRefresh, 500);
+    });
 
-        inCp.ApiCmd("pod/entry?id=" + inCpPod.itemActiveId, {
-            api_zone_id: pod_zone_id,
-            callback: ep.done("pod"),
-        });
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
 
-        /**
+    inCp.ApiCmd("pod/entry?id=" + inCpPod.itemActiveId, {
+        api_zone_id: pod_zone_id,
+        callback: ep.done("pod"),
+    });
+
+    /**
         inCp.ApiCmd("pod/status?id=" + inCpPod.itemActiveId, {
             api_zone_id: pod_zone_id,
             callback: ep.done("podStatus"),
         });
         */
 
-        inCp.TplFetch("pod/entry-overview", {
-            callback: ep.done("tpl"),
-        });
+    inCp.TplFetch("pod/entry-overview", {
+        callback: ep.done("tpl"),
+    });
 };
 
 inCpPod.EntryRepOpLogActive = function (rep_id) {
@@ -1721,6 +1730,10 @@ inCpPod.entryAutoRefresh = function () {
     inCp.ApiCmd("pod/status?id=" + inCpPod.itemActiveId, {
         api_zone_id: inCpPod.itemActive.spec.zone,
         callback: function (err, data) {
+            var el = document.getElementById("incp-podentry-status-value");
+            if (!el || !inCpPod.itemActiveId) {
+                return;
+            }
             if (err || !data || data.error || !data.kind) {
                 setTimeout(inCpPod.entryAutoRefresh, 5000);
                 return;
@@ -1974,39 +1987,39 @@ inCpPod.EntryStats = function (time_past, rep_id) {
     }
 
     stats_url += "&qry=" + btoa(JSON.stringify(stats_query));
-        var ep = valueui.newEventProxy("tpl", "pod", "stats", function (tpl, pod, stats) {
-            if (tpl) {
-                $("#work-content").html(tpl);
-                $(".incp-podentry-stats-item").css({
-                    "flex-basis": ww + "px",
-                });
-                inCp.OpToolsRefresh("#incp-podentry-optools-stats");
-            }
+    var ep = valueui.newEventProxy("tpl", "pod", "stats", function (tpl, pod, stats) {
+        if (tpl) {
+            $("#work-content").html(tpl);
+            $(".incp-podentry-stats-item").css({
+                "flex-basis": ww + "px",
+            });
+            inCp.OpToolsRefresh("#incp-podentry-optools-stats");
+        }
 
-            var max = 0;
-            var tc_title = stats.cycle + " seconds";
-            var tc_ns = stats.cycle * 1000000000;
-            if (stats.cycle >= 86400 && stats.cycle % 86400 == 0) {
-                tc_title = stats.cycle / 86400 + " Day";
-                if (stats.cycle > 86400) {
-                    tc_title += "s";
-                }
-            } else if (stats.cycle >= 3600 && stats.cycle % 3600 == 0) {
-                tc_title = stats.cycle / 3600 + " Hour";
-                if (stats.cycle > 3600) {
-                    tc_title += "s";
-                }
-            } else if (stats.cycle >= 60 && stats.cycle % 60 == 0) {
-                tc_title = stats.cycle / 60 + " Minute";
-                if (stats.cycle > 60) {
-                    tc_title += "s";
-                }
+        var max = 0;
+        var tc_title = stats.cycle + " seconds";
+        var tc_ns = stats.cycle * 1000000000;
+        if (stats.cycle >= 86400 && stats.cycle % 86400 == 0) {
+            tc_title = stats.cycle / 86400 + " Day";
+            if (stats.cycle > 86400) {
+                tc_title += "s";
             }
+        } else if (stats.cycle >= 3600 && stats.cycle % 3600 == 0) {
+            tc_title = stats.cycle / 3600 + " Hour";
+            if (stats.cycle > 3600) {
+                tc_title += "s";
+            }
+        } else if (stats.cycle >= 60 && stats.cycle % 60 == 0) {
+            tc_title = stats.cycle / 60 + " Minute";
+            if (stats.cycle > 60) {
+                tc_title += "s";
+            }
+        }
 
-            //
-            var stats_cpu = valueui.utilx.objectClone(inCpPod.hchart_def);
-            stats_cpu.options.title = valueui.lang.T("CPU Usage (Percentage / %s)", tc_title);
-            /**
+        //
+        var stats_cpu = valueui.utilx.objectClone(inCpPod.hchart_def);
+        stats_cpu.options.title = valueui.lang.T("CPU Usage (Percentage / %s)", tc_title);
+        /**
                 max = inCpPod.entryStatsFeedMaxValue(stats, "cpu/us");
                 if (max > 1000000000) {
                     stats_cpu.options.title = valueui.lang.T("CPU (Seconds / %s)", tc_title);
@@ -2022,215 +2035,214 @@ inCpPod.EntryStats = function (time_past, rep_id) {
                 }
             */
 
-            //
-            var stats_ram = valueui.utilx.objectClone(inCpPod.hchart_def);
-            stats_ram.options.title = valueui.lang.T("Memory Usage (MB)");
-            stats_ram._fix = 1024 * 1024;
+        //
+        var stats_ram = valueui.utilx.objectClone(inCpPod.hchart_def);
+        stats_ram.options.title = valueui.lang.T("Memory Usage (MB)");
+        stats_ram._fix = 1024 * 1024;
 
-            //
-            var stats_net = valueui.utilx.objectClone(inCpPod.hchart_def);
-            max = inCpPod.entryStatsFeedMaxValue(stats, "net/rs,net/ws");
-            if (max > 1024 * 1024) {
-                stats_net.options.title = valueui.lang.T("Network Bytes (MB / %s)", tc_title);
-                stats_net._fix = 1024 * 1024;
-            } else if (max > 1024) {
-                stats_net.options.title = valueui.lang.T("Network Bytes (KB / %s)", tc_title);
-                stats_net._fix = 1024;
-            } else {
-                stats_net.options.title = valueui.lang.T("Network Bytes (Bytes / %s)", tc_title);
-            }
+        //
+        var stats_net = valueui.utilx.objectClone(inCpPod.hchart_def);
+        max = inCpPod.entryStatsFeedMaxValue(stats, "net/rs,net/ws");
+        if (max > 1024 * 1024) {
+            stats_net.options.title = valueui.lang.T("Network Bytes (MB / %s)", tc_title);
+            stats_net._fix = 1024 * 1024;
+        } else if (max > 1024) {
+            stats_net.options.title = valueui.lang.T("Network Bytes (KB / %s)", tc_title);
+            stats_net._fix = 1024;
+        } else {
+            stats_net.options.title = valueui.lang.T("Network Bytes (Bytes / %s)", tc_title);
+        }
 
-            //
-            var stats_fsn = valueui.utilx.objectClone(inCpPod.hchart_def);
-            stats_fsn.options.title = valueui.lang.T("Storage IO (Number / %s)", tc_title);
+        //
+        var stats_fsn = valueui.utilx.objectClone(inCpPod.hchart_def);
+        stats_fsn.options.title = valueui.lang.T("Storage IO (Number / %s)", tc_title);
 
-            //
-            var stats_fss = valueui.utilx.objectClone(inCpPod.hchart_def);
-            max = inCpPod.entryStatsFeedMaxValue(stats, "fs/rs,fs/ws");
-            if (max > 1024 * 1024) {
-                stats_fss.options.title = valueui.lang.T("Storage IO Bytes (MB / %s)", tc_title);
-                stats_fss._fix = 1024 * 1024;
-            } else if (max > 1024) {
-                stats_fss.options.title = valueui.lang.T("Storage IO Bytes (KB / %s)", tc_title);
-                stats_fss._fix = 1024;
-            } else {
-                stats_fss.options.title = valueui.lang.T("Storage IO Bytes (Bytes / %s)", tc_title);
-            }
+        //
+        var stats_fss = valueui.utilx.objectClone(inCpPod.hchart_def);
+        max = inCpPod.entryStatsFeedMaxValue(stats, "fs/rs,fs/ws");
+        if (max > 1024 * 1024) {
+            stats_fss.options.title = valueui.lang.T("Storage IO Bytes (MB / %s)", tc_title);
+            stats_fss._fix = 1024 * 1024;
+        } else if (max > 1024) {
+            stats_fss.options.title = valueui.lang.T("Storage IO Bytes (KB / %s)", tc_title);
+            stats_fss._fix = 1024;
+        } else {
+            stats_fss.options.title = valueui.lang.T("Storage IO Bytes (Bytes / %s)", tc_title);
+        }
 
-            for (var i in stats.items) {
-                var v = stats.items[i];
-                var dataset = {
-                    data: [],
-                };
-                var labels = [];
-                var fix = 1;
-                switch (v.name) {
-                    case "cpu/us":
-                        /**
+        for (var i in stats.items) {
+            var v = stats.items[i];
+            var dataset = {
+                data: [],
+            };
+            var labels = [];
+            var fix = 1;
+            switch (v.name) {
+                case "cpu/us":
+                    /**
                                         if (stats_cpu._fix && stats_cpu._fix > 1) {
                                             fix = stats_cpu._fix;
                                         }
                         */
-                        fix = tc_ns / 100;
-                        break;
+                    fix = tc_ns / 100;
+                    break;
 
-                    case "ram/us":
-                    case "ram/cc":
-                        if (stats_ram._fix && stats_ram._fix > 1) {
-                            fix = stats_ram._fix;
-                        }
-                        break;
-
-                    case "net/rs":
-                    case "net/ws":
-                        if (stats_net._fix && stats_net._fix > 1) {
-                            fix = stats_net._fix;
-                        }
-                        break;
-
-                    case "fs/rs":
-                    case "fs/ws":
-                        if (stats_fss._fix && stats_fss._fix > 1) {
-                            fix = stats_fss._fix;
-                        }
-                        break;
-                }
-
-                for (var j in v.items) {
-                    var v2 = v.items[j];
-
-                    // var t = new Date(v2.time * 1000);
-                    // labels.push(t.l4iTimeFormat(tfmt));
-                    labels.push(valueui.utilx.unixTimeFormat(v2.time, tfmt));
-                    
-
-                    if (!v2.value) {
-                        v2.value = 0;
+                case "ram/us":
+                case "ram/cc":
+                    if (stats_ram._fix && stats_ram._fix > 1) {
+                        fix = stats_ram._fix;
                     }
+                    break;
 
-                    if (fix > 1) {
-                        v2.value = (v2.value / fix).toFixed(2);
+                case "net/rs":
+                case "net/ws":
+                    if (stats_net._fix && stats_net._fix > 1) {
+                        fix = stats_net._fix;
                     }
+                    break;
 
-                    dataset.data.push(v2.value);
-                }
-
-                switch (v.name) {
-                    case "cpu/us":
-                        stats_cpu.data.labels = labels;
-                        dataset.label = "Usage";
-                        stats_cpu.data.datasets.push(dataset);
-                        break;
-
-                    case "ram/us":
-                        stats_ram.data.labels = labels;
-                        dataset.label = "Usage";
-                        stats_ram.data.datasets.push(dataset);
-                        break;
-
-                    case "ram/cc":
-                        stats_ram.data.labels = labels;
-                        dataset.label = "Cache";
-                        stats_ram.data.datasets.push(dataset);
-                        break;
-
-                    case "net/rs":
-                        stats_net.data.labels = labels;
-                        dataset.label = "Read";
-                        stats_net.data.datasets.push(dataset);
-                        break;
-
-                    case "net/ws":
-                        stats_net.data.labels = labels;
-                        dataset.label = "Send";
-                        stats_net.data.datasets.push(dataset);
-                        break;
-
-                    case "fs/rs":
-                        stats_fss.data.labels = labels;
-                        dataset.label = "Read";
-                        stats_fss.data.datasets.push(dataset);
-                        break;
-
-                    case "fs/ws":
-                        stats_fss.data.labels = labels;
-                        dataset.label = "Write";
-                        stats_fss.data.datasets.push(dataset);
-                        break;
-
-                    case "fs/rn":
-                        stats_fsn.data.labels = labels;
-                        dataset.label = "Read";
-                        stats_fsn.data.datasets.push(dataset);
-                        break;
-
-                    case "fs/wn":
-                        stats_fsn.data.labels = labels;
-                        dataset.label = "Write";
-                        stats_fsn.data.datasets.push(dataset);
-                        break;
-                }
+                case "fs/rs":
+                case "fs/ws":
+                    if (stats_fss._fix && stats_fss._fix > 1) {
+                        fix = stats_fss._fix;
+                    }
+                    break;
             }
 
-            var statses = [
-                {
-                    data: stats_cpu,
-                    target: "cpu",
-                },
-                {
-                    data: stats_ram,
-                    target: "ram",
-                },
-                {
-                    data: stats_net,
-                    target: "net",
-                },
-                {
-                    data: stats_fss,
-                    target: "fss",
-                },
-                {
-                    data: stats_fsn,
-                    target: "fsn",
-                },
-            ];
+            for (var j in v.items) {
+                var v2 = v.items[j];
 
-            valueui.template.render({
-                dstid: "incp-podentry-stats-list",
-                tplid: "incp-podentry-stats-item-tpl",
-                data: {
-                    items: statses,
-                    pod: inCpPod.itemActive,
-                    _pod_rep_id: rep_id,
-                },
-                callback: function () {
-                    for (var i in statses) {
-                        statses[i].data.options.title = "";
-                        hooto_chart.RenderElement(
-                            statses[i].data,
-                            "incp-podentry-stats-" + statses[i].target
-                        );
-                    }
-                },
-            });
-        });
+                // var t = new Date(v2.time * 1000);
+                // labels.push(t.l4iTimeFormat(tfmt));
+                labels.push(valueui.utilx.unixTimeFormat(v2.time, tfmt));
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+                if (!v2.value) {
+                    v2.value = 0;
+                }
 
-        inCp.ApiCmd("pod/entry?id=" + inCpPod.itemActiveId, {
-            callback: ep.done("pod"),
-        });
+                if (fix > 1) {
+                    v2.value = (v2.value / fix).toFixed(2);
+                }
 
-        inCp.ApiCmd("pod-stats/feed?" + stats_url, {
-            api_zone_id: pod_zone_id,
-            callback: ep.done("stats"),
-        });
+                dataset.data.push(v2.value);
+            }
 
-        inCp.TplFetch("pod/entry-stats", {
-            callback: ep.done("tpl"),
+            switch (v.name) {
+                case "cpu/us":
+                    stats_cpu.data.labels = labels;
+                    dataset.label = "Usage";
+                    stats_cpu.data.datasets.push(dataset);
+                    break;
+
+                case "ram/us":
+                    stats_ram.data.labels = labels;
+                    dataset.label = "Usage";
+                    stats_ram.data.datasets.push(dataset);
+                    break;
+
+                case "ram/cc":
+                    stats_ram.data.labels = labels;
+                    dataset.label = "Cache";
+                    stats_ram.data.datasets.push(dataset);
+                    break;
+
+                case "net/rs":
+                    stats_net.data.labels = labels;
+                    dataset.label = "Read";
+                    stats_net.data.datasets.push(dataset);
+                    break;
+
+                case "net/ws":
+                    stats_net.data.labels = labels;
+                    dataset.label = "Send";
+                    stats_net.data.datasets.push(dataset);
+                    break;
+
+                case "fs/rs":
+                    stats_fss.data.labels = labels;
+                    dataset.label = "Read";
+                    stats_fss.data.datasets.push(dataset);
+                    break;
+
+                case "fs/ws":
+                    stats_fss.data.labels = labels;
+                    dataset.label = "Write";
+                    stats_fss.data.datasets.push(dataset);
+                    break;
+
+                case "fs/rn":
+                    stats_fsn.data.labels = labels;
+                    dataset.label = "Read";
+                    stats_fsn.data.datasets.push(dataset);
+                    break;
+
+                case "fs/wn":
+                    stats_fsn.data.labels = labels;
+                    dataset.label = "Write";
+                    stats_fsn.data.datasets.push(dataset);
+                    break;
+            }
+        }
+
+        var statses = [
+            {
+                data: stats_cpu,
+                target: "cpu",
+            },
+            {
+                data: stats_ram,
+                target: "ram",
+            },
+            {
+                data: stats_net,
+                target: "net",
+            },
+            {
+                data: stats_fss,
+                target: "fss",
+            },
+            {
+                data: stats_fsn,
+                target: "fsn",
+            },
+        ];
+
+        valueui.template.render({
+            dstid: "incp-podentry-stats-list",
+            tplid: "incp-podentry-stats-item-tpl",
+            data: {
+                items: statses,
+                pod: inCpPod.itemActive,
+                _pod_rep_id: rep_id,
+            },
+            callback: function () {
+                for (var i in statses) {
+                    statses[i].data.options.title = "";
+                    hooto_chart.RenderElement(
+                        statses[i].data,
+                        "incp-podentry-stats-" + statses[i].target
+                    );
+                }
+            },
         });
+    });
+
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
+
+    inCp.ApiCmd("pod/entry?id=" + inCpPod.itemActiveId, {
+        callback: ep.done("pod"),
+    });
+
+    inCp.ApiCmd("pod-stats/feed?" + stats_url, {
+        api_zone_id: pod_zone_id,
+        callback: ep.done("stats"),
+    });
+
+    inCp.TplFetch("pod/entry-stats", {
+        callback: ep.done("tpl"),
+    });
 };
 
 inCpPod.EntryAccess = function (pod_id) {
@@ -2241,53 +2253,53 @@ inCpPod.EntryAccess = function (pod_id) {
         return alert("No Pod Found");
     }
 
-        var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
-            var actions = [];
-            if (!pod.operate.access) {
-                pod.operate.access = valueui.utilx.objectClone(inCpPod.itemOperateAccessDef);
-            }
-            if (!pod.operate.access.ssh_key) {
-                pod.operate.access.ssh_key = "";
-            }
-            if (!pod.operate.access.ssh_pwd) {
-                pod.operate.access.ssh_pwd = "";
-            } else if (pod.operate.access.ssh_pwd.length > 0) {
-                pod.operate.access.ssh_pwd = "********";
-            }
-            valueui.modal.open({
-                title: "Remote Access",
-                tplsrc: tpl,
-                width: 900,
-                height: 500,
-                data: pod,
-                buttons: [
-                    {
-                        onclick: "valueui.modal.close()",
-                        title: "Close",
-                    },
-                    {
-                        onclick: "inCpPod.EntryAccessSetCommit()",
-                        title: "Save",
-                        style: "btn btn-primary",
-                    },
-                ],
-                callback: function () {
-                    inCpPod.EntryAccessSshRefresh();
+    var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
+        var actions = [];
+        if (!pod.operate.access) {
+            pod.operate.access = valueui.utilx.objectClone(inCpPod.itemOperateAccessDef);
+        }
+        if (!pod.operate.access.ssh_key) {
+            pod.operate.access.ssh_key = "";
+        }
+        if (!pod.operate.access.ssh_pwd) {
+            pod.operate.access.ssh_pwd = "";
+        } else if (pod.operate.access.ssh_pwd.length > 0) {
+            pod.operate.access.ssh_pwd = "********";
+        }
+        valueui.modal.open({
+            title: "Remote Access",
+            tplsrc: tpl,
+            width: 900,
+            height: 500,
+            data: pod,
+            buttons: [
+                {
+                    onclick: "valueui.modal.close()",
+                    title: "Close",
                 },
-            });
+                {
+                    onclick: "inCpPod.EntryAccessSetCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
+                },
+            ],
+            callback: function () {
+                inCpPod.EntryAccessSshRefresh();
+            },
         });
+    });
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
 
-        inCp.ApiCmd("pod/entry?id=" + pod_id, {
-            callback: ep.done("pod"),
-        });
+    inCp.ApiCmd("pod/entry?id=" + pod_id, {
+        callback: ep.done("pod"),
+    });
 
-        inCp.TplFetch("pod/entry-access", {
-            callback: ep.done("tpl"),
-        });
+    inCp.TplFetch("pod/entry-access", {
+        callback: ep.done("tpl"),
+    });
 };
 
 inCpPod.EntryAccessSshRefresh = function () {
@@ -2376,180 +2388,182 @@ inCpPod.SpecSet = function (pod_id) {
 
     var alert_id = "#incp-podnew-alert";
 
-        var ep = valueui.newEventProxy(
-            "tpl",
-            "pod",
-            "zones",
-            "plans",
-            function (tpl, pod, zones, plans) {
-                if (!pod || !pod.kind || pod.kind != "Pod" || !pod.spec.box) {
-                    return valueui.alert.open("error", "No Pod Found");
-                }
+    var ep = valueui.newEventProxy(
+        "tpl",
+        "pod",
+        "zones",
+        "plans",
+        function (tpl, pod, zones, plans) {
+            if (!pod || !pod.kind || pod.kind != "Pod" || !pod.spec.box) {
+                return valueui.alert.open("error", "No Pod Found");
+            }
 
-                if (!zones || !zones.kind || zones.kind != "HostZoneList") {
-                    return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-                }
-                inCpPod.syszones = zones;
+            if (!zones || !zones.kind || zones.kind != "HostZoneList") {
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            }
+            inCpPod.syszones = zones;
 
-                if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
-                    return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-                }
+            if (!plans || !plans.kind || plans.kind != "PodSpecPlanList") {
+                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            }
 
-                if (!pod.spec.vol_sys) {
-                    return valueui.alert.open("error", "Invalid Pod Spec");
-                }
+            if (!pod.spec.vol_sys) {
+                return valueui.alert.open("error", "Invalid Pod Spec");
+            }
 
-                var spec_res_id = pod.spec.box.resources.ref.id,
-                    spec_vol_id = pod.spec.vol_sys.ref_id,
-                    spec_vol_size = pod.spec.vol_sys.size,
-                    spec_image_id = pod.spec.box.image.ref.id,
-                    spec_image_driver = pod.spec.box.image.driver;
+            var spec_res_id = pod.spec.box.resources.ref.id,
+                spec_vol_id = pod.spec.vol_sys.ref_id,
+                spec_vol_size = pod.spec.vol_sys.size,
+                spec_image_id = pod.spec.box.image.ref.id,
+                spec_image_driver = pod.spec.box.image.driver;
 
-                var _plans = [];
-                for (var i in plans.items) {
-                    for (var j in plans.items[i].zones) {
-                        if (pod.spec.ref.id == plans.items[i].meta.id) {
-                            plans.items[i].res_compute_default = spec_res_id;
-                            plans.items[i].image_default = spec_image_id;
-                            plans.items[i].image_driver = spec_image_driver;
-                            plans.items[i].res_volume_default = spec_vol_id;
-                            for (var k in plans.items[i].res_volumes) {
-                                if (plans.items[i].res_volumes[k].ref_id == spec_vol_id) {
-                                    plans.items[i].res_volumes[k].default = spec_vol_size;
-                                    break;
-                                }
+            var _plans = [];
+            for (var i in plans.items) {
+                for (var j in plans.items[i].zones) {
+                    if (pod.spec.ref.id == plans.items[i].meta.id) {
+                        plans.items[i].res_compute_default = spec_res_id;
+                        plans.items[i].image_default = spec_image_id;
+                        plans.items[i].image_driver = spec_image_driver;
+                        plans.items[i].res_volume_default = spec_vol_id;
+                        for (var k in plans.items[i].res_volumes) {
+                            if (plans.items[i].res_volumes[k].ref_id == spec_vol_id) {
+                                plans.items[i].res_volumes[k].default = spec_vol_size;
+                                break;
                             }
                         }
-                        if (
-                            pod.spec.zone == plans.items[i].zones[j].name &&
-                            plans.items[i].zones[j].cells &&
-                            plans.items[i].zones[j].cells.indexOf(pod.spec.cell) > -1
-                        ) {
-                            plans.items[i].zones = [
-                                {
-                                    name: pod.spec.zone,
-                                    cells: [pod.spec.cell],
-                                },
-                            ];
-                            _plans.push(plans.items[i]);
-                            break;
-                        }
                     }
-                }
-                if (_plans.length < 1) {
-                    return valueui.alert.open("error", "no available spec found");
-                }
-                plans.items = _plans;
-
-                pod._plans = plans;
-                pod._plan_selected = pod.spec.ref.id;
-
-                pod._image_selected = spec_image_id;
-                pod._image_driver = spec_image_driver;
-
-                inCpPod.specSetActive = pod;
-
-                inCpPod.plans = plans;
-                inCpPod.planSelected = pod._plan_selected;
-
-                var options = {
-                    app_runtime_images: [],
-                };
-                for (var i in pod.apps) {
                     if (
-                        !pod.apps[i].spec.runtime_images ||
-                        pod.apps[i].spec.runtime_images.length < 1
+                        pod.spec.zone == plans.items[i].zones[j].name &&
+                        plans.items[i].zones[j].cells &&
+                        plans.items[i].zones[j].cells.indexOf(pod.spec.cell) > -1
                     ) {
-                        continue;
-                    }
-                    if (options.app_runtime_images.length == 0) {
-                        options.app_runtime_images = valueui.utilx.objectClone(pod.apps[i].spec.runtime_images);
-                    } else {
-                        var app_runtime_images_merges = [];
-                        for (var j in pod.apps[i].spec.runtime_images) {
-                            if (
-                                inCp.ArrayStringHas(
-                                    options.app_runtime_images,
-                                    pod.apps[i].spec.runtime_images[i]
-                                )
-                            ) {
-                                app_runtime_images_merges.push(pod.apps[i].spec.runtime_images[i]);
-                            }
-                        }
-                        options.app_runtime_images = app_runtime_images_merges; // TODO issue!
+                        plans.items[i].zones = [
+                            {
+                                name: pod.spec.zone,
+                                cells: [pod.spec.cell],
+                            },
+                        ];
+                        _plans.push(plans.items[i]);
+                        break;
                     }
                 }
+            }
+            if (_plans.length < 1) {
+                return valueui.alert.open("error", "no available spec found");
+            }
+            plans.items = _plans;
 
-                inCpPod.itemNewOptions = options;
+            pod._plans = plans;
+            pod._plan_selected = pod.spec.ref.id;
 
-                var fnfre = function () {
+            pod._image_selected = spec_image_id;
+            pod._image_driver = spec_image_driver;
+
+            inCpPod.specSetActive = pod;
+
+            inCpPod.plans = plans;
+            inCpPod.planSelected = pod._plan_selected;
+
+            var options = {
+                app_runtime_images: [],
+            };
+            for (var i in pod.apps) {
+                if (
+                    !pod.apps[i].spec.runtime_images ||
+                    pod.apps[i].spec.runtime_images.length < 1
+                ) {
+                    continue;
+                }
+                if (options.app_runtime_images.length == 0) {
+                    options.app_runtime_images = valueui.utilx.objectClone(
+                        pod.apps[i].spec.runtime_images
+                    );
+                } else {
+                    var app_runtime_images_merges = [];
+                    for (var j in pod.apps[i].spec.runtime_images) {
+                        if (
+                            inCp.ArrayStringHas(
+                                options.app_runtime_images,
+                                pod.apps[i].spec.runtime_images[i]
+                            )
+                        ) {
+                            app_runtime_images_merges.push(pod.apps[i].spec.runtime_images[i]);
+                        }
+                    }
+                    options.app_runtime_images = app_runtime_images_merges; // TODO issue!
+                }
+            }
+
+            inCpPod.itemNewOptions = options;
+
+            var fnfre = function () {
+                valueui.template.render({
+                    dstid: "incp-podnew-plans",
+                    tplid: "incp-podnew-plans-tpl",
+                    data: {
+                        items: inCpPod.plans.items,
+                        _plan_selected: inCpPod.planSelected,
+                        _options: options,
+                    },
+                });
+                inCpPod.NewRefreshPlan();
+            };
+            // console.log(options);
+
+            valueui.modal.open({
+                id: "podset-planset",
+                tplsrc: tpl,
+                title: "Setting Pod Spec",
+                width: 1200,
+                min_width: 900,
+                height: 900,
+                callback: function () {
                     valueui.template.render({
-                        dstid: "incp-podnew-plans",
-                        tplid: "incp-podnew-plans-tpl",
+                        dstid: "incp-podnew-form",
+                        tplid: "incp-podnew-modal",
                         data: {
                             items: inCpPod.plans.items,
                             _plan_selected: inCpPod.planSelected,
                             _options: options,
                         },
+                        callback: fnfre,
                     });
-                    inCpPod.NewRefreshPlan();
-                };
-                // console.log(options);
-
-                valueui.modal.open({
-                    id: "podset-planset",
-                    tplsrc: tpl,
-                    title: "Setting Pod Spec",
-                    width: 1200,
-                    min_width: 900,
-                    height: 900,
-                    callback: function () {
-                        valueui.template.render({
-                            dstid: "incp-podnew-form",
-                            tplid: "incp-podnew-modal",
-                            data: {
-                                items: inCpPod.plans.items,
-                                _plan_selected: inCpPod.planSelected,
-                                _options: options,
-                            },
-                            callback: fnfre,
-                        });
+                },
+                buttons: [
+                    {
+                        onclick: "valueui.modal.close()",
+                        title: "Close",
                     },
-                    buttons: [
-                        {
-                            onclick: "valueui.modal.close()",
-                            title: "Close",
-                        },
-                        {
-                            onclick: "inCpPod.SpecSetCommit()",
-                            title: "Save",
-                            style: "btn btn-primary",
-                        },
-                    ],
-                });
-            }
-        );
+                    {
+                        onclick: "inCpPod.SpecSetCommit()",
+                        title: "Save",
+                        style: "btn btn-primary",
+                    },
+                ],
+            });
+        }
+    );
 
-        ep.fail(function (err) {
-            alert("Network Connection Error, Please try again later (EC:incp-pod)");
-        });
+    ep.fail(function (err) {
+        alert("Network Connection Error, Please try again later (EC:incp-pod)");
+    });
 
-        // template
-        inCp.TplFetch("pod/plan-set", {
-            callback: ep.done("tpl"),
-        });
+    // template
+    inCp.TplFetch("pod/plan-set", {
+        callback: ep.done("tpl"),
+    });
 
-        inCp.ApiCmd("pod/entry?id=" + pod_id, {
-            callback: ep.done("pod"),
-        });
+    inCp.ApiCmd("pod/entry?id=" + pod_id, {
+        callback: ep.done("pod"),
+    });
 
-        inCp.ApiCmd("pod-spec/plan-list", {
-            callback: ep.done("plans"),
-        });
+    inCp.ApiCmd("pod-spec/plan-list", {
+        callback: ep.done("plans"),
+    });
 
-        inCp.ApiCmd("host/zone-list?fields=cells", {
-            callback: ep.done("zones"),
-        });
+    inCp.ApiCmd("host/zone-list?fields=cells", {
+        callback: ep.done("zones"),
+    });
 };
 
 inCpPod.SpecSetCommit = function () {

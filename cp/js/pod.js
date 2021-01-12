@@ -1589,6 +1589,82 @@ inCpPod.EntryIndex = function (pod_id, nav_target) {
     }
 };
 
+inCpPod.entryDataFix = function (pod) {
+    if (!pod.operate.failover) {
+        pod.operate.failover = {};
+    }
+    if (!pod.operate.failover.reps) {
+        pod.operate.failover.reps = [];
+    }
+    for (var i in pod.operate.failover.reps) {
+        if (!pod.operate.failover.reps[i].rep_id) {
+            pod.operate.failover.reps[i].rep_id = 0;
+        }
+    }
+    if (!pod.operate.exp_failovers) {
+        pod.operate.exp_failovers = [];
+    }
+
+    if (!pod.operate.replicas) {
+        pod.operate.replicas = [];
+    }
+    for (var i in pod.operate.replicas) {
+        if (!pod.operate.replicas[i].ports) {
+            pod.operate.replicas[i].ports = [];
+        }
+        if (!pod.operate.replicas[i].rep_id) {
+            pod.operate.replicas[i].rep_id = 0;
+        }
+        for (var j in pod.operate.replicas[i].ports) {
+            if (!pod.operate.replicas[i].ports[j].host_port) {
+                pod.operate.replicas[i].ports[j].host_port = 0;
+            }
+            if (!pod.operate.replicas[i].ports[j].lan_addr) {
+                pod.operate.replicas[i].ports[j].lan_addr = "127.0.0.1";
+            }
+            if (!pod.operate.replicas[i].ports[j].wan_addr) {
+                pod.operate.replicas[i].ports[j].wan_addr =
+                    pod.operate.replicas[i].ports[j].lan_addr;
+            }
+        }
+        for (var j in pod.operate.failover.reps) {
+            if (pod.operate.replicas[i].rep_id == pod.operate.failover.reps[j].rep_id) {
+                pod.operate.replicas[i]._failover_enable = true;
+                break;
+            }
+        }
+    }
+    pod.spec._box_image_driver = pod.spec.box.image.driver;
+    pod.spec._cpu_limit = pod.spec.box.resources.cpu_limit;
+    pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
+
+    if (pod.payment && pod.payment.cycle_amount && pod.operate.replica_cap) {
+        pod.payment._cycle_amount = valueui.lang.T(
+            "%.2f / Hour",
+            pod.payment.cycle_amount * pod.operate.replica_cap
+        );
+    } else if (inCpPod.HookAccountChargeRefreshCache > 0) {
+        if (!pod.payment) {
+            pod.payment = {};
+        }
+        pod.payment._cycle_amount = valueui.lang.T(
+            "%.2f / Hour",
+            inCpPod.HookAccountChargeRefreshCache * pod.operate.replica_cap
+        );
+    }
+
+    for (var i in inCpPod.opSysStates) {
+        if (inCpPod.opSysStates[i].value == pod.operate.exp_sys_state) {
+            pod.operate._exp_sys_state_title = valueui.lang.T(inCpPod.opSysStates[i].title);
+            break;
+        }
+    }
+    if (!pod.operate._exp_sys_state_title) {
+        pod.operate._exp_sys_state_title = valueui.lang.T("Stateful");
+    }
+    return pod;
+};
+
 inCpPod.EntryOverview = function () {
     var pod_zone_id = null;
     for (var i in inCpPod.list) {
@@ -1599,78 +1675,7 @@ inCpPod.EntryOverview = function () {
     }
 
     var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
-        if (!pod.operate.failover) {
-            pod.operate.failover = {};
-        }
-        if (!pod.operate.failover.reps) {
-            pod.operate.failover.reps = [];
-        }
-        for (var i in pod.operate.failover.reps) {
-            if (!pod.operate.failover.reps[i].rep_id) {
-                pod.operate.failover.reps[i].rep_id = 0;
-            }
-        }
-        if (!pod.operate.exp_failovers) {
-            pod.operate.exp_failovers = [];
-        }
-
-        if (!pod.operate.replicas) {
-            pod.operate.replicas = [];
-        }
-        for (var i in pod.operate.replicas) {
-            if (!pod.operate.replicas[i].ports) {
-                pod.operate.replicas[i].ports = [];
-            }
-            if (!pod.operate.replicas[i].rep_id) {
-                pod.operate.replicas[i].rep_id = 0;
-            }
-            for (var j in pod.operate.replicas[i].ports) {
-                if (!pod.operate.replicas[i].ports[j].host_port) {
-                    pod.operate.replicas[i].ports[j].host_port = 0;
-                }
-                if (!pod.operate.replicas[i].ports[j].lan_addr) {
-                    pod.operate.replicas[i].ports[j].lan_addr = "127.0.0.1";
-                }
-                if (!pod.operate.replicas[i].ports[j].wan_addr) {
-                    pod.operate.replicas[i].ports[j].wan_addr =
-                        pod.operate.replicas[i].ports[j].lan_addr;
-                }
-            }
-            for (var j in pod.operate.failover.reps) {
-                if (pod.operate.replicas[i].rep_id == pod.operate.failover.reps[j].rep_id) {
-                    pod.operate.replicas[i]._failover_enable = true;
-                    break;
-                }
-            }
-        }
-        pod.spec._box_image_driver = pod.spec.box.image.driver;
-        pod.spec._cpu_limit = pod.spec.box.resources.cpu_limit;
-        pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
-
-        if (pod.payment && pod.payment.cycle_amount && pod.operate.replica_cap) {
-            pod.payment._cycle_amount = valueui.lang.T(
-                "%.2f / Hour",
-                pod.payment.cycle_amount * pod.operate.replica_cap
-            );
-        } else if (inCpPod.HookAccountChargeRefreshCache > 0) {
-            if (!pod.payment) {
-                pod.payment = {};
-            }
-            pod.payment._cycle_amount = valueui.lang.T(
-                "%.2f / Hour",
-                inCpPod.HookAccountChargeRefreshCache * pod.operate.replica_cap
-            );
-        }
-
-        for (var i in inCpPod.opSysStates) {
-            if (inCpPod.opSysStates[i].value == pod.operate.exp_sys_state) {
-                pod.operate._exp_sys_state_title = valueui.lang.T(inCpPod.opSysStates[i].title);
-                break;
-            }
-        }
-        if (!pod.operate._exp_sys_state_title) {
-            pod.operate._exp_sys_state_title = valueui.lang.T("Stateful");
-        }
+        pod = inCpPod.entryDataFix(pod);
 
         inCp.OpToolsClean();
         $("#work-content").html(tpl);
@@ -1683,7 +1688,7 @@ inCpPod.EntryOverview = function () {
             data: pod,
         });
 
-        setTimeout(inCpPod.entryAutoRefresh, 500);
+        setTimeout(inCpPod.entryAutoRefresh, 300);
     });
 
     ep.fail(function (err) {
@@ -1764,7 +1769,10 @@ inCpPod.entryAutoRefresh = function () {
                 });
             }
 
-            if (data.replicas.length != inCpPod.itemActive.operate.replicas.length) {
+            if (
+                inCp.zone_id == inCpPod.itemActive.spec.zone &&
+                data.replicas.length != inCpPod.itemActive.operate.replicas.length
+            ) {
                 return setTimeout(inCpPod.EntryOverview, 3000);
             }
 
@@ -1808,6 +1816,7 @@ inCpPod.entryAutoRefresh = function () {
                     }
 
                     if (
+                        inCp.zone_id == inCpPod.itemActive.spec.zone &&
                         data.replicas[i].ports &&
                         data.replicas[i].ports.length !=
                             inCpPod.itemActive.operate.replicas[i].ports.length
@@ -1855,7 +1864,6 @@ inCpPod.entryAutoRefresh = function () {
                 tplid: "incp-podentry-overview-oplog-tpl",
                 data: inCpPod.itemStatusActive,
             });
-
             setTimeout(inCpPod.entryAutoRefresh, 5000);
         },
     });

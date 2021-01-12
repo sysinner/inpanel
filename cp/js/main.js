@@ -102,6 +102,9 @@ inCp.Boot = function (login_first) {
         elem.removeClass("status_dark");
         elem.addClass("info");
         elem.html(inCp.well_signin_html);
+        valueui.use(["in/cp/css/base.css"], function() {
+            //
+        });
         return;
     }
 
@@ -185,10 +188,10 @@ inCp.load_index = function () {
                 tplid: "incp-topbar-user-signed-tpl",
                 data: inCp.UserSession,
                 callback: function () {
-                    $("#incp-topbar-userbar").on('mouseenter', function() {
+                    $("#incp-topbar-userbar").on("mouseenter", function () {
                         $("#incp-topbar-user-signed-modal").fadeIn(200);
                     });
-                    $("#incp-topbar-user-signed-modal").on("mouseleave", function() {
+                    $("#incp-topbar-user-signed-modal").on("mouseleave", function () {
                         $("#incp-topbar-user-signed-modal").fadeOut(200);
                     });
 
@@ -505,7 +508,11 @@ inCp.CodeRender = function () {
         }
 
         valueui.use(
-            ["in/cm/5/lib/codemirror.css", "in/cm/5/lib/codemirror.js", "in/cm/5/theme/monokai.css"],
+            [
+                "in/cm/5/lib/codemirror.css",
+                "in/cm/5/lib/codemirror.js",
+                "in/cm/5/theme/monokai.css",
+            ],
             function () {
                 modes.push("in/cm/5/addon/runmode/runmode.js");
                 modes.push("in/cm/5/mode/clike/clike.js");

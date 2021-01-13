@@ -871,16 +871,9 @@ inCpPod.NewCommit = function () {
             if (inCpPod.itemNewOptions.open_modal) {
                 valueui.modal.scrollTop();
             }
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodInstance");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
@@ -907,32 +900,7 @@ inCpPod.NewCommit = function () {
 inCpPod.Info = function (pod_id, options) {
     options = options || {};
     var ep = valueui.newEventProxy("tpl", "pod", function (tpl, pod) {
-        if (!pod.operate.replicas) {
-            pod.operate.replicas = [];
-        }
-        for (var i in pod.operate.replicas) {
-            if (!pod.operate.replicas[i].ports) {
-                pod.operate.replicas[i].ports = [];
-            }
-            if (!pod.operate.replicas[i].rep_id) {
-                pod.operate.replicas[i].rep_id = 0;
-            }
-            for (var j in pod.operate.replicas[i].ports) {
-                if (!pod.operate.replicas[i].ports[j].host_port) {
-                    pod.operate.replicas[i].ports[j].host_port = 0;
-                }
-                if (!pod.operate.replicas[i].ports[j].lan_addr) {
-                    pod.operate.replicas[i].ports[j].lan_addr = "127.0.0.1";
-                }
-                if (!pod.operate.replicas[i].ports[j].wan_addr) {
-                    pod.operate.replicas[i].ports[j].wan_addr =
-                        pod.operate.replicas[i].ports[j].lan_addr;
-                }
-            }
-        }
-        pod.spec._box_image_driver = pod.spec.box.image.driver;
-        pod.spec._cpu_limit = pod.spec.box.resources.cpu_limit;
-        pod.spec._mem_limit = pod.spec.box.resources.mem_limit;
+        pod = inCpPod.entryDataFix(pod);
 
         var btns = [
             {
@@ -1118,7 +1086,7 @@ inCpPod.SetInfoCommit = function () {
                 valueui.modal.close();
                 var el = document.getElementById("incp-podls");
                 if (el) {
-                    inCpPod.List(null, null);
+                    inCpPod.List();
                 }
             }, 2000);
         },
@@ -1184,16 +1152,9 @@ inCpPod.UserTransferCommit = function () {
         method: "POST",
         data: JSON.stringify(set),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodInstance");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.modal.footAlert(
@@ -1280,16 +1241,9 @@ inCpPod.UserTransferPerformCommit = function () {
         // method: "POST",
         // data: JSON.stringify(set),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodInstance");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.modal.footAlert("ok", valueui.lang.T("Successfully Updated"));
@@ -1360,16 +1314,9 @@ inCpPod.EntryDelCommit = function () {
     inCp.ApiCmd("pod/delete?pod_id=" + pod_id, {
         method: "GET",
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodInstance");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
@@ -1500,16 +1447,9 @@ inCpPod.SetCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "Pod") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "Pod");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
@@ -2357,16 +2297,9 @@ inCpPod.EntryAccessSetCommit = function () {
         method: "POST",
         data: JSON.stringify(set),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodInstance");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
@@ -2616,16 +2549,9 @@ inCpPod.SpecSetCommit = function () {
         data: JSON.stringify(set),
         callback: function (err, rsj) {
             valueui.modal.scrollTop();
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "PodInstance") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodInstance");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");

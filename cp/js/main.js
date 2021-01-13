@@ -102,7 +102,7 @@ inCp.Boot = function (login_first) {
         elem.removeClass("status_dark");
         elem.addClass("info");
         elem.html(inCp.well_signin_html);
-        valueui.use(["in/cp/css/base.css"], function() {
+        valueui.use(["in/cp/css/base.css"], function () {
             //
         });
         return;
@@ -110,7 +110,7 @@ inCp.Boot = function (login_first) {
 
     valueui.use(
         [
-            "in/cp/css/base.css",
+            // "in/cp/css/base.css",
             "in/fa/css/fa.css",
             "in/cp/css/main.css",
             "in/cp/js/host.js",

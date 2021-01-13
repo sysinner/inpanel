@@ -320,7 +320,7 @@ inOpsHost.NodePodList = function (z, c, node_id) {
                     return valueui.alert.innerShow(alert_id, "error", data.error.message);
                 }
                 if (data.items.length < 1) {
-                    return valueui.alert.innerShow(alert_id, "alert-info", "No Item Found Yet ...");
+                    return valueui.alert.innerShow(alert_id, "info", "No Item Found Yet ...");
                 }
                 valueui.template.render({
                     dstid: "inops-host-podls-selector",
@@ -377,12 +377,9 @@ inOpsHost.NodeSet = function (zoneid, cellid, nodeid) {
     var alert_id = "#inops-host-nodeset-alert";
 
     var ep = valueui.newEventProxy("tpl", "data", function (tpl, rsj) {
-        if (!rsj || !rsj.kind || rsj.kind != "HostNode") {
-            return valueui.alert.innerShow(
-                alert_id,
-                "alert-danger",
-                "Network Connection Exception"
-            );
+        var errMsg = valueui.utilx.errorKindCheck(null, rsj, "HostNode");
+        if (errMsg) {
+            return valueui.alert.innerShow(alert_id, "error", errMsg);
         }
 
         rsj._actions = inOpsHost.actions;
@@ -471,31 +468,12 @@ inOpsHost.NodeSetCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", err);
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "HostNode");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            if (!rsj) {
-                return valueui.alert.innerShow(
-                    alert_id,
-                    "alert-danger",
-                    "Network Connection Exception"
-                );
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "HostNode") {
-                return valueui.alert.innerShow(
-                    alert_id,
-                    "alert-danger",
-                    "Network Connection Exception"
-                );
-            }
-
-            valueui.alert.innerShow(alert_id, "alert-success", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
                 valueui.modal.close();
@@ -578,31 +556,12 @@ inOpsHost.NodeSecretKeySetCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", err);
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "HostNode");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            if (!rsj) {
-                return valueui.alert.innerShow(
-                    alert_id,
-                    "alert-danger",
-                    "Network Connection Exception"
-                );
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "HostNode") {
-                return valueui.alert.innerShow(
-                    alert_id,
-                    "alert-danger",
-                    "Network Connection Exception"
-                );
-            }
-
-            valueui.alert.innerShow(alert_id, "alert-success", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
                 valueui.modal.close();
@@ -690,27 +649,12 @@ inOpsHost.NodeNewCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(
-                    alert_id,
-                    "alert-danger",
-                    "Network Connection Exception"
-                );
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "HostNode");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "HostNode") {
-                return valueui.alert.innerShow(
-                    alert_id,
-                    "alert-danger",
-                    "Network Connection Exception"
-                );
-            }
-
-            valueui.alert.innerShow(alert_id, "alert-success", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             window.setTimeout(function () {
                 valueui.modal.close();
@@ -1319,20 +1263,9 @@ inOpsHost.node_list_refresh = function (zoneid, cellid, cb) {
     inOps.ApiCmd("host/node-list?zoneid=" + zoneid + "&cellid=" + cellid, {
         api_zone_id: zoneid,
         callback: function (err, nodes) {
-            if (err) {
-                return cb(err, null);
-            }
-
-            if (!nodes) {
-                return cb("Network Connection Exception", null);
-            }
-
-            if (nodes.error) {
-                return cb(nodes.error.message, null);
-            }
-
-            if (!nodes.kind || nodes.kind != "HostNodeList") {
-                return cb("Network Connection Exception", null);
+            var errMsg = valueui.utilx.errorKindCheck(err, nodes, "HostNodeList");
+            if (errMsg) {
+                return cb(errMsg);
             }
 
             for (var i in nodes.items) {
@@ -1596,31 +1529,12 @@ inOpsHost.CellSetCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, cell) {
-            if (err || !cell) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", "Failed");
+            var errMsg = valueui.utilx.errorKindCheck(err, cell, "HostCell");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            if (!cell) {
-                return valueui.alert.innerShow(
-                    alert_id,
-                    "alert-danger",
-                    "Network Connection Exception"
-                );
-            }
-
-            if (cell.error) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", cell.error.message);
-            }
-
-            if (!cell.kind || cell.kind != "HostCell") {
-                return valueui.alert.innerShow(
-                    alert_id,
-                    "alert-danger",
-                    "Network Connection Exception"
-                );
-            }
-
-            valueui.alert.innerShow(alert_id, "alert-success", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             inOpsHost.ZoneRefresh(function () {
                 window.setTimeout(function () {
@@ -1733,7 +1647,7 @@ inOpsHost.ZoneList = function () {
     //         }
 
     //         if (!rsj || !rsj.kind || rsj.kind != "HostZoneList") {
-    //             return valueui.alert.innerShow(alert_id, 'alert-danger', "Item Not Found");
+    //             return valueui.alert.innerShow(alert_id, 'error', "Item Not Found");
     //         }
 
     //         if (!rsj.items) {
@@ -1903,7 +1817,7 @@ inOpsHost.ZoneImageServiceDel = function (field) {
 
 inOpsHost.ZoneSetCommit = function () {
     var form = $("#inops-host-zone-form"),
-        alertid = "#inops-host-zoneset-alert";
+        alert_id = "#inops-host-zoneset-alert";
 
     var req = {
         meta: {
@@ -1957,34 +1871,19 @@ inOpsHost.ZoneSetCommit = function () {
             throw "No LAN Address Found";
         }
     } catch (err) {
-        return valueui.alert.innerShow("#inops-host-zoneset-alert", "alert-danger", err);
+        return valueui.alert.innerShow("#inops-host-zoneset-alert", "error", err);
     }
 
     inOps.ApiCmd("host/zone-set", {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(
-                    alertid,
-                    "alert-danger",
-                    "Network Connection Exception"
-                );
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "HostZone");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            if (rsj.error) {
-                return valueui.alert.innerShow(alertid, "alert-danger", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "HostZone") {
-                return valueui.alert.innerShow(
-                    alertid,
-                    "alert-danger",
-                    "Network Connection Exception"
-                );
-            }
-
-            valueui.alert.innerShow(alertid, "alert-success", "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
             inOpsHost.ZoneRefresh(function () {
                 window.setTimeout(function () {

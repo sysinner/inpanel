@@ -70,16 +70,9 @@ inCpPodRep.SetCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.modal.footAlert("error", "Network Connection Exception", 3000);
-            }
-
-            if (rsj.error) {
-                return valueui.modal.footAlert("error", rsj.error.message, 3000);
-            }
-
-            if (!rsj.kind || rsj.kind != "PodRep") {
-                return valueui.modal.footAlert("error", "Network Connection Exception", 3000);
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodRep");
+            if (errMsg) {
+                return valueui.modal.footAlert("error", errMsg, 3000);
             }
 
             valueui.modal.footAlert("ok", "Successfully Updated");
@@ -133,16 +126,9 @@ inCpPodRep.FailoverCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.modal.footAlert("error", "Network Connection Exception", 3000);
-            }
-
-            if (rsj.error) {
-                return valueui.modal.footAlert("error", rsj.error.message, 3000);
-            }
-
-            if (!rsj.kind || rsj.kind != "PodRep") {
-                return valueui.modal.footAlert("error", "Network Connection Exception", 3000);
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodRep");
+            if (errMsg) {
+                return valueui.modal.footAlert("error", errMsg, 3000);
             }
 
             valueui.modal.footAlert("ok", "Successfully Updated");

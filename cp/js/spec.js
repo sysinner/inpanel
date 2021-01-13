@@ -78,8 +78,11 @@ inCpSpec.ImageList = function () {
             $("#work-content-spec").html(tpl);
         }
 
-        if (data === undefined || data.kind != "BoxImageList") {
-            return valueui.alert.innerShow("#mix-spec-image-alert", "error", "Item Not Found");
+        var alert_id = "#mix-spec-image-alert";
+
+        var errMsg = valueui.utilx.errorKindCheck(null, data, "BoxImageList");
+        if (errMsg) {
+            return valueui.alert.innerShow(alert_id, "error", errMsg);
         }
 
         if (!data.items) {
@@ -112,9 +115,7 @@ inCpSpec.ImageSetForm = function (imageid) {
     var ep = valueui.newEventProxy("tpl", "data", function (tpl, rsj) {
         if (!rsj) {
             rsj = valueui.utilx.objectClone(inCpSpec.boxImageDef);
-        }
-
-        if (!rsj.kind || rsj.kind != "BoxImage") {
+        } else if (!rsj.kind || rsj.kind != "BoxImage") {
             rsj = valueui.utilx.objectClone(inCpSpec.boxImageDef);
         }
 
@@ -178,17 +179,10 @@ inCpSpec.ImageSetCommit = function () {
     inCp.ApiCmd("spec/image-set", {
         method: "POST",
         data: JSON.stringify(req),
-        success: function (rsj) {
-            if (!rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "BoxImage") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+        callback: function (err, rsj) {
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "BoxImage");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
@@ -210,8 +204,11 @@ inCpSpec.QuotaList = function () {
             $("#work-content-spec").html(tpl);
         }
 
-        if (data === undefined || data.kind != "BoxQuotaList") {
-            return valueui.alert.innerShow("#mix-spec-quotas-alert", "error", "Item Not Found");
+        var alert_id = "#mix-spec-quotas-alert";
+
+        var errMsg = valueui.utilx.errorKindCheck(null, data, "BoxQuotaList");
+        if (errMsg) {
+            return valueui.alert.innerShow(alert_id, "error", errMsg);
         }
 
         if (!data.items) {
@@ -309,17 +306,10 @@ inCpSpec.QuotaSetCommit = function () {
     inCp.ApiCmd("spec/quota-set", {
         method: "POST",
         data: JSON.stringify(req),
-        success: function (rsj) {
-            if (!rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "BoxQuota") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+        callback: function (err, rsj) {
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "BoxQuota");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
@@ -342,8 +332,11 @@ inCpSpec.PodList = function () {
             $("#work-content-spec").html(tpl);
         }
 
-        if (data === undefined || data.kind != "PodSpecList") {
-            return valueui.alert.innerShow("#mix-spec-pods-alert", "error", "Item Not Found");
+        var alert_id = "#mix-spec-pods-alert";
+
+        var errMsg = valueui.utilx.errorKindCheck(null, data, "PodSpecList");
+        if (errMsg) {
+            return valueui.alert.innerShow(alert_id, "error", errMsg);
         }
 
         if (!data.items) {
@@ -606,17 +599,10 @@ inCpSpec.PodSetCommit = function () {
     inCp.ApiCmd("spec/pod-set", {
         method: "POST",
         data: JSON.stringify(req),
-        success: function (rsj) {
-            if (!rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "PodSpec") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+        callback: function (err, rsj) {
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodSpec");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");

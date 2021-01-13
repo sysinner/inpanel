@@ -2,15 +2,15 @@ var inCpResDomain = {
     op_actions: [
         {
             action: 1,
-            title: "Start"
+            title: "Start",
         },
         {
             action: 2,
-            title: "Stop"
+            title: "Stop",
         },
         {
             action: 3,
-            title: "Destroy"
+            title: "Destroy",
         },
     ],
     inst_active: null,
@@ -25,104 +25,100 @@ var inCpResDomain = {
         _upstream: "",
         _redirect_url: "",
     },
-    bound_types: [{
-        title: "Pod/BoxPort",
-        type: "pod",
-    }, {
-        title: "IP/Port",
-        type: "upstream",
-    }, {
-        title: "Redirect",
-        type: "redirect",
-    }],
-}
+    bound_types: [
+        {
+            title: "Pod/BoxPort",
+            type: "pod",
+        },
+        {
+            title: "IP/Port",
+            type: "upstream",
+        },
+        {
+            title: "Redirect",
+            type: "redirect",
+        },
+    ],
+};
 
-inCpResDomain.List = function() {
+inCpResDomain.List = function () {
     var uri = "?type=domain";
     uri += "&fields=meta/id|user|name|updated,description,bounds/name,operate/app_id,action";
 
     var options = {};
 
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
+        if (tpl) {
+            $("#work-content").html(tpl);
+        }
+        inCp.OpToolsRefresh("#incp-resdomain-optools");
 
-        var ep = valueui.newEventProxy("tpl", "data", function(tpl, data) {
+        var alert_id = "#incp-resdomain-list-alert";
 
-            if (tpl) {
-                $("#work-content").html(tpl);
-            }
-            inCp.OpToolsRefresh("#incp-resdomain-optools");
+        var errMsg = valueui.utilx.errorKindCheck(null, data, "ResourceList");
+        if (errMsg) {
+            return valueui.alert.innerShow(alert_id, "error", errMsg);
+        }
 
-            var alert_id = "#incp-resdomain-list-alert";
+        if (!data.items) {
+            data.items = [];
+        }
+        options.owner_column = false;
 
-            if (data.error || !data.kind || data.kind != "ResourceList") {
-
-                if (data.error) {
-                    return valueui.alert.innerShow(alert_id, 'error', data.error.message);
-                }
-
-                return valueui.alert.innerShow(alert_id, 'error', "Items Not Found");
-            }
-
-            if (!data.items) {
-                data.items = [];
-            }
-            options.owner_column = false;
-
-            for (var i in data.items) {
-
-                if (!options.owner_column && data.items[i].meta.user != inCp.UserSession.username) {
-                    options.owner_column = true;
-                }
-
-                if (!data.items[i].action) {
-                    data.items[i].action = "ok";
-                }
-                if (!data.items[i].description) {
-                    data.items[i].description = "";
-                }
-                if (!data.items[i].operate) {
-                    data.items[i].operate = {};
-                }
-                if (!data.items[i].operate.app_id) {
-                    data.items[i].operate.app_id = "-";
-                }
-                if (!data.items[i].bounds) {
-                    data.items[i].bounds = [];
-                }
-
-                data.items[i]._name = data.items[i].meta.name.substr("domain/".length);
+        for (var i in data.items) {
+            if (!options.owner_column && data.items[i].meta.user != inCp.UserSession.username) {
+                options.owner_column = true;
             }
 
-            data._options = options;
+            if (!data.items[i].action) {
+                data.items[i].action = "ok";
+            }
+            if (!data.items[i].description) {
+                data.items[i].description = "";
+            }
+            if (!data.items[i].operate) {
+                data.items[i].operate = {};
+            }
+            if (!data.items[i].operate.app_id) {
+                data.items[i].operate.app_id = "-";
+            }
+            if (!data.items[i].bounds) {
+                data.items[i].bounds = [];
+            }
 
-            $(alert_id).hide();
+            data.items[i]._name = data.items[i].meta.name.substr("domain/".length);
+        }
 
-            valueui.template.render({
-                dstid: "incp-resdomain-list-box",
-                tplid: "incp-resdomain-list-tpl",
-                data: data,
-                callback: function(err) {
-                    if (err) {
-                        return;
-                    }
-                },
-            });
+        data._options = options;
+
+        $(alert_id).hide();
+
+        valueui.template.render({
+            dstid: "incp-resdomain-list-box",
+            tplid: "incp-resdomain-list-tpl",
+            data: data,
+            callback: function (err) {
+                if (err) {
+                    return;
+                }
+            },
         });
+    });
 
-        ep.fail(function(err) {
-            alert("ListRefresh error, Please try again later (EC:001)");
-        });
+    ep.fail(function (err) {
+        alert("ListRefresh error, Please try again later (EC:001)");
+    });
 
-        inCp.TplFetch("res/domain-list", {
-            callback: ep.done("tpl"),
-        });
+    inCp.TplFetch("res/domain-list", {
+        callback: ep.done("tpl"),
+    });
 
-        inCp.ApiCmd("resource/list" + uri, {
-            callback: ep.done("data"),
-        });
-}
+    inCp.ApiCmd("resource/list" + uri, {
+        callback: ep.done("data"),
+    });
+};
 
-inCpResDomain.New = function(options) {
-
+inCpResDomain.New = function (options) {
     options = options || {};
     //
     if (inCp.UserSession.groups && inCp.UserSession.groups.length > 0) {
@@ -142,18 +138,21 @@ inCpResDomain.New = function(options) {
         data: {
             _options: options,
         },
-        buttons: [{
-            title: "Cancel",
-            onclick: "valueui.modal.close()",
-        }, {
-            title: "Save",
-            onclick: 'inCpResDomain.NewCommit()',
-            style: "btn-primary",
-        }],
+        buttons: [
+            {
+                title: "Cancel",
+                onclick: "valueui.modal.close()",
+            },
+            {
+                title: "Save",
+                onclick: "inCpResDomain.NewCommit()",
+                style: "btn-primary",
+            },
+        ],
     });
-}
+};
 
-inCpResDomain.NewCommit = function() {
+inCpResDomain.NewCommit = function () {
     var form = $("#incp-mod-domain-new-form");
     var alert_id = "#incp-mod-domain-new-alert";
 
@@ -176,93 +175,82 @@ inCpResDomain.NewCommit = function() {
     inCp.ApiCmd("resource/domain-new", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, 'error', "Network Connection Exception");
+        callback: function (err, rsj) {
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "Resource");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, 'error', rsj.error.message);
-            }
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
-            if (!rsj.kind || rsj.kind != "Resource") {
-                return valueui.alert.innerShow(alert_id, 'error', "Network Connection Exception");
-            }
-
-            valueui.alert.innerShow(alert_id, 'ok', "Successfully Updated");
-
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 valueui.modal.close();
                 inCpResDomain.List();
             }, 500);
-        }
+        },
     });
-}
+};
 
-inCpResDomain.Set = function(name) {
+inCpResDomain.Set = function (name) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
+        // if (tpl) {
+        //     $("#work-content").html(tpl);
+        // }
 
-        var ep = valueui.newEventProxy("tpl", "data", function(tpl, data) {
+        var alert_id = "#incp-resdomain-set-alert";
 
-            // if (tpl) {
-            //     $("#work-content").html(tpl);
-            // }
+        var errMsg = valueui.utilx.errorKindCheck(null, data, "Resource");
+        if (errMsg) {
+            return valueui.alert.innerShow(alert_id, "error", errMsg);
+        }
 
-            var alert_id = "#incp-resdomain-set-alert";
+        if (!data.action) {
+            data.action = "ok";
+        }
+        if (!data.description) {
+            data.description = "";
+        }
 
-            if (!data || data.error || !data.kind || data.kind != "Resource") {
+        if (!data.options) {
+            data.options = [];
+        }
 
-                if (data.error) {
-                    return valueui.alert.innerShow(alert_id, 'error', data.error.message);
-                }
+        data._name = data.meta.name.substr("domain/".length);
 
-                return valueui.alert.innerShow(alert_id, 'error', "Item Not Found");
-            }
-
-            if (!data.action) {
-                data.action = "ok";
-            }
-            if (!data.description) {
-                data.description = "";
-            }
-
-            if (!data.options) {
-                data.options = [];
-            }
-
-            data._name = data.meta.name.substr("domain/".length);
-
-            valueui.modal.open({
-                title: "Domain Set",
-                tplsrc: tpl,
-                width: 900,
-                height: 400,
-                data: data,
-                buttons: [{
+        valueui.modal.open({
+            title: "Domain Set",
+            tplsrc: tpl,
+            width: 900,
+            height: 400,
+            data: data,
+            buttons: [
+                {
                     title: "Cancel",
                     onclick: "valueui.modal.close()",
-                }, {
+                },
+                {
                     title: "Save",
-                    onclick: 'inCpResDomain.SetCommit()',
+                    onclick: "inCpResDomain.SetCommit()",
                     style: "btn-primary",
-                }],
-            });
+                },
+            ],
         });
+    });
 
-        ep.fail(function(err) {
-            alert("ApiCmd error, Please try again later (EC:001)");
-        });
+    ep.fail(function (err) {
+        alert("ApiCmd error, Please try again later (EC:001)");
+    });
 
-        inCp.TplFetch("res/domain-set", {
-            callback: ep.done("tpl"),
-        });
+    inCp.TplFetch("res/domain-set", {
+        callback: ep.done("tpl"),
+    });
 
-        inCp.ApiCmd("resource/domain?name=" + name, {
-            callback: ep.done("data"),
-        });
-}
+    inCp.ApiCmd("resource/domain?name=" + name, {
+        callback: ep.done("data"),
+    });
+};
 
-inCpResDomain.SetCommit = function() {
+inCpResDomain.SetCommit = function () {
     var form = $("#incp-resdomain-set-form");
     var alert_id = "#incp-resdomain-set-alert";
 
@@ -282,160 +270,142 @@ inCpResDomain.SetCommit = function() {
     var optValue = form.find("input[name=option_letsencrypt_enable]:checked").val();
     if (optValue == "on") {
         req.options.push({
-            "name": "letsencrypt_enable",
-            "value": "on"
+            name: "letsencrypt_enable",
+            value: "on",
         });
     } else {
         req.options.push({
-            "name": "letsencrypt_enable",
-            "value": "off"
+            name: "letsencrypt_enable",
+            value: "off",
         });
     }
 
     inCp.ApiCmd("resource/domain-set", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, 'error', "Network Connection Exception");
+        callback: function (err, rsj) {
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "Resource");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, 'error', rsj.error.message);
-            }
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
-            if (!rsj.kind || rsj.kind != "Resource") {
-                return valueui.alert.innerShow(alert_id, 'error', "Network Connection Exception");
-            }
-
-            valueui.alert.innerShow(alert_id, 'ok', "Successfully Updated");
-
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 valueui.modal.close();
                 inCpResDomain.List();
             }, 500);
-        }
+        },
     });
-}
+};
 
+inCpResDomain.BoundList = function (name) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
+        var alert_id = "#incp-resdomain-boundlist-alert";
 
-inCpResDomain.BoundList = function(name) {
+        var errMsg = valueui.utilx.errorKindCheck(null, data, "Resource");
+        if (errMsg) {
+            return alert(errMsg);
+        }
 
-        var ep = valueui.newEventProxy("tpl", "data", function(tpl, data) {
-
-            var alert_id = "#incp-resdomain-boundlist-alert";
-
-            if (!data || data.error || !data.kind || data.kind != "Resource") {
-
-                if (data.error) {
-                    return alert(data.error.message);
-                // return valueui.alert.innerShow(alert_id, 'error', data.error.message);
-                }
-
-                return alert("Resource Not Found");
-            // return valueui.alert.innerShow(alert_id, 'error', "Item Not Found");
+        if (!data.action) {
+            data.action = "ok";
+        }
+        if (!data.description) {
+            data.description = "";
+        }
+        if (!data.bounds) {
+            data.bounds = [];
+        }
+        for (var i in data.bounds) {
+            data.bounds[i]._name = data.bounds[i].name.substr("domain/basepath".length);
+            if (data.bounds[i]._name == "") {
+                data.bounds[i]._name = "/";
+            }
+            if (!data.bounds[i]._type) {
+                data.bounds[i]._type = "pod";
             }
 
-            if (!data.action) {
-                data.action = "ok";
-            }
-            if (!data.description) {
-                data.description = "";
-            }
-            if (!data.bounds) {
-                data.bounds = [];
-            }
-            for (var i in data.bounds) {
-                data.bounds[i]._name = data.bounds[i].name.substr("domain/basepath".length);
-                if (data.bounds[i]._name == "") {
-                    data.bounds[i]._name = "/";
-                }
-                if (!data.bounds[i]._type) {
-                    data.bounds[i]._type = "pod";
-                }
+            var vpi = data.bounds[i].value.indexOf(":");
+            if (vpi > 1) {
+                switch (data.bounds[i].value.substr(0, vpi)) {
+                    case "pod":
+                        break;
 
-                var vpi = data.bounds[i].value.indexOf(":");
-                if (vpi > 1) {
+                    case "upstream":
+                        break;
 
-                    switch (data.bounds[i].value.substr(0, vpi)) {
-                        case "pod":
-                            break;
+                    case "redirect":
+                        break;
 
-                        case "upstream":
-                            break;
-
-                        case "redirect":
-                            break;
-
-                        default:
+                    default:
                     // TODO
-                    }
-                    data.bounds[i]._value = data.bounds[i].value.substr(vpi + 1);
-                    data.bounds[i]._type = data.bounds[i].value.substr(0, vpi);
-                } else {
-                    data.bounds[i]._value = "";
-                    data.bounds[i]._type = "pod";
                 }
+                data.bounds[i]._value = data.bounds[i].value.substr(vpi + 1);
+                data.bounds[i]._type = data.bounds[i].value.substr(0, vpi);
+            } else {
+                data.bounds[i]._value = "";
+                data.bounds[i]._type = "pod";
             }
+        }
 
-            data._name = data.meta.name.substr("domain/".length);
-            inCpResDomain.inst_active = valueui.utilx.objectClone(data);
+        data._name = data.meta.name.substr("domain/".length);
+        inCpResDomain.inst_active = valueui.utilx.objectClone(data);
 
-            data._actions = inCpResDomain.op_actions;
-            data._types = inCpResDomain.bound_types;
+        data._actions = inCpResDomain.op_actions;
+        data._types = inCpResDomain.bound_types;
 
-            valueui.modal.open({
-                id: "incp-resdomain-boundlist-modal",
-                title: "Domain Bounds",
-                tplsrc: tpl,
-                width: 900,
-                height: 600,
-                buttons: [{
+        valueui.modal.open({
+            id: "incp-resdomain-boundlist-modal",
+            title: "Domain Bounds",
+            tplsrc: tpl,
+            width: 900,
+            height: 600,
+            buttons: [
+                {
                     title: "Cancel",
                     onclick: "valueui.modal.close()",
-                }, {
-                    title: "Binding New",
-                    onclick: 'inCpResDomain.BoundSet()',
-                    style: "btn-primary",
-                }],
-                success: function() {
-
-                    if (data.bounds.length == 0) {
-                        return valueui.alert.innerShow(alert_id, 'alert-info', "No Resource Bound");
-                    }
-
-                    valueui.template.render({
-                        dstid: "incp-resdomain-boundlist",
-                        tplid: "incp-resdomain-boundlist-tpl",
-                        data: data,
-                    });
                 },
-            });
+                {
+                    title: "Binding New",
+                    onclick: "inCpResDomain.BoundSet()",
+                    style: "btn-primary",
+                },
+            ],
+            success: function () {
+                if (data.bounds.length == 0) {
+                    return valueui.alert.innerShow(alert_id, "alert-info", "No Resource Bound");
+                }
+
+                valueui.template.render({
+                    dstid: "incp-resdomain-boundlist",
+                    tplid: "incp-resdomain-boundlist-tpl",
+                    data: data,
+                });
+            },
         });
+    });
 
-        ep.fail(function(err) {
-            alert("ApiCmd error, Please try again later (EC:001)");
-        });
+    ep.fail(function (err) {
+        alert("ApiCmd error, Please try again later (EC:001)");
+    });
 
-        inCp.TplFetch("res/domain-bound-list", {
-            callback: ep.done("tpl"),
-        });
+    inCp.TplFetch("res/domain-bound-list", {
+        callback: ep.done("tpl"),
+    });
 
-        inCp.ApiCmd("resource/domain?name=" + name, {
-            callback: ep.done("data"),
-        });
-}
+    inCp.ApiCmd("resource/domain?name=" + name, {
+        callback: ep.done("data"),
+    });
+};
 
-
-inCpResDomain.BoundSet = function(name) {
+inCpResDomain.BoundSet = function (name) {
     if (!inCpResDomain.inst_active) {
         return;
     }
 
     var bound = null;
     if (name) {
-
         for (var i in inCpResDomain.inst_active.bounds) {
             if (inCpResDomain.inst_active.bounds[i].name == name) {
                 bound = valueui.utilx.objectClone(inCpResDomain.inst_active.bounds[i]);
@@ -452,7 +422,7 @@ inCpResDomain.BoundSet = function(name) {
     var pi = bound.value.indexOf(":");
     if (pi < 2) {
         pi = bound.value.indexOf("/");
-    // TODO return;
+        // TODO return;
     }
     if (pi < 2) {
         return;
@@ -501,23 +471,26 @@ inCpResDomain.BoundSet = function(name) {
         title: "Binding",
         tpluri: inCp.TplPath("res/domain-bound-set"),
         data: bound,
-        callback: function(err, data) {
+        callback: function (err, data) {
             $("#incp-resdomain-boundset-type-" + bound._type).css({
-                "display": "block"
+                display: "block",
             });
         },
-        buttons: [{
-            title: "Cancel",
-            onclick: "valueui.modal.close()",
-        }, {
-            title: "Save",
-            onclick: 'inCpResDomain.BoundSetCommit()',
-            style: "btn-primary",
-        }],
+        buttons: [
+            {
+                title: "Cancel",
+                onclick: "valueui.modal.close()",
+            },
+            {
+                title: "Save",
+                onclick: "inCpResDomain.BoundSetCommit()",
+                style: "btn-primary",
+            },
+        ],
     });
-}
+};
 
-inCpResDomain.BoundSetTypeOnChange = function(elem) {
+inCpResDomain.BoundSetTypeOnChange = function (elem) {
     if (!inCpResDomain.inst_active_bound) {
         return;
     }
@@ -532,16 +505,16 @@ inCpResDomain.BoundSetTypeOnChange = function(elem) {
     }
 
     $("#incp-resdomain-boundset-type-" + inCpResDomain.inst_active_bound._type).css({
-        "display": "none"
+        display: "none",
     });
     $("#incp-resdomain-boundset-type-" + typeid).css({
-        "display": "block"
+        display: "block",
     });
 
     inCpResDomain.inst_active_bound._type = typeid;
-}
+};
 
-inCpResDomain.BoundSetCommit = function() {
+inCpResDomain.BoundSetCommit = function () {
     var alert_id = "#incp-resdomain-boundset-alert";
 
     var form = $("#incp-resdomain-boundset-form");
@@ -554,7 +527,7 @@ inCpResDomain.BoundSetCommit = function() {
             name: inCpResDomain.inst_active.meta.name,
         },
         bounds: [],
-    }
+    };
 
     try {
         var basepath = form.find("input[name=bound_basepath]").val();
@@ -601,46 +574,36 @@ inCpResDomain.BoundSetCommit = function() {
             value: value,
             action: action,
         });
-
     } catch (err) {
-        return valueui.alert.innerShow(alert_id, 'error', err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     inCp.ApiCmd("resource/domain-bound", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
-
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, 'error', "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, 'error', rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "Resource") {
-                return valueui.alert.innerShow(alert_id, 'error', "Network Connection Exception");
+        callback: function (err, rsj) {
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "Resource");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             inCpResDomain.inst_active = null;
-            valueui.alert.innerShow(alert_id, 'ok', "Successfully Updated");
+            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 valueui.modal.close();
                 inCpResDomain.List();
             }, 500);
-        }
+        },
     });
-}
+};
 
-
-inCpResDomain.Deploy = function(name) {
+inCpResDomain.Deploy = function (name) {
     if (!name) {
         return;
     }
     inCp.ApiCmd("resource/domain?name=" + name, {
-        callback: function(err, data) {
+        callback: function (err, data) {
             if (err || !data.kind) {
                 return;
             }
@@ -653,16 +616,16 @@ inCpResDomain.Deploy = function(name) {
             }
         },
     });
-}
+};
 
-inCpResDomain.DeployWizard = function(name) {
+inCpResDomain.DeployWizard = function (name) {
     valueui.modal.open({
         id: "incp-resdomain-deploy",
         title: "Resource Domain Deploy Wizard",
         width: 900,
         height: 300,
         tpluri: inCp.TplPath("res/domain-deploy"),
-        callback: function(err, data) {
+        callback: function (err, data) {
             valueui.template.render({
                 dstid: "incp-resdomain-deploy-wizard",
                 tplid: "incp-resdomain-deploy-wizard-tpl",
@@ -671,73 +634,77 @@ inCpResDomain.DeployWizard = function(name) {
                 },
             });
         },
-        buttons: [{
-            onclick: "valueui.modal.close()",
-            title: "Close",
-        }, {
-            onclick: "inCpResDomain.DeployCommit()",
-            title: "Next",
-            style: "btn-primary",
-        }],
+        buttons: [
+            {
+                onclick: "valueui.modal.close()",
+                title: "Close",
+            },
+            {
+                onclick: "inCpResDomain.DeployCommit()",
+                title: "Next",
+                style: "btn-primary",
+            },
+        ],
     });
-}
+};
 
-inCpResDomain.DeploySelectApp = function(name) {
+inCpResDomain.DeploySelectApp = function (name) {
     if (!inCpResDomain.inst_active) {
         return;
     }
 
+    var ep = valueui.newEventProxy("tpl", "inst", function (tpl, inst) {
+        var errMsg = valueui.utilx.errorKindCheck(null, inst, "AppList");
+        if (errMsg) {
+            return alert(errMsg);
+        }
 
-        var ep = valueui.newEventProxy("tpl", "inst", function(tpl, inst) {
-
-            if (!inst || !inst.kind || inst.kind != "AppList") {
-                return alert("AppInst error, Please try again later (EC:incp-appset)");
-            }
-
-            valueui.modal.open({
-                title: "Select a App to Deploy",
-                width: 900,
-                height: 400,
-                tplsrc: tpl,
-                callback: function(err) {
-                    if (err) {
-                        return;
-                    }
-                    valueui.template.render({
-                        dstid: "incp-appls-selector",
-                        tplid: "incp-appls-selector-tpl",
-                        data: inst,
-                    });
-                },
-                fn_selector: function(err, data) {
-                    if (err || !data || data.length < 16) {
-                        return;
-                    }
-                    inCpResDomain.inst_active.operate.app_id = data;
-                    inCpResDomain.DeployCommit();
-                },
-                buttons: [{
+        valueui.modal.open({
+            title: "Select a App to Deploy",
+            width: 900,
+            height: 400,
+            tplsrc: tpl,
+            callback: function (err) {
+                if (err) {
+                    return;
+                }
+                valueui.template.render({
+                    dstid: "incp-appls-selector",
+                    tplid: "incp-appls-selector-tpl",
+                    data: inst,
+                });
+            },
+            fn_selector: function (err, data) {
+                if (err || !data || data.length < 16) {
+                    return;
+                }
+                inCpResDomain.inst_active.operate.app_id = data;
+                inCpResDomain.DeployCommit();
+            },
+            buttons: [
+                {
                     onclick: "valueui.modal.close()",
                     title: "Close",
-                }],
-            });
+                },
+            ],
         });
+    });
 
-        ep.fail(function(err) {
-            alert("SpecSet error, Please try again later (EC:incp-appset)");
-        });
+    ep.fail(function (err) {
+        alert("SpecSet error, Please try again later (EC:incp-appset)");
+    });
 
-        // template
-        inCp.TplFetch("app/inst/selector", {
-            callback: ep.done("tpl"),
-        });
+    // template
+    inCp.TplFetch("app/inst/selector", {
+        callback: ep.done("tpl"),
+    });
 
-        inCp.ApiCmd("app/list-op-res?res_type=domain", {
-            callback: ep.done("inst"),
-        });
-}
+    inCp.ApiCmd("app/list-op-res?res_type=domain", {
+        callback: ep.done("inst"),
+    });
+};
 
-inCpResDomain.DeployCommit = function() {
+inCpResDomain.DeployCommit = function () {
     if (!inCpResDomain.inst_active || !inCpResDomain.inst_active.operate.app_id) {
         return;
     }
@@ -750,35 +717,26 @@ inCpResDomain.DeployCommit = function() {
         operate: {
             app_id: inCpResDomain.inst_active.operate.app_id,
         },
-    }
+    };
 
     inCp.ApiCmd("app/op-res-set", {
         method: "POST",
         data: JSON.stringify(req),
         timeout: 3000,
-        callback: function(err, rsj) {
-
+        callback: function (err, rsj) {
             valueui.modal.close();
 
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, 'error', "Failed");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "App");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            if (!rsj || rsj.kind != "App") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.alert.innerShow(alert_id, 'error', msg);
-            }
+            valueui.alert.innerShow(alert_id, "ok", "Successful operation");
 
-            valueui.alert.innerShow(alert_id, 'ok', "Successful operation");
-
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 inCpResDomain.inst_active = null;
                 inCpResDomain.List();
             }, 1000);
-        }
+        },
     });
-}
-
+};

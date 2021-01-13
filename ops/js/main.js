@@ -51,7 +51,6 @@ inOps.Boot = function (login_first) {
     valueui.use(
         [
             "in/cp/js/main.js",
-            "in/cp/css/base.css",
             "in/cp/css/main.css",
             "in/fa/css/fa.css",
             "in/cp/js/pod.js",

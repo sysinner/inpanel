@@ -596,8 +596,8 @@
 
 .incp-app-specset-gn-box .title {
   left: 0;
-  font-size: 15px;
   font-weight: bold;
+  color: #222 !important;
 }
 
 .incp-app-specset-gn-box .options {

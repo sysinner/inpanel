@@ -95,12 +95,9 @@ inOpsPod.SpecPlanList = function () {
         }
         inCp.OpToolsRefresh("#inops-podspec-planls-optools");
 
-        if (!data || data.error || !data.kind || data.kind != "PodSpecPlanList") {
-            if (data.error) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", data.error.message);
-            }
-
-            return valueui.alert.innerShow(alert_id, "alert-danger", "Items Not Found");
+        var errMsg = valueui.utilx.errorKindCheck(null, data, "PodSpecPlanList");
+        if (errMsg) {
+            return valueui.alert.innerShow(alert_id, "error", errMsg);
         }
 
         if (!data.items) {
@@ -115,7 +112,7 @@ inOpsPod.SpecPlanList = function () {
         }
 
         if (data.items.length < 1) {
-            return valueui.alert.innerShow(alert_id, "alert-info", "No Item Found Yet ...");
+            return valueui.alert.innerShow(alert_id, "info", "No Item Found Yet ...");
         }
 
         valueui.template.render({
@@ -500,7 +497,7 @@ inOpsPod.SpecPlanSetCommit = function () {
             }
         }
     } catch (err) {
-        return valueui.alert.innerShow(alert_id, "alert-danger", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     inOps.ApiCmd("pod-spec/plan-set", {
@@ -508,19 +505,12 @@ inOpsPod.SpecPlanSetCommit = function () {
         data: JSON.stringify(req),
         timeout: 3000,
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", "Failed");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodSpecPlan");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            if (!rsj || rsj.kind != "PodSpecPlan") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.alert.innerShow(alert_id, "alert-danger", msg);
-            }
-
-            valueui.alert.innerShow(alert_id, "alert-success", "Successful operation");
+            valueui.alert.innerShow(alert_id, "ok", "Successful operation");
 
             window.setTimeout(function () {
                 inOpsPod.SpecPlanList();
@@ -540,12 +530,9 @@ inOpsPod.SpecPlanImageList = function () {
         }
         inCp.OpToolsRefresh("#inops-podspec-imagels-optools");
 
-        if (!data || data.error || !data.kind || data.kind != "PodSpecBoxImageList") {
-            if (data.error) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", data.error.message);
-            }
-
-            return valueui.alert.innerShow(alert_id, "alert-danger", "Items Not Found");
+        var errMsg = valueui.utilx.errorKindCheck(null, rsj, "PodSpecBoxImageList");
+        if (errMsg) {
+            return valueui.alert.innerShow(alert_id, "error", errMsg);
         }
 
         if (!data.items) {
@@ -555,12 +542,10 @@ inOpsPod.SpecPlanImageList = function () {
         }
 
         if (data.items.length < 1) {
-            return valueui.alert.innerShow(alert_id, "alert-info", "No Item Found Yet ...");
+            return valueui.alert.innerShow(alert_id, "info", "No Item Found Yet ...");
         }
 
         inOpsPod.image_actives = data.items;
-        console.log(data.items);
-        console.log(inOps.ooActions);
 
         valueui.template.render({
             dstid: tplid,
@@ -674,7 +659,7 @@ inOpsPod.SpecPlanImageSetCommit = function () {
         req.os_dist = form.find("input[name=os_dist]").val();
         req.arch = form.find("input[name=arch]").val();
     } catch (err) {
-        return valueui.alert.innerShow(alert_id, "alert-danger", err);
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     inOps.ApiCmd("pod-spec/box-image-set", {
@@ -682,19 +667,12 @@ inOpsPod.SpecPlanImageSetCommit = function () {
         data: JSON.stringify(req),
         timeout: 3000,
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "alert-danger", "Failed");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "PodSpecBoxImage");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            if (!rsj || rsj.kind != "PodSpecBoxImage") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.alert.innerShow(alert_id, "alert-danger", msg);
-            }
-
-            valueui.alert.innerShow(alert_id, "alert-success", "Successful operation");
+            valueui.alert.innerShow(alert_id, "ok", "Successful operation");
 
             window.setTimeout(function () {
                 inOpsPod.SpecPlanImageList();

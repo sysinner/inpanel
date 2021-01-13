@@ -564,16 +564,9 @@ inCpApp.instConfigDepRemotesCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "AppInstConfig") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppInstConfig");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
@@ -742,7 +735,8 @@ inCpApp.InstConfigWizardAppBound = function (spec_id, cb) {
     var alert_id = "#incp-appinst-cfg-wizard-alert";
 
     var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
-        if (!data || data.error || data.kind != "AppList") {
+        var errMsg = valueui.utilx.errorKindCheck(null, data, "AppList");
+        if (errMsg) {
             return;
         }
 
@@ -882,16 +876,9 @@ inCpApp.instConfigCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "AppInstConfig") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppInstConfig");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
@@ -916,16 +903,9 @@ inCpApp.InstDeploy = function (id, auto_start) {
     inCp.ApiCmd("app/entry?id=" + id, {
         timeout: 3000,
         callback: function (err, rsj) {
-            if (err) {
-                return valueui.alert.innerShow(alert_id, "error", "Failed: " + err);
-            }
-
-            if (!rsj || rsj.kind != "App") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.alert.innerShow(alert_id, "error", msg);
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "App");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             inCpApp.instDeployActive = rsj;
@@ -952,17 +932,9 @@ inCpApp.InstDeployCommit = function (app_id, auto_start) {
         method: "GET",
         timeout: 10000,
         callback: function (err, rsj) {
-            if (err) {
-                return valueui.alert.innerShow(alert_id, "error", "Failed: " + err);
-            }
-
-            if (!rsj || rsj.kind != "App") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                valueui.alert.innerShow(alert_id, "error", msg);
-                return;
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "App");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             inCpApp.instDeployActive = null;
@@ -984,8 +956,7 @@ inCpApp.InstDeployCommit = function (app_id, auto_start) {
                             title: "Close",
                         },
                         {
-                            onclick:
-                                'inCpApp.InstPodEntryIndex("' + inCpAppInstDeployActivePod + '")',
+                            onclick: `inCpApp.InstPodEntryIndex('${inCpAppInstDeployActivePod}')`,
                             title: "Go to Container Details",
                             style: "btn btn-primary",
                         },
@@ -1002,8 +973,9 @@ inCpApp.InstNew = function (spec_id, version) {
     }
 
     var ep = valueui.newEventProxy("tpl", "spec", function (tpl, spec) {
-        if (!spec || !spec.kind || spec.kind != "AppSpec") {
-            return alert("AppSpec error, Please try again later (EC:incp-appset)");
+        var errMsg = valueui.utilx.errorKindCheck(null, spec, "AppSpec");
+        if (errMsg) {
+            return alert(errMsg);
         }
 
         inCpApp.instSet = valueui.utilx.objectClone(inCpApp.instDef);
@@ -1060,12 +1032,9 @@ inCpApp.InstNew = function (spec_id, version) {
 inCpApp.instNewPodSelectCallback = function (err, pod_id) {
     inCp.ApiCmd("pod/entry?id=" + pod_id, {
         callback: function (err, podjs) {
-            if (err) {
-                return alert(err);
-            }
-
-            if (!podjs || podjs.kind != "Pod") {
-                return alert("Pod Not Found");
+            var errMsg = valueui.utilx.errorKindCheck(err, podjs, "Pod");
+            if (errMsg) {
+                return alert(errMsg);
             }
 
             inCpApp.instSet.operate.pod_id = podjs.meta.id;
@@ -1148,19 +1117,13 @@ inCpApp.InstNewCommit = function () {
         data: JSON.stringify(inCpApp.instSet),
         timeout: 3000,
         callback: function (err, rsj) {
-            var alertid = "#incp-appnew-cf-alert";
-
-            if (err || !rsj || rsj.kind != "App") {
-                var msg = "Bad Request";
-                if (err) {
-                    msg = err;
-                } else if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.alert.innerShow(alertid, "error", msg);
+            var alert_id = "#incp-appnew-cf-alert";
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "App");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
-            valueui.alert.innerShow(alertid, "ok", "Successful operation");
+            valueui.alert.innerShow(alert_id, "ok", "Successful operation");
 
             inCpApp.instSet = {};
             valueui.url.eventHandler("app/inst/list");
@@ -1202,12 +1165,14 @@ inCpApp.InstSet = function (app_id, spec_id) {
         "roles",
         "spec_vs",
         function (tpl, inst, roles, spec_vs) {
-            if (!inst || inst.error || inst.kind != "App") {
-                return valueui.alert.open("error", "App Not Found");
+            var errMsg = valueui.utilx.errorKindCheck(null, inst, "App");
+            if (errMsg) {
+                return valueui.alert.open("error", errMsg);
             }
 
-            if (!roles || roles.error || roles.kind != "UserRoleList") {
-                return valueui.alert.open("error", "RoleList Not Found");
+            errMsg = valueui.utilx.errorKindCheck(null, roles, "UserRoleList");
+            if (errMsg) {
+                return valueui.alert.open("error", errMsg);
             }
 
             $("#work-content").html(tpl);
@@ -1325,16 +1290,9 @@ inCpApp.InstSetCommit = function (options) {
         data: JSON.stringify(inCpApp.instSet),
         timeout: 3000,
         callback: function (err, rsj) {
-            if (err) {
-                return valueui.alert.innerShow(alert_id, "error", err);
-            }
-
-            if (!rsj || rsj.kind != "App") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.alert.innerShow(alert_id, "error", msg);
+            var errMsg = valueui.utilx.errorKindCheck(rer, rsj, "App");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             var msg = "Successful updated";
@@ -1366,7 +1324,7 @@ inCpApp.InstPodInfo = function (pod_id) {
         buttons: [
             {
                 title: "Detail",
-                onclick: 'inCpApp.InstPodEntryIndex("' + pod_id + '")',
+                onclick: `inCpApp.InstPodEntryIndex('${pod_id}')`,
                 style: "btn-success",
             },
         ],

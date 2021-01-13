@@ -1,21 +1,19 @@
 var inCpHost = {
     zones: null,
     single_node: false,
-}
+};
 
-inCpHost.ZoneRefresh = function(cb) {
+inCpHost.ZoneRefresh = function (cb) {
     var zoneid = valueui.session.get("incp_host_zoneid");
     if (!zoneid) {
         zoneid = valueui.storage.get("incp_host_zoneid");
     }
 
     if (inCpHost.zones) {
-
         if (!zoneid || zoneid.indexOf("/") >= 0) {
-
             for (var i in inCpHost.zones.items) {
                 zoneid = inCpHost.zones.items[i].meta.id;
-                break
+                break;
             }
 
             valueui.session.set("incp_host_zoneid", zoneid);
@@ -28,31 +26,18 @@ inCpHost.ZoneRefresh = function(cb) {
     }
 
     inCp.ApiCmd("host/zone-list", {
-        callback: function(err, zones) {
-
-            if (err) {
-                return cb(err, null);
-            }
-
-            if (!zones) {
-                return cb("Network Connection Exception", null);
-            }
-
-            if (zones.error) {
-                return cb(zones.error.message, null);
-            }
-
-            if (!zones.kind || zones.kind != "HostZoneList") {
-                return cb("Network Connection Exception", null);
+        callback: function (err, zones) {
+            var errMsg = valueui.utilx.errorKindCheck(err, zones, "HostZoneList");
+            if (errMsg) {
+                return cb(errMsg);
             }
 
             inCpHost.zones = zones;
 
             if (!zoneid || zoneid.indexOf("/") >= 0) {
-
                 for (var i in inCpHost.zones.items) {
                     zoneid = inCpHost.zones.items[i].meta.id;
-                    break
+                    break;
                 }
 
                 valueui.session.set("incp_host_zoneid", zoneid);
@@ -64,5 +49,4 @@ inCpHost.ZoneRefresh = function(cb) {
             cb(null, inCpHost.zones);
         },
     });
-}
-
+};

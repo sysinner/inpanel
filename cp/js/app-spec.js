@@ -324,172 +324,178 @@ inCpAppSpec.ListSelectorQueryCommit = function () {
 };
 
 inCpAppSpec.Info = function (id, spec, version, app_id) {
-    var ep = valueui.newEventProxy("tpl", "data", "roles", "tags", function (tpl, rsj, roles, tags) {
-        if (!rsj || rsj.error || rsj.kind != "AppSpec") {
-            return valueui.alert.open("error", "AppSpec Not Found");
-        }
-
-        if (!rsj.depends) {
-            rsj.depends = [];
-        }
-
-        if (!rsj.dep_remotes) {
-            rsj.dep_remotes = [];
-        }
-
-        if (!rsj.packages) {
-            rsj.packages = [];
-        }
-
-        if (!rsj.vcs_repos) {
-            rsj.vcs_repos = [];
-        }
-
-        if (!rsj.executors) {
-            rsj.executors = [];
-        }
-
-        for (var i in rsj.executors) {
-            if (!rsj.executors[i].exec_start) {
-                rsj.executors[i].exec_start = "";
+    var ep = valueui.newEventProxy(
+        "tpl",
+        "data",
+        "roles",
+        "tags",
+        function (tpl, rsj, roles, tags) {
+            if (!rsj || rsj.error || rsj.kind != "AppSpec") {
+                return valueui.alert.open("error", "AppSpec Not Found");
             }
 
-            if (!rsj.executors[i].exec_stop) {
-                rsj.executors[i].exec_stop = "";
+            if (!rsj.depends) {
+                rsj.depends = [];
             }
 
-            if (!rsj.executors[i].priority) {
-                rsj.executors[i].priority = 0;
+            if (!rsj.dep_remotes) {
+                rsj.dep_remotes = [];
             }
 
-            if (!rsj.executors[i].plan) {
-                rsj.executors[i].plan = {
-                    on_boot: true,
-                    on_boot_selected: "selected",
-                };
-            } else {
-                if (rsj.executors[i].plan.on_boot == true) {
-                    rsj.executors[i].plan.on_boot_selected = "selected";
-                } else if (rsj.executors[i].plan.on_tick > 0) {
-                    rsj.executors[i].plan.on_tick_selected = "selected";
+            if (!rsj.packages) {
+                rsj.packages = [];
+            }
+
+            if (!rsj.vcs_repos) {
+                rsj.vcs_repos = [];
+            }
+
+            if (!rsj.executors) {
+                rsj.executors = [];
+            }
+
+            for (var i in rsj.executors) {
+                if (!rsj.executors[i].exec_start) {
+                    rsj.executors[i].exec_start = "";
+                }
+
+                if (!rsj.executors[i].exec_stop) {
+                    rsj.executors[i].exec_stop = "";
+                }
+
+                if (!rsj.executors[i].priority) {
+                    rsj.executors[i].priority = 0;
+                }
+
+                if (!rsj.executors[i].plan) {
+                    rsj.executors[i].plan = {
+                        on_boot: true,
+                        on_boot_selected: "selected",
+                    };
+                } else {
+                    if (rsj.executors[i].plan.on_boot == true) {
+                        rsj.executors[i].plan.on_boot_selected = "selected";
+                    } else if (rsj.executors[i].plan.on_tick > 0) {
+                        rsj.executors[i].plan.on_tick_selected = "selected";
+                    }
                 }
             }
-        }
 
-        if (!rsj.service_ports) {
-            rsj.service_ports = [];
-        }
-
-        for (var i in rsj.service_ports) {
-            if (!rsj.service_ports[i].name) {
-                rsj.service_ports[i].name = "";
+            if (!rsj.service_ports) {
+                rsj.service_ports = [];
             }
-            if (!rsj.service_ports[i].box_port) {
-                rsj.service_ports[i].box_port = "";
-            }
-        }
 
-        for (var i in rsj.depends) {
-            if (!rsj.depends[i].name) {
-                rsj.depends[i].name = "";
+            for (var i in rsj.service_ports) {
+                if (!rsj.service_ports[i].name) {
+                    rsj.service_ports[i].name = "";
+                }
+                if (!rsj.service_ports[i].box_port) {
+                    rsj.service_ports[i].box_port = "";
+                }
             }
-        }
 
-        for (var i in rsj.dep_remotes) {
-            if (!rsj.dep_remotes[i].name) {
-                rsj.dep_remotes[i].name = "";
+            for (var i in rsj.depends) {
+                if (!rsj.depends[i].name) {
+                    rsj.depends[i].name = "";
+                }
             }
-            if (!rsj.dep_remotes[i].configs) {
-                rsj.dep_remotes[i].configs = [];
+
+            for (var i in rsj.dep_remotes) {
+                if (!rsj.dep_remotes[i].name) {
+                    rsj.dep_remotes[i].name = "";
+                }
+                if (!rsj.dep_remotes[i].configs) {
+                    rsj.dep_remotes[i].configs = [];
+                }
             }
-        }
 
-        if (!rsj.exp_deploy) {
-            rsj.exp_deploy = {};
-        }
-        if (!rsj.exp_deploy.rep_min) {
-            rsj.exp_deploy.rep_min = 1;
-            rsj.exp_deploy.rep_max = 1;
-        }
-        if (!rsj.exp_deploy.failover_time) {
-            rsj.exp_deploy.failover_time = 300;
-        }
-        if (!rsj.exp_deploy.failover_num_max) {
-            rsj.exp_deploy.failover_num_max = 0;
-        } else if (rsj.exp_deploy.failover_num_max > 0) {
-            rsj.exp_deploy._failover_enable = true;
-        }
-        if (!rsj.exp_deploy.failover_rate_max) {
-            rsj.exp_deploy.failover_rate_max = 0;
-        } else if (rsj.exp_deploy.failover_rate_max > 0) {
-            rsj.exp_deploy._failover_enable = true;
-        }
-
-        if (!rsj.exp_deploy.sys_state) {
-            rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
-        }
-        for (var i in inCpAppSpec.deploySysStates) {
-            if (inCpAppSpec.deploySysStates[i].value == rsj.exp_deploy.sys_state) {
-                rsj.exp_deploy._sys_state = inCpAppSpec.deploySysStates[i].title;
-                break;
+            if (!rsj.exp_deploy) {
+                rsj.exp_deploy = {};
             }
-        }
-        if (!rsj.exp_deploy._sys_state) {
-            rsj.exp_deploy._sys_state = "";
-        }
-        rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
+            if (!rsj.exp_deploy.rep_min) {
+                rsj.exp_deploy.rep_min = 1;
+                rsj.exp_deploy.rep_max = 1;
+            }
+            if (!rsj.exp_deploy.failover_time) {
+                rsj.exp_deploy.failover_time = 300;
+            }
+            if (!rsj.exp_deploy.failover_num_max) {
+                rsj.exp_deploy.failover_num_max = 0;
+            } else if (rsj.exp_deploy.failover_num_max > 0) {
+                rsj.exp_deploy._failover_enable = true;
+            }
+            if (!rsj.exp_deploy.failover_rate_max) {
+                rsj.exp_deploy.failover_rate_max = 0;
+            } else if (rsj.exp_deploy.failover_rate_max > 0) {
+                rsj.exp_deploy._failover_enable = true;
+            }
 
-        rsj._roles = [];
-        if (!rsj.roles) {
-            rsj.roles = [];
-        }
-        for (var i in rsj.roles) {
-            for (var j in roles.items) {
-                if (rsj.roles[i] == roles.items[j].id) {
-                    rsj._roles.push(roles.items[j].name);
+            if (!rsj.exp_deploy.sys_state) {
+                rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
+            }
+            for (var i in inCpAppSpec.deploySysStates) {
+                if (inCpAppSpec.deploySysStates[i].value == rsj.exp_deploy.sys_state) {
+                    rsj.exp_deploy._sys_state = inCpAppSpec.deploySysStates[i].title;
                     break;
                 }
             }
-        }
-        rsj._multi_replica_enable = inCp.syscfg.zone_master.multi_replica_enable;
+            if (!rsj.exp_deploy._sys_state) {
+                rsj.exp_deploy._sys_state = "";
+            }
+            rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
 
-        rsj._type_tags = [];
-        rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
-        for (var i in rsj.type_tags) {
-            for (var j in tags.items) {
-                if (rsj.type_tags[i] == tags.items[j].name) {
-                    rsj._type_tags.push(tags.items[j].value);
-                    break;
+            rsj._roles = [];
+            if (!rsj.roles) {
+                rsj.roles = [];
+            }
+            for (var i in rsj.roles) {
+                for (var j in roles.items) {
+                    if (rsj.roles[i] == roles.items[j].id) {
+                        rsj._roles.push(roles.items[j].name);
+                        break;
+                    }
                 }
             }
+            rsj._multi_replica_enable = inCp.syscfg.zone_master.multi_replica_enable;
+
+            rsj._type_tags = [];
+            rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
+            for (var i in rsj.type_tags) {
+                for (var j in tags.items) {
+                    if (rsj.type_tags[i] == tags.items[j].name) {
+                        rsj._type_tags.push(tags.items[j].value);
+                        break;
+                    }
+                }
+            }
+
+            rsj.runtime_images = rsj.runtime_images || [];
+
+            valueui.modal.open({
+                title: "AppSpec Information",
+                width: 1400,
+                width_min: 1000,
+                height: "max",
+                tplsrc: tpl,
+                data: rsj,
+                buttons: [
+                    {
+                        onclick: `inCpAppSpec.Download('${rsj.meta.id}')`,
+                        title: "Download the AppSpec file",
+                        style: "btn-primary",
+                    },
+                    {
+                        onclick: "valueui.modal.close()",
+                        title: "Close",
+                        style: "btn-primary",
+                    },
+                ],
+                callback: function () {
+                    inCp.CodeRender();
+                },
+            });
         }
-
-        rsj.runtime_images = rsj.runtime_images || [];
-
-        valueui.modal.open({
-            title: "AppSpec Information",
-            width: 1400,
-            width_min: 1000,
-            height: "max",
-            tplsrc: tpl,
-            data: rsj,
-            buttons: [
-                {
-                    onclick: 'inCpAppSpec.Download("' + rsj.meta.id + '")',
-                    title: "Download the AppSpec file",
-                    style: "btn-primary",
-                },
-                {
-                    onclick: "valueui.modal.close()",
-                    title: "Close",
-                    style: "btn-primary",
-                },
-            ],
-            callback: function () {
-                inCp.CodeRender();
-            },
-        });
-    });
+    );
 
     ep.fail(function (err) {
         // TODO
@@ -606,16 +612,9 @@ inCpAppSpec.ItemDelCommit = function () {
     inCp.ApiCmd("app-spec/item-del?id=" + id, {
         method: "GET",
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "AppSpec") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppSpec");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
@@ -630,153 +629,160 @@ inCpAppSpec.ItemDelCommit = function () {
 };
 
 inCpAppSpec.Set = function (id) {
-    var ep = valueui.newEventProxy("tpl", "data", "roles", "tags", function (tpl, rsj, roles, tags) {
-        rsj = rsj || valueui.utilx.objectClone(inCpAppSpec.def);
+    var ep = valueui.newEventProxy(
+        "tpl",
+        "data",
+        "roles",
+        "tags",
+        function (tpl, rsj, roles, tags) {
+            rsj = rsj || valueui.utilx.objectClone(inCpAppSpec.def);
 
-        if (!rsj || rsj.error || rsj.kind != "AppSpec") {
-            rsj = valueui.utilx.objectClone(inCpAppSpec.def);
-        }
-
-        $("#work-content").html(tpl);
-
-        rsj.meta.name = rsj.meta.name ? rsj.meta.name : "";
-        rsj.meta.title = rsj.meta.title ? rsj.meta.title : "";
-        rsj.meta.subtitle = rsj.meta.subtitle ? rsj.meta.subtitle : "";
-
-        rsj.description = rsj.description ? rsj.description : "";
-        rsj.comment = rsj.comment ? rsj.comment : "";
-
-        rsj.packages = rsj.packages ? rsj.packages : [];
-        rsj.executors = rsj.executors ? rsj.executors : [];
-
-        rsj.service_ports = rsj.service_ports ? rsj.service_ports : [];
-
-        if (inCp.UserSession.username == "sysadmin") {
-            rsj._host_port_enable = true;
-        }
-
-        for (var i in rsj.service_ports) {
-            if (!rsj.service_ports[i].name) {
-                rsj.service_ports[i].name = "";
+            if (!rsj || rsj.error || rsj.kind != "AppSpec") {
+                rsj = valueui.utilx.objectClone(inCpAppSpec.def);
             }
-            if (!rsj.service_ports[i].box_port) {
-                rsj.service_ports[i].box_port = "";
-            }
-            if (!rsj.service_ports[i].host_port) {
-                rsj.service_ports[i].host_port = "";
-            }
-        }
 
-        for (var i in rsj.depends) {
-            if (!rsj.depends[i].name) {
-                rsj.depends[i].name = "";
-            }
-        }
+            $("#work-content").html(tpl);
 
-        for (var i in rsj.dep_remotes) {
-            if (!rsj.dep_remotes[i].name) {
-                rsj.dep_remotes[i].name = "";
-            }
-            if (!rsj.dep_remotes[i].configs) {
-                rsj.dep_remotes[i].configs = [];
-            }
-        }
+            rsj.meta.name = rsj.meta.name ? rsj.meta.name : "";
+            rsj.meta.title = rsj.meta.title ? rsj.meta.title : "";
+            rsj.meta.subtitle = rsj.meta.subtitle ? rsj.meta.subtitle : "";
 
-        rsj._roles = valueui.utilx.objectClone(roles);
-        if (!rsj.roles) {
-            rsj.roles = [];
-        }
-        for (var i in rsj.roles) {
-            for (var j in rsj._roles.items) {
-                if (rsj.roles[i] == rsj._roles.items[j].id) {
-                    rsj._roles.items[j]._checked = true;
-                    break;
+            rsj.description = rsj.description ? rsj.description : "";
+            rsj.comment = rsj.comment ? rsj.comment : "";
+
+            rsj.packages = rsj.packages ? rsj.packages : [];
+            rsj.executors = rsj.executors ? rsj.executors : [];
+
+            rsj.service_ports = rsj.service_ports ? rsj.service_ports : [];
+
+            if (inCp.UserSession.username == "sysadmin") {
+                rsj._host_port_enable = true;
+            }
+
+            for (var i in rsj.service_ports) {
+                if (!rsj.service_ports[i].name) {
+                    rsj.service_ports[i].name = "";
+                }
+                if (!rsj.service_ports[i].box_port) {
+                    rsj.service_ports[i].box_port = "";
+                }
+                if (!rsj.service_ports[i].host_port) {
+                    rsj.service_ports[i].host_port = "";
                 }
             }
-        }
 
-        if (!rsj.exp_res.cpu_min) {
-            rsj.exp_res.cpu_min = 1;
-        }
-        rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
-
-        if (!rsj.exp_res.mem_min) {
-            rsj.exp_res.mem_min = 32;
-        }
-
-        if (!rsj.exp_res.vol_min) {
-            rsj.exp_res.vol_min = 1;
-        }
-
-        if (!rsj.exp_deploy) {
-            rsj.exp_deploy = {};
-        }
-        if (!rsj.exp_deploy.rep_min || rsj.exp_deploy.rep_min < 1) {
-            rsj.exp_deploy.rep_min = 1;
-        }
-        if (!rsj.exp_deploy.rep_max || rsj.exp_deploy.rep_max < 1) {
-            rsj.exp_deploy.rep_max = 1;
-        } else if (rsj.exp_deploy.rep_max > inCpPod.OpRepMax) {
-            rsj.exp_deploy.rep_max = inCpPod.OpRepMax;
-        }
-        if (rsj.exp_deploy.rep_min > rsj.exp_deploy.rep_max) {
-            rsj.exp_deploy.rep_min = rsj.exp_deploy.rep_max;
-        }
-        if (!rsj.exp_deploy.failover_time) {
-            rsj.exp_deploy.failover_time = 600;
-        }
-        if (!rsj.exp_deploy.failover_num_max) {
-            rsj.exp_deploy.failover_num_max = 0;
-        } else if (rsj.exp_deploy.failover_num_max > 0) {
-            rsj.exp_deploy._failover_enable = true;
-        }
-        if (!rsj.exp_deploy.failover_rate_max) {
-            rsj.exp_deploy.failover_rate_max = 0;
-        } else if (rsj.exp_deploy.failover_rate_max > 0) {
-            rsj.exp_deploy._failover_enable = true;
-        }
-        if (!rsj.exp_deploy.sys_state) {
-            rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
-        }
-
-        rsj._type_tags = valueui.utilx.objectClone(tags);
-        rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
-        for (var i in rsj.type_tags) {
-            for (var j in rsj._type_tags.items) {
-                if (rsj._type_tags.items[j].name == rsj.type_tags[i]) {
-                    rsj._type_tags.items[j]._checked = true;
-                    break;
+            for (var i in rsj.depends) {
+                if (!rsj.depends[i].name) {
+                    rsj.depends[i].name = "";
                 }
             }
-        }
 
-        rsj.runtime_images = rsj.runtime_images ? rsj.runtime_images : [];
-
-        inCpAppSpec.setActive = rsj;
-
-        valueui.template.render({
-            dstid: "incp-app-specset",
-            tplid: "incp-app-specset-tpl",
-            data: {
-                actionTitle: rsj.meta.id == "" ? "New AppSpec" : "Setting (" + rsj.meta.id + ")",
-                spec: rsj,
-                _multi_replica_enable: inCp.syscfg.zone_master.multi_replica_enable,
-                _deploy_sys_states: inCpAppSpec.deploySysStates,
-                _deploy_network_modes: inCpAppSpec.deployNetworkModes,
-            },
-            callback: function () {
-                inCpAppSpec.setDependRefresh();
-                inCpAppSpec.setDepRemoteRefresh();
-                inCpAppSpec.setPackRefresh();
-                inCpAppSpec.setVcsRefresh();
-                inCpAppSpec.setExecutorRefresh();
-
-                if (rsj.service_ports.length == 0) {
-                    inCpAppSpec.SetServicePortAppend();
+            for (var i in rsj.dep_remotes) {
+                if (!rsj.dep_remotes[i].name) {
+                    rsj.dep_remotes[i].name = "";
                 }
-            },
-        });
-    });
+                if (!rsj.dep_remotes[i].configs) {
+                    rsj.dep_remotes[i].configs = [];
+                }
+            }
+
+            rsj._roles = valueui.utilx.objectClone(roles);
+            if (!rsj.roles) {
+                rsj.roles = [];
+            }
+            for (var i in rsj.roles) {
+                for (var j in rsj._roles.items) {
+                    if (rsj.roles[i] == rsj._roles.items[j].id) {
+                        rsj._roles.items[j]._checked = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!rsj.exp_res.cpu_min) {
+                rsj.exp_res.cpu_min = 1;
+            }
+            rsj.exp_res._cpu_min = (rsj.exp_res.cpu_min / 10).toFixed(1);
+
+            if (!rsj.exp_res.mem_min) {
+                rsj.exp_res.mem_min = 32;
+            }
+
+            if (!rsj.exp_res.vol_min) {
+                rsj.exp_res.vol_min = 1;
+            }
+
+            if (!rsj.exp_deploy) {
+                rsj.exp_deploy = {};
+            }
+            if (!rsj.exp_deploy.rep_min || rsj.exp_deploy.rep_min < 1) {
+                rsj.exp_deploy.rep_min = 1;
+            }
+            if (!rsj.exp_deploy.rep_max || rsj.exp_deploy.rep_max < 1) {
+                rsj.exp_deploy.rep_max = 1;
+            } else if (rsj.exp_deploy.rep_max > inCpPod.OpRepMax) {
+                rsj.exp_deploy.rep_max = inCpPod.OpRepMax;
+            }
+            if (rsj.exp_deploy.rep_min > rsj.exp_deploy.rep_max) {
+                rsj.exp_deploy.rep_min = rsj.exp_deploy.rep_max;
+            }
+            if (!rsj.exp_deploy.failover_time) {
+                rsj.exp_deploy.failover_time = 600;
+            }
+            if (!rsj.exp_deploy.failover_num_max) {
+                rsj.exp_deploy.failover_num_max = 0;
+            } else if (rsj.exp_deploy.failover_num_max > 0) {
+                rsj.exp_deploy._failover_enable = true;
+            }
+            if (!rsj.exp_deploy.failover_rate_max) {
+                rsj.exp_deploy.failover_rate_max = 0;
+            } else if (rsj.exp_deploy.failover_rate_max > 0) {
+                rsj.exp_deploy._failover_enable = true;
+            }
+            if (!rsj.exp_deploy.sys_state) {
+                rsj.exp_deploy.sys_state = inCpAppSpec.deploySysStateful;
+            }
+
+            rsj._type_tags = valueui.utilx.objectClone(tags);
+            rsj.type_tags = rsj.type_tags ? rsj.type_tags : [];
+            for (var i in rsj.type_tags) {
+                for (var j in rsj._type_tags.items) {
+                    if (rsj._type_tags.items[j].name == rsj.type_tags[i]) {
+                        rsj._type_tags.items[j]._checked = true;
+                        break;
+                    }
+                }
+            }
+
+            rsj.runtime_images = rsj.runtime_images ? rsj.runtime_images : [];
+
+            inCpAppSpec.setActive = rsj;
+
+            valueui.template.render({
+                dstid: "incp-app-specset",
+                tplid: "incp-app-specset-tpl",
+                data: {
+                    actionTitle:
+                        rsj.meta.id == "" ? "New AppSpec" : "Setting (" + rsj.meta.id + ")",
+                    spec: rsj,
+                    _multi_replica_enable: inCp.syscfg.zone_master.multi_replica_enable,
+                    _deploy_sys_states: inCpAppSpec.deploySysStates,
+                    _deploy_network_modes: inCpAppSpec.deployNetworkModes,
+                },
+                callback: function () {
+                    inCpAppSpec.setDependRefresh();
+                    inCpAppSpec.setDepRemoteRefresh();
+                    inCpAppSpec.setPackRefresh();
+                    inCpAppSpec.setVcsRefresh();
+                    inCpAppSpec.setExecutorRefresh();
+
+                    if (rsj.service_ports.length == 0) {
+                        inCpAppSpec.SetServicePortAppend();
+                    }
+                },
+            });
+        }
+    );
 
     ep.fail(function (err) {
         // TODO
@@ -855,16 +861,9 @@ inCpAppSpec.setDependEntry = function (opt) {
     inCp.ApiCmd("app-spec/entry?id=" + opt.id, {
         timeout: 10000,
         callback: function (err, rsj) {
-            if (err) {
-                return valueui.alert.innerShow(alert_id, "error", err);
-            }
-
-            if (!rsj || rsj.kind != "AppSpec") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.alert.innerShow(alert_id, "error", msg);
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppSpec");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             if (!inCpAppSpec.setActive.depends) {
@@ -965,16 +964,9 @@ inCpAppSpec.setDepRemoteEntry = function (opt) {
     inCp.ApiCmd("app-spec/entry?id=" + opt.id, {
         timeout: 10000,
         callback: function (err, rsj) {
-            if (err) {
-                return valueui.alert.innerShow(alert_id, "error", err);
-            }
-
-            if (!rsj || rsj.kind != "AppSpec") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.alert.innerShow(alert_id, "error", msg);
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppSpec");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             if (!inCpAppSpec.setActive.dep_remotes) {
@@ -1089,16 +1081,9 @@ inCpAppSpec.setPackInfo = function (opt) {
     valueui.utilx.ajax("/ips/v1/pkg/entry?" + req, {
         timeout: 10000,
         callback: function (err, rsj) {
-            if (err) {
-                return valueui.alert.innerShow(alert_id, "error", err);
-            }
-
-            if (!rsj || rsj.kind != "Pack") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.alert.innerShow(alert_id, "error", msg);
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "Pack");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             if (!inCpAppSpec.setActive.packages) {
@@ -1768,16 +1753,9 @@ inCpAppSpec.SetCommit = function () {
         data: JSON.stringify(inCpAppSpec.setActive),
         timeout: 3000,
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.modal.footAlert("error", "network error", 3000, footer_id);
-            }
-
-            if (!rsj || rsj.kind != "AppSpec") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.modal.footAlert("error", msg, 3000, footer_id);
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppSpec");
+            if (errMsg) {
+                return valueui.modal.footAlert("error", errMsg, 3000, footer_id);
             }
 
             valueui.modal.footAlert("ok", "Successful operation", 3000, footer_id);
@@ -1863,16 +1841,9 @@ inCpAppSpec.SetRawCommit = function () {
         data: setActive,
         timeout: 3000,
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Failed");
-            }
-
-            if (!rsj || rsj.kind != "AppSpec") {
-                var msg = "Bad Request";
-                if (rsj.error) {
-                    msg = rsj.error.message;
-                }
-                return valueui.alert.innerShow(alert_id, "error", msg);
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppSpec");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successful operation");
@@ -1888,12 +1859,9 @@ inCpAppSpec.CfgSet = function (spec_id) {
     var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         var alert_id = "#incp-appspec-cfg-fieldlist-alert";
 
-        if (!data || data.error || !data.kind || data.kind != "AppSpec") {
-            if (data.error) {
-                return alert(data.error.message);
-            }
-
-            return alert("AppSpec Not Found");
+        var errMsg = valueui.utilx.errorKindCheck(null, data, "AppSpec");
+        if (errMsg) {
+            return alert(errMsg);
         }
 
         if (!data.configurator) {
@@ -2045,16 +2013,9 @@ inCpAppSpec.CfgSetCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "AppSpec") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppSpec");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             inCpAppSpec.active = null;
@@ -2227,16 +2188,9 @@ inCpAppSpec.CfgFieldSetCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "AppSpec") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppSpec");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
@@ -2294,16 +2248,9 @@ inCpAppSpec.CfgFieldDelCommit = function () {
         method: "POST",
         data: JSON.stringify(req),
         callback: function (err, rsj) {
-            if (err || !rsj) {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
-            }
-
-            if (rsj.error) {
-                return valueui.alert.innerShow(alert_id, "error", rsj.error.message);
-            }
-
-            if (!rsj.kind || rsj.kind != "AppSpec") {
-                return valueui.alert.innerShow(alert_id, "error", "Network Connection Exception");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppSpec");
+            if (errMsg) {
+                return valueui.alert.innerShow(alert_id, "error", errMsg);
             }
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");

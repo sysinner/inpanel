@@ -1290,7 +1290,7 @@ inCpApp.InstSetCommit = function (options) {
         data: JSON.stringify(inCpApp.instSet),
         timeout: 3000,
         callback: function (err, rsj) {
-            var errMsg = valueui.utilx.errorKindCheck(rer, rsj, "App");
+            var errMsg = valueui.utilx.errorKindCheck(err, rsj, "App");
             if (errMsg) {
                 return valueui.alert.innerShow(alert_id, "error", errMsg);
             }

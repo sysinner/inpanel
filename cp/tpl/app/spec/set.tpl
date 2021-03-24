@@ -29,10 +29,10 @@
 
 <div class="card-header">
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-auto me-auto">
       {[=it.actionTitle]}
     </div>
-    <div class="col-md-4 text-right">
+    <div class="col-auto text-right">
       <button class="btn btn-sm btn-primary" onclick="inCpAppSpec.Set('{[=it.meta_id]}')">
         <span class="fa fa-edit"></span> Visual editing mode
       </button>
@@ -69,10 +69,10 @@
 
 <div class="card-header">
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-auto me-auto">
       {[=it.actionTitle]}
     </div>
-    <div class="col-md-4 text-right">
+    <div class="col-auto">
       {[? it.spec.meta.user == "" || it.spec.meta.user == inCp.UserSession.username || inCp.UserSession.username == "sysadmin"]}
       <button class="btn btn-sm btn-primary" onclick="inCpAppSpec.SetRaw('{[=it.spec.meta.id]}')">
         <span class="fa fa-edit"></span> Advanced editing mode

@@ -408,12 +408,12 @@ inCpSpec.PodSetForm = function (podid) {
                         style: "btn btn-primary",
                     },
                 ],
-                success: function () {
+                callback: function () {
                     valueui.template.render({
                         dstid: "mix-spec-podset",
                         tplid: "mix-spec-podset-tpl",
                         data: rsj,
-                        success: function () {
+                        callback: function () {
                             if (!rsj.labels || rsj.labels.length < 1) {
                                 inCpSpec.PodSetLabelAppend();
                             }
@@ -486,7 +486,7 @@ inCpSpec.PodSetBoxAppend = function (box) {
         dstid: "mix-spec-podset-box",
         tplid: "mix-spec-podset-box-tpl",
         data: box,
-        success: function () {
+        callback: function () {
             if (!box.ports || box.ports.length < 1) {
                 inCpSpec.PodSetBoxPortAppend(box._rowid);
             }

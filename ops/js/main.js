@@ -124,19 +124,13 @@ inOps.load_index = function () {
                 dstid: "incp-topbar-userbar",
                 tplid: "incp-topbar-user-signed-tpl",
                 data: inOps.UserSession,
-                success: function () {
-                    $("#incp-topbar-userbar").hover(
-                        function () {
-                            $("#incp-topbar-user-signed-modal").fadeIn(200);
-                        },
-                        function () {}
-                    );
-                    $("#incp-topbar-user-signed-modal").hover(
-                        function () {},
-                        function () {
-                            $("#incp-topbar-user-signed-modal").fadeOut(200);
-                        }
-                    );
+                callback: function () {
+                    $("#incp-topbar-userbar").on("mouseenter", function () {
+                        $("#incp-topbar-user-signed-modal").fadeIn(200);
+                    });
+                    $("#incp-topbar-user-signed-modal").on("mouseleave", function () {
+                        $("#incp-topbar-user-signed-modal").fadeOut(200);
+                    });
                 },
             });
 

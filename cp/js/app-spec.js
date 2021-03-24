@@ -1045,7 +1045,7 @@ inCpAppSpec.SetPackSelect = function () {
         title: "Select a dependent Package",
         width: 900,
         height: 600,
-        tpluri: inCp.base + "/ips/~/ips/tpl/pkginfo/selector.html",
+        tpluri: inCp.base + "~/ips/tpl/pkginfo/selector.html",
         fn_selector: function (err, rsp) {
             valueui.modal.close();
             inCpAppSpec.setPackInfo({
@@ -1922,8 +1922,8 @@ inCpAppSpec.CfgSet = function (spec_id) {
             id: "incp-appspec-cfg-fieldlist-modal",
             title: "Configurator",
             tplsrc: tpl,
-            width: 1200,
-            height: 800,
+            width: 1800,
+            height: 1000,
             buttons: btns,
             callback: function () {
                 inCpAppSpec.cfgFieldListRefresh();

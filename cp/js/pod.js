@@ -1375,12 +1375,12 @@ inCpPod.Set = function (pod_id) {
                         style: "btn btn-primary",
                     },
                 ],
-                success: function () {
+                callback: function () {
                     valueui.template.render({
                         dstid: "incp-podset",
                         tplid: "incp-podset-tpl",
                         data: pod,
-                        success: function () {
+                        callback: function () {
                             if (pod.spec.meta.id != "") {
                                 inCpPod.SetSpecRefresh(pod.spec.meta.id);
                             } else {

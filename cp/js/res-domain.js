@@ -372,7 +372,7 @@ inCpResDomain.BoundList = function (name) {
                     style: "btn-primary",
                 },
             ],
-            success: function () {
+            callback: function () {
                 if (data.bounds.length == 0) {
                     return valueui.alert.innerShow(alert_id, "alert-info", "No Resource Bound");
                 }

@@ -859,7 +859,7 @@ inCpAppSpec.setDependEntry = function (opt) {
     var alert_id = "#incp-app-specset-alert";
 
     inCp.ApiCmd("app-spec/entry?id=" + opt.id, {
-        timeout: 10000,
+        timeout: 3000,
         callback: function (err, rsj) {
             var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppSpec");
             if (errMsg) {
@@ -962,7 +962,7 @@ inCpAppSpec.setDepRemoteEntry = function (opt) {
     var alert_id = "#incp-app-specset-alert";
 
     inCp.ApiCmd("app-spec/entry?id=" + opt.id, {
-        timeout: 10000,
+        timeout: 3000,
         callback: function (err, rsj) {
             var errMsg = valueui.utilx.errorKindCheck(err, rsj, "AppSpec");
             if (errMsg) {
@@ -1079,7 +1079,7 @@ inCpAppSpec.setPackInfo = function (opt) {
     var alert_id = "#incp-app-specset-alert";
 
     valueui.utilx.ajax("/ips/v1/pkg/entry?" + req, {
-        timeout: 10000,
+        timeout: 3000,
         callback: function (err, rsj) {
             var errMsg = valueui.utilx.errorKindCheck(err, rsj, "Pack");
             if (errMsg) {

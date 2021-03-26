@@ -336,6 +336,7 @@
   align-items: flex-start;
 }
 
+.incp-form-box-selector-item-frame,
 .incp-form-box-selector-item {
   /**
   position: relative;
@@ -344,8 +345,6 @@
   */
   padding: 5px;
   margin: 0 10px 10px 0;
-  background-color: #ecf0f1;
-  box-shadow: inset 0px 0px 1px #ffffcc;
   min-width: 280px;
   max-width: 280px;
   overflow: hidden;
@@ -354,6 +353,15 @@
   cursor: pointer;
   align-self: flex-start;
   flex-grow: 1;
+}
+
+.incp-form-box-selector-item {
+  background-color: #ecf0f1;
+  box-shadow: inset 0px 0px 1px #ffffcc;
+}
+
+.incp-form-box-selector-item > div {
+  padding: 2px;
 }
 
 .incp-form-box-selector-item-w2 {

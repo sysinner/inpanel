@@ -296,6 +296,10 @@ inCp.ApiCmd = function (url, options) {
         }
     }
 
+	if (!options.timeout || options.timeout < 5000) {
+	    options.timeout = 5000;
+	}
+
     options.callback = function (err, data) {
         if (err == "Unauthorized") {
             return inCp.AlertUserLogin();

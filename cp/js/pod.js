@@ -23,6 +23,7 @@ var inCpPod = {
             title: "Destroy",
         },
     ],
+    ociNameRE: /^[0-9a-zA-Z_.-]{1,50}:[0-9a-zA-Z_.-]{1,50}$/,
     def: {
         meta: {
             id: "",
@@ -40,6 +41,18 @@ var inCpPod = {
             cell: "",
         },
     },
+    def_volume_mounts: [
+        {
+            source: "{{.POD_SYS_VOL}}/opt",
+            target: "/opt",
+            default: true,
+        },
+        {
+            source: "{{.POD_SYS_VOL}}/home/action",
+            target: "/home/action",
+            default: true,
+        },
+    ],
     syszones: null,
     specs: null,
     plans: null,
@@ -656,6 +669,22 @@ inCpPod.NewRefreshPlan = function () {
             inCpPod.plan.res_compute_selected = inCpPod.plan.res_compute_default;
         }
 
+        if (!inCpPod.plan._spec_mounts || inCpPod.plan._spec_mounts.length < 1) {
+            inCpPod.plan._spec_mounts = inCpPod.def_volume_mounts;
+        } else {
+            for (var i in inCpPod.def_volume_mounts) {
+                if (!inCpPod.def_volume_mounts[i].default) {
+                    continue;
+                }
+                for (var j in inCpPod.plan._spec_mounts) {
+                    if (inCpPod.plan._spec_mounts[j].target == inCpPod.def_volume_mounts[i].target) {
+                        inCpPod.plan._spec_mounts[j].default = true;
+                        break;
+                    }
+                }
+            }
+        }
+
         $(".incp-podnew-resource-selector-row").remove();
 
         valueui.template.render({
@@ -720,6 +749,7 @@ inCpPod.NewPlanImageChange = function (image_id) {
     $("#incp-podnew-image-id-" + image_id_enc).addClass("selected");
 
     inCpPod.plan.image_selected = image_id;
+    console.log("pod image select : " + image_id);
 };
 
 inCpPod.NewPlanVolChange = function (ref_id) {
@@ -809,6 +839,19 @@ inCpPod.HookAccountChargeRefresh = function () {
     });
 };
 
+inCpPod.SpecMountAppend = function () {
+    valueui.template.render({
+        append: true,
+        dstid: "incp-pod-set-spec-mounts",
+        tplid: "incp-pod-set-spec-mount-item-tpl",
+        data: {
+            source: "",
+            target: "",
+            default: false,
+        },
+    });
+}
+
 inCpPod.NewCommit = function () {
     var alert_id = "#incp-podnew-alert",
         form = $("#incp-podnew-form"),
@@ -828,8 +871,8 @@ inCpPod.NewCommit = function () {
                 alert_id,
                 "error",
                 "this System Storage requires at least " +
-                    inCpPod.itemNewOptions.app_vol_min +
-                    " GB of space to fit the Application Resource Requirements"
+                inCpPod.itemNewOptions.app_vol_min +
+                " GB of space to fit the Application Resource Requirements"
             );
         }
     }
@@ -845,6 +888,7 @@ inCpPod.NewCommit = function () {
         cell: inCpPod.plan._zone_selected.split("/")[1],
         res_volume: inCpPod.plan._res_volume.ref_id,
         res_volume_size: vol_size,
+        mounts: [],
         box: {
             name: "main",
             image: inCpPod.plan.image_selected,
@@ -852,8 +896,36 @@ inCpPod.NewCommit = function () {
         },
     };
 
-    if (!set.name || set.name == "") {
-        return valueui.alert.innerShow(alert_id, "error", "Name Not Found");
+    try {
+
+        if (set.box.image == "oci-name") {
+            var ociname = $("#incp-podnew-image-oci-name").val();
+            if (!ociname || ociname.length < 1) {
+                throw "image name not found";
+            }
+            if (!inCpPod.ociNameRE.test(ociname)) {
+                throw "Invalid image name (REPOSITORY:TAG)";
+            }
+            set.box.image = ociname;
+        }
+
+        if (!set.name || set.name == "") {
+            throw "Name Not Found";
+        }
+
+        form.find(".incp-pod-set-spec-mount-item").each(function () {
+            var source = $(this).find("input[name=source]").val();
+            var target = $(this).find("input[name=target]").val();
+            if (source && target) {
+                set.mounts.push({
+                    source: source,
+                    target: target,
+                });
+            }
+        });
+
+    } catch (err) {
+        return valueui.alert.innerShow(alert_id, "error", err);
     }
 
     //
@@ -1160,8 +1232,8 @@ inCpPod.UserTransferCommit = function () {
             valueui.modal.footAlert(
                 "ok",
                 valueui.lang.T("Successfully Updated") +
-                    ", " +
-                    valueui.lang.T("msg-transter-ownership-confirm")
+                ", " +
+                valueui.lang.T("msg-transter-ownership-confirm")
             );
 
             window.setTimeout(function () {
@@ -1482,7 +1554,7 @@ inCpPod.entry_nav_menus = [
     },
     {
         name: "Remote Access",
-        uri: "pod/entry/setup",
+        uri: "pod/entry/access",
         onclick: "inCpPod.EntryAccess()",
         icon_fa: "key",
         /**
@@ -1759,7 +1831,7 @@ inCpPod.entryAutoRefresh = function () {
                         inCp.zone_id == inCpPod.itemActive.spec.zone &&
                         data.replicas[i].ports &&
                         data.replicas[i].ports.length !=
-                            inCpPod.itemActive.operate.replicas[i].ports.length
+                        inCpPod.itemActive.operate.replicas[i].ports.length
                     ) {
                         return setTimeout(inCpPod.EntryOverview, 3000);
                     }
@@ -1774,7 +1846,7 @@ inCpPod.entryAutoRefresh = function () {
                 }
 
                 for (var k in data.replicas[i].volumes) {
-                    if (data.replicas[i].volumes[k].mount_path == "/home/action") {
+                    if (data.replicas[i].volumes[k].target == "/home/action") {
                         if (!data.replicas[i].volumes[k].used) {
                             data.replicas[i].volumes[k].used = 0;
                         }
@@ -2356,7 +2428,8 @@ inCpPod.SpecSet = function (pod_id) {
                 spec_vol_id = pod.spec.vol_sys.ref_id,
                 spec_vol_size = pod.spec.vol_sys.size,
                 spec_image_id = pod.spec.box.image.ref.id,
-                spec_image_driver = pod.spec.box.image.driver;
+                spec_image_driver = pod.spec.box.image.driver,
+                spec_mounts = pod.spec.mounts;
 
             var _plans = [];
             for (var i in plans.items) {
@@ -2372,6 +2445,7 @@ inCpPod.SpecSet = function (pod_id) {
                                 break;
                             }
                         }
+                        plans.items[i]._spec_mounts = spec_mounts;
                     }
                     if (
                         pod.spec.zone == plans.items[i].zones[j].name &&
@@ -2510,6 +2584,7 @@ inCpPod.SpecSet = function (pod_id) {
 inCpPod.SpecSetCommit = function () {
     var alert_id = "#incp-podnew-alert",
         url = "",
+        form = $("#incp-podnew-form"),
         vol_size = parseInt($("#incp-podnew-resource-value").val());
     if (vol_size <= 0) {
         return valueui.alert.innerShow(alert_id, "error", "System Storage Not Set");
@@ -2539,7 +2614,20 @@ inCpPod.SpecSetCommit = function () {
             // image: inCpPod.specSetActive._image_selected,
             res_compute: inCpPod.plan.res_compute_selected,
         },
+        mounts: [],
     };
+
+    form.find(".incp-pod-set-spec-mount-item").each(function () {
+        var source = $(this).find("input[name=source]").val();
+        var target = $(this).find("input[name=target]").val();
+        if (source && target) {
+            set.mounts.push({
+                source: source,
+                target: target,
+            });
+        }
+    });
+
     // console.log(set);
 
     $(alert_id).hide();

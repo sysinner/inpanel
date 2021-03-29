@@ -1727,6 +1727,10 @@ inOpsHost.ZoneSet = function (zoneid) {
             rsj.image_services = [];
         }
 
+        if (!rsj.network_domain_name) {
+            rsj.network_domain_name = "";
+        }
+
         rsj._actions = inOpsHost.actions;
 
         valueui.modal.open({
@@ -1830,6 +1834,7 @@ inOpsHost.ZoneSetCommit = function () {
         lan_addrs: [],
         image_services: [],
         wan_api: form.find("input[name=wan_api]").val(),
+        network_domain_name: form.find("input[name=network_domain_name]").val(),
     };
 
     try {

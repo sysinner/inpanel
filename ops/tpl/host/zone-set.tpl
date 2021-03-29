@@ -171,6 +171,15 @@
       </tr>
 
       <tr>
+        <td>Network Domain Name</td>
+        <td></td>
+        <td>
+          <input type="text" name="network_domain_name" class="form-control form-control-sm" placeholder="Enter the Domain Name" value="{[=it.network_domain_name]}">
+          <small class="form-text text-muted">example: zone-service.example.com</small>
+        </td>
+      </tr>
+
+      <tr>
         <td>Action</td>
         <td></td>
         <td>

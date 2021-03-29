@@ -1660,10 +1660,14 @@ inCpAppSpec.SetCommit = function () {
             });
         });
 
-        inCpAppSpec.setActive.runtime_images = form
+
+
+        var runtime_images = form
             .find("input[name=runtime_images]")
-            .val()
-            .split(",");
+            .val();
+		if (runtime_images && runtime_images.length > 0) {
+            inCpAppSpec.setActive.runtime_images = runtime_images.split(",");
+		}
 
         inCpAppSpec.setActive.roles = [];
         form.find("input[name=roles]:checked").each(function () {

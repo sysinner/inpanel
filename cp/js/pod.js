@@ -271,7 +271,6 @@ inCpPod.List = function (tplid, options) {
                         data.items[i].spec.box.image.ref.id
                     )
                 ) {
-                    consoelg.log("list skip " + data.items[i].spec.box.image.ref.id);
                     continue;
                 }
             }

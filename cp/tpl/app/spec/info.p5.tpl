@@ -76,7 +76,7 @@
     {[}]}
 
 
-    {[if (it.depends.length > 0) {]}
+    {[? it.depends && it.depends.length > 0]}
     <tr>
       <td>Import AppSpec</td>
       <td id="incp-app-specset-depls">
@@ -100,7 +100,7 @@
         </table>
       </td>
     </tr>
-    {[}]}
+    {[?]}
 
     {[if (it.dep_remotes && it.dep_remotes.length > 0) {]}
     <tr>
@@ -218,7 +218,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr id="incp-app-specset-depls-id{[=v.id]}">
+            <tr>
               <td>{[=it.exp_res._cpu_min]} cores</td>
               <td>{[=it.exp_res.mem_min]} MB</td>
               <td>{[=it.exp_res.vol_min]} GB</td>

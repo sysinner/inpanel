@@ -18,16 +18,47 @@
       <tr>
         <td>Priority of resource allocation</td>
         <td>
-		  <select class="form-control" name="operate_pr">
+          <select class="form-control" name="operate_pr">
           {[~it._priorities :v]}
             <option value="{[=v.pr]}" {[? it.operate.pr == v.pr]}selected{[?]}>{[=v.name]}</option>
           {[~]}
-		  </select>
+          </select>
         </td>
       </tr>
- 
+
+      {[? it.operate._network_vpc_enable]}
       <tr>
-        <td>Action</td>
+        <td>
+          Virtual Private Cloud
+        </td>
+        <td>
+          <table width="100%">
+            <thead>
+              <tr>
+                <th width="50%">IP range for Container</th>
+                <th>IP range for Bridge device of Host</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <input type="text" name="operate_network_vpc_instance" class="form-control form-control-sm" value="{[=it.operate.network_vpc_instance]}">
+                  <small class="form-text text-muted">ex: 10.10.1.0/24</small>
+                </td>
+                <td>
+                  <input type="text" name="operate_network_vpc_bridge" class="form-control form-control-sm" value="{[=it.operate.network_vpc_bridge]}">
+                  <small class="form-text text-muted">ex: 192.168.10.1</small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <small class="form-text text-muted">notice: avoid conflicts with the IP range of the host's physical network</small>
+        </td>
+      </tr>
+      {[?]}
+
+      <tr>
+        <td>Action <span class="text-danger">*</span></td>
         <td>
           {[~it._actions :v]}
           <span class="ids-form-checkbox">
@@ -36,7 +67,6 @@
           {[~]}
         </td>
       </tr>
-
 
     </tbody>
   </table>

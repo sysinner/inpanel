@@ -18,22 +18,22 @@ var inOps = {
     ],
 };
 
-inOps.debug_uri = function () {
+inOps.debug_uri = function() {
     if (!inOps.debug) {
         return "?_=" + inOps.version;
     }
     return "?_=" + Math.random();
 };
 
-inOps.Boot = function (login_first) {
+inOps.Boot = function(login_first) {
     if (
         !(
-            ($.browser.chrome === true &&
-                valueui.utilx.versionCompare($.browser.version, "22.0") > 0) ||
-            ($.browser.firefox === true &&
-                valueui.utilx.versionCompare($.browser.version, "31.0") > 0) ||
-            ($.browser.safari === true &&
-                valueui.utilx.versionCompare($.browser.version, "5.0") > 0)
+        ($.browser.chrome === true &&
+        valueui.utilx.versionCompare($.browser.version, "22.0") > 0) ||
+        ($.browser.firefox === true &&
+        valueui.utilx.versionCompare($.browser.version, "31.0") > 0) ||
+        ($.browser.safari === true &&
+        valueui.utilx.versionCompare($.browser.version, "5.0") > 0)
         )
     ) {
         $("body").load(inCp.tplbase + "error/browser.tpl");
@@ -69,7 +69,16 @@ inOps.Boot = function (login_first) {
     );
 };
 
-inOps.load_index = function () {
+inOps.zone = function(zone_id) {
+    for (var i in inCp.Zones.items) {
+        if (inCp.Zones.items[i].meta.id === zone_id) {
+            return inCp.Zones.items[i];
+        }
+    }
+    return null;
+}
+
+inOps.load_index = function() {
     // l4i.debug = inOps.debug;
     // l4i.app_version = inOps.version;
 
@@ -80,7 +89,7 @@ inOps.load_index = function () {
         "zones",
         "session",
         "syscfg",
-        function (tpl, zones, session, syscfg) {
+        function(tpl, zones, session, syscfg) {
             if (!session || session.username == "") {
                 return alert("Network Exception, Please try again later (EC:zone-list)");
             }
@@ -124,11 +133,11 @@ inOps.load_index = function () {
                 dstid: "incp-topbar-userbar",
                 tplid: "incp-topbar-user-signed-tpl",
                 data: inOps.UserSession,
-                callback: function () {
-                    $("#incp-topbar-userbar").on("mouseenter", function () {
+                callback: function() {
+                    $("#incp-topbar-userbar").on("mouseenter", function() {
                         $("#incp-topbar-user-signed-modal").fadeIn(200);
                     });
-                    $("#incp-topbar-user-signed-modal").on("mouseleave", function () {
+                    $("#incp-topbar-user-signed-modal").on("mouseleave", function() {
                         $("#incp-topbar-user-signed-modal").fadeOut(200);
                     });
                 },
@@ -142,7 +151,7 @@ inOps.load_index = function () {
         }
     );
 
-    ep.fail(function (err) {
+    ep.fail(function(err) {
         if (err && err == "AuthSession") {
             inCp.AlertUserLogin();
         } else {
@@ -159,7 +168,7 @@ inOps.load_index = function () {
     });
 
     valueui.utilx.ajax(inCp.base + "auth/session", {
-        callback: function (err, data) {
+        callback: function(err, data) {
             if (!data || data.kind != "AuthSession") {
                 return ep.emit("error", "AuthSession");
             }
@@ -172,7 +181,7 @@ inOps.load_index = function () {
     });
 };
 
-inOps.ApiCmd = function (url, options) {
+inOps.ApiCmd = function(url, options) {
     var appcb = null;
     if (options.callback) {
         appcb = options.callback;
@@ -191,7 +200,7 @@ inOps.ApiCmd = function (url, options) {
         }
     }
 
-    options.callback = function (err, data) {
+    options.callback = function(err, data) {
         if (err == "Unauthorized") {
             return inCp.AlertUserLogin();
         }
@@ -204,22 +213,22 @@ inOps.ApiCmd = function (url, options) {
     valueui.utilx.ajax(inOps.api + url, options);
 };
 
-inOps.TplFetch = function (url, options) {
+inOps.TplFetch = function(url, options) {
     valueui.utilx.ajax(inOps.basetpl + url + ".tpl", options);
 };
 
-inOps.Loader = function (target, uri) {
+inOps.Loader = function(target, uri) {
     valueui.utilx.ajax(inOps.basetpl + uri + ".tpl", {
-        callback: function (err, data) {
+        callback: function(err, data) {
             $("#" + target).html(data);
         },
     });
 };
 
-inOps.CompLoader = function (uri) {
+inOps.CompLoader = function(uri) {
     inOps.Loader("comp-content", uri);
 };
 
-inOps.WorkLoader = function (uri) {
+inOps.WorkLoader = function(uri) {
     inOps.Loader("work-content", uri);
 };

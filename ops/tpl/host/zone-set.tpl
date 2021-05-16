@@ -17,7 +17,7 @@
 #inops-host-zone-form .card-body {
   padding: 0 10px;
 }
-<
+
 </style>
 
 <div id="inops-host-zone-form">
@@ -28,7 +28,7 @@
     <tbody>
  
       <tr>
-        <td width="260px">Zone ID</td>
+        <td width="300px">Zone ID <span class="text-danger">*</span></td>
         <td width="30px"></td>
         <td>
           <input type="text" name="id" class="form-control" value="{[=it.meta.id]}" {[? it.meta.id.length > 0]}readonly{[?]}>
@@ -36,7 +36,7 @@
       </tr>
  
       <tr>
-        <td>Name</td>
+        <td>Name <span class="text-danger">*</span></td>
         <td></td>
         <td>
           <input type="text" name="name" class="form-control" value="{[? it.meta.name]}{[=it.meta.name]}{[?]}">
@@ -50,11 +50,10 @@
           <input type="text" name="summary" class="form-control" placeholder="Enter the Zone Summary" value="{[=it.summary]}">
         </td>
       </tr>
-    
-   
+
       <tr>
         <td>
-          LAN Address
+          LAN Address <span class="text-danger">*</span>
         </td>
         <td>
           <button class="btn btn-default icon-x20"
@@ -77,13 +76,13 @@
               {[~]}
             </tbody>
           </table>
-          <small class="form-text text-muted">example: 192.168.1.1:9529</small>
+          <small class="form-text text-muted">ex: 192.168.1.1:9529</small>
         </td>
       </tr>
  
       <tr>
         <td>
-          WAN Address (Optional)
+          WAN Address
         </td>
         <td>
           <button class="btn btn-default icon-x20"
@@ -106,24 +105,64 @@
               {[~]}
             </tbody>
           </table>
-          <small class="form-text text-muted">example: 1.2.3.4:9529</small>
+          <small class="form-text text-muted">ex: 1.2.3.4:9529</small>
         </td>
       </tr>
-   
+
+      <tr>
+        <td>
+          Virtual Private Cloud
+        </td>
+        <td>
+        </td>
+        <td>
+          <table width="100%">
+            <thead>
+              <tr>
+                <th width="50%">IP range for Container</th>
+                <th>IP range for Bridge device of Host</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <input type="text" name="network_vpc_instance" class="form-control form-control-sm" value="{[=it.network_vpc_instance]}">
+                  <small class="form-text text-muted">ex: 10.10.0.0/16</small>
+                </td>
+                <td>
+                  <input type="text" name="network_vpc_bridge" class="form-control form-control-sm" value="{[=it.network_vpc_bridge]}">
+                  <small class="form-text text-muted">ex: 192.168.10.1/24</small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <small class="form-text text-muted">notice: avoid conflicts with the IP range of the host's physical network</small>
+        </td>
+      </tr>
+
+      <tr>
+        <td>Private Domain Name</td>
+        <td></td>
+        <td>
+          <input type="text" name="network_domain_name" class="form-control form-control-sm" placeholder="Enter the Domain Name" value="{[=it.network_domain_name]}">
+          <small class="form-text text-muted">ex: zone-service.example.com</small>
+        </td>
+      </tr>
+
       {[? inCp.syscfg.zone_master.multi_zone_enable]}
       <tr>
         <td>Cross Region Zone access API</td>
         <td></td>
         <td>
           <input type="text" name="wan_api" class="form-control form-control-sm" placeholder="Enter the Zone API" value="{[=it.wan_api]}">
-          <small class="form-text text-muted">example: http://1.2.3.4:9529 or https://example.com</small>
+          <small class="form-text text-muted">ex: http://1.2.3.4:9529 or https://example.com</small>
         </td>
       </tr>
       {[?]}
 
       <tr>
         <td>
-          Image Registry Services (Optional)
+          Image Registry Services
         </td>
         <td>
           <button class="btn btn-default icon-x20"
@@ -158,10 +197,10 @@
             <tbody>
               <tr>
                 <td>
-                  <small class="form-text text-muted">example: docker, or pouch</small>
+                  <small class="form-text text-muted">ex: docker, or pouch</small>
                 </td>
                 <td>
-                  <small class="form-text text-muted">example: https://registry.docker.com</small>
+                  <small class="form-text text-muted">ex: https://registry.docker.com</small>
                 </td>
                 <td></td>
               </tr>
@@ -171,16 +210,7 @@
       </tr>
 
       <tr>
-        <td>Network Domain Name</td>
-        <td></td>
-        <td>
-          <input type="text" name="network_domain_name" class="form-control form-control-sm" placeholder="Enter the Domain Name" value="{[=it.network_domain_name]}">
-          <small class="form-text text-muted">example: zone-service.example.com</small>
-        </td>
-      </tr>
-
-      <tr>
-        <td>Action</td>
+        <td>Action <span class="text-danger">*</span></td>
         <td></td>
         <td>
           {[~it._actions :v]}

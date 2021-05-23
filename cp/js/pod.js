@@ -851,6 +851,10 @@ inCpPod.SpecMountAppend = function () {
     });
 }
 
+inCpPod.SpecMountDel = function (field) {
+    $(field).parent().parent().remove();
+}
+
 inCpPod.NewCommit = function () {
     var alert_id = "#incp-podnew-alert",
         form = $("#incp-podnew-form"),

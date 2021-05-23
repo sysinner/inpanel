@@ -349,7 +349,8 @@
               {[if (inCp.syscfg.zone_master.multi_replica_enable) {]}
               <th>Host</th>
               {[}]}
-              <th>Service Port Mapping</th>
+              <th>VPC IP</th>
+              <th>Expose Ports</th>
               <th>Vol</th>
               <th>Status</th>
               <th>Uptime</th>
@@ -363,6 +364,9 @@
               {[if (inCp.syscfg.zone_master.multi_replica_enable) {]}
               <td id="incp-podentry-rep-host-value-{[=rep.rep_id]}" class="incp-font-fixspace">
                 {[? rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}
+              </td>
+              <td>
+                {[? rep.vpc_ipv4]}{[=rep.vpc_ipv4]}{[?]}
               </td>
               {[}]}
               <td>

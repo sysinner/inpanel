@@ -213,56 +213,6 @@
   </td>
 </tr>
 
-<tr>
-  <td>
-    Service Ports
-  </td>
-  <td>
-    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetServicePortAppend()">
-      <i class="fa fa-plus"></i>
-    </button>
-  </td>
-  <td>
-    <table>
-      <thead>
-        <tr>
-          <th width="33%">Port (1025 ~ 65535)</th>
-          <th width="33%">Name (tcp,http, ...)</th>
-          {[? it.spec._host_port_enable]}
-          <th>Host Port (1 ~ 9999)</th>
-          {[??]}
-          <th></th>
-          {[?]}
-          <th width="30px"></th>
-        <tr>
-      </thead>
-      <tbody id="incp-app-specset-serviceports">
-        {[~it.spec.service_ports :vp]}
-        <tr class="incp-app-specset-serviceport-item">
-          <td>
-            <input name="sp_box_port" type="text" value="{[=vp.box_port]}" class="form-control form-control-sm">
-          </td>
-          <td>
-            <input name="sp_name" type="text" value="{[=vp.name]}" class="form-control form-control-sm">
-          </td>
-          {[? it.spec._host_port_enable]}
-          <td>
-            <input name="sp_host_port" type="text" value="{[=vp.host_port]}" class="form-control form-control-sm">
-          </td>
-          {[??]}
-          <td></td>
-          {[?]}
-          <td align="right">
-            <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetServicePortDel(this)">
-              <i class="fa fa-times"></i>
-            </button>
-          </td>
-        </tr>
-        {[~]}
-      </tbody>
-    </table>
-  </td>
-</tr>
 
 
 <tr>
@@ -307,7 +257,7 @@
     <tr>
       <td width="33%">Number of Replicas (1 ~ 256)</td>
       <td width="33%">System State</td>
-      <td>Network Mode</td>
+      <td></td>
     </tr>
     <tr>
       <td>
@@ -330,17 +280,119 @@
         </select>
       </td>
       <td>
-        <select name="exp_deploy_network_mode" class="form-control form-control-sm">
-        {[~it._deploy_network_modes :v]}
-        <option value="{[=v.value]}" {[if (it.spec.exp_deploy.network_mode == v.value) {]} selected{[}]}>{[=v.title]}</option>
-        {[~]}
-        </select>
       </td>
     </tr>
     </tbody>
     </table>
   </td>
 </tr>
+
+
+<tr>
+  <td>
+    Network
+  </td>
+  <td>
+  </td>
+  <td>
+    <table>
+      <thead>
+        <tr>
+          <th width="33%">VPC</th>
+          <th width="33%">Expose Ports</th>
+          <th></th>
+        <tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <select name="exp_deploy_network_vpc_name" class="form-control form-control-sm">
+              <option value="v1" {[? it.spec.exp_deploy.network_vpc_name == "v1"]} selected{[?]}>Enable</option>
+              <option value="v0" {[? it.spec.exp_deploy.network_vpc_name != "v1"]} selected{[?]}>Disable</option>
+            </select>
+          </td>
+          <td>
+            <select name="exp_deploy_network_mode" class="form-control form-control-sm">
+            {[~it._deploy_network_modes :v]}
+              <option value="{[=v.value]}" {[if (it.spec.exp_deploy.network_mode == v.value) {]} selected{[}]}>{[=v.title]}</option>
+            {[~]}
+            </select>
+          </td>
+          <td>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>
+
+<tr>
+  <td>
+    Network of Expose Ports
+  </td>
+  <td>
+    <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetServicePortAppend()">
+      <i class="fa fa-plus"></i>
+    </button>
+  </td>
+  <td>
+    <table>
+      <thead>
+        <tr>
+          <th width="33%">Container Port</th>
+          <th width="33%">Name</th>
+          {[? it.spec._host_port_enable]}
+          <th>Host Port</th>
+          {[??]}
+          <th></th>
+          {[?]}
+          <th width="30px"></th>
+        <tr>
+      </thead>
+      <tbody id="incp-app-specset-serviceports">
+        {[~it.spec.service_ports :vp]}
+        <tr class="incp-app-specset-serviceport-item">
+          <td>
+            <input name="sp_box_port" type="text" value="{[=vp.box_port]}" class="form-control form-control-sm">
+          </td>
+          <td>
+            <input name="sp_name" type="text" value="{[=vp.name]}" class="form-control form-control-sm">
+          </td>
+          {[? it.spec._host_port_enable]}
+          <td>
+            <input name="sp_host_port" type="text" value="{[=vp.host_port]}" class="form-control form-control-sm">
+          </td>
+          {[??]}
+          <td></td>
+          {[?]}
+          <td align="right">
+            <button class="btn btn-default icon-x20" onclick="inCpAppSpec.SetServicePortDel(this)">
+              <i class="fa fa-times"></i>
+            </button>
+          </td>
+        </tr>
+        {[~]}
+        <tr id="incp-app-specset-serviceports-tail">
+          <td>
+            <small>ex: 1025 ~ 65535</small>
+          </td>
+          <td>
+            <small>ex: tcp, http, ...</small>
+          </td>
+          {[? it.spec._host_port_enable]}
+          <td>
+            <small>ex: 1 ~ 9999</small>
+          </td>
+          {[??]}
+          <td>
+          </td>
+          {[?]}
+        </tr>
+      </tbody>
+    </table>
+  </td>
+</tr>
+
 
 <tr>
   <td>High Availability</td>

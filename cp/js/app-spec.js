@@ -113,7 +113,7 @@ var inCpAppSpec = {
     ],
     deployNetworkModes: [
         {
-            title: "Bridge",
+            title: "Host Bridge",
             value: 1,
         },
         {
@@ -1509,8 +1509,9 @@ inCpAppSpec.SetServicePortAppend = function () {
     }
 
     valueui.template.render({
-        append: true,
-        dstid: "incp-app-specset-serviceports",
+        // append: true,
+		beforeAppend: true,
+        dstid: "incp-app-specset-serviceports-tail",
         tplid: "incp-app-specset-serviceport-tpl",
         data: data,
     });
@@ -1731,6 +1732,14 @@ inCpAppSpec.SetCommit = function () {
             network_mode = 1;
         }
         inCpAppSpec.setActive.exp_deploy.network_mode = network_mode;
+
+        //
+        var network_vpc_name = form.find("select[name=exp_deploy_network_vpc_name]").val();
+        if (network_vpc_name != "v1") {
+            network_vpc_name = "v0";
+        }
+        inCpAppSpec.setActive.exp_deploy.network_vpc_name = network_vpc_name;
+
 
         //
         var fail_time = parseInt(form.find("input[name=exp_deploy_failover_time]").val());

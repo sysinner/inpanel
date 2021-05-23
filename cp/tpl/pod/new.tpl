@@ -309,7 +309,7 @@
                       {[? v.default !== true]}
                       <button
                         class="btn btn-default icon-x20"
-                        onclick="inCpPod.SpecMountDelete()"
+                        onclick="inCpPod.SpecMountDel(this)"
                       >
                         <i class="fa fa-times"></i>
                       </button>
@@ -343,7 +343,7 @@
     {[? it.default !== true]}
     <button
       class="btn btn-default icon-x20"
-      onclick="inCpPod.SpecMountDelete()"
+      onclick="inCpPod.SpecMountDel(this)"
     >
       <i class="fa fa-times"></i>
     </button>

@@ -295,7 +295,7 @@
             <tr class="incp-formtable-row-line">
               <th>Name</th>
               <th>AppSpec</th>
-              <th>Service Ports</th>
+              <th>Expose Ports</th>
               <th>Configs</th>
               <th style="text-align:right"></th>
             </tr>
@@ -365,10 +365,10 @@
               <td id="incp-podentry-rep-host-value-{[=rep.rep_id]}" class="incp-font-fixspace">
                 {[? rep.node]}{[=rep.node]}{[??]}Scheduling{[?]}
               </td>
+              {[}]}
               <td>
                 {[? rep.vpc_ipv4]}{[=rep.vpc_ipv4]}{[?]}
               </td>
-              {[}]}
               <td>
                 {[? rep.ports]}
                 <table class="incp-font-fixspace table-reset" style="width:100%">

@@ -74,7 +74,7 @@
       <tr class="incp-formtable-row-line">
         <th>Name</th>
         <th>App Spec</th>
-        <th>Service Ports</th>
+        <th>Expose Ports</th>
         <th></th>
       </tr>
     </thead>

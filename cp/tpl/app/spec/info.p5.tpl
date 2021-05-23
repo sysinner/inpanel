@@ -179,31 +179,6 @@
     </tr>
     {[}]}
 
-    {[if (it.service_ports.length > 0) {]}
-    <tr>
-      <td>Service Ports</td>
-      <td>
-        <table>
-          <thead>
-            <tr>
-              <th width="33%">Port</th>
-              <th width="33%">Name (http,https, ...)</th>
-              <th></th>
-            <tr>
-          </thead>
-          <tbody>
-            {[~it.service_ports :vp]}
-            <tr>
-              <td>{[=vp.box_port]}</td>
-              <td>{[=vp.name]}</td>
-              <td></td>
-            </tr>
-            {[~]}
-          </tbody>
-        </table>
-      </td>
-    </tr>
-    {[}]}
 
 
     <tr>
@@ -250,6 +225,54 @@
       </td>
     </tr>
 
+    <tr>
+      <td>Network</td>
+      <td>
+        <table>
+          <thead>
+            <tr>
+              <th width="33%">VPC</th>
+              <th width="33%">Expose Ports</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{[? it.exp_deploy.network_vpc_name == "v1"]}Enable{[??]}Disable{[?]}</td>
+              <td>{[? it.exp_deploy.network_mode == 1]}Host Bridge{[??]}Host{[?]}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+
+
+    {[if (it.service_ports.length > 0) {]}
+    <tr>
+      <td>Network of Expose Ports</td>
+      <td>
+        <table>
+          <thead>
+            <tr>
+              <th width="33%">Port</th>
+              <th width="33%">Name (http,https, ...)</th>
+              <th></th>
+            <tr>
+          </thead>
+          <tbody>
+            {[~it.service_ports :vp]}
+            <tr>
+              <td>{[=vp.box_port]}</td>
+              <td>{[=vp.name]}</td>
+              <td></td>
+            </tr>
+            {[~]}
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    {[}]}
 
     {[? it.exp_deploy._failover_enable]}
     <tr>

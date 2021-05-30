@@ -30,14 +30,23 @@ var inOpsHost = {
     actions: [
         // {action: 0, title: "Unknown"},
         {
-            action: 1,
+            action: 1 << 1,
             title: "Active",
         },
         {
-            action: 2,
+            action: 1 << 3,
             title: "Suspended",
         },
+        {
+            action: 1 << 5,
+            title: "Destroy",
+        },
+        {
+            action: (1 << 5) | (1 << 27),
+            title: "Force Destroy",
+        },
     ],
+	actionForce: 1 << 27,
     zone_def: {
         kind: "HostZone",
         meta: {
@@ -453,7 +462,7 @@ inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
 
     // data
     inOps.ApiCmd("host/node-entry?zoneid=" + zoneid + "&cellid=" + cellid + "&nodeid=" + nodeid, {
-        api_zone_id: zoneid,
+        // api_zone_id: zoneid,
         callback: ep.done("data"),
     });
 };
@@ -478,8 +487,7 @@ inOpsHost.NodeSetCommit = function() {
         spec: {},
     };
 
-    inOps.ApiCmd("host/node-set", {
-        api_zone_id: req.operate.zone_id,
+	var opts = {
         method: "POST",
         data: JSON.stringify(req),
         callback: function(err, rsj) {
@@ -502,7 +510,13 @@ inOpsHost.NodeSetCommit = function() {
                 }
             }, 500);
         },
-    });
+	};
+
+	if (inCp.OpActionAllow(req.operate.action, inOps.actionForce)) {
+		opts.api_zone_id = req.operate.zone_id;
+	}
+
+    inOps.ApiCmd("host/node-set", opts);
 };
 
 inOpsHost.NodeSecretKeySet = function(zoneid, cellid, nodeid) {
@@ -1276,7 +1290,7 @@ inOpsHost.ZoneRefresh = function(cb, force) {
 
 inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
     inOps.ApiCmd("host/node-list?zoneid=" + zoneid + "&cellid=" + cellid, {
-        api_zone_id: zoneid,
+        // api_zone_id: zoneid,
         callback: function(err, nodes) {
             var errMsg = valueui.utilx.errorKindCheck(err, nodes, "HostNodeList");
             if (errMsg) {

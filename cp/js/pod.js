@@ -1849,7 +1849,7 @@ inCpPod.entryAutoRefresh = function () {
                 }
 
                 for (var k in data.replicas[i].volumes) {
-                    if (data.replicas[i].volumes[k].target == "/home/action") {
+                    if (data.replicas[i].volumes[k].mount_path == "/home/action") {
                         if (!data.replicas[i].volumes[k].used) {
                             data.replicas[i].volumes[k].used = 0;
                         }

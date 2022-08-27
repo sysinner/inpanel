@@ -11,13 +11,13 @@ var inCpSpec = {
     ],
     boxImageSpecs: [
         {
-            distName: "CentOS 7",
-            dist: "el7",
+            distName: "Rocky Linux 8",
+            dist: "el8",
             arch: "x64",
         },
         {
-            distName: "CentOS 8",
-            dist: "el8",
+            distName: "CentOS 7",
+            dist: "el7",
             arch: "x64",
         },
     ],
@@ -37,7 +37,7 @@ var inCpSpec = {
         },
         driver: "docker",
         spec: {
-            dist: "el7",
+            dist: "el8",
             arch: "x64",
         },
         status: {

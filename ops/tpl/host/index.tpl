@@ -4,6 +4,12 @@
 </div>
 <div id='work-content'></div>
 
+<script id="inops-host-zone-nav-tpl" type="text/html">
+<li>
+  <a class="valueui-nav-item active" href="#sys/config">Zones</a>
+</li>
+</script>
+
 <script id="inops-host-nav-tpl" type="text/html">
 <li id="inops-cluster-nav-zone" style="display:none"><a id="inops-cluster-nav-zone-value" class="valueui-nav-item inops-cluster-nav-item arrow_next" href="#cluster/zone" onclick="inOpsHost.ZoneList()">Zone</a></li>
 <li id="inops-cluster-nav-cell" style="display:none"><a id="inops-cluster-nav-cell-value" class="valueui-nav-item inops-cluster-nav-item arrow_next" href="#cluster/cell" onclick="inOpsHost.CellList()">Cell</a></li>

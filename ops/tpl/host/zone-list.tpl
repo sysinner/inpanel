@@ -3,53 +3,41 @@
 <div class="incp-div-light">
 <table class="table table-hover valign-middle">
   <thead><tr>
-    <th>Zone ID</th>
-    <th>Name</th>
+    <th>ID / Name</th>
   	<th>Description</th>
     <th>LAN Address</th>
     <th>WAN Address</th>
+    <th>Driver</th>
     <th>Action</th>
-    <th>Updated</th>
-    <th>Cells</th>
-    <th></th>
+    <th width="30px"></th>
   </tr></thead>
   <tbody id="inops-host-zones"></tbody>
 </table>
 </div>
 
 <script id="inops-host-zones-tpl" type="text/html">
+
 {[~it.items :v]}
-<tr>
-  <td class="incp-font-fixspace">
-    {[=v.meta.id]}
+<tr onclick="inOpsHost.ZoneEntryIndex('{[=v.meta.id]}')">
+  <td class="incp-font-fixspace incp-ctn-hover">
+    <span><strong>{[=v.meta.id]}</strong></span>
+	<div>{[=v.meta.name]}</div>
   </td>
-  <td>{[=v.meta.name]}</td>
-  <td>{[=v.summary]}</td>
-  <td>
+  <td class="incp-ctn-hover">{[=v.summary]}</td>
+  <td class="incp-ctn-hover">
     {[~v.lan_addrs :addr]}
     <div>{[=addr]}</div>
     {[~]}
   </td>
-  <td>
+  <td class="incp-ctn-hover">
     {[~v.wan_addrs :addr]}
     <div>{[=addr]}</div>
     {[~]}
   </td>
-  <td>{[=inOpsHost.ActionTitle(v.phase)]}</td>
-  <td>{[=valueui.utilx.unixMillisecondFormat(v.meta.updated, "Y-m-d")]}</td>
-  <td>
-    <button class="btn btn-sm btn-outline-primary"
-      onclick="inOpsHost.CellList('{[=v.meta.id]}')">
-      <span class="fa fa-layer-group"></span>
-      <span style="display:inline-block;width:30px">{[=v.cells.length]}</span>
-    </button>
-  </td>
-  <td align="right">
-    <button class="btn btn-sm btn-outline-primary"
-      onclick="inOpsHost.ZoneSet('{[=v.meta.id]}')">
-      <span class="fa fa-cog"></span>
-      Setting
-    </button>
+  <td class="incp-ctn-hover">{[=v.driver.name]}</td>
+  <td class="incp-ctn-hover">{[=inOpsHost.ActionTitle(v.phase)]}</td>
+  <td align="right" class="incp-ctn-hover">
+    <span class="fa fa-chevron-right"></span>
   </td>
 </tr>
 {[~]}
@@ -57,7 +45,8 @@
 
 <script type="text/html" id="inops-cluster-zones-optools">
 <li class="incp-btn incp-btn-primary">
-  <a href="#" onclick="inOpsHost.ZoneSet()">
+  <a href="#" onclick="inOpsHost.ZoneNew()">
+    <span class="fa fa-plus-circle"></span>
     Add a Region Zone
   </a>
 </li>

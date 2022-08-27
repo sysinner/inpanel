@@ -20,15 +20,15 @@
       </div>
       <div class="incp-card-frame incp-card-frame-p25 incp-card-body-inline-item">
         <div class="name">Zone / Cell</div>
-        <div class="value">{[=it.operate.zone_id]} / {[=it.operate.cell_id]}</div>
+        <div class="value">{[=it.operate.zone_id]} / {[=inCp.HtmlVarDisplay(it.operate.cell_id)]}</div>
       </div>
       <div class="incp-card-frame incp-card-frame-p25 incp-card-body-inline-item">
         <div class="name">Joined</div>
         <div class="value">{[=valueui.utilx.unixMillisecondFormat(it.meta.created, "Y-m-d")]}</div>
       </div>
       <div class="incp-card-frame incp-card-frame-p25 incp-card-body-inline-item">
-        <div class="name">OS - Kernel</div>
-        <div class="value">{[=it.spec.platform.os]} - {[=it.spec.platform.kernel]}</div>
+        <div class="name">OS / Kernel</div>
+        <div class="value">{[=inCp.HtmlVarDisplay(it.spec.platform.os)]} / {[=inCp.HtmlVarDisplay(it.spec.platform.kernel)]}</div>
       </div>
     </div>
     <div class="incp-card-frame-inline">
@@ -94,7 +94,7 @@
       </div>
       <div class="incp-card-frame incp-card-frame-p50 incp-card-body-inline-item">
         <div class="name">WAN Address</div>
-        <div class="value">{[=it.spec.peer_wan_addr]}</div>
+        <div class="value">{[=inCp.HtmlVarDisplay(it.spec.peer_wan_addr)]}</div>
       </div>
     </div>
   </div>
@@ -110,6 +110,7 @@
     <span>Volumes</span>
   </div>
   <div class="incp-card-body">
+    {[? it.status.volumes && it.status.volumes.length > 0]}
     {[~it.status.volumes :v]}
     <div class="incp-grid-space px0020">
       <div class="incp-grid-inrow">
@@ -125,6 +126,9 @@
       </div>
     </div>
     {[~]}
+    {[??]}
+	no items found ...
+    {[?]}
   </div> 
 </div> 
 </div> 

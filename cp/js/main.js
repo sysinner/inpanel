@@ -121,6 +121,7 @@ inCp.Boot = function (login_first) {
             "in/cp/js/app-spec.js",
             "in/cp/js/res.js",
             "in/cp/js/res-domain.js",
+            "in/cp/js/config.js",
             //
             "hchart/hchart.js",
             "ips/js/main.js",
@@ -296,9 +297,9 @@ inCp.ApiCmd = function (url, options) {
         }
     }
 
-	if (!options.timeout || options.timeout < 5000) {
-	    options.timeout = 5000;
-	}
+    if (!options.timeout || options.timeout < 5000) {
+        options.timeout = 5000;
+    }
 
     options.callback = function (err, data) {
         if (err == "Unauthorized") {
@@ -783,6 +784,9 @@ inCp.NavBack = function (fn) {
 };
 
 inCp.TimeUptime = function (sec) {
+    if (!sec) {
+        return "--";
+    }
     var s = [];
 
     var d = parseInt(sec / 86400);
@@ -841,4 +845,17 @@ inCp.SysConfigValueIf = function (group_name, item_name, if_str) {
         return v;
     }
     return if_str;
+};
+
+inCp.HtmlVarDisplay = function (v, prefix) {
+    if (v && v.length > 0) {
+        if (prefix) {
+            return " " + prefix + " " + v;
+        }
+        return v;
+    }
+    if (prefix) {
+        return " " + prefix + " --";
+    }
+    return "--";
 };

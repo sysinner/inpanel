@@ -31,11 +31,11 @@ var inOpsHost = {
         // {action: 0, title: "Unknown"},
         {
             action: 1 << 1,
-            title: "Active",
+            title: "Start",
         },
         {
             action: 1 << 3,
-            title: "Suspended",
+            title: "Stop",
         },
         {
             action: 1 << 5,
@@ -46,7 +46,7 @@ var inOpsHost = {
             title: "Force Destroy",
         },
     ],
-	actionForce: 1 << 27,
+    actionForce: 1 << 27,
     zone_def: {
         kind: "HostZone",
         meta: {
@@ -57,6 +57,10 @@ var inOpsHost = {
         desc: "",
         wan_addrs: [],
         lan_addrs: [],
+        driver: {
+            name: "private_cloud",
+        },
+        groups: [],
     },
     cell_def: {
         kind: "HostCell",
@@ -93,9 +97,18 @@ var inOpsHost = {
     ],
     PriorityDefault: 2,
     PriorityLength: 6,
+    ZoneGroupSetupIn: 1 << 1,
+    ZoneGroupSetupOut: 1 << 2,
+    zoneGroupDefault: {
+        id: "g1",
+        name: "General v1",
+        description:
+            "General purpose instances provide a balance of compute, memory and networking resources",
+        action: 1 << 1,
+    },
 };
 
-inOpsHost.ActionTitle = function(action) {
+inOpsHost.ActionTitle = function (action) {
     for (var i in inOpsHost.actions) {
         if (action == inOpsHost.actions[i].action) {
             return inOpsHost.actions[i].title;
@@ -104,12 +117,25 @@ inOpsHost.ActionTitle = function(action) {
     return "Unknown";
 };
 
-inOpsHost.NavInit = function() {
+inOpsHost.NavInit = function () {
     // valueui.url.eventRegister("host/index", inOpsHost.Index);
 };
 
-inOpsHost.Index = function() {
-    var ep = valueui.newEventProxy("zones", "tpl", function(zones, tpl) {
+inOpsHost.Index = function () {
+    var activeZone = false;
+    if (inOpsHost._nodeActiveZoneId) {
+        for (var i in inCp.Zones.items) {
+            if (inCp.Zones.items[i].meta.id == inOpsHost._nodeActiveZoneId) {
+                activeZone = true;
+            }
+        }
+    }
+    if (!activeZone && inCp.Zones.items.length > 0) {
+        inOpsHost._nodeActiveZoneId = inCp.Zones.items[0].meta.id;
+        valueui.storage.set("inops_cluster_zone_id", inOpsHost._nodeActiveZoneId);
+    }
+
+    var ep = valueui.newEventProxy("zones", "tpl", function (zones, tpl) {
         if (!zones || !zones.items) {
             return valueui.alert.open("error", "Zone Not Found");
         }
@@ -119,7 +145,7 @@ inOpsHost.Index = function() {
         inOpsHost.ZoneIndex();
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
         if (err == "AccessDenied") {
             return inCp.AlertAccessDenied();
         }
@@ -134,7 +160,7 @@ inOpsHost.Index = function() {
     inOpsHost.ZoneRefresh(ep.done("zones"));
 };
 
-inOpsHost.zone_active_fix = function(zoneid) {
+inOpsHost.zone_active_fix = function (zoneid) {
     if (!inOpsHost.zones) {
         return false;
     }
@@ -158,7 +184,7 @@ inOpsHost.zone_active_fix = function(zoneid) {
     return true;
 };
 
-inOpsHost.cell_active_fix = function(zoneid, cellid) {
+inOpsHost.cell_active_fix = function (zoneid, cellid) {
     if (!inOpsHost.zone_active_fix(zoneid)) {
         return false;
     }
@@ -189,7 +215,90 @@ inOpsHost.cell_active_fix = function(zoneid, cellid) {
     return true;
 };
 
-inOpsHost.NodeList = function(zoneid, cellid) {
+inOpsHost._nodeEntryReset = function (nodeEntry) {
+    var tn = Date.now() / 1000;
+
+    if (!nodeEntry.meta.name || nodeEntry.meta.name.length < 1) {
+        nodeEntry.meta.name = "localhost";
+    }
+
+    if (!nodeEntry.spec.platform) {
+        nodeEntry.spec.platform = {};
+    }
+
+    if (nodeEntry.spec.platform.kernel) {
+        nodeEntry.spec.platform.kernel = nodeEntry.spec.platform.kernel.replace(/.x86_64$/g, "");
+    }
+
+    nodeEntry.spec.capacity = nodeEntry.spec.capacity || {};
+    nodeEntry.spec.capacity.cpu = nodeEntry.spec.capacity.cpu || 1000;
+    nodeEntry.spec.capacity.mem = nodeEntry.spec.capacity.mem || 0;
+
+    if (!nodeEntry.operate.pr) {
+        nodeEntry.operate.pr = inOpsHost.PriorityDefault;
+    }
+
+    if (!nodeEntry.operate.cpu_used) {
+        nodeEntry.operate.cpu_used = 0;
+    }
+    if (!nodeEntry.operate.mem_used) {
+        nodeEntry.operate.mem_used = 0;
+    }
+
+    if (!nodeEntry.operate.port_used) {
+        nodeEntry.operate.port_used = [];
+    }
+    if (!nodeEntry.operate.box_num) {
+        nodeEntry.operate.box_num = 0;
+    }
+
+    nodeEntry.status = nodeEntry.status || {};
+
+    if (!nodeEntry.status.volumes) {
+        nodeEntry.status.volumes = [];
+    }
+    for (var i in nodeEntry.status.volumes) {
+        if (!nodeEntry.status.volumes[i].total) {
+            nodeEntry.status.volumes[i].total = 1;
+        }
+        if (!nodeEntry.status.volumes[i].used) {
+            nodeEntry.status.volumes[i].used = 1;
+        }
+        nodeEntry.status.volumes[i]._percent = parseInt(
+            (100 * nodeEntry.status.volumes[i].used) / nodeEntry.status.volumes[i].total
+        );
+    }
+
+    if (nodeEntry.status.uptime) {
+        nodeEntry.status._uptime = parseInt(new Date() / 1e3) - nodeEntry.status.uptime;
+    }
+
+    if (!nodeEntry.status || !nodeEntry.status.updated || tn - nodeEntry.status.updated > 3600) {
+        nodeEntry._status = "Offline";
+    } else {
+        nodeEntry._status = "Online";
+    }
+
+    if (nodeEntry.operate.action) {
+        for (var j in inOpsHost.actions) {
+            if (inOpsHost.actions[j].action == nodeEntry.operate.action) {
+                nodeEntry._action_display = inOpsHost.actions[j].title;
+                break;
+            }
+        }
+    }
+
+    if (!nodeEntry.spec.exp_docker_version) {
+        nodeEntry.spec.exp_docker_version = "disable";
+    }
+    if (!nodeEntry.spec.exp_pouch_version) {
+        nodeEntry.spec.exp_pouch_version = "disable";
+    }
+
+    return nodeEntry;
+};
+
+inOpsHost.NodeList = function (zoneid, cellid) {
     if (!inOpsHost.cell_active_fix(zoneid, cellid)) {
         return;
     }
@@ -216,7 +325,7 @@ inOpsHost.NodeList = function(zoneid, cellid) {
         $("#inops-cluster-nav-cell-value").text("Cell: " + inOpsHost.cell_active.meta.id);
     }
 
-    var ep = valueui.newEventProxy("tpl", "data", function(tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         if (tpl) {
             $("#work-content").html(tpl);
         }
@@ -230,24 +339,8 @@ inOpsHost.NodeList = function(zoneid, cellid) {
             inCp.OpToolsClean();
         }
 
-        var tn = Date.now() / 1000;
-
         for (var i in data.items) {
-            if (data.items[i].status && tn - data.items[i].status.updated > 3600) {
-                data.items[i]._status = "Offline";
-            }
-            if (!data.items[i].meta.name || data.items[i].meta.name.length < 1) {
-                data.items[i].meta.name = "localhost";
-            }
-            if (!data.items[i].operate.pr) {
-                data.items[i].operate.pr = inOpsHost.PriorityDefault;
-            }
-            if (!data.items[i].operate.cpu_used) {
-                data.items[i].operate.cpu_used = 0;
-            }
-            if (!data.items[i].operate.mem_used) {
-                data.items[i].operate.mem_used = 0;
-            }
+            data.items[i] = inOpsHost._nodeEntryReset(data.items[i]);
         }
 
         valueui.template.render({
@@ -257,7 +350,7 @@ inOpsHost.NodeList = function(zoneid, cellid) {
         });
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
         alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
     });
 
@@ -272,18 +365,18 @@ inOpsHost.NodeList = function(zoneid, cellid) {
     );
 };
 
-inOpsHost.NodeOpPortUsedInfo = function(z, c, node_id) {
-    for (var i in inOpsHost.nodes.items) {
-        if (node_id != inOpsHost.nodes.items[i].meta.id) {
+inOpsHost.NodeOpPortUsedInfo = function (z, c, node_id) {
+    for (var i in inOpsHost._nodeListActive.items) {
+        if (node_id != inOpsHost._nodeListActive.items[i].meta.id) {
             continue;
         }
 
         var s = "no port assigned yet...";
         if (
-            inOpsHost.nodes.items[i].operate.port_used &&
-            inOpsHost.nodes.items[i].operate.port_used.length > 0
+            inOpsHost._nodeListActive.items[i].operate.port_used &&
+            inOpsHost._nodeListActive.items[i].operate.port_used.length > 0
         ) {
-            s = inOpsHost.nodes.items[i].operate.port_used.join(", ");
+            s = inOpsHost._nodeListActive.items[i].operate.port_used.join(", ");
         }
 
         return valueui.modal.open({
@@ -301,14 +394,14 @@ inOpsHost.NodeOpPortUsedInfo = function(z, c, node_id) {
     }
 };
 
-inOpsHost.NodePodList = function(z, c, node_id) {
+inOpsHost.NodePodList = function (z, c, node_id) {
     var node = null;
 
-    for (var i in inOpsHost.nodes.items) {
-        if (node_id != inOpsHost.nodes.items[i].meta.id) {
+    for (var i in inOpsHost._nodeListActive.items) {
+        if (node_id != inOpsHost._nodeListActive.items[i].meta.id) {
             continue;
         }
-        node = inOpsHost.nodes.items[i];
+        node = inOpsHost._nodeListActive.items[i];
         break;
     }
     if (!node) {
@@ -317,14 +410,14 @@ inOpsHost.NodePodList = function(z, c, node_id) {
 
     var alert_id = "#inops-host-podls-selector-alert";
 
-    var ep = valueui.newEventProxy("tpl", "data", function(tpl, data) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
         valueui.modal.open({
             id: "inops-host-pod-list",
             title: "Pod List",
             tplsrc: tpl,
             width: 1200,
             height: 800,
-            callback: function() {
+            callback: function () {
                 if (data.error) {
                     return valueui.alert.innerShow(alert_id, "error", data.error.message);
                 }
@@ -346,7 +439,7 @@ inOpsHost.NodePodList = function(z, c, node_id) {
         });
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
         //
     });
 
@@ -363,11 +456,11 @@ inOpsHost.NodePodList = function(z, c, node_id) {
     });
 };
 
-inOpsHost.NodePodInfo = function(pod_id) {
+inOpsHost.NodePodInfo = function (pod_id) {
     inCpPod.Info(pod_id);
 };
 
-inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
+inOpsHost.NodeSet = function (zoneid, cellid, nodeid) {
     if (!zoneid) {
         zoneid = valueui.storage.get("inops_cluster_zone_id");
     }
@@ -385,7 +478,7 @@ inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
 
     var alert_id = "#inops-host-nodeset-alert";
 
-    var ep = valueui.newEventProxy("tpl", "data", function(tpl, rsj) {
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, rsj) {
         var errMsg = valueui.utilx.errorKindCheck(null, rsj, "HostNode");
         if (errMsg) {
             return valueui.alert.innerShow(alert_id, "error", errMsg);
@@ -451,7 +544,7 @@ inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
         });
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
         alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
     });
 
@@ -467,7 +560,7 @@ inOpsHost.NodeSet = function(zoneid, cellid, nodeid) {
     });
 };
 
-inOpsHost.NodeSetCommit = function() {
+inOpsHost.NodeSetCommit = function () {
     var form = $("#inops-host-node-form"),
         alert_id = "#inops-host-nodeset-alert";
 
@@ -487,10 +580,10 @@ inOpsHost.NodeSetCommit = function() {
         spec: {},
     };
 
-	var opts = {
+    var opts = {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
+        callback: function (err, rsj) {
             var errMsg = valueui.utilx.errorKindCheck(err, rsj, "HostNode");
             if (errMsg) {
                 return valueui.alert.innerShow(alert_id, "error", errMsg);
@@ -498,7 +591,7 @@ inOpsHost.NodeSetCommit = function() {
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 valueui.modal.close();
                 var el = document.getElementById("inops-host-nodes");
                 if (el) {
@@ -510,16 +603,16 @@ inOpsHost.NodeSetCommit = function() {
                 }
             }, 500);
         },
-	};
+    };
 
-	if (inCp.OpActionAllow(req.operate.action, inOps.actionForce)) {
-		opts.api_zone_id = req.operate.zone_id;
-	}
+    if (inCp.OpActionAllow(req.operate.action, inOps.actionForce)) {
+        opts.api_zone_id = req.operate.zone_id;
+    }
 
     inOps.ApiCmd("host/node-set", opts);
 };
 
-inOpsHost.NodeSecretKeySet = function(zoneid, cellid, nodeid) {
+inOpsHost.NodeSecretKeySet = function (zoneid, cellid, nodeid) {
     if (!zoneid) {
         zoneid = valueui.storage.get("inops_cluster_zone_id");
     }
@@ -537,7 +630,7 @@ inOpsHost.NodeSecretKeySet = function(zoneid, cellid, nodeid) {
 
     var alert_id = "#inops-host-node-secretkey-set-alert";
 
-    var ep = valueui.newEventProxy("tpl", function(tpl) {
+    var ep = valueui.newEventProxy("tpl", function (tpl) {
         valueui.modal.open({
             title: "Reset Secret Key",
             tplsrc: tpl,
@@ -561,7 +654,7 @@ inOpsHost.NodeSecretKeySet = function(zoneid, cellid, nodeid) {
         });
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
         alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
     });
 
@@ -570,7 +663,7 @@ inOpsHost.NodeSecretKeySet = function(zoneid, cellid, nodeid) {
     });
 };
 
-inOpsHost.NodeSecretKeySetCommit = function() {
+inOpsHost.NodeSecretKeySetCommit = function () {
     var form = $("#inops-host-node-secretkey-form"),
         alert_id = "#inops-host-node-secretkey-set-alert";
 
@@ -584,7 +677,7 @@ inOpsHost.NodeSecretKeySetCommit = function() {
         api_zone_id: req.zone_id,
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
+        callback: function (err, rsj) {
             var errMsg = valueui.utilx.errorKindCheck(err, rsj, "HostNode");
             if (errMsg) {
                 return valueui.alert.innerShow(alert_id, "error", errMsg);
@@ -592,7 +685,7 @@ inOpsHost.NodeSecretKeySetCommit = function() {
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 valueui.modal.close();
                 var el = document.getElementById("inops-host-nodes");
                 if (el) {
@@ -603,7 +696,7 @@ inOpsHost.NodeSecretKeySetCommit = function() {
     });
 };
 
-inOpsHost.NodeNew = function(zoneid, cellid) {
+inOpsHost.NodeNew = function (zoneid, cellid) {
     if (!zoneid) {
         zoneid = valueui.storage.get("inops_cluster_zone_id");
     }
@@ -613,7 +706,7 @@ inOpsHost.NodeNew = function(zoneid, cellid) {
     }
 
     inOps.TplFetch("host/node-new", {
-        callback: function(err, tpl) {
+        callback: function (err, tpl) {
             var priorities = [];
             for (var i = 1; i < inOpsHost.PriorityLength - 1; i++) {
                 var v = "";
@@ -660,7 +753,7 @@ inOpsHost.NodeNew = function(zoneid, cellid) {
     });
 };
 
-inOpsHost.NodeNewCommit = function() {
+inOpsHost.NodeNewCommit = function () {
     var form = $("#inops-host-node-form"),
         alert_id = "#inops-host-nodenew-alert";
 
@@ -677,7 +770,7 @@ inOpsHost.NodeNewCommit = function() {
         api_zone_id: req.zone_id,
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, rsj) {
+        callback: function (err, rsj) {
             var errMsg = valueui.utilx.errorKindCheck(err, rsj, "HostNode");
             if (errMsg) {
                 return valueui.alert.innerShow(alert_id, "error", errMsg);
@@ -685,7 +778,7 @@ inOpsHost.NodeNewCommit = function() {
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 valueui.modal.close();
                 inOpsHost.NodeList();
             }, 500);
@@ -696,7 +789,8 @@ inOpsHost.NodeNewCommit = function() {
 inOpsHost.entry_nav_menus = [
     {
         name: "Back",
-        onclick: "inOpsHost.NodeList()",
+        // onclick: "inOpsHost.NodeList()",
+        onclick: "inOpsHost.ZoneEntryIndex()",
         uri: "",
         style: "primary",
     },
@@ -719,7 +813,7 @@ inOpsHost.entry_nav_menus = [
     },
 ];
 
-inOpsHost.Node = function(zone_id, host_id, nav_target) {
+inOpsHost.Node = function (zone_id, host_id, nav_target) {
     if (!zone_id) {
         zone_id = valueui.storage.get("inops_cluster_zone_id");
     }
@@ -728,7 +822,7 @@ inOpsHost.Node = function(zone_id, host_id, nav_target) {
         return;
     }
 
-    inOpsHost.node_active_zone_id = zone_id;
+    inOpsHost._nodeActiveZoneId = zone_id;
     inOpsHost.node_active_id = host_id;
 
     inCp.ModuleNavbarMenu("ops/host/entry", inOpsHost.entry_nav_menus);
@@ -751,8 +845,8 @@ inOpsHost.Node = function(zone_id, host_id, nav_target) {
     }
 };
 
-inOpsHost.NodeOverview = function() {
-    var ep = valueui.newEventProxy("tpl", "node", function(tpl, node) {
+inOpsHost.NodeOverview = function () {
+    var ep = valueui.newEventProxy("tpl", "node", function (tpl, node) {
         if (!node.spec.platform) {
             node.spec.platform = {};
         }
@@ -804,9 +898,6 @@ inOpsHost.NodeOverview = function() {
             node.status._uptime = parseInt(new Date() / 1e3) - node.status.uptime;
         }
 
-        if (!node.spec.peer_wan_addr) {
-            node.spec.peer_wan_addr = "not set";
-        }
         if (!node.spec.exp_docker_version) {
             node.spec.exp_docker_version = "disable";
         }
@@ -828,17 +919,17 @@ inOpsHost.NodeOverview = function() {
         });
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
         alert("Network Connection Error, Please try again later (EC:incp-node)");
     });
 
     inOps.ApiCmd(
         "host/node-entry?zoneid=" +
-        inOpsHost.node_active_zone_id +
-        "&nodeid=" +
-        inOpsHost.node_active_id,
+            inOpsHost._nodeActiveZoneId +
+            "&nodeid=" +
+            inOpsHost.node_active_id,
         {
-            api_zone_id: inOpsHost.node_active_zone_id,
+            api_zone_id: inOpsHost._nodeActiveZoneId,
             callback: ep.done("node"),
         }
     );
@@ -852,13 +943,13 @@ inOpsHost.NodeOverview = function() {
     });
 };
 
-inOpsHost.NodeStatsButton = function(obj) {
+inOpsHost.NodeStatsButton = function (obj) {
     $("#incp-module-navbar-optools").find(".hover").removeClass("hover");
     obj.setAttribute("class", "hover");
     inOpsHost.NodeStats(parseInt(obj.getAttribute("value")));
 };
 
-inOpsHost.nodeStatsFeedMaxValue = function(feed, names) {
+inOpsHost.nodeStatsFeedMaxValue = function (feed, names) {
     var max = 0;
     var arr = names.split(",");
     for (var i in feed.items) {
@@ -874,7 +965,7 @@ inOpsHost.nodeStatsFeedMaxValue = function(feed, names) {
     return max;
 };
 
-inOpsHost.NodeStats = function(time_past) {
+inOpsHost.NodeStats = function (time_past) {
     if (time_past) {
         inOpsHost.node_active_past = parseInt(time_past);
         if (!inOpsHost.node_active_past) {
@@ -969,7 +1060,7 @@ inOpsHost.NodeStats = function(time_past) {
     }
 
     stats_url += "&qry=" + btoa(JSON.stringify(stats_query));
-    var ep = valueui.newEventProxy("tpl", "node", "stats", function(tpl, node, stats) {
+    var ep = valueui.newEventProxy("tpl", "node", "stats", function (tpl, node, stats) {
         if (tpl) {
             $("#work-content").html(tpl);
             $(".incp-podentry-stats-item").css({
@@ -1202,7 +1293,7 @@ inOpsHost.NodeStats = function(time_past) {
             data: {
                 items: statses,
             },
-            callback: function() {
+            callback: function () {
                 for (var i in statses) {
                     statses[i].data.options.title = "";
                     hooto_chart.RenderElement(
@@ -1214,7 +1305,7 @@ inOpsHost.NodeStats = function(time_past) {
         });
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
         alert("Network Connection Error, Please try again later (EC:inops-node)");
     });
 
@@ -1233,13 +1324,13 @@ inOpsHost.NodeStats = function(time_past) {
     });
 };
 
-inOpsHost.ZoneRefresh = function(cb, force) {
+inOpsHost.ZoneRefresh = function (cb, force) {
     if (inOpsHost.zones && !force) {
         return cb(null, inOpsHost.zones);
     }
 
     inOps.ApiCmd("host/zone-list?fields=cells", {
-        callback: function(err, zones) {
+        callback: function (err, zones) {
             if (err) {
                 return cb(err, null);
             }
@@ -1288,10 +1379,10 @@ inOpsHost.ZoneRefresh = function(cb, force) {
     });
 };
 
-inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
+inOpsHost.node_list_refresh = function (zoneid, cellid, cb) {
     inOps.ApiCmd("host/node-list?zoneid=" + zoneid + "&cellid=" + cellid, {
         // api_zone_id: zoneid,
-        callback: function(err, nodes) {
+        callback: function (err, nodes) {
             var errMsg = valueui.utilx.errorKindCheck(err, nodes, "HostNodeList");
             if (errMsg) {
                 return cb(errMsg);
@@ -1320,9 +1411,6 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
                     nodes.items[i].spec = {};
                 }
 
-                if (!nodes.items[i].spec.peer_wan_addr) {
-                    nodes.items[i].spec.peer_wan_addr = "";
-                }
                 if (!nodes.items[i].spec.http_port) {
                     nodes.items[i].spec.http_port = "";
                 }
@@ -1371,13 +1459,13 @@ inOpsHost.node_list_refresh = function(zoneid, cellid, cb) {
                 }
             }
 
-            inOpsHost.nodes = nodes;
+            inOpsHost._nodeListActive = nodes;
             cb(null, nodes);
         },
     });
 };
 
-inOpsHost.CellIndex = function() {
+inOpsHost.CellIndex = function () {
     if (!inOpsHost.zone_active) {
         return;
     }
@@ -1423,7 +1511,7 @@ inOpsHost.CellIndex = function() {
     inOpsHost.CellList();
 };
 
-inOpsHost.CellList = function(zoneid) {
+inOpsHost.CellList = function (zoneid) {
     if (!inOpsHost.zone_active_fix(zoneid)) {
         return;
     }
@@ -1450,7 +1538,7 @@ inOpsHost.CellList = function(zoneid) {
     valueui.storage.set("inops_cluster_zone_id", inOpsHost.zone_active.meta.id);
     inOpsHost.cell_active = null;
 
-    var ep = valueui.newEventProxy("tpl", function(tpl) {
+    var ep = valueui.newEventProxy("tpl", function (tpl) {
         if (tpl) {
             $("#work-content").html(tpl);
         }
@@ -1470,7 +1558,7 @@ inOpsHost.CellList = function(zoneid) {
         });
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
         alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
     });
 
@@ -1479,12 +1567,12 @@ inOpsHost.CellList = function(zoneid) {
     });
 };
 
-inOpsHost.CellSet = function(zoneid, cellid) {
+inOpsHost.CellSet = function (zoneid, cellid) {
     if (!inOpsHost.zone_active) {
         return;
     }
     zoneid = inOpsHost.zone_active.meta.id;
-    var ep = valueui.newEventProxy("tpl", "cell", function(tpl, cell) {
+    var ep = valueui.newEventProxy("tpl", "cell", function (tpl, cell) {
         if (!cell) {
             cell = valueui.utilx.objectClone(inOpsHost.cell_def);
         }
@@ -1521,7 +1609,7 @@ inOpsHost.CellSet = function(zoneid, cellid) {
         });
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
         alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
     });
 
@@ -1540,7 +1628,7 @@ inOpsHost.CellSet = function(zoneid, cellid) {
     }
 };
 
-inOpsHost.CellSetCommit = function() {
+inOpsHost.CellSetCommit = function () {
     var form = $("#inops-host-cell-form"),
         alert_id = "#inops-host-cellset-alert";
 
@@ -1557,7 +1645,7 @@ inOpsHost.CellSetCommit = function() {
     inOps.ApiCmd("host/cell-set", {
         method: "POST",
         data: JSON.stringify(req),
-        callback: function(err, cell) {
+        callback: function (err, cell) {
             var errMsg = valueui.utilx.errorKindCheck(err, cell, "HostCell");
             if (errMsg) {
                 return valueui.alert.innerShow(alert_id, "error", errMsg);
@@ -1565,8 +1653,8 @@ inOpsHost.CellSetCommit = function() {
 
             valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
 
-            inOpsHost.ZoneRefresh(function() {
-                window.setTimeout(function() {
+            inOpsHost.ZoneRefresh(function () {
+                window.setTimeout(function () {
                     valueui.modal.close();
                     inOpsHost.CellList();
                 }, 500);
@@ -1575,10 +1663,18 @@ inOpsHost.CellSetCommit = function() {
     });
 };
 
-inOpsHost.ZoneIndex = function() {
+inOpsHost.ZoneIndex = function () {
     if (!inOpsHost.zones) {
         return;
     }
+
+    inCp.ModuleNavbarMenuRefresh("inops-host-zone-nav-tpl");
+    var activeZoneId = valueui.storage.get("inops_cluster_zone_id");
+    if (activeZoneId && activeZoneId.length > 0) {
+        return inOpsHost.ZoneEntryIndex(activeZoneId);
+    }
+    return inOpsHost.ZoneList();
+
     inCp.ModuleNavbarMenuRefresh("inops-host-nav-tpl");
     if (inOps.nav_cluster_zone) {
         $("#inops-cluster-nav-zone").css({
@@ -1586,31 +1682,22 @@ inOpsHost.ZoneIndex = function() {
         });
     }
 
-    var zone_active_id = valueui.storage.get("inops_cluster_zone_id");
-
-    if (!inOps.nav_cluster_zone && !zone_active_id && inOpsHost.zones.items.length > 0) {
-        zone_active_id = inOpsHost.zones.items[0].meta.id;
+    if (!inOps.nav_cluster_zone && !activeZoneId && inOpsHost.zones.items.length > 0) {
+        activeZoneId = inOpsHost.zones.items[0].meta.id;
         inOpsHost.zone_active = valueui.utilx.objectClone(inOpsHost.zones.items[0]);
-        valueui.storage.set("inops_cluster_zone_id", zone_active_id);
+        valueui.storage.set("inops_cluster_zone_id", activeZoneId);
     }
 
-    if (
-        zone_active_id &&
-        (!inOpsHost.zone_active || inOpsHost.zone_active.meta.id != zone_active_id)
-    ) {
+    if (activeZoneId && (!inOpsHost.zone_active || inOpsHost.zone_active.meta.id != activeZoneId)) {
         for (var i in inOpsHost.zones.items) {
-            if (zone_active_id == inOpsHost.zones.items[i].meta.id) {
+            if (activeZoneId == inOpsHost.zones.items[i].meta.id) {
                 inOpsHost.zone_active = valueui.utilx.objectClone(inOpsHost.zones.items[i]);
                 break;
             }
         }
     }
 
-    if (
-        zone_active_id &&
-        inOpsHost.zone_active &&
-        zone_active_id == inOpsHost.zone_active.meta.id
-    ) {
+    if (activeZoneId && inOpsHost.zone_active && activeZoneId == inOpsHost.zone_active.meta.id) {
         if (inOps.nav_cluster_zone) {
             $("#inops-cluster-nav-zone-value").text("Zone: " + inOpsHost.zone_active.meta.id);
         }
@@ -1620,7 +1707,7 @@ inOpsHost.ZoneIndex = function() {
     inOpsHost.ZoneList();
 };
 
-inOpsHost.ZoneList = function() {
+inOpsHost.ZoneList = function () {
     if (!inOpsHost.zones) {
         return;
     }
@@ -1628,20 +1715,22 @@ inOpsHost.ZoneList = function() {
     valueui.storage.del("inops_cluster_zone_id");
     inOpsHost.zone_active = null;
 
-    $("#inops-cluster-nav-host").css({
-        display: "none",
-    });
-    $("#inops-cluster-nav-cell").css({
-        display: "none",
-    });
-    if (inOps.nav_cluster_zone) {
-        $("#inops-cluster-nav-zone").css({
-            display: "block",
-        });
-        $("#inops-cluster-nav-zone-value").text("Zones");
-    }
+    inCp.ModuleNavbarMenuRefresh("inops-host-zone-nav-tpl");
 
-    var ep = valueui.newEventProxy("tpl", function(tpl) {
+    //  $("#inops-cluster-nav-host").css({
+    //      display: "none",
+    //  });
+    //  $("#inops-cluster-nav-cell").css({
+    //      display: "none",
+    //  });
+    //  if (true || inOps.nav_cluster_zone) {
+    //      $("#inops-cluster-nav-zone").css({
+    //          display: "block",
+    //      });
+    //      $("#inops-cluster-nav-zone-value").text("Zones");
+    //  }
+
+    var ep = valueui.newEventProxy("tpl", function (tpl) {
         if (tpl) {
             $("#work-content").html(tpl);
         }
@@ -1658,7 +1747,7 @@ inOpsHost.ZoneList = function() {
         });
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
         alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
     });
 
@@ -1715,99 +1804,228 @@ inOpsHost.ZoneList = function() {
     //         callback: ep.done("tpl"),
     //     });
 
-//     inOps.ApiCmd("host/zone-list", {
-//         callback: ep.done("data"),
-//     });
-// });
+    //     inOps.ApiCmd("host/zone-list", {
+    //         callback: ep.done("data"),
+    //     });
+    // });
 };
 
-inOpsHost.ZoneSet = function(zoneid) {
-    var ep = valueui.newEventProxy("tpl", "data", function(tpl, rsj) {
-        if (!rsj) {
-            rsj = valueui.utilx.objectClone(inOpsHost.zone_def);
+inOpsHost._zoneEntryReset = function (zoneEntry) {
+    if (!zoneEntry) {
+        zoneEntry = valueui.utilx.objectClone(inOpsHost.zone_def);
+    }
+
+    if (!zoneEntry.wan_addrs) {
+        zoneEntry.wan_addrs = [];
+    }
+
+    if (!zoneEntry.lan_addrs) {
+        zoneEntry.lan_addrs = [];
+    }
+
+    if (!zoneEntry.summary) {
+        zoneEntry.summary = "";
+    }
+
+    if (!zoneEntry.wan_api) {
+        zoneEntry.wan_api = "";
+    }
+
+    if (!zoneEntry.image_services) {
+        zoneEntry.image_services = [];
+    }
+
+    if (!zoneEntry.network_vpc_instance) {
+        zoneEntry.network_vpc_instance = "";
+    }
+
+    if (!zoneEntry.network_vpc_bridge) {
+        zoneEntry.network_vpc_bridge = "";
+    }
+
+    if (!zoneEntry.network_domain_name) {
+        zoneEntry.network_domain_name = "";
+    }
+
+    zoneEntry.driver = zoneEntry.driver || {};
+    zoneEntry.driver.name = zoneEntry.driver.name || "private_cloud";
+
+    if (!zoneEntry.groups) {
+        zoneEntry.groups = [];
+    }
+
+    return zoneEntry;
+};
+
+inOpsHost.ZoneEntryIndex = function (zoneid) {
+    if (zoneid) {
+        inOpsHost._nodeActiveZoneId = zoneid;
+        valueui.storage.set("inops_cluster_zone_id", zoneid);
+    }
+
+    var ep = valueui.newEventProxy("tpl", "data", "nodeList", function (tpl, rsj, nodeList) {
+        if (!rsj || !rsj.kind || rsj.kind != "HostZone") {
+            return valueui.alert.open("error", "zone not setup");
         }
 
-        if (!rsj.kind || rsj.kind != "HostZone") {
-            rsj = valueui.utilx.objectClone(inOpsHost.zone_def);
+        if (tpl) {
+            $("#work-content").html(tpl);
         }
 
-        var title = "Zone Setting";
-        if (rsj.meta.id == "") {
-            title = "Create new Zone";
+        inCp.ModuleNavbarMenuRefresh("inops-cluster-zone-entry-menu");
+        inCp.OpToolsRefresh("#inops-cluster-zone-entry-optools");
+
+        var zoneEntry = inOpsHost._zoneEntryReset(rsj);
+
+        if (zoneEntry.meta.id == "") {
+            return valueui.alert.open("error", "zone not setup");
         }
 
-        if (!rsj.wan_addrs) {
-            rsj.wan_addrs = [];
-        }
+        zoneEntry._actions = inOpsHost.actions;
 
-        if (!rsj.lan_addrs) {
-            rsj.lan_addrs = [];
-        }
+        inOpsHost.zoneSetActiveEntry = zoneEntry;
 
-        if (!rsj.summary) {
-            rsj.summary = "";
-        }
-
-        if (!rsj.wan_api) {
-            rsj.wan_api = "";
-        }
-
-        if (!rsj.image_services) {
-            rsj.image_services = [];
-        }
-
-        if (!rsj.network_vpc_instance) {
-            rsj.network_vpc_instance = "";
-        }
-
-        if (!rsj.network_vpc_bridge) {
-            rsj.network_vpc_bridge = "";
-        }
-
-        if (!rsj.network_domain_name) {
-            rsj.network_domain_name = "";
-        }
-
-        rsj._actions = inOpsHost.actions;
-
-        valueui.modal.open({
-            title: title,
-            tplsrc: tpl,
-            data: rsj,
-            width: "max",
-            height: "max",
-            buttons: [
-                {
-                    onclick: "valueui.modal.close()",
-                    title: "Close",
-                },
-                {
-                    onclick: "inOpsHost.ZoneSetCommit()",
-                    title: "Save",
-                    style: "btn btn-primary",
-                },
-            ],
-            callback: function() {
-                if (rsj.lan_addrs.length < 1) {
-                    inOpsHost.ZoneLanAddressAppend();
-                }
-                if (rsj.wan_addrs.length < 1) {
-                    inOpsHost.ZoneWanAddressAppend();
-                }
-                if (rsj.image_services.length < 1) {
-                    inOpsHost.ZoneImageServiceAppend();
-                }
-            },
+        valueui.template.render({
+            dstid: "inops-host-zone-entry-overview",
+            tplid: "inops-host-zone-entry-overview-info-tpl",
+            data: zoneEntry,
         });
+
+        nodeList.items = nodeList.items || [];
+        for (var i in nodeList.items) {
+            nodeList.items[i] = inOpsHost._nodeEntryReset(nodeList.items[i]);
+        }
+
+        nodeList._zone = zoneEntry;
+
+        valueui.template.render({
+            dstid: "inops-host-zone-entry-node-list",
+            tplid: "inops-host-zone-entry-node-list-tpl",
+            data: nodeList,
+        });
+
+        inOpsHost._nodeListActive = nodeList;
     });
 
-    ep.fail(function(err) {
+    ep.fail(function (err) {
+        alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
+    });
+
+    // template
+    inOps.TplFetch("host/zone-overview", {
+        callback: ep.done("tpl"),
+    });
+
+    // data
+    if (!inOpsHost._nodeActiveZoneId) {
+        ep.emit("data", null);
+    } else {
+        inOps.ApiCmd("host/zone-entry?id=" + inOpsHost._nodeActiveZoneId, {
+            callback: ep.done("data"),
+        });
+        inOps.ApiCmd("host/node-list?zoneid=" + inOpsHost._nodeActiveZoneId, {
+            callback: ep.done("nodeList"),
+        });
+    }
+};
+
+inOpsHost.ZoneNew = function () {
+    inOpsHost._nodeActiveZoneId = null;
+    inOpsHost.ZoneSet();
+};
+
+inOpsHost.ZoneSet = function (zoneid) {
+    if (!zoneid) {
+        zoneid = inOpsHost._nodeActiveZoneId;
+    }
+    var ep = valueui.newEventProxy(
+        "tpl",
+        "data",
+        "driverSpecList",
+        function (tpl, rsj, driverSpecList) {
+            if (!rsj) {
+                rsj = valueui.utilx.objectClone(inOpsHost.zone_def);
+            }
+
+            if (!rsj.kind || rsj.kind != "HostZone") {
+                rsj = valueui.utilx.objectClone(inOpsHost.zone_def);
+            }
+
+            var errMsg = valueui.utilx.errorKindCheck(null, driverSpecList, "ZoneDriverSpecList");
+            if (errMsg) {
+                return valueui.alert.open("error", errMsg);
+            }
+            driverSpecList.items = driverSpecList.items || [];
+
+            var zoneEntry = inOpsHost._zoneEntryReset(rsj);
+
+            var title = "Zone Setting";
+            if (zoneEntry.meta.id == "") {
+                title = "Create new Zone";
+            }
+
+            zoneEntry._actions = inOpsHost.actions;
+            zoneEntry._driver_spec_list = driverSpecList.items;
+
+            inOpsHost.zoneDriverSpecList = driverSpecList.items;
+            inOpsHost.zoneSetActiveEntry = zoneEntry;
+
+            valueui.modal.open({
+                title: title,
+                tplsrc: tpl,
+                width: "max",
+                height: "max",
+                buttons: [
+                    {
+                        onclick: "valueui.modal.close()",
+                        title: "Close",
+                    },
+                    {
+                        onclick: "inOpsHost.ZoneSetNext()",
+                        title: "Next",
+                        style: "btn btn-primary",
+                    },
+                ],
+                callback: function () {
+                    valueui.template.render({
+                        dstid: "inops-host-zoneset",
+                        tplid: "inops-host-zoneset-tpl",
+                        data: zoneEntry,
+                        callback: function () {
+                            if (zoneEntry.lan_addrs.length < 1) {
+                                inOpsHost.ZoneLanAddressAppend();
+                            }
+                            if (!zoneEntry.wan_addrs || zoneEntry.wan_addrs.length < 1) {
+                                inOpsHost.ZoneWanAddressAppend();
+                            }
+                            if (zoneEntry.image_services.length < 1) {
+                                inOpsHost.ZoneImageServiceAppend();
+                            }
+                            if (!zoneEntry.groups || zoneEntry.groups.length < 1) {
+                                inOpsHost.ZoneGroupAppend(inOpsHost.zoneGroupDefault);
+                            } else {
+                                for (var i in zoneEntry.groups) {
+                                    inOpsHost.ZoneGroupAppend(zoneEntry.groups[i]);
+                                }
+                            }
+                        },
+                    });
+                },
+            });
+        }
+    );
+
+    ep.fail(function (err) {
         alert("SpecSet error, Please try again later (EC:inops-host-zoneset)");
     });
 
     // template
     inOps.TplFetch("host/zone-set", {
         callback: ep.done("tpl"),
+    });
+
+    inOps.ApiCmd("host/zone-driver-spec-list", {
+        callback: ep.done("driverSpecList"),
     });
 
     // data
@@ -1820,7 +2038,7 @@ inOpsHost.ZoneSet = function(zoneid) {
     }
 };
 
-inOpsHost.ZoneWanAddressAppend = function() {
+inOpsHost.ZoneWanAddressAppend = function () {
     valueui.template.render({
         append: true,
         dstid: "inops-host-zoneset-wanaddrs",
@@ -1828,11 +2046,11 @@ inOpsHost.ZoneWanAddressAppend = function() {
     });
 };
 
-inOpsHost.ZoneWanAddressDel = function(field) {
+inOpsHost.ZoneWanAddressDel = function (field) {
     $(field).parent().parent().remove();
 };
 
-inOpsHost.ZoneLanAddressAppend = function() {
+inOpsHost.ZoneLanAddressAppend = function () {
     valueui.template.render({
         append: true,
         dstid: "inops-host-zoneset-lanaddrs",
@@ -1840,11 +2058,11 @@ inOpsHost.ZoneLanAddressAppend = function() {
     });
 };
 
-inOpsHost.ZoneLanAddressDel = function(field) {
+inOpsHost.ZoneLanAddressDel = function (field) {
     $(field).parent().parent().remove();
 };
 
-inOpsHost.ZoneImageServiceAppend = function() {
+inOpsHost.ZoneImageServiceAppend = function () {
     valueui.template.render({
         append: true,
         dstid: "inops-host-zoneset-imageservice",
@@ -1852,11 +2070,24 @@ inOpsHost.ZoneImageServiceAppend = function() {
     });
 };
 
-inOpsHost.ZoneImageServiceDel = function(field) {
+inOpsHost.ZoneImageServiceDel = function (field) {
     $(field).parent().parent().remove();
 };
 
-inOpsHost.ZoneSetCommit = function() {
+inOpsHost.ZoneGroupAppend = function (data) {
+    valueui.template.render({
+        append: true,
+        dstid: "inops-host-zoneset-groups",
+        tplid: "inops-host-zoneset-group-tpl",
+        data: data,
+    });
+};
+
+inOpsHost.ZoneGroupDel = function (field) {
+    $(field).parent().parent().remove();
+};
+
+inOpsHost.ZoneSetNext = function () {
     var form = $("#inops-host-zone-form"),
         alert_id = "#inops-host-zoneset-alert";
 
@@ -1874,10 +2105,14 @@ inOpsHost.ZoneSetCommit = function() {
         network_vpc_instance: form.find("input[name=network_vpc_instance]").val(),
         network_vpc_bridge: form.find("input[name=network_vpc_bridge]").val(),
         network_domain_name: form.find("input[name=network_domain_name]").val(),
+        driver: {
+            name: form.find("select[name=driver_name]").val(),
+        },
+        groups: [],
     };
 
     try {
-        form.find(".inops-host-zoneset-wanaddr-item").each(function() {
+        form.find(".inops-host-zoneset-wanaddr-item").each(function () {
             var addr = $(this).find("input[name=wan_addr]").val();
 
             if (!addr || addr.length < 7) {
@@ -1887,7 +2122,7 @@ inOpsHost.ZoneSetCommit = function() {
             req.wan_addrs.push(addr);
         });
 
-        form.find(".inops-host-zoneset-lanaddr-item").each(function() {
+        form.find(".inops-host-zoneset-lanaddr-item").each(function () {
             var addr = $(this).find("input[name=lan_addr]").val();
 
             if (!addr || addr.length < 7) {
@@ -1897,7 +2132,7 @@ inOpsHost.ZoneSetCommit = function() {
             req.lan_addrs.push(addr);
         });
 
-        form.find(".inops-host-zoneset-imageservice-item").each(function() {
+        form.find(".inops-host-zoneset-imageservice-item").each(function () {
             var driver = $(this).find("input[name=image_service_driver]").val();
             var url = $(this).find("input[name=image_service_url]").val();
 
@@ -1911,6 +2146,38 @@ inOpsHost.ZoneSetCommit = function() {
             });
         });
 
+        form.find(".inops-host-zoneset-group-item").each(function () {
+            var id = $(this).find("input[name=id]").val(),
+                name = $(this).find("input[name=name]").val(),
+                description = $(this).find("input[name=description]").val(),
+                action = 0;
+
+            if (!id || id.length < 1) {
+                return;
+            }
+
+            if (!name || name.length < 1) {
+                throw "group name can not be null";
+            }
+
+            if (!description) {
+                description = "";
+            }
+
+            if ($(this).find("input[name=action]").prop("checked") == true) {
+                action = inOpsHost.ZoneGroupSetupIn;
+            } else {
+                action = inOpsHost.ZoneGroupSetupOut;
+            }
+
+            req.groups.push({
+                id: id,
+                name: name,
+                description: description,
+                action: action,
+            });
+        });
+
         if (req.lan_addrs.length < 1) {
             throw "No LAN Address Found";
         }
@@ -1918,23 +2185,198 @@ inOpsHost.ZoneSetCommit = function() {
         return valueui.alert.innerShow("#inops-host-zoneset-alert", "error", err);
     }
 
+    if (
+        req.driver.name == inOpsHost.zoneSetActiveEntry.driver.name &&
+        inOpsHost.zoneSetActiveEntry.driver.fields &&
+        inOpsHost.zoneSetActiveEntry.driver.fields.length > 0
+    ) {
+        req.driver.fields = inOpsHost.zoneSetActiveEntry.driver.fields;
+    } else {
+        req.driver.fields = [];
+    }
+
+    inOpsHost.zoneSetActiveEntry = req;
+
+    for (var i in inOpsHost.zoneDriverSpecList) {
+        if (inOpsHost.zoneDriverSpecList[i].name == req.driver.name) {
+            return inCpConfig.ConfigInstanceEntry(
+                inOpsHost.zoneDriverSpecList[i],
+                inOpsHost.zoneSetActiveEntry.driver,
+                {
+                    callback: inOpsHost.ZoneSetDriver,
+                }
+            );
+        }
+    }
+
+    return valueui.alert.innerShow("#inops-host-zoneset-alert", "error", "driver name not found");
+};
+
+inOpsHost.ZoneSetDriver = function (configInstance) {
+    if (!configInstance || !configInstance.fields || configInstance.fields.length == 0) {
+        return valueui.modal.footAlert("error", "driver config not found", 2000);
+    }
+    inOpsHost._zoneSetCommit(configInstance);
+};
+
+inOpsHost._zoneSetCommit = function (configInstance) {
+    inOpsHost.zoneSetActiveEntry.driver = configInstance;
+
+    console.log(inOpsHost.zoneSetActiveEntry);
+
     inOps.ApiCmd("host/zone-set", {
         method: "POST",
-        data: JSON.stringify(req),
-        callback: function(err, rsj) {
+        data: JSON.stringify(inOpsHost.zoneSetActiveEntry),
+        callback: function (err, rsj) {
             var errMsg = valueui.utilx.errorKindCheck(err, rsj, "HostZone");
             if (errMsg) {
-                return valueui.alert.innerShow(alert_id, "error", errMsg);
+                return valueui.modal.footAlert("error", errMsg, 2000);
             }
 
-            valueui.alert.innerShow(alert_id, "ok", "Successfully Updated");
+            valueui.modal.footAlert("ok", "Successfully Updated");
 
-            inOpsHost.ZoneRefresh(function() {
-                window.setTimeout(function() {
+            inOpsHost.ZoneRefresh(function () {
+                window.setTimeout(function () {
                     valueui.modal.close();
                     inOpsHost.ZoneList();
                 }, 500);
             }, true);
         },
     });
+};
+
+inOpsHost.ResHostCloudProviderSyncBound = 1 << 1;
+inOpsHost.ResHostCloudProviderSyncCreate = 1 << 2;
+inOpsHost.ResHostCloudProviderSyncBind = 1 << 3;
+
+inOpsHost.CloudProviderSyncActionName = function (action) {
+    if (action == inOpsHost.ResHostCloudProviderSyncBound) {
+        return "bound";
+    } else if (action == inOpsHost.ResHostCloudProviderSyncBind) {
+        return "bind";
+    }
+    return "created";
+};
+
+inOpsHost.ZoneNodeListSyncPull = function (zoneid) {
+    if (!zoneid) {
+        zoneid = inOpsHost._nodeActiveZoneId;
+    } else {
+        inOpsHost._nodeActiveZoneId = zoneid;
+    }
+
+    var ep = valueui.newEventProxy("tpl", "data", function (tpl, data) {
+        data.items = data.items || [];
+
+        inOpsHost._zoneNodeListSyncPullActive = data.items;
+
+        valueui.modal.open({
+            title: "Sync host list from the cloud service provider",
+            tplsrc: tpl,
+            width: 1000,
+            height: 900,
+            callback: function () {
+                valueui.template.render({
+                    dstid: "inops-host-node-sync-pull-list",
+                    tplid: "inops-host-node-sync-pull-list-tpl",
+                    data: data,
+                });
+            },
+            buttons: [
+                {
+                    onclick: "valueui.modal.close()",
+                    title: "Close",
+                },
+                {
+                    onclick: "inOpsHost.ZoneNodeListSyncCommit()",
+                    title: "Save",
+                    style: "btn btn-primary",
+                },
+            ],
+        });
+    });
+
+    ep.fail(function (err) {
+        if (err == "AccessDenied") {
+            return inCp.AlertAccessDenied();
+        }
+        alert("Error: " + err);
+    });
+
+    inOps.TplFetch("host/node-sync-pull-list", {
+        callback: ep.done("tpl"),
+    });
+
+    inOps.ApiCmd("host/node-sync-pull-list?zone_id=" + zoneid, {
+        callback: ep.done("data"),
+    });
+};
+
+inOpsHost.ZoneNodeListSyncCommit = function () {
+    var zoneid = inOpsHost._nodeActiveZoneId,
+        form = $("#inops-host-node-sync-pull-list"),
+        alert_id = "#inops-host-node-sync-pull-list-alert",
+        err = null;
+
+    form.find(".inops-host-node-sync-pull-item").each(function () {
+        if (err) {
+            return;
+        }
+
+        var req = {
+            cloud_provider: {
+                instance_id: $(this).find("input[name=cloud_instance_id]").val(),
+            },
+            action: parseInt($(this).find("input[name=action]").val()),
+            zone_id: zoneid,
+        };
+
+        var itemAlertId = "#id-" + req.cloud_provider.instance_id + "-alert";
+
+        if (!req.cloud_provider.instance_id || !req.action) {
+            err = "invalid request (local form)";
+            return valueui.alert.innerShow(alert_id, "error", err);
+        }
+
+        if ($(this).find("input[name=action]").prop("checked") != true) {
+            return;
+        }
+
+        for (var i in inOpsHost._zoneNodeListSyncPullActive) {
+            var n = inOpsHost._zoneNodeListSyncPullActive[i];
+            if (n.cloud_provider.instance_id == req.cloud_provider.instance_id) {
+                req.cloud_provider = n.cloud_provider;
+                req.instance_id = n.instance_id;
+                req.instance_name = n.instance_name;
+                break;
+            }
+        }
+
+        inOps.ApiCmd("host/node-sync-pull-set", {
+            // api_zone_id: zoneid,
+            method: "POST",
+            data: JSON.stringify(req),
+            callback: function (err, data) {
+                var errMsg = valueui.utilx.errorKindCheck(err, data, "NodeEntry");
+                if (errMsg) {
+                    err = errMsg;
+                    return valueui.alert.innerShow(alert_id, "error", errMsg);
+                }
+                $(itemAlertId)
+                    .addClass("badge rounded-pill bg-success")
+                    .text("Successfully Updated");
+            },
+        });
+    });
+
+    if (err) {
+        return valueui.modal.footAlert("error", err, 2000);
+    }
+
+    setTimeout(function () {
+        valueui.modal.close();
+        inOpsHost.ZoneIndex();
+    }, 2000);
+
+    return valueui.modal.footAlert("ok", "Successfully Updated", 2000);
 };
